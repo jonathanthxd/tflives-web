@@ -1,19 +1,56 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [user, setUser] = useState<{
+    name: string | null;
+    username: string | null;
+    role: string;
+    image: string | null;
+  } | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("tfl_token");
+    if (!token) return;
+
+    // Fetch fresh user data from server
+    fetch("/api/auth/me", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.user) {
+          setUser({
+            name: data.user.name || null,
+            username: data.user.username || null,
+            role: data.user.role,
+            image: data.user.image || null,
+          });
+        } else {
+          localStorage.removeItem("tfl_token");
+        }
+      })
+      .catch(() => {
+        localStorage.removeItem("tfl_token");
+      });
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("tfl_token");
+    window.location.href = "/";
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50">
-      {/* Glassmorphism mejorado con ligera sombra */}
+      {/* Glassmorphism mejorado */}
       <div className="absolute inset-0 bg-tfl-night/70 backdrop-blur-xl border-b border-tfl-sky/10 shadow-lg shadow-black/5" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Left: Theme toggle placeholder (sin cambios funcionales) */}
+          {/* Left: Theme toggle placeholder */}
           <div className="hidden md:flex items-center w-32">
             <button className="p-2 rounded-lg text-tfl-stone hover:text-tfl-sky hover:bg-tfl-sky/5 transition-all duration-300">
               <svg
@@ -34,7 +71,6 @@ export default function Navbar() {
 
           {/* Center: Logo + Links */}
           <div className="flex items-center gap-8">
-            {/* Enlace Tienda con subrayado animado */}
             <Link
               href="/tienda"
               className="relative text-sm font-medium text-tfl-stone hover:text-tfl-sky transition-colors duration-300 tracking-wide py-1 after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-tfl-sky/70 after:transition-all after:duration-300 hover:after:w-full"
@@ -42,7 +78,6 @@ export default function Navbar() {
               Tienda
             </Link>
 
-            {/* Logo con resplandor al hover */}
             <Link href="/" className="flex flex-col items-center group">
               <span className="font-display text-2xl md:text-3xl font-bold tracking-tight transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(147,197,253,0.5)]">
                 <span className="text-tfl-bone group-hover:text-tfl-sky transition-colors duration-300">
@@ -52,11 +87,9 @@ export default function Navbar() {
                   ives
                 </span>
               </span>
-              {/* Línea expansible suavizada */}
               <span className="w-0 group-hover:w-full h-[1px] bg-gradient-to-r from-transparent via-tfl-sky/50 to-transparent transition-all duration-500 mt-0.5" />
             </Link>
 
-            {/* Enlace TFL Network con subrayado animado */}
             <Link
               href="/network"
               className="relative text-sm font-medium text-tfl-stone hover:text-tfl-sky transition-colors duration-300 tracking-wide py-1 after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-tfl-sky/70 after:transition-all after:duration-300 hover:after:w-full"
@@ -65,14 +98,60 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Right: Login placeholder mejorado */}
+          {/* Right: User section */}
           <div className="hidden md:flex items-center justify-end w-32">
-            <button className="px-4 py-2 text-sm font-medium text-tfl-stone border border-tfl-stone/20 rounded-full hover:border-tfl-sky/50 hover:text-tfl-sky hover:bg-tfl-sky/5 transition-all duration-300 backdrop-blur-sm">
-              Login
-            </button>
+            {user ? (
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/dashboard"
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl bg-tfl-sky/10 border border-tfl-sky/20 text-tfl-sky text-sm font-medium hover:bg-tfl-sky/20 transition-all"
+                >
+                  {user.image ? (
+                    <img
+                      src={user.image}
+                      alt={user.name || user.username || "User"}
+                      className="w-6 h-6 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-6 h-6 rounded-full bg-tfl-sky/20 flex items-center justify-center text-xs font-bold">
+                      {(user.name?.[0] || user.username?.[0] || "U").toUpperCase()}
+                    </div>
+                  )}
+                  <span className="max-w-[80px] truncate">
+                    {user.name || user.username}
+                  </span>
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="p-2 text-tfl-stone hover:text-red-400 transition-colors"
+                  title="Cerrar sesión"
+                >
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                    />
+                  </svg>
+                </button>
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="px-4 py-2 text-sm font-medium text-tfl-stone border border-tfl-stone/20 rounded-full hover:border-tfl-sky/50 hover:text-tfl-sky hover:bg-tfl-sky/5 transition-all duration-300 backdrop-blur-sm"
+              >
+                Login
+              </Link>
+            )}
           </div>
 
-          {/* Mobile menu button con aria-expanded */}
+          {/* Mobile menu button */}
           <button
             className="md:hidden p-2 text-tfl-stone hover:text-tfl-sky transition-colors"
             onClick={() => setMobileOpen(!mobileOpen)}
@@ -105,7 +184,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile menu animado con transición suave */}
+      {/* Mobile menu animado */}
       <div
         className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
           mobileOpen
@@ -136,11 +215,37 @@ export default function Navbar() {
             >
               TFL Network
             </Link>
-            <div className="pt-2 border-t border-tfl-sky/10">
-              <button className="w-full py-2 text-sm font-medium text-tfl-stone border border-tfl-stone/20 rounded-full hover:border-tfl-sky/50 hover:text-tfl-sky transition-all duration-300">
-                Login
-              </button>
-            </div>
+
+            {user ? (
+              <div className="pt-2 border-t border-tfl-sky/10 space-y-3">
+                <Link
+                  href="/dashboard"
+                  className="block py-2 text-tfl-sky font-medium"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setMobileOpen(false);
+                  }}
+                  className="block w-full text-left py-2 text-red-400"
+                >
+                  Cerrar sesión
+                </button>
+              </div>
+            ) : (
+              <div className="pt-2 border-t border-tfl-sky/10">
+                <Link
+                  href="/login"
+                  className="block py-2 text-tfl-stone hover:text-tfl-sky transition-colors"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  Login
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>
