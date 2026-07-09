@@ -1,0 +1,108 @@
+"use client";
+
+import { motion } from "framer-motion";
+
+interface Owner {
+  name: string;
+  tag: string;
+  initials: string;
+  gradient: string;
+}
+
+const owners: Owner[] = [
+  {
+    name: "Jonathan",
+    tag: "Owner",
+    initials: "J",
+    gradient: "from-tfl-sky/30 to-tfl-pastel/20",
+  },
+  {
+    name: "Sebas",
+    tag: "Owner",
+    initials: "S",
+    gradient: "from-tfl-pastel/30 to-tfl-glacier/20",
+  },
+  {
+    name: "bStive",
+    tag: "Owner",
+    initials: "B",
+    gradient: "from-tfl-glacier/30 to-tfl-sky/20",
+  },
+];
+
+function OwnerCard({ owner, index }: { owner: Owner; index: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, delay: index * 0.15 }}
+      className="group relative flex flex-col items-center"
+    >
+      {/* Pedestal / Base */}
+      <div className="relative w-full max-w-[280px]">
+        {/* Glow effect behind */}
+        <div className="absolute inset-0 bg-tfl-sky/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        
+        {/* Card container - glassmorphism para ver el silk detrás */}
+        <div className="relative bg-tfl-night/60 backdrop-blur-md border border-tfl-sky/10 rounded-2xl p-8 flex flex-col items-center transition-all duration-500 group-hover:-translate-y-3 group-hover:border-tfl-sky/30 group-hover:shadow-[0_0_40px_rgba(96,165,250,0.1)]">
+          
+          {/* Avatar circle */}
+          <div className={`relative w-24 h-24 rounded-full bg-gradient-to-br ${owner.gradient} border-2 border-tfl-sky/20 flex items-center justify-center mb-5 group-hover:border-tfl-sky/50 group-hover:shadow-[0_0_20px_rgba(96,165,250,0.2)] transition-all duration-500`}>
+            <span className="font-display text-3xl font-bold text-tfl-bone/90">
+              {owner.initials}
+            </span>
+            
+            {/* Online dot */}
+            <div className="absolute bottom-1 right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-tfl-night" />
+          </div>
+
+          {/* Name */}
+          <h3 className="font-display text-xl font-semibold text-tfl-bone mb-1 group-hover:text-tfl-sky transition-colors duration-300">
+            {owner.name}
+          </h3>
+
+          {/* Tag */}
+          <span className="px-3 py-1 text-xs font-medium tracking-wider uppercase text-tfl-sky/80 bg-tfl-sky/10 rounded-full border border-tfl-sky/20">
+            {owner.tag}
+          </span>
+
+          {/* Decorative line */}
+          <div className="mt-5 w-12 h-[1px] bg-tfl-sky/20 group-hover:w-20 group-hover:bg-tfl-sky/50 transition-all duration-500" />
+        </div>
+
+        {/* Pedestal base shadow */}
+        <div className="mx-auto mt-2 w-3/4 h-2 bg-tfl-sky/5 rounded-full blur-md group-hover:bg-tfl-sky/10 transition-all duration-500" />
+      </div>
+    </motion.div>
+  );
+}
+
+export default function OwnersSection() {
+  return (
+    <section className="relative py-24 md:py-32 overflow-hidden">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
+        >
+          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-tfl-bone mb-4">
+            Los Fundadores
+          </h2>
+          <div className="w-16 h-[2px] bg-tfl-sky/50 mx-auto rounded-full" />
+        </motion.div>
+
+        {/* Owners grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 items-start">
+          {owners.map((owner, index) => (
+            <OwnerCard key={owner.name} owner={owner} index={index} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
