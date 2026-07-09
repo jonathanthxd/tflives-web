@@ -1,14 +1,22 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { postSchema } from "@/lib/validators";
-import { auth } from "@/lib/auth";
+import { verifyToken } from "@/lib/auth-manual";
 
 export async function POST(request: Request) {
-  const session = await auth();
-
-  if (!session?.user?.id) {
+  // Auth manual con JWT
+  const token = request.headers.get("authorization")?.replace("Bearer ", "");
+  if (!token) {
     return NextResponse.json(
       { error: "Debes iniciar sesión para crear posts" },
+      { status: 401 }
+    );
+  }
+
+  const payload = verifyToken(token);
+  if (!payload) {
+    return NextResponse.json(
+      { error: "Sesión inválida" },
       { status: 401 }
     );
   }
@@ -27,7 +35,7 @@ export async function POST(request: Request) {
     const post = await prisma.post.create({
       data: {
         ...parsed.data,
-        authorId: session.user.id,
+        authorId: payload.userId,
       },
     });
 

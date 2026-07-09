@@ -35,7 +35,8 @@ export async function POST(request: Request) {
     // Crear token
     const token = createToken(user.id, user.email, user.role, user.name, user.username);
 
-    return NextResponse.json(
+    // Crear respuesta y establecer cookie
+    const response = NextResponse.json(
       {
         success: true,
         user: {
@@ -49,6 +50,15 @@ export async function POST(request: Request) {
       },
       { status: 200 }
     );
+
+    response.cookies.set("tfl_token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7, // 7 días
+    });
+
+    return response;
   } catch (error) {
     console.error(error);
     return NextResponse.json(
