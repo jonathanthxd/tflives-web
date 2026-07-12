@@ -6,11 +6,11 @@ import ReactMarkdown from "react-markdown";
 export const dynamic = "force-dynamic";
 
 interface PostPageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export default async function PostDetailPage({ params }: PostPageProps) {
-  const { slug } = params;
+  const { slug } = await params; // ✅ esperamos la promesa
 
   const post = await prisma.post.findUnique({
     where: { slug },
@@ -20,7 +20,6 @@ export default async function PostDetailPage({ params }: PostPageProps) {
     },
   });
 
-  // Si no existe o no está publicado, mostrar 404
   if (!post || !post.published) {
     notFound();
   }
@@ -42,28 +41,19 @@ export default async function PostDetailPage({ params }: PostPageProps) {
   return (
     <main className="relative min-h-screen pt-24 pb-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Botón volver */}
         <Link
           href="/network"
           className="inline-flex items-center gap-2 text-sm text-tfl-stone hover:text-tfl-sky transition-colors mb-8"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M10 19l-7-7m0 0l7-7m-7 7h18"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
           Volver a TFL Network
         </Link>
 
-        {/* Header del post */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
-            <span
-              className={`px-3 py-1 text-xs font-medium tracking-wider uppercase rounded-full border ${typeColors[post.type]}`}
-            >
+            <span className={`px-3 py-1 text-xs font-medium tracking-wider uppercase rounded-full border ${typeColors[post.type]}`}>
               {typeLabels[post.type]}
             </span>
             <span className="text-sm text-tfl-stone">{post.modality.name}</span>
@@ -76,11 +66,7 @@ export default async function PostDetailPage({ params }: PostPageProps) {
           <div className="flex items-center gap-4 text-sm text-tfl-stone">
             <div className="flex items-center gap-2">
               {post.author.image ? (
-                <img
-                  src={post.author.image}
-                  alt=""
-                  className="w-6 h-6 rounded-full object-cover"
-                />
+                <img src={post.author.image} alt="" className="w-6 h-6 rounded-full object-cover" />
               ) : (
                 <div className="w-6 h-6 rounded-full bg-tfl-sky/20 flex items-center justify-center text-xs font-bold text-tfl-sky">
                   {(post.author.name?.[0] || "U").toUpperCase()}
@@ -99,18 +85,12 @@ export default async function PostDetailPage({ params }: PostPageProps) {
           </div>
         </div>
 
-        {/* Imagen destacada (si existe) */}
         {post.image && (
           <div className="mb-8 rounded-2xl overflow-hidden bg-tfl-slate/30 border border-tfl-sky/10">
-            <img
-              src={post.image}
-              alt={post.title}
-              className="w-full h-auto object-cover max-h-[400px]"
-            />
+            <img src={post.image} alt={post.title} className="w-full h-auto object-cover max-h-[400px]" />
           </div>
         )}
 
-        {/* Contenido en Markdown */}
         <div className="prose prose-invert prose-tfl max-w-none">
           <ReactMarkdown>{post.content}</ReactMarkdown>
         </div>
