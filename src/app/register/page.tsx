@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import SafeButton from "@/components/ui/safe-button"; // ✅ import añadido
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -55,7 +56,6 @@ export default function RegisterPage() {
         return;
       }
 
-      // Guardar token
       localStorage.setItem("tfl_token", result.token);
       router.push("/dashboard");
       router.refresh();
@@ -136,7 +136,6 @@ export default function RegisterPage() {
               className="w-full px-4 py-3 bg-tfl-slate/30 border border-tfl-sky/20 rounded-xl text-tfl-bone placeholder-tfl-stone/50 focus:outline-none focus:border-tfl-sky/50 focus:ring-1 focus:ring-tfl-sky/30 transition-all"
               placeholder="••••••••"
             />
-            {/* Strength meter */}
             <div className="mt-2">
               <div className="flex gap-1 h-1.5">
                 {[0, 1, 2, 3].map((i) => (
@@ -167,13 +166,14 @@ export default function RegisterPage() {
             />
           </div>
 
-          <button
+          {/* ✅ Botón reemplazado por SafeButton */}
+          <SafeButton
             type="submit"
             disabled={loading}
             className="w-full py-3 bg-tfl-sky/10 border border-tfl-sky/30 rounded-xl text-tfl-sky font-medium hover:bg-tfl-sky/20 transition-all duration-300 disabled:opacity-50"
           >
             {loading ? "Creando cuenta..." : "Crear Cuenta"}
-          </button>
+          </SafeButton>
 
           <p className="text-center text-sm text-tfl-stone">
             ¿Ya tienes cuenta?{" "}

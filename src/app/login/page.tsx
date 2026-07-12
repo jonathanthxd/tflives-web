@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import SafeButton from "@/components/ui/safe-button"; // ✅ Import del SafeButton
 
 export default function LoginPage() {
   const router = useRouter();
@@ -80,13 +81,14 @@ export default function LoginPage() {
             />
           </div>
 
-          <button
+          {/* ✅ Usamos SafeButton para evitar hydration error */}
+          <SafeButton
             type="submit"
             disabled={loading}
             className="w-full py-3 bg-tfl-sky/10 border border-tfl-sky/30 rounded-xl text-tfl-sky font-medium hover:bg-tfl-sky/20 transition-all duration-300 disabled:opacity-50"
           >
             {loading ? "Entrando..." : "Entrar"}
-          </button>
+          </SafeButton>
 
           <p className="text-center text-sm text-tfl-stone">
             ¿No tienes cuenta?{" "}

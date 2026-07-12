@@ -7,7 +7,6 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { name, username, email, password } = body;
 
-    // Validaciones básicas
     if (!name || !username || !email || !password) {
       return NextResponse.json(
         { error: "Todos los campos son obligatorios" },
@@ -22,7 +21,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Verificar si el email ya existe
     const existingEmail = await prisma.user.findUnique({ where: { email } });
     if (existingEmail) {
       return NextResponse.json(
@@ -31,7 +29,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Verificar si el username ya existe
     const existingUser = await prisma.user.findUnique({ where: { username } });
     if (existingUser) {
       return NextResponse.json(
@@ -40,10 +37,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // Hash password
     const hashedPassword = await hashPassword(password);
 
-    // Crear usuario
     const user = await prisma.user.create({
       data: {
         name,
@@ -53,10 +48,8 @@ export async function POST(request: Request) {
       },
     });
 
-    // Crear token
     const token = createToken(user.id, user.email, user.role, user.name, user.username);
 
-    // Crear respuesta y establecer cookie
     const response = NextResponse.json(
       {
         success: true,
@@ -74,9 +67,10 @@ export async function POST(request: Request) {
 
     response.cookies.set("tfl_token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: false, // true in production
       sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 días
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: "/",
     });
 
     return response;

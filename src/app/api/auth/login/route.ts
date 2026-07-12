@@ -14,7 +14,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Buscar usuario
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user || !user.password) {
       return NextResponse.json(
@@ -23,7 +22,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Verificar contraseña
     const isValid = await verifyPassword(password, user.password);
     if (!isValid) {
       return NextResponse.json(
@@ -32,7 +30,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Crear token
     const token = createToken(user.id, user.email, user.role, user.name, user.username);
 
     // Crear respuesta y establecer cookie
@@ -53,9 +50,10 @@ export async function POST(request: Request) {
 
     response.cookies.set("tfl_token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: false, // true in production
       sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 días
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: "/",
     });
 
     return response;

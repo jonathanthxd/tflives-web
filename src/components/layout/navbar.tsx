@@ -16,7 +16,6 @@ export default function Navbar() {
     const token = localStorage.getItem("tfl_token");
     if (!token) return;
 
-    // Fetch fresh user data from server
     fetch("/api/auth/me", {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -38,20 +37,23 @@ export default function Navbar() {
       });
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
     localStorage.removeItem("tfl_token");
     window.location.href = "/";
   };
 
+  const displayName = user?.name || user?.username || "";
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50">
-      {/* Glassmorphism mejorado */}
+      {/* Glassmorphism */}
       <div className="absolute inset-0 bg-tfl-night/70 backdrop-blur-xl border-b border-tfl-sky/10 shadow-lg shadow-black/5" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Left: Theme toggle placeholder */}
-          <div className="hidden md:flex items-center w-32">
+          {/* Left: Theme toggle (flex-1 para que ocupe espacio) */}
+          <div className="flex-1 flex items-center justify-start">
             <button className="p-2 rounded-lg text-tfl-stone hover:text-tfl-sky hover:bg-tfl-sky/5 transition-all duration-300">
               <svg
                 className="w-5 h-5"
@@ -69,17 +71,17 @@ export default function Navbar() {
             </button>
           </div>
 
-          {/* Center: Logo + Links */}
-          <div className="flex items-center gap-8">
+          {/* Center: Logo + Links (centrado absoluto) */}
+          <div className="flex items-center gap-4 sm:gap-6 md:gap-8 flex-shrink-0">
             <Link
               href="/tienda"
-              className="relative text-sm font-medium text-tfl-stone hover:text-tfl-sky transition-colors duration-300 tracking-wide py-1 after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-tfl-sky/70 after:transition-all after:duration-300 hover:after:w-full"
+              className="relative text-sm font-medium text-tfl-stone hover:text-tfl-sky transition-colors duration-300 tracking-wide py-1 after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-tfl-sky/70 after:transition-all after:duration-300 hover:after:w-full whitespace-nowrap"
             >
               Tienda
             </Link>
 
             <Link href="/" className="flex flex-col items-center group">
-              <span className="font-display text-2xl md:text-3xl font-bold tracking-tight transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(147,197,253,0.5)]">
+              <span className="font-display text-xl md:text-2xl lg:text-3xl font-bold tracking-tight transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(147,197,253,0.5)] whitespace-nowrap">
                 <span className="text-tfl-bone group-hover:text-tfl-sky transition-colors duration-300">
                   TFL
                 </span>
@@ -92,42 +94,42 @@ export default function Navbar() {
 
             <Link
               href="/network"
-              className="relative text-sm font-medium text-tfl-stone hover:text-tfl-sky transition-colors duration-300 tracking-wide py-1 after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-tfl-sky/70 after:transition-all after:duration-300 hover:after:w-full"
+              className="relative text-sm font-medium text-tfl-stone hover:text-tfl-sky transition-colors duration-300 tracking-wide py-1 after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-tfl-sky/70 after:transition-all after:duration-300 hover:after:w-full whitespace-nowrap"
             >
               TFL Network
             </Link>
           </div>
 
-          {/* Right: User section */}
-          <div className="hidden md:flex items-center justify-end w-32">
+          {/* Right: User / Login (flex-1 para que ocupe espacio) */}
+          <div className="flex-1 flex items-center justify-end">
             {user ? (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 md:gap-3">
                 <Link
                   href="/dashboard"
-                  className="flex items-center gap-2 px-3 py-2 rounded-xl bg-tfl-sky/10 border border-tfl-sky/20 text-tfl-sky text-sm font-medium hover:bg-tfl-sky/20 transition-all"
+                  className="flex items-center gap-1.5 md:gap-2 px-2.5 md:px-3 py-1.5 md:py-2 rounded-xl bg-tfl-sky/10 border border-tfl-sky/20 text-tfl-sky text-xs md:text-sm font-medium hover:bg-tfl-sky/20 transition-all"
                 >
                   {user.image ? (
                     <img
                       src={user.image}
-                      alt={user.name || user.username || "User"}
-                      className="w-6 h-6 rounded-full object-cover"
+                      alt={displayName || "User"}
+                      className="w-5 h-5 md:w-6 md:h-6 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="w-6 h-6 rounded-full bg-tfl-sky/20 flex items-center justify-center text-xs font-bold">
-                      {(user.name?.[0] || user.username?.[0] || "U").toUpperCase()}
+                    <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-tfl-sky/20 flex items-center justify-center text-[10px] md:text-xs font-bold">
+                      {(displayName[0] || "U").toUpperCase()}
                     </div>
                   )}
-                  <span className="max-w-[80px] truncate">
-                    {user.name || user.username}
+                  <span className="max-w-[80px] md:max-w-[140px] truncate" title={displayName}>
+                    {displayName}
                   </span>
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="p-2 text-tfl-stone hover:text-red-400 transition-colors"
+                  className="p-1.5 md:p-2 text-tfl-stone hover:text-red-400 transition-colors"
                   title="Cerrar sesión"
                 >
                   <svg
-                    className="w-4 h-4"
+                    className="w-4 h-4 md:w-5 md:h-5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -144,47 +146,16 @@ export default function Navbar() {
             ) : (
               <Link
                 href="/login"
-                className="px-4 py-2 text-sm font-medium text-tfl-stone border border-tfl-stone/20 rounded-full hover:border-tfl-sky/50 hover:text-tfl-sky hover:bg-tfl-sky/5 transition-all duration-300 backdrop-blur-sm"
+                className="px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-medium text-tfl-stone border border-tfl-stone/20 rounded-full hover:border-tfl-sky/50 hover:text-tfl-sky hover:bg-tfl-sky/5 transition-all duration-300 backdrop-blur-sm whitespace-nowrap"
               >
                 Login
               </Link>
             )}
           </div>
-
-          {/* Mobile menu button */}
-          <button
-            className="md:hidden p-2 text-tfl-stone hover:text-tfl-sky transition-colors"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-expanded={mobileOpen}
-            aria-label="Abrir menú"
-          >
-            <svg
-              className="w-6 h-6 transition-transform duration-300"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              {mobileOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              )}
-            </svg>
-          </button>
         </div>
       </div>
 
-      {/* Mobile menu animado */}
+      {/* Mobile menu (sin cambios) */}
       <div
         className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
           mobileOpen
