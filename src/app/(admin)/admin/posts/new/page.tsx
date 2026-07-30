@@ -73,7 +73,7 @@ export default function NewPostPage() {
       <h1 className="font-display text-3xl font-bold text-foreground mb-8">Nuevo Post</h1>
 
       {error && (
-        <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
+        <div className="mb-6 p-4 bg-red-600/10 dark:bg-red-500/10 border border-red-600/20 dark:border-red-500/20 rounded-xl text-red-700 dark:text-red-400 text-sm">
           {error}
         </div>
       )}

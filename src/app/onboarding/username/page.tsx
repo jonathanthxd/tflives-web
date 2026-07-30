@@ -139,7 +139,10 @@ export default function UsernameOnboardingPage() {
               autoFocus
               aria-invalid={!!fieldErrors.username}
               onBlur={(e) => handleUsernameBlur(e.target.value.toLowerCase())}
-              onChange={() => setUsernameTaken(false)}
+              onChange={() => {
+                setUsernameTaken(false);
+                setFieldErrors((prev) => ({ ...prev, username: "" }));
+              }}
             />
             {checkingUsername && (
               <p className="mt-1.5 text-xs text-muted-foreground">
