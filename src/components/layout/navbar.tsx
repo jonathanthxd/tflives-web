@@ -2,9 +2,13 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useTheme } from "next-themes";
 import { createClient } from "@/lib/supabase/client";
 
 export default function Navbar() {
+  // resolvedTheme (y no theme) porque ThemeProvider usa enableSystem: con
+  // theme === "system" la comparación contra "dark" daría un click sin efecto.
+  const { resolvedTheme, setTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState<{
     name: string | null;
@@ -59,7 +63,12 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Left: Theme toggle (flex-1 para que ocupe espacio) */}
           <div className="flex-1 flex items-center justify-start">
-            <button className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300">
+            <button
+              onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+              aria-label="Cambiar tema"
+              title="Cambiar tema"
+              className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300"
+            >
               <svg
                 className="w-5 h-5"
                 fill="none"
