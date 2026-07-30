@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 
 interface RevealProps {
@@ -10,8 +11,13 @@ interface RevealProps {
 
 export default function Reveal({ children, className, delay = 0 }: RevealProps) {
   const shouldReduceMotion = useReducedMotion();
+  const [mounted, setMounted] = useState(false);
 
-  if (shouldReduceMotion) {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted || shouldReduceMotion) {
     return <div className={className}>{children}</div>;
   }
 
