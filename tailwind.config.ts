@@ -10,15 +10,6 @@ const config: Config = {
   theme: {
   	extend: {
   		colors: {
-  			tfl: {
-  				night: '#0B1120',
-  				slate: '#1E293B',
-  				sky: '#60A5FA',
-  				pastel: '#93C5FD',
-  				glacier: '#BFDBFE',
-  				bone: '#F8FAFC',
-  				stone: '#94A3B8',
-  			},
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {
@@ -61,8 +52,8 @@ const config: Config = {
   			}
   		},
   		fontFamily: {
-  			sans: ['Inter', 'Geist', 'sans-serif'],
-  			display: ['Space Grotesk', 'Satoshi', 'sans-serif'],
+  			sans: ['var(--font-inter)', 'var(--font-geist-sans)', 'sans-serif'],
+  			display: ['var(--font-space-grotesk)', 'var(--font-geist-sans)', 'sans-serif'],
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
