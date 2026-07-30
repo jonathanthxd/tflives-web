@@ -89,7 +89,7 @@ export default function DiscordWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="absolute bottom-full right-0 mb-3 w-72 bg-tfl-night/95 backdrop-blur-xl border border-tfl-sky/20 rounded-2xl p-5 shadow-2xl shadow-black/50"
+            className="absolute bottom-full right-0 mb-3 w-72 bg-background/95 backdrop-blur-xl border border-primary/20 rounded-2xl p-5 shadow-2xl shadow-black/50"
           >
             {/* Encabezado */}
             <div className="flex items-center gap-3 mb-4">
@@ -103,10 +103,10 @@ export default function DiscordWidget() {
                 </svg>
               </div>
               <div>
-                <h4 className="text-sm font-semibold text-tfl-bone">
+                <h4 className="text-sm font-semibold text-foreground">
                   TFLives
                 </h4>
-                <p className="text-xs text-tfl-stone">Servidor oficial</p>
+                <p className="text-xs text-muted-foreground">Servidor oficial</p>
               </div>
             </div>
 
@@ -114,31 +114,31 @@ export default function DiscordWidget() {
             <div className="space-y-3">
               {/* Miembros totales */}
               <div className="flex items-center justify-between text-sm">
-                <span className="text-tfl-stone flex items-center gap-2">
+                <span className="text-muted-foreground flex items-center gap-2">
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                   </svg>
                   Miembros totales
                 </span>
-                <span className="text-tfl-bone font-bold tabular-nums">
+                <span className="text-foreground font-bold tabular-nums">
                   {displayCount.toLocaleString()}
                 </span>
               </div>
 
               {/* En línea */}
               <div className="flex items-center justify-between text-sm">
-                <span className="text-tfl-stone flex items-center gap-2">
+                <span className="text-muted-foreground flex items-center gap-2">
                   <div className="w-2 h-2 bg-green-400 rounded-full" />
                   En línea ahora
                 </span>
-                <span className="text-tfl-bone font-bold tabular-nums">
+                <span className="text-foreground font-bold tabular-nums">
                   {showOnline.toLocaleString()}
                 </span>
               </div>
 
               {/* Barra de proporción */}
               <div className="space-y-1.5">
-                <div className="flex justify-between text-xs text-tfl-stone">
+                <div className="flex justify-between text-xs text-muted-foreground">
                   <span>Actividad</span>
                   <span>
                     {data?.member_count
@@ -146,7 +146,7 @@ export default function DiscordWidget() {
                       : "—"}
                   </span>
                 </div>
-                <div className="w-full h-2 bg-tfl-slate/50 rounded-full overflow-hidden">
+                <div className="w-full h-2 bg-card/50 rounded-full overflow-hidden">
                   <motion.div
                     className="h-full bg-gradient-to-r from-green-400 to-emerald-500 rounded-full"
                     initial={{ width: 0 }}
@@ -165,8 +165,8 @@ export default function DiscordWidget() {
             </div>
 
             {/* Pie */}
-            <div className="mt-4 pt-3 border-t border-tfl-sky/10">
-              <p className="text-xs text-tfl-stone text-center flex items-center justify-center gap-1">
+            <div className="mt-4 pt-3 border-t border-primary/10">
+              <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-1">
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"

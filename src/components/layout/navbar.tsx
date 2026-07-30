@@ -53,13 +53,13 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50">
       {/* Glassmorphism */}
-      <div className="absolute inset-0 bg-tfl-night/70 backdrop-blur-xl border-b border-tfl-sky/10 shadow-lg shadow-black/5" />
+      <div className="absolute inset-0 bg-background/70 backdrop-blur-xl border-b border-primary/10 shadow-lg shadow-black/5" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Left: Theme toggle (flex-1 para que ocupe espacio) */}
           <div className="flex-1 flex items-center justify-start">
-            <button className="p-2 rounded-lg text-tfl-stone hover:text-tfl-sky hover:bg-tfl-sky/5 transition-all duration-300">
+            <button className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300">
               <svg
                 className="w-5 h-5"
                 fill="none"
@@ -80,26 +80,26 @@ export default function Navbar() {
           <div className="flex items-center gap-4 sm:gap-6 md:gap-8 flex-shrink-0">
             <Link
               href="/tienda"
-              className="relative text-sm font-medium text-tfl-stone hover:text-tfl-sky transition-colors duration-300 tracking-wide py-1 after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-tfl-sky/70 after:transition-all after:duration-300 hover:after:w-full whitespace-nowrap"
+              className="relative text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-300 tracking-wide py-1 after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-primary/70 after:transition-all after:duration-300 hover:after:w-full whitespace-nowrap"
             >
               Tienda
             </Link>
 
             <Link href="/" className="flex flex-col items-center group">
               <span className="font-display text-xl md:text-2xl lg:text-3xl font-bold tracking-tight transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(147,197,253,0.5)] whitespace-nowrap">
-                <span className="text-tfl-bone group-hover:text-tfl-sky transition-colors duration-300">
+                <span className="text-foreground group-hover:text-primary transition-colors duration-300">
                   TFL
                 </span>
-                <span className="text-tfl-sky group-hover:text-tfl-pastel transition-colors duration-300">
+                <span className="text-primary group-hover:text-primary transition-colors duration-300">
                   ives
                 </span>
               </span>
-              <span className="w-0 group-hover:w-full h-[1px] bg-gradient-to-r from-transparent via-tfl-sky/50 to-transparent transition-all duration-500 mt-0.5" />
+              <span className="w-0 group-hover:w-full h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent transition-all duration-500 mt-0.5" />
             </Link>
 
             <Link
               href="/network"
-              className="relative text-sm font-medium text-tfl-stone hover:text-tfl-sky transition-colors duration-300 tracking-wide py-1 after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-tfl-sky/70 after:transition-all after:duration-300 hover:after:w-full whitespace-nowrap"
+              className="relative text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-300 tracking-wide py-1 after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-primary/70 after:transition-all after:duration-300 hover:after:w-full whitespace-nowrap"
             >
               TFL Network
             </Link>
@@ -111,7 +111,7 @@ export default function Navbar() {
               <div className="flex items-center gap-2 md:gap-3">
                 <Link
                   href="/dashboard"
-                  className="flex items-center gap-1.5 md:gap-2 px-2.5 md:px-3 py-1.5 md:py-2 rounded-xl bg-tfl-sky/10 border border-tfl-sky/20 text-tfl-sky text-xs md:text-sm font-medium hover:bg-tfl-sky/20 transition-all"
+                  className="flex items-center gap-1.5 md:gap-2 px-2.5 md:px-3 py-1.5 md:py-2 rounded-xl bg-primary/10 border border-primary/20 text-primary text-xs md:text-sm font-medium hover:bg-primary/20 transition-all"
                 >
                   {user.image ? (
                     <img
@@ -120,7 +120,7 @@ export default function Navbar() {
                       className="w-5 h-5 md:w-6 md:h-6 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-tfl-sky/20 flex items-center justify-center text-[10px] md:text-xs font-bold">
+                    <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] md:text-xs font-bold">
                       {(displayName[0] || "U").toUpperCase()}
                     </div>
                   )}
@@ -130,7 +130,7 @@ export default function Navbar() {
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="p-1.5 md:p-2 text-tfl-stone hover:text-red-400 transition-colors"
+                  className="p-1.5 md:p-2 text-muted-foreground hover:text-red-400 transition-colors"
                   title="Cerrar sesión"
                 >
                   <svg
@@ -151,7 +151,7 @@ export default function Navbar() {
             ) : (
               <Link
                 href="/login"
-                className="px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-medium text-tfl-stone border border-tfl-stone/20 rounded-full hover:border-tfl-sky/50 hover:text-tfl-sky hover:bg-tfl-sky/5 transition-all duration-300 backdrop-blur-sm whitespace-nowrap"
+                className="px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-medium text-muted-foreground border border-muted-foreground/20 rounded-full hover:border-primary/50 hover:text-primary hover:bg-primary/5 transition-all duration-300 backdrop-blur-sm whitespace-nowrap"
               >
                 Login
               </Link>
@@ -168,35 +168,35 @@ export default function Navbar() {
             : "max-h-0 opacity-0 pointer-events-none"
         }`}
       >
-        <div className="bg-tfl-night/95 backdrop-blur-xl border-b border-tfl-sky/10 shadow-inner">
+        <div className="bg-background/95 backdrop-blur-xl border-b border-primary/10 shadow-inner">
           <div className="px-4 py-4 space-y-3">
             <Link
               href="/tienda"
-              className="block py-2 text-tfl-stone hover:text-tfl-sky transition-colors"
+              className="block py-2 text-muted-foreground hover:text-primary transition-colors"
               onClick={() => setMobileOpen(false)}
             >
               Tienda
             </Link>
             <Link
               href="/"
-              className="block py-2 text-tfl-sky font-medium"
+              className="block py-2 text-primary font-medium"
               onClick={() => setMobileOpen(false)}
             >
               TFLives
             </Link>
             <Link
               href="/network"
-              className="block py-2 text-tfl-stone hover:text-tfl-sky transition-colors"
+              className="block py-2 text-muted-foreground hover:text-primary transition-colors"
               onClick={() => setMobileOpen(false)}
             >
               TFL Network
             </Link>
 
             {user ? (
-              <div className="pt-2 border-t border-tfl-sky/10 space-y-3">
+              <div className="pt-2 border-t border-primary/10 space-y-3">
                 <Link
                   href="/dashboard"
-                  className="block py-2 text-tfl-sky font-medium"
+                  className="block py-2 text-primary font-medium"
                   onClick={() => setMobileOpen(false)}
                 >
                   Dashboard
@@ -212,10 +212,10 @@ export default function Navbar() {
                 </button>
               </div>
             ) : (
-              <div className="pt-2 border-t border-tfl-sky/10">
+              <div className="pt-2 border-t border-primary/10">
                 <Link
                   href="/login"
-                  className="block py-2 text-tfl-stone hover:text-tfl-sky transition-colors"
+                  className="block py-2 text-muted-foreground hover:text-primary transition-colors"
                   onClick={() => setMobileOpen(false)}
                 >
                   Login
