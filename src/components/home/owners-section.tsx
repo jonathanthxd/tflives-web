@@ -45,10 +45,10 @@ function OwnerCard({ owner, index }: { owner: Owner; index: number }) {
         <div className="absolute inset-0 bg-primary/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         
         {/* Card container - glassmorphism para ver el silk detrás */}
-        <div className="relative bg-background/60 backdrop-blur-md border border-primary/10 rounded-2xl p-8 flex flex-col items-center transition-all duration-500 group-hover:-translate-y-3 group-hover:border-primary/30 group-hover:shadow-[0_0_40px_rgba(96,165,250,0.1)]">
+        <div className="relative bg-card/60 backdrop-blur-md border border-primary/10 rounded-2xl p-8 flex flex-col items-center transition-all duration-500 group-hover:-translate-y-3 group-hover:border-primary/30 group-hover:shadow-[0_0_40px_hsl(var(--primary)/0.1)]">
           
           {/* Avatar circle */}
-          <div className={`relative w-24 h-24 rounded-full bg-gradient-to-br ${owner.gradient} border-2 border-primary/20 flex items-center justify-center mb-5 group-hover:border-primary/50 group-hover:shadow-[0_0_20px_rgba(96,165,250,0.2)] transition-all duration-500`}>
+          <div className={`relative w-24 h-24 rounded-full bg-gradient-to-br ${owner.gradient} border-2 border-primary/20 flex items-center justify-center mb-5 group-hover:border-primary/50 group-hover:shadow-[0_0_20px_hsl(var(--primary)/0.2)] transition-all duration-500`}>
             <span className="font-display text-3xl font-bold text-foreground/90">
               {owner.initials}
             </span>

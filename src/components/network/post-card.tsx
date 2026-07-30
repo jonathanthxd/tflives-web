@@ -15,10 +15,13 @@ interface PostCardProps {
 }
 
 const typeColors: Record<PostType, string> = {
-  UPDATE: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-  PATCH: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+  UPDATE:
+    "bg-emerald-600/10 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-600/30 dark:border-emerald-500/20",
+  PATCH:
+    "bg-amber-600/10 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-600/30 dark:border-amber-500/20",
   NEWS: "bg-primary/10 text-primary border-primary/20",
-  EVENT: "bg-purple-500/10 text-purple-400 border-purple-500/20",
+  EVENT:
+    "bg-purple-600/10 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-600/30 dark:border-purple-500/20",
 };
 
 const typeLabels: Record<PostType, string> = {
@@ -37,7 +40,7 @@ export default function PostCard({ title, excerpt, type, modality, date, slug, i
       transition={{ duration: 0.4 }}
     >
       <Link href={`/network/${slug}`}>
-        <div className="group relative bg-background/60 backdrop-blur-md border border-primary/10 rounded-2xl overflow-hidden transition-all duration-500 hover:border-primary/30 hover:shadow-[0_0_40px_rgba(96,165,250,0.08)] hover:-translate-y-1">
+        <div className="group relative bg-card/60 backdrop-blur-md border border-primary/10 rounded-2xl overflow-hidden transition-all duration-500 hover:border-primary/30 hover:shadow-[0_0_40px_hsl(var(--primary)/0.08)] hover:-translate-y-1">
           {/* Image placeholder or actual image */}
           <div className="relative h-48 bg-muted/30 overflow-hidden">
             {image ? (

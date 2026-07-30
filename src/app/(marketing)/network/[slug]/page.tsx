@@ -32,10 +32,13 @@ export default async function PostDetailPage({ params }: PostPageProps) {
   };
 
   const typeColors: Record<string, string> = {
-    UPDATE: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
-    PATCH: "text-amber-400 bg-amber-500/10 border-amber-500/20",
+    UPDATE:
+      "text-emerald-700 dark:text-emerald-400 bg-emerald-600/10 dark:bg-emerald-500/10 border-emerald-600/30 dark:border-emerald-500/20",
+    PATCH:
+      "text-amber-700 dark:text-amber-400 bg-amber-600/10 dark:bg-amber-500/10 border-amber-600/30 dark:border-amber-500/20",
     NEWS: "text-primary bg-primary/10 border-primary/20",
-    EVENT: "text-purple-400 bg-purple-500/10 border-purple-500/20",
+    EVENT:
+      "text-purple-600 dark:text-purple-400 bg-purple-600/10 dark:bg-purple-500/10 border-purple-600/30 dark:border-purple-500/20",
   };
 
   return (

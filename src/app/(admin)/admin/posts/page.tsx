@@ -17,10 +17,10 @@ export default async function PostsListPage() {
   };
 
   const typeColors: Record<string, string> = {
-    UPDATE: "text-emerald-400 bg-emerald-500/10",
-    PATCH: "text-amber-400 bg-amber-500/10",
+    UPDATE: "text-emerald-700 dark:text-emerald-400 bg-emerald-600/10 dark:bg-emerald-500/10",
+    PATCH: "text-amber-700 dark:text-amber-400 bg-amber-600/10 dark:bg-amber-500/10",
     NEWS: "text-primary bg-primary/10",
-    EVENT: "text-purple-400 bg-purple-500/10",
+    EVENT: "text-purple-600 dark:text-purple-400 bg-purple-600/10 dark:bg-purple-500/10",
   };
 
   return (
@@ -71,7 +71,7 @@ export default async function PostsListPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${post.published ? "text-green-400 bg-green-500/10" : "text-amber-400 bg-amber-500/10"}`}>
+                    <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${post.published ? "text-green-700 dark:text-green-400 bg-green-600/10 dark:bg-green-500/10" : "text-amber-700 dark:text-amber-400 bg-amber-600/10 dark:bg-amber-500/10"}`}>
                       {post.published ? "Publicado" : "Borrador"}
                     </span>
                   </td>

@@ -31,11 +31,7 @@ export default function RootLayout({
         className={`${inter.variable} ${spaceGrotesk.variable} ${GeistSans.variable} font-sans antialiased min-h-screen relative`}
       >
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-          {/* Silk Background Global */}
           <AmbientBackground />
-
-          {/* Overlay sutil para legibilidad */}
-          <div className="fixed inset-0 -z-10 bg-background/30 pointer-events-none" />
 
           <Navbar />
           {children}

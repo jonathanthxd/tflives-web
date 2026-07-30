@@ -95,7 +95,7 @@ export default function Navbar() {
             </Link>
 
             <Link href="/" className="flex flex-col items-center group">
-              <span className="font-display text-xl md:text-2xl lg:text-3xl font-bold tracking-tight transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(147,197,253,0.5)] whitespace-nowrap">
+              <span className="font-display text-xl md:text-2xl lg:text-3xl font-bold tracking-tight transition-all duration-300 group-hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)] whitespace-nowrap">
                 <span className="text-foreground group-hover:text-primary transition-colors duration-300">
                   TFL
                 </span>
