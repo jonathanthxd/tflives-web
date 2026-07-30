@@ -1,140 +1,193 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import SafeButton from "@/components/ui/safe-button"; // ✅ import añadido
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
+import { registerSchema, flattenZodErrors } from "@/lib/validations/auth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { FormField } from "@/components/ui/form-field";
+import { OAuthButtons } from "@/components/auth/oauth-buttons";
 
 export default function RegisterPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [passwordStrength, setPasswordStrength] = useState(0);
+  const [formError, setFormError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [passwordValue, setPasswordValue] = useState("");
+  const [checkingUsername, setCheckingUsername] = useState(false);
+  const [usernameTaken, setUsernameTaken] = useState(false);
+  const [registered, setRegistered] = useState(false);
 
-  const checkStrength = (password: string) => {
+  const passwordStrength = useMemo(() => {
     let strength = 0;
-    if (password.length >= 8) strength++;
-    if (/[A-Z]/.test(password)) strength++;
-    if (/[0-9]/.test(password)) strength++;
-    if (/[^A-Za-z0-9]/.test(password)) strength++;
-    setPasswordStrength(strength);
-  };
+    if (passwordValue.length >= 8) strength++;
+    if (/[A-Z]/.test(passwordValue)) strength++;
+    if (/[0-9]/.test(passwordValue)) strength++;
+    if (/[^A-Za-z0-9]/.test(passwordValue)) strength++;
+    return strength;
+  }, [passwordValue]);
 
   const strengthLabels = ["Muy débil", "Débil", "Media", "Fuerte", "Muy fuerte"];
   const strengthColors = ["bg-red-500", "bg-orange-500", "bg-yellow-500", "bg-green-500", "bg-emerald-500"];
 
+  async function handleUsernameBlur(username: string) {
+    if (!username || username.length < 3) return;
+    setCheckingUsername(true);
+    try {
+      const res = await fetch(`/api/auth/check-username?username=${encodeURIComponent(username)}`);
+      const data = await res.json();
+      setUsernameTaken(!data.available);
+      if (!data.available && data.error) {
+        setFieldErrors((prev) => ({ ...prev, username: data.error }));
+      }
+    } catch {
+      // Si falla el chequeo, no bloqueamos — la unicidad la garantiza la DB igual.
+    } finally {
+      setCheckingUsername(false);
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setLoading(true);
-    setError("");
+    setFormError("");
+    setFieldErrors({});
 
     const formData = new FormData(e.currentTarget);
-    const data = {
-      name: `${formData.get("firstName")} ${formData.get("lastName")}`,
-      username: formData.get("username") as string,
+    const raw = {
+      firstName: formData.get("firstName") as string,
+      lastName: formData.get("lastName") as string,
+      username: (formData.get("username") as string || "").toLowerCase(),
       email: formData.get("email") as string,
       password: formData.get("password") as string,
       confirmPassword: formData.get("confirmPassword") as string,
     };
 
-    if (data.password !== data.confirmPassword) {
-      setError("Las contraseñas no coinciden");
-      setLoading(false);
+    const parsed = registerSchema.safeParse(raw);
+    if (!parsed.success) {
+      setFieldErrors(flattenZodErrors(parsed.error));
       return;
     }
 
+    if (usernameTaken) {
+      setFieldErrors((prev) => ({ ...prev, username: "Este username ya está en uso" }));
+      return;
+    }
+
+    setLoading(true);
     try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+      const supabase = createClient();
+      const displayName = `${parsed.data.firstName} ${parsed.data.lastName}`.trim();
+
+      const { data, error } = await supabase.auth.signUp({
+        email: parsed.data.email,
+        password: parsed.data.password,
+        options: {
+          data: {
+            username: parsed.data.username,
+            display_name: displayName,
+          },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
       });
 
-      const result = await res.json();
-
-      if (!res.ok) {
-        setError(result.error || "Error al registrarse");
+      if (error) {
+        if (error.message.toLowerCase().includes("database")) {
+          setFormError("Este username o email ya está en uso.");
+        } else if (error.message.toLowerCase().includes("already registered")) {
+          setFormError("Este email ya está registrado.");
+        } else {
+          setFormError(error.message);
+        }
         return;
       }
 
-      localStorage.setItem("tfl_token", result.token);
-      router.push("/dashboard");
-      router.refresh();
+      if (data.session) {
+        router.push("/dashboard");
+        router.refresh();
+        return;
+      }
+
+      // Sin sesión = falta confirmar el email (configuración por defecto de Supabase Auth).
+      setRegistered(true);
     } catch {
-      setError("Error de conexión");
+      setFormError("Error de conexión");
     } finally {
       setLoading(false);
     }
+  }
+
+  if (registered) {
+    return (
+      <main className="min-h-screen flex items-center justify-center pt-20 px-4">
+        <div className="w-full max-w-md text-center">
+          <h1 className="font-display text-3xl font-bold text-foreground mb-4">Revisá tu email</h1>
+          <p className="text-muted-foreground">
+            Te enviamos un link de confirmación. Confirmá tu cuenta para poder iniciar sesión en TFLives.
+          </p>
+        </div>
+      </main>
+    );
   }
 
   return (
     <main className="min-h-screen flex items-center justify-center pt-20 px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="font-display text-3xl font-bold text-tfl-bone mb-2">Crear Cuenta</h1>
-          <p className="text-tfl-stone">Únete a la comunidad TFLives</p>
+          <h1 className="font-display text-3xl font-bold text-foreground mb-2">Crear Cuenta</h1>
+          <p className="text-muted-foreground">Únete a la comunidad TFLives</p>
         </div>
 
-        {error && (
-          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
-            {error}
+        {formError && (
+          <div role="alert" className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive text-sm">
+            {formError}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <OAuthButtons redirectTo="/dashboard" />
+
+        <div className="flex items-center gap-3 my-6">
+          <div className="h-px flex-1 bg-border" />
+          <span className="text-xs text-muted-foreground uppercase tracking-widest">o con email</span>
+          <div className="h-px flex-1 bg-border" />
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-5" noValidate>
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-tfl-stone mb-2">Nombre</label>
-              <input
-                name="firstName"
-                type="text"
-                required
-                className="w-full px-4 py-3 bg-tfl-slate/30 border border-tfl-sky/20 rounded-xl text-tfl-bone placeholder-tfl-stone/50 focus:outline-none focus:border-tfl-sky/50 focus:ring-1 focus:ring-tfl-sky/30 transition-all"
-                placeholder="Jonathan"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-tfl-stone mb-2">Apellido</label>
-              <input
-                name="lastName"
-                type="text"
-                required
-                className="w-full px-4 py-3 bg-tfl-slate/30 border border-tfl-sky/20 rounded-xl text-tfl-bone placeholder-tfl-stone/50 focus:outline-none focus:border-tfl-sky/50 focus:ring-1 focus:ring-tfl-sky/30 transition-all"
-                placeholder="Thompson"
-              />
-            </div>
+            <FormField label="Nombre" htmlFor="firstName" error={fieldErrors.firstName}>
+              <Input id="firstName" name="firstName" type="text" placeholder="Jonathan" aria-invalid={!!fieldErrors.firstName} />
+            </FormField>
+            <FormField label="Apellido" htmlFor="lastName" error={fieldErrors.lastName}>
+              <Input id="lastName" name="lastName" type="text" placeholder="Thompson" aria-invalid={!!fieldErrors.lastName} />
+            </FormField>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-tfl-stone mb-2">Username</label>
-            <input
+          <FormField label="Username" htmlFor="username" error={fieldErrors.username}>
+            <Input
+              id="username"
               name="username"
               type="text"
-              required
-              className="w-full px-4 py-3 bg-tfl-slate/30 border border-tfl-sky/20 rounded-xl text-tfl-bone placeholder-tfl-stone/50 focus:outline-none focus:border-tfl-sky/50 focus:ring-1 focus:ring-tfl-sky/30 transition-all"
               placeholder="jonathanthxd"
+              aria-invalid={!!fieldErrors.username}
+              onBlur={(e) => handleUsernameBlur(e.target.value.toLowerCase())}
+              onChange={() => setUsernameTaken(false)}
             />
-          </div>
+            {checkingUsername && <p className="mt-1.5 text-xs text-muted-foreground">Verificando disponibilidad…</p>}
+          </FormField>
 
-          <div>
-            <label className="block text-sm font-medium text-tfl-stone mb-2">Email</label>
-            <input
-              name="email"
-              type="email"
-              required
-              className="w-full px-4 py-3 bg-tfl-slate/30 border border-tfl-sky/20 rounded-xl text-tfl-bone placeholder-tfl-stone/50 focus:outline-none focus:border-tfl-sky/50 focus:ring-1 focus:ring-tfl-sky/30 transition-all"
-              placeholder="tu@email.com"
-            />
-          </div>
+          <FormField label="Email" htmlFor="email" error={fieldErrors.email}>
+            <Input id="email" name="email" type="email" placeholder="tu@email.com" aria-invalid={!!fieldErrors.email} />
+          </FormField>
 
-          <div>
-            <label className="block text-sm font-medium text-tfl-stone mb-2">Contraseña</label>
-            <input
+          <FormField label="Contraseña" htmlFor="password" error={fieldErrors.password}>
+            <Input
+              id="password"
               name="password"
               type="password"
-              required
-              onChange={(e) => checkStrength(e.target.value)}
-              className="w-full px-4 py-3 bg-tfl-slate/30 border border-tfl-sky/20 rounded-xl text-tfl-bone placeholder-tfl-stone/50 focus:outline-none focus:border-tfl-sky/50 focus:ring-1 focus:ring-tfl-sky/30 transition-all"
               placeholder="••••••••"
+              aria-invalid={!!fieldErrors.password}
+              onChange={(e) => setPasswordValue(e.target.value)}
             />
             <div className="mt-2">
               <div className="flex gap-1 h-1.5">
@@ -142,7 +195,7 @@ export default function RegisterPage() {
                   <div
                     key={i}
                     className={`flex-1 rounded-full transition-all duration-300 ${
-                      i < passwordStrength ? strengthColors[passwordStrength - 1] : "bg-tfl-slate/50"
+                      i < passwordStrength ? strengthColors[passwordStrength - 1] : "bg-muted"
                     }`}
                   />
                 ))}
@@ -153,33 +206,27 @@ export default function RegisterPage() {
                 </p>
               )}
             </div>
-          </div>
+          </FormField>
 
-          <div>
-            <label className="block text-sm font-medium text-tfl-stone mb-2">Confirmar Contraseña</label>
-            <input
+          <FormField label="Confirmar Contraseña" htmlFor="confirmPassword" error={fieldErrors.confirmPassword}>
+            <Input
+              id="confirmPassword"
               name="confirmPassword"
               type="password"
-              required
-              className="w-full px-4 py-3 bg-tfl-slate/30 border border-tfl-sky/20 rounded-xl text-tfl-bone placeholder-tfl-stone/50 focus:outline-none focus:border-tfl-sky/50 focus:ring-1 focus:ring-tfl-sky/30 transition-all"
               placeholder="••••••••"
+              aria-invalid={!!fieldErrors.confirmPassword}
             />
-          </div>
+          </FormField>
 
-          {/* ✅ Botón reemplazado por SafeButton */}
-          <SafeButton
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 bg-tfl-sky/10 border border-tfl-sky/30 rounded-xl text-tfl-sky font-medium hover:bg-tfl-sky/20 transition-all duration-300 disabled:opacity-50"
-          >
+          <Button type="submit" disabled={loading} className="w-full">
             {loading ? "Creando cuenta..." : "Crear Cuenta"}
-          </SafeButton>
+          </Button>
 
-          <p className="text-center text-sm text-tfl-stone">
+          <p className="text-center text-sm text-muted-foreground">
             ¿Ya tienes cuenta?{" "}
-            <a href="/login" className="text-tfl-sky hover:text-tfl-pastel transition-colors">
+            <Link href="/login" className="text-primary hover:underline">
               Iniciar sesión
-            </a>
+            </Link>
           </p>
         </form>
       </div>

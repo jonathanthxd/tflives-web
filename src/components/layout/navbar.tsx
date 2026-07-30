@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -13,33 +14,37 @@ export default function Navbar() {
   } | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("tfl_token");
-    if (!token) return;
+    const supabase = createClient();
 
-    fetch("/api/auth/me", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.user) {
-          setUser({
-            name: data.user.name || null,
-            username: data.user.username || null,
-            role: data.user.role,
-            image: data.user.image || null,
-          });
-        } else {
-          localStorage.removeItem("tfl_token");
-        }
-      })
-      .catch(() => {
-        localStorage.removeItem("tfl_token");
-      });
+    async function loadProfile() {
+      const res = await fetch("/api/me");
+      const data = await res.json();
+      if (data.user) {
+        setUser({
+          name: data.user.displayName || data.user.name || null,
+          username: data.user.username || null,
+          role: data.user.role,
+          image: data.user.image || null,
+        });
+      } else {
+        setUser(null);
+      }
+    }
+
+    loadProfile();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(() => {
+      loadProfile();
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const handleLogout = async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
-    localStorage.removeItem("tfl_token");
+    const supabase = createClient();
+    await supabase.auth.signOut();
     window.location.href = "/";
   };
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { GeistSans } from "geist/font/sans";
+import { ThemeProvider } from "@/components/theme-provider";
 import Navbar from "@/components/layout/navbar";
 import SilkBackground from "@/components/effects/silk-background";
 import DiscordWidget from "@/components/effects/discord-widget";
@@ -25,23 +26,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className="dark" suppressHydrationWarning>
+    <html lang="es" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${spaceGrotesk.variable} ${GeistSans.variable} font-sans antialiased bg-tfl-night text-tfl-bone min-h-screen relative`}
+        className={`${inter.variable} ${spaceGrotesk.variable} ${GeistSans.variable} font-sans antialiased min-h-screen relative`}
       >
-        {/* Silk Background Global */}
-        <div className="fixed inset-0 -z-20">
-          <SilkBackground />
-        </div>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          {/* Silk Background Global */}
+          <div className="fixed inset-0 -z-20">
+            <SilkBackground />
+          </div>
 
-        {/* Overlay sutil para legibilidad */}
-        <div className="fixed inset-0 -z-10 bg-tfl-night/30 pointer-events-none" />
+          {/* Overlay sutil para legibilidad */}
+          <div className="fixed inset-0 -z-10 bg-background/30 pointer-events-none" />
 
-        <Navbar />
-        {children}
+          <Navbar />
+          {children}
 
-        {/* Discord Widget */}
-        <DiscordWidget />
+          {/* Discord Widget */}
+          <DiscordWidget />
+        </ThemeProvider>
       </body>
     </html>
   );

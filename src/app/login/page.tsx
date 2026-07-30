@@ -1,44 +1,69 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import SafeButton from "@/components/ui/safe-button"; // ✅ Import del SafeButton
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
+import { loginSchema, flattenZodErrors } from "@/lib/validations/auth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { FormField } from "@/components/ui/form-field";
+import { OAuthButtons } from "@/components/auth/oauth-buttons";
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/dashboard";
+
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [formError, setFormError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setLoading(true);
-    setError("");
+    setFormError("");
+    setFieldErrors({});
 
     const formData = new FormData(e.currentTarget);
-    const data = {
+    const raw = {
       email: formData.get("email") as string,
       password: formData.get("password") as string,
     };
 
+    const parsed = loginSchema.safeParse(raw);
+    if (!parsed.success) {
+      setFieldErrors(flattenZodErrors(parsed.error));
+      return;
+    }
+
+    setLoading(true);
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithPassword(parsed.data);
 
-      const result = await res.json();
-
-      if (!res.ok) {
-        setError(result.error || "Error al iniciar sesión");
+      if (error) {
+        if (error.message.toLowerCase().includes("invalid login credentials")) {
+          setFormError("Email o contraseña incorrectos");
+        } else if (error.message.toLowerCase().includes("email not confirmed")) {
+          setFormError("Confirmá tu email antes de iniciar sesión — revisá tu bandeja de entrada.");
+        } else {
+          setFormError(error.message);
+        }
         return;
       }
 
-      localStorage.setItem("tfl_token", result.token);
-      router.push("/dashboard");
+      router.push(redirectTo);
       router.refresh();
     } catch {
-      setError("Error de conexión");
+      setFormError("Error de conexión");
     } finally {
       setLoading(false);
     }
@@ -48,53 +73,47 @@ export default function LoginPage() {
     <main className="min-h-screen flex items-center justify-center pt-20 px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="font-display text-3xl font-bold text-tfl-bone mb-2">Iniciar Sesión</h1>
-          <p className="text-tfl-stone">Bienvenido de vuelta a TFLives</p>
+          <h1 className="font-display text-3xl font-bold text-foreground mb-2">Iniciar Sesión</h1>
+          <p className="text-muted-foreground">Bienvenido de vuelta a TFLives</p>
         </div>
 
-        {error && (
-          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
-            {error}
+        {formError && (
+          <div role="alert" className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive text-sm">
+            {formError}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-sm font-medium text-tfl-stone mb-2">Email</label>
-            <input
-              name="email"
-              type="email"
-              required
-              className="w-full px-4 py-3 bg-tfl-slate/30 border border-tfl-sky/20 rounded-xl text-tfl-bone placeholder-tfl-stone/50 focus:outline-none focus:border-tfl-sky/50 focus:ring-1 focus:ring-tfl-sky/30 transition-all"
-              placeholder="tu@email.com"
-            />
-          </div>
+        <OAuthButtons redirectTo={redirectTo} />
 
-          <div>
-            <label className="block text-sm font-medium text-tfl-stone mb-2">Contraseña</label>
-            <input
-              name="password"
-              type="password"
-              required
-              className="w-full px-4 py-3 bg-tfl-slate/30 border border-tfl-sky/20 rounded-xl text-tfl-bone placeholder-tfl-stone/50 focus:outline-none focus:border-tfl-sky/50 focus:ring-1 focus:ring-tfl-sky/30 transition-all"
-              placeholder="••••••••"
-            />
-          </div>
+        <div className="flex items-center gap-3 my-6">
+          <div className="h-px flex-1 bg-border" />
+          <span className="text-xs text-muted-foreground uppercase tracking-widest">o con email</span>
+          <div className="h-px flex-1 bg-border" />
+        </div>
 
-          {/* ✅ Usamos SafeButton para evitar hydration error */}
-          <SafeButton
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 bg-tfl-sky/10 border border-tfl-sky/30 rounded-xl text-tfl-sky font-medium hover:bg-tfl-sky/20 transition-all duration-300 disabled:opacity-50"
-          >
+        <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+          <FormField label="Email" htmlFor="email" error={fieldErrors.email}>
+            <Input id="email" name="email" type="email" placeholder="tu@email.com" aria-invalid={!!fieldErrors.email} />
+          </FormField>
+
+          <FormField label="Contraseña" htmlFor="password" error={fieldErrors.password}>
+            <Input id="password" name="password" type="password" placeholder="••••••••" aria-invalid={!!fieldErrors.password} />
+            <div className="text-right mt-1.5">
+              <Link href="/forgot-password" className="text-xs text-primary hover:underline">
+                ¿Olvidaste tu contraseña?
+              </Link>
+            </div>
+          </FormField>
+
+          <Button type="submit" disabled={loading} className="w-full">
             {loading ? "Entrando..." : "Entrar"}
-          </SafeButton>
+          </Button>
 
-          <p className="text-center text-sm text-tfl-stone">
+          <p className="text-center text-sm text-muted-foreground">
             ¿No tienes cuenta?{" "}
-            <a href="/register" className="text-tfl-sky hover:text-tfl-pastel transition-colors">
+            <Link href="/register" className="text-primary hover:underline">
               Crear cuenta
-            </a>
+            </Link>
           </p>
         </form>
       </div>

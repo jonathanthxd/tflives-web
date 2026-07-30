@@ -2,203 +2,246 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
+import { Button } from "@/components/ui/button";
 
-interface User {
+interface UserProfile {
   id: string;
   name: string | null;
+  displayName: string | null;
   username: string | null;
   email: string;
   role: string;
   image: string | null;
+  bio: string | null;
 }
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [bioDraft, setBioDraft] = useState("");
+  const [savingBio, setSavingBio] = useState(false);
+  const [bioSaved, setBioSaved] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("tfl_token");
-    if (!token) {
-      router.push("/login");
-      return;
-    }
+    async function load() {
+      const res = await fetch("/api/me");
+      const data = await res.json();
 
-    try {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      setUser({
-        id: payload.userId,
-        name: payload.name || null,
-        username: payload.username || null,
-        email: payload.email,
-        role: payload.role,
-        image: payload.image || null,
-      });
-    } catch {
-      localStorage.removeItem("tfl_token");
-      router.push("/login");
-    } finally {
+      if (!data.user) {
+        router.push("/login?redirect=/dashboard");
+        return;
+      }
+
+      setUser(data.user);
+      setBioDraft(data.user.bio || "");
       setLoading(false);
     }
+
+    load();
   }, [router]);
+
+  const handleSaveBio = async () => {
+    setSavingBio(true);
+    setBioSaved(false);
+    try {
+      const res = await fetch("/api/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bio: bioDraft }),
+      });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setUser((prev) => (prev ? { ...prev, bio: data.user.bio } : null));
+      setBioSaved(true);
+    } catch {
+      setUploadError("No se pudo guardar la bio");
+    } finally {
+      setSavingBio(false);
+    }
+  };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file || !user) return;
 
+    if (file.size > 2 * 1024 * 1024) {
+      setUploadError("La imagen no puede superar los 2MB");
+      return;
+    }
+
+    setUploadError("");
     setUploading(true);
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
+      const supabase = createClient();
+      const ext = file.name.split(".").pop();
+      const path = `${user.id}/avatar.${ext}`;
 
-      const uploadRes = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
+      const { error: uploadErr } = await supabase.storage
+        .from("avatars")
+        .upload(path, file, { upsert: true });
+
+      if (uploadErr) throw uploadErr;
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("avatars").getPublicUrl(path);
+
+      const updateRes = await fetch("/api/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: `${publicUrl}?t=${Date.now()}` }),
       });
 
-      const uploadData = await uploadRes.json();
-      if (!uploadRes.ok) throw new Error(uploadData.error);
-
-      // Update user profile with new image
-      const token = localStorage.getItem("tfl_token")!;
-      const updateRes = await fetch("/api/auth/update-profile", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ image: uploadData.url }),
-      });
-
+      if (!updateRes.ok) throw new Error("No se pudo actualizar el perfil");
       const updateData = await updateRes.json();
-      if (!updateRes.ok) throw new Error(updateData.error);
 
-      // Update token and state
-      localStorage.setItem("tfl_token", updateData.token);
-      setUser((prev) => prev ? { ...prev, image: uploadData.url } : null);
-    } catch (error) {
-      console.error(error);
-      alert("Error al subir imagen");
+      setUser((prev) => (prev ? { ...prev, image: updateData.user.image } : null));
+    } catch {
+      setUploadError("Error al subir la imagen");
     } finally {
       setUploading(false);
     }
   };
 
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/");
+    router.refresh();
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-2 border-tfl-sky/30 border-t-tfl-sky rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
       </div>
     );
   }
 
   if (!user) return null;
 
-  const displayName = user.name || user.username || "Usuario";
+  const displayName = user.displayName || user.name || user.username || "Usuario";
   const initial = (displayName[0] || "U").toUpperCase();
 
   return (
     <div>
-      <h1 className="font-display text-3xl font-bold text-tfl-bone mb-2">
+      <h1 className="font-display text-3xl font-bold text-foreground mb-2">
         Bienvenido, {displayName}
       </h1>
-      <p className="text-tfl-stone mb-8">Panel de control de tu cuenta TFLives</p>
+      <p className="text-muted-foreground mb-8">Panel de control de tu cuenta TFLives</p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Profile Card */}
-        <div className="bg-tfl-slate/20 backdrop-blur-sm border border-tfl-sky/10 rounded-2xl p-6">
+        <div className="bg-card/50 backdrop-blur-sm border border-border rounded-2xl p-6">
           <div className="flex items-center gap-4 mb-4">
             <div className="relative">
               {user.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={user.image}
                   alt={displayName}
-                  className="w-14 h-14 rounded-full object-cover border-2 border-tfl-sky/30"
+                  className="w-14 h-14 rounded-full object-cover border-2 border-primary/30"
                 />
               ) : (
-                <div className="w-14 h-14 rounded-full bg-tfl-sky/10 border-2 border-tfl-sky/20 flex items-center justify-center">
-                  <span className="font-display text-xl font-bold text-tfl-sky">{initial}</span>
+                <div className="w-14 h-14 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center">
+                  <span className="font-display text-xl font-bold text-primary">{initial}</span>
                 </div>
               )}
               {uploading && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full">
-                  <div className="w-4 h-4 border-2 border-tfl-sky/30 border-t-tfl-sky rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
                 </div>
               )}
             </div>
             <div>
-              <h3 className="font-semibold text-tfl-bone">{displayName}</h3>
-              <p className="text-sm text-tfl-stone">{user.email}</p>
-              {user.username && <p className="text-xs text-tfl-sky">@{user.username}</p>}
+              <h3 className="font-semibold text-foreground">{displayName}</h3>
+              <p className="text-sm text-muted-foreground">{user.email}</p>
+              {user.username && (
+                <Link href={`/perfil/${user.username}`} className="text-xs text-primary hover:underline">
+                  @{user.username}
+                </Link>
+              )}
             </div>
           </div>
 
-          {/* Upload button */}
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*"
+            accept="image/png,image/jpeg,image/webp"
             onChange={handleImageUpload}
             className="hidden"
           />
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
-            className="w-full py-2 text-sm text-tfl-sky border border-tfl-sky/20 rounded-xl hover:bg-tfl-sky/10 transition-all disabled:opacity-50"
+            className="w-full py-2 text-sm text-primary border border-primary/20 rounded-xl hover:bg-primary/10 transition-all disabled:opacity-50"
           >
             {uploading ? "Subiendo..." : "Cambiar foto de perfil"}
           </button>
+          {uploadError && <p className="mt-2 text-xs text-destructive">{uploadError}</p>}
 
           <div className="flex items-center gap-2 mt-4">
-            <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-tfl-sky/10 text-tfl-sky border border-tfl-sky/20">
+            <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary border border-primary/20">
               {user.role}
             </span>
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="bg-tfl-slate/20 backdrop-blur-sm border border-tfl-sky/10 rounded-2xl p-6">
-          <h3 className="font-semibold text-tfl-bone mb-4">Acciones Rápidas</h3>
-          <div className="space-y-2">
-            <a
-              href="/settings"
-              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-tfl-stone hover:bg-tfl-sky/5 hover:text-tfl-bone transition-all"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              Configuración
-            </a>
-            {user.role === "ADMIN" && (
-              <a
-                href="/admin"
-                className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-tfl-stone hover:bg-tfl-sky/5 hover:text-tfl-bone transition-all"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-                Panel Admin
-              </a>
-            )}
+        {/* Editar bio */}
+        <div className="bg-card/50 backdrop-blur-sm border border-border rounded-2xl p-6">
+          <h3 className="font-semibold text-foreground mb-4">Sobre mí</h3>
+          <textarea
+            value={bioDraft}
+            onChange={(e) => {
+              setBioDraft(e.target.value);
+              setBioSaved(false);
+            }}
+            maxLength={280}
+            rows={3}
+            placeholder="Contá algo sobre vos..."
+            className="w-full rounded-xl border border-input bg-input/30 px-4 py-2 text-sm text-foreground placeholder:text-muted-foreground outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 resize-none"
+          />
+          <div className="flex items-center justify-between mt-3">
+            <span className="text-xs text-muted-foreground">{bioDraft.length}/280</span>
+            <Button type="button" size="sm" onClick={handleSaveBio} disabled={savingBio}>
+              {savingBio ? "Guardando..." : bioSaved ? "Guardado ✓" : "Guardar"}
+            </Button>
           </div>
         </div>
 
-        {/* Stats Placeholder */}
-        <div className="bg-tfl-slate/20 backdrop-blur-sm border border-tfl-sky/10 rounded-2xl p-6">
-          <h3 className="font-semibold text-tfl-bone mb-4">Estadísticas</h3>
-          <div className="space-y-3">
-            <div className="flex justify-between text-sm">
-              <span className="text-tfl-stone">Mensajes enviados</span>
-              <span className="text-tfl-bone font-medium">0</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-tfl-stone">Posts creados</span>
-              <span className="text-tfl-bone font-medium">0</span>
-            </div>
+        {/* Quick Actions */}
+        <div className="bg-card/50 backdrop-blur-sm border border-border rounded-2xl p-6">
+          <h3 className="font-semibold text-foreground mb-4">Acciones Rápidas</h3>
+          <div className="space-y-2">
+            {user.username && (
+              <Link
+                href={`/perfil/${user.username}`}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-muted-foreground hover:bg-primary/5 hover:text-foreground transition-all"
+              >
+                Ver mi perfil público
+              </Link>
+            )}
+            {user.role === "ADMIN" && (
+              <Link
+                href="/admin"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-muted-foreground hover:bg-primary/5 hover:text-foreground transition-all"
+              >
+                Panel Admin
+              </Link>
+            )}
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-destructive hover:bg-destructive/5 transition-all w-full text-left"
+            >
+              Cerrar sesión
+            </button>
           </div>
         </div>
       </div>

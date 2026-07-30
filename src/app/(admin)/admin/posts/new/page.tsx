@@ -45,14 +45,10 @@ export default function NewPostPage() {
       published: formData.get("published") === "on",
     };
 
-    const token = localStorage.getItem("tfl_token");
     try {
       const res = await fetch("/api/posts", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
