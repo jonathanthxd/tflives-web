@@ -3,6 +3,7 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import { GeistSans } from "geist/font/sans";
 import { ThemeProvider } from "@/components/theme-provider";
 import Navbar from "@/components/layout/navbar";
+import Footer from "@/components/layout/footer";
 import AmbientBackground from "@/components/effects/ambient-background";
 import DiscordWidget from "@/components/effects/discord-widget";
 import "./globals.css";
@@ -35,6 +36,7 @@ export default function RootLayout({
 
           <Navbar />
           {children}
+          <Footer />
 
           {/* Discord Widget */}
           <DiscordWidget />

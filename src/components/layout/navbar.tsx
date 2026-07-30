@@ -2,10 +2,17 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { createClient } from "@/lib/supabase/client";
+import AuthHeader from "@/components/layout/auth-header";
+
+const MINIMAL_HEADER_ROUTES = ["/login", "/register", "/forgot-password", "/reset-password"];
 
 export default function Navbar() {
+  const pathname = usePathname();
+  const isAuthRoute = MINIMAL_HEADER_ROUTES.includes(pathname);
+
   // resolvedTheme (y no theme) porque ThemeProvider usa enableSystem: con
   // theme === "system" la comparación contra "dark" daría un click sin efecto.
   const { resolvedTheme, setTheme } = useTheme();
@@ -53,6 +60,10 @@ export default function Navbar() {
   };
 
   const displayName = user?.name || user?.username || "";
+
+  if (isAuthRoute) {
+    return <AuthHeader />;
+  }
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50">
@@ -139,7 +150,7 @@ export default function Navbar() {
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="p-1.5 md:p-2 text-muted-foreground hover:text-red-400 transition-colors"
+                  className="p-1.5 md:p-2 text-muted-foreground hover:text-red-700 dark:hover:text-red-400 transition-colors"
                   title="Cerrar sesión"
                 >
                   <svg
@@ -215,7 +226,7 @@ export default function Navbar() {
                     handleLogout();
                     setMobileOpen(false);
                   }}
-                  className="block w-full text-left py-2 text-red-400"
+                  className="block w-full text-left py-2 text-red-700 dark:text-red-400"
                 >
                   Cerrar sesión
                 </button>
