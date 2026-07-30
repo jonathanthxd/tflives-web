@@ -61,13 +61,13 @@ const config: Config = {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		keyframes: {
-  			'silk-glow': {
-  				'0%, 100%': { opacity: '0.4' },
-  				'50%': { opacity: '0.8' },
+  			'glow-pulse': {
+  				'0%, 100%': { opacity: '0.5' },
+  				'50%': { opacity: '0.9' },
   			}
   		},
   		animation: {
-  			'silk-glow': 'silk-glow 8s ease-in-out infinite',
+  			'glow-pulse': 'glow-pulse 6s ease-in-out infinite',
   		}
   	}
   },
