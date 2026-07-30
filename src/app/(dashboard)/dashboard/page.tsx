@@ -38,6 +38,12 @@ export default function DashboardPage() {
         return;
       }
 
+      // Los signups por OAuth llegan sin username: sin él no hay perfil público.
+      if (!data.user.username) {
+        router.replace("/onboarding/username");
+        return;
+      }
+
       setUser(data.user);
       setBioDraft(data.user.bio || "");
       setLoading(false);

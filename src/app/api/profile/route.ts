@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
+import { usernameSchema } from "@/lib/validations/auth";
 
-const ALLOWED_FIELDS = ["image", "bio", "bannerUrl", "displayName"] as const;
+const ALLOWED_FIELDS = ["image", "bio", "bannerUrl", "displayName", "username"] as const;
 type AllowedField = (typeof ALLOWED_FIELDS)[number];
 
 export async function PATCH(request: Request) {
@@ -24,15 +26,46 @@ export async function PATCH(request: Request) {
     }
   }
 
+  if (data.username !== undefined) {
+    const parsed = usernameSchema.safeParse(data.username);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: parsed.error.issues[0].message },
+        { status: 400 }
+      );
+    }
+    data.username = parsed.data;
+  }
+
   if (Object.keys(data).length === 0) {
     return NextResponse.json({ error: "Nada para actualizar" }, { status: 400 });
   }
 
-  const updated = await prisma.user.update({
-    where: { id: authUser.id },
-    data,
-    select: { id: true, image: true, bio: true, bannerUrl: true, displayName: true },
-  });
+  try {
+    const updated = await prisma.user.update({
+      where: { id: authUser.id },
+      data,
+      select: {
+        id: true,
+        image: true,
+        bio: true,
+        bannerUrl: true,
+        displayName: true,
+        username: true,
+      },
+    });
 
-  return NextResponse.json({ user: updated }, { status: 200 });
+    return NextResponse.json({ user: updated }, { status: 200 });
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      return NextResponse.json(
+        { error: "Este username ya está en uso" },
+        { status: 409 }
+      );
+    }
+    throw error;
+  }
 }
