@@ -3,7 +3,7 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import { GeistSans } from "geist/font/sans";
 import { ThemeProvider } from "@/components/theme-provider";
 import Navbar from "@/components/layout/navbar";
-import SilkBackground from "@/components/effects/silk-background";
+import AmbientBackground from "@/components/effects/ambient-background";
 import DiscordWidget from "@/components/effects/discord-widget";
 import "./globals.css";
 
@@ -32,9 +32,7 @@ export default function RootLayout({
       >
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           {/* Silk Background Global */}
-          <div className="fixed inset-0 -z-20">
-            <SilkBackground />
-          </div>
+          <AmbientBackground />
 
           {/* Overlay sutil para legibilidad */}
           <div className="fixed inset-0 -z-10 bg-background/30 pointer-events-none" />
