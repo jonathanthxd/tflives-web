@@ -33,8 +33,9 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname.startsWith(prefix)
   );
 
-  // Solo valida sesión, no rol: la Tarea #6 (roles/permissions) todavía no existe.
-  // /admin queda abierto a cualquier usuario autenticado hasta que RBAC esté listo.
+  // El middleware solo garantiza autenticación (puede correr en Edge runtime,
+  // donde Prisma no está disponible de forma confiable). El rol ADMIN se valida
+  // a nivel de layout/route: src/app/(admin)/layout.tsx y src/app/api/posts/route.ts.
   if (isProtected && !user) {
     const redirectUrl = new URL("/login", request.url);
     redirectUrl.searchParams.set("redirect", request.nextUrl.pathname);

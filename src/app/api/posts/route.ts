@@ -16,6 +16,15 @@ export async function POST(request: Request) {
     );
   }
 
+  const profile = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: { role: true },
+  });
+
+  if (profile?.role !== "ADMIN") {
+    return NextResponse.json({ error: "No autorizado" }, { status: 403 });
+  }
+
   try {
     const body = await request.json();
 
