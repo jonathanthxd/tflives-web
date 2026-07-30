@@ -70,7 +70,7 @@ export default function NewPostPage() {
 
   return (
     <div className="max-w-3xl">
-      <h1 className="font-display text-3xl font-bold text-tfl-bone mb-8">Nuevo Post</h1>
+      <h1 className="font-display text-3xl font-bold text-foreground mb-8">Nuevo Post</h1>
 
       {error && (
         <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
@@ -80,37 +80,37 @@ export default function NewPostPage() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-tfl-stone mb-2">Título</label>
+          <label className="block text-sm font-medium text-muted-foreground mb-2">Título</label>
           <input
             name="title"
             type="text"
             required
-            className="w-full px-4 py-3 bg-tfl-slate/30 border border-tfl-sky/20 rounded-xl text-tfl-bone placeholder-tfl-stone/50 focus:outline-none focus:border-tfl-sky/50 focus:ring-1 focus:ring-tfl-sky/30 transition-all"
+            className="w-full px-4 py-3 bg-card/30 border border-primary/20 rounded-xl text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all"
             placeholder="Título del post"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-tfl-stone mb-2">Slug (URL)</label>
+          <label className="block text-sm font-medium text-muted-foreground mb-2">Slug (URL)</label>
           <input
             name="slug"
             type="text"
             required
             pattern="[a-z0-9-]+"
-            className="w-full px-4 py-3 bg-tfl-slate/30 border border-tfl-sky/20 rounded-xl text-tfl-bone placeholder-tfl-stone/50 focus:outline-none focus:border-tfl-sky/50 focus:ring-1 focus:ring-tfl-sky/30 transition-all"
+            className="w-full px-4 py-3 bg-card/30 border border-primary/20 rounded-xl text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all"
             placeholder="nueva-actualizacion-v1-5"
           />
-          <p className="text-xs text-tfl-stone/50 mt-1">Solo minúsculas, números y guiones</p>
+          <p className="text-xs text-muted-foreground/50 mt-1">Solo minúsculas, números y guiones</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-tfl-stone mb-2">Modalidad</label>
+            <label className="block text-sm font-medium text-muted-foreground mb-2">Modalidad</label>
             <select
               name="modalityId"
               required
               disabled={modalitiesLoading}
-              className="w-full px-4 py-3 bg-tfl-slate/30 border border-tfl-sky/20 rounded-xl text-tfl-bone focus:outline-none focus:border-tfl-sky/50 focus:ring-1 focus:ring-tfl-sky/30 transition-all disabled:opacity-50"
+              className="w-full px-4 py-3 bg-card/30 border border-primary/20 rounded-xl text-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all disabled:opacity-50"
             >
               <option value="">{modalitiesLoading ? "Cargando..." : "Seleccionar..."}</option>
               {modalities.map((mod) => (
@@ -122,11 +122,11 @@ export default function NewPostPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-tfl-stone mb-2">Tipo</label>
+            <label className="block text-sm font-medium text-muted-foreground mb-2">Tipo</label>
             <select
               name="type"
               required
-              className="w-full px-4 py-3 bg-tfl-slate/30 border border-tfl-sky/20 rounded-xl text-tfl-bone focus:outline-none focus:border-tfl-sky/50 focus:ring-1 focus:ring-tfl-sky/30 transition-all"
+              className="w-full px-4 py-3 bg-card/30 border border-primary/20 rounded-xl text-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all"
             >
               <option value="UPDATE">Update</option>
               <option value="PATCH">Parche</option>
@@ -137,32 +137,32 @@ export default function NewPostPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-tfl-stone mb-2">Extracto</label>
+          <label className="block text-sm font-medium text-muted-foreground mb-2">Extracto</label>
           <input
             name="excerpt"
             type="text"
-            className="w-full px-4 py-3 bg-tfl-slate/30 border border-tfl-sky/20 rounded-xl text-tfl-bone placeholder-tfl-stone/50 focus:outline-none focus:border-tfl-sky/50 focus:ring-1 focus:ring-tfl-sky/30 transition-all"
+            className="w-full px-4 py-3 bg-card/30 border border-primary/20 rounded-xl text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all"
             placeholder="Breve descripción del post..."
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-tfl-stone mb-2">Contenido (Markdown)</label>
+          <label className="block text-sm font-medium text-muted-foreground mb-2">Contenido (Markdown)</label>
           <textarea
             name="content"
             required
             rows={12}
-            className="w-full px-4 py-3 bg-tfl-slate/30 border border-tfl-sky/20 rounded-xl text-tfl-bone placeholder-tfl-stone/50 focus:outline-none focus:border-tfl-sky/50 focus:ring-1 focus:ring-tfl-sky/30 transition-all resize-y font-mono text-sm"
+            className="w-full px-4 py-3 bg-card/30 border border-primary/20 rounded-xl text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all resize-y font-mono text-sm"
             placeholder="# Título&#10;&#10;Contenido en markdown..."
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-tfl-stone mb-2">Imagen URL (opcional)</label>
+          <label className="block text-sm font-medium text-muted-foreground mb-2">Imagen URL (opcional)</label>
           <input
             name="image"
             type="url"
-            className="w-full px-4 py-3 bg-tfl-slate/30 border border-tfl-sky/20 rounded-xl text-tfl-bone placeholder-tfl-stone/50 focus:outline-none focus:border-tfl-sky/50 focus:ring-1 focus:ring-tfl-sky/30 transition-all"
+            className="w-full px-4 py-3 bg-card/30 border border-primary/20 rounded-xl text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all"
             placeholder="https://..."
           />
         </div>
@@ -172,22 +172,22 @@ export default function NewPostPage() {
             name="published"
             type="checkbox"
             id="published"
-            className="w-5 h-5 rounded border-tfl-sky/30 bg-tfl-slate/30 text-tfl-sky focus:ring-tfl-sky/30"
+            className="w-5 h-5 rounded border-primary/30 bg-card/30 text-primary focus:ring-primary/30"
           />
-          <label htmlFor="published" className="text-sm text-tfl-stone">Publicar inmediatamente</label>
+          <label htmlFor="published" className="text-sm text-muted-foreground">Publicar inmediatamente</label>
         </div>
 
         <div className="flex gap-4 pt-4">
           <button
             type="submit"
             disabled={loading || modalitiesLoading}
-            className="px-8 py-3 bg-tfl-sky/10 border border-tfl-sky/30 rounded-xl text-tfl-sky font-medium hover:bg-tfl-sky/20 transition-all duration-300 disabled:opacity-50"
+            className="px-8 py-3 bg-primary/10 border border-primary/30 rounded-xl text-primary font-medium hover:bg-primary/20 transition-all duration-300 disabled:opacity-50"
           >
             {loading ? "Creando..." : "Crear Post"}
           </button>
           <a
             href="/admin/posts"
-            className="px-8 py-3 border border-tfl-stone/20 rounded-xl text-tfl-stone font-medium hover:border-tfl-sky/30 hover:text-tfl-sky transition-all duration-300"
+            className="px-8 py-3 border border-muted-foreground/20 rounded-xl text-muted-foreground font-medium hover:border-primary/30 hover:text-primary transition-all duration-300"
           >
             Cancelar
           </a>
