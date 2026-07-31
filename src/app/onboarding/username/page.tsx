@@ -27,7 +27,7 @@ export default function UsernameOnboardingPage() {
       }
 
       if (data.user.username) {
-        router.replace("/dashboard");
+        router.replace(`/perfil/${data.user.username}`);
         return;
       }
 
@@ -91,7 +91,7 @@ export default function UsernameOnboardingPage() {
         return;
       }
 
-      router.replace("/dashboard");
+      router.replace(`/perfil/${parsed.data}`);
       router.refresh();
     } catch {
       setFormError("Error de conexión");

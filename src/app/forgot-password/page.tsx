@@ -7,6 +7,7 @@ import { forgotPasswordSchema, flattenZodErrors } from "@/lib/validations/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormField } from "@/components/ui/form-field";
+import HeroGlow from "@/components/effects/hero-glow";
 
 export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false);
@@ -62,11 +63,12 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center pt-20 px-4">
+    <main className="relative min-h-screen flex items-center justify-center pt-20 px-4 overflow-hidden">
+      <HeroGlow />
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="font-display text-3xl font-bold text-foreground mb-2">Recuperar contraseña</h1>
-          <p className="text-muted-foreground">Te mandamos un link para crear una nueva</p>
+          <p className="text-foreground/70">Te mandamos un link para crear una nueva</p>
         </div>
 
         {formError && (

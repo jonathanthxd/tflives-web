@@ -7,6 +7,7 @@ import { resetPasswordSchema, flattenZodErrors } from "@/lib/validations/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormField } from "@/components/ui/form-field";
+import HeroGlow from "@/components/effects/hero-glow";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -41,7 +42,10 @@ export default function ResetPasswordPage() {
         return;
       }
 
-      router.push("/login");
+      // updateUser deja al usuario logueado con la sesión de recuperación —
+      // mandarlo a /login lo dejaría autenticado en una pantalla de login.
+      router.push("/onboarding/username");
+      router.refresh();
     } catch {
       setFormError("Error de conexión");
     } finally {
@@ -50,11 +54,12 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center pt-20 px-4">
+    <main className="relative min-h-screen flex items-center justify-center pt-20 px-4 overflow-hidden">
+      <HeroGlow />
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="font-display text-3xl font-bold text-foreground mb-2">Nueva contraseña</h1>
-          <p className="text-muted-foreground">Elegí una contraseña nueva para tu cuenta</p>
+          <p className="text-foreground/70">Elegí una contraseña nueva para tu cuenta</p>
         </div>
 
         {formError && (

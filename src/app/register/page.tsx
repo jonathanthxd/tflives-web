@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormField } from "@/components/ui/form-field";
 import { OAuthButtons } from "@/components/auth/oauth-buttons";
+import HeroGlow from "@/components/effects/hero-glow";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -104,12 +105,31 @@ export default function RegisterPage() {
       }
 
       if (data.session) {
-        router.push("/dashboard");
+        router.push(`/perfil/${parsed.data.username}`);
         router.refresh();
         return;
       }
 
       // Sin sesión = falta confirmar el email (configuración por defecto de Supabase Auth).
+      if (process.env.NODE_ENV !== "production") {
+        fetch("/api/dev/confirmation-link", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: parsed.data.email, password: parsed.data.password }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.link) {
+              console.log(
+                "%c[dev] Link de confirmación (no llega en prod):\n%s",
+                "color:#60A5FA;font-weight:bold",
+                data.link
+              );
+            }
+          })
+          .catch(() => {});
+      }
+
       setRegistered(true);
     } catch {
       setFormError("Error de conexión");
@@ -120,11 +140,67 @@ export default function RegisterPage() {
 
   if (registered) {
     return (
-      <main className="min-h-screen flex items-center justify-center pt-20 px-4">
+      <main className="relative min-h-screen flex items-center justify-center pt-20 px-4 overflow-hidden">
+        <HeroGlow />
         <div className="w-full max-w-md text-center">
-          <h1 className="font-display text-3xl font-bold text-foreground mb-4">Revisá tu email</h1>
-          <p className="text-muted-foreground">
+          <div className="relative mx-auto mb-6 flex h-20 w-20 items-center justify-center">
+            <div className="absolute inset-0 rounded-full bg-primary/10 animate-glow-pulse" />
+            <svg
+              className="relative h-10 w-10 text-primary"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
+              />
+            </svg>
+            <svg
+              className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full bg-primary p-1 text-primary-foreground shadow-[0_4px_12px_hsl(var(--primary)/0.5)]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              strokeWidth={3}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+            </svg>
+          </div>
+
+          <h1 className="font-display text-3xl font-bold text-foreground mb-2">Revisá tu email</h1>
+          <p className="text-foreground/70 mb-8">
             Te enviamos un link de confirmación. Confirmá tu cuenta para poder iniciar sesión en TFLives.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <a
+              href="https://mail.google.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card/50 px-6 py-2.5 text-xs font-semibold uppercase tracking-widest text-foreground transition-all duration-200 hover:-translate-y-px hover:border-primary/40 hover:text-primary"
+            >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0-1.036.84-1.875 1.875-1.875h15.75c1.035 0 1.875.84 1.875 1.875v10.5A1.875 1.875 0 0119.875 19.125H4.125A1.875 1.875 0 012.25 17.25V6.75zM3.622 6.44l7.803 5.457a1.125 1.125 0 001.25 0l7.803-5.457" />
+              </svg>
+              Abrir email
+            </a>
+            <Button variant="outline" onClick={() => router.push("/login")}>
+              Ir a iniciar sesión
+            </Button>
+          </div>
+
+          <p className="mt-8 text-xs text-muted-foreground">
+            ¿No llegó nada? Revisá spam o{" "}
+            <button
+              type="button"
+              onClick={() => setRegistered(false)}
+              className="text-primary hover:underline"
+            >
+              probá con otro email
+            </button>
+            .
           </p>
         </div>
       </main>
@@ -132,11 +208,12 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center pt-28 pb-20 px-4">
+    <main className="relative min-h-screen flex flex-col items-center pt-28 pb-20 px-4 overflow-hidden">
+      <HeroGlow />
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="font-display text-3xl font-bold text-foreground mb-2">Crear Cuenta</h1>
-          <p className="text-muted-foreground">Únete a la comunidad TFLives</p>
+          <p className="text-foreground/70">Sumate a la comunidad y empezá a construir tu perfil en TFLives</p>
         </div>
 
         {formError && (
@@ -145,7 +222,7 @@ export default function RegisterPage() {
           </div>
         )}
 
-        <OAuthButtons redirectTo="/dashboard" />
+        <OAuthButtons redirectTo="/onboarding/username" />
 
         <div className="flex items-center gap-3 my-6">
           <div className="h-px flex-1 bg-border" />

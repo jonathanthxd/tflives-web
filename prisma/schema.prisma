@@ -17,6 +17,8 @@ model User {
   image         String?
   bannerUrl     String?   @map("banner_url")
   bio           String?   @db.Text
+  minecraftUsername String? @map("minecraft_username")
+  socialLinks   Json?     @map("social_links")
   role          Role      @default(USER)
   messages      Message[]
   posts         Post[]

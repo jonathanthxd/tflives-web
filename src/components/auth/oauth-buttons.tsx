@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 type Provider = "google" | "discord";
 
-export function OAuthButtons({ redirectTo = "/dashboard" }: { redirectTo?: string }) {
+export function OAuthButtons({ redirectTo = "/onboarding/username" }: { redirectTo?: string }) {
   const [loadingProvider, setLoadingProvider] = useState<Provider | null>(null);
   const [error, setError] = useState("");
 
@@ -36,7 +36,7 @@ export function OAuthButtons({ redirectTo = "/dashboard" }: { redirectTo?: strin
           variant="outline"
           disabled={loadingProvider !== null}
           onClick={() => handleOAuth("google")}
-          className="gap-2 normal-case tracking-normal text-sm"
+          className="gap-3 normal-case tracking-normal text-sm"
         >
           <svg viewBox="0 0 24 24" className="size-4" aria-hidden="true">
             <path
@@ -64,7 +64,7 @@ export function OAuthButtons({ redirectTo = "/dashboard" }: { redirectTo?: strin
           variant="outline"
           disabled={loadingProvider !== null}
           onClick={() => handleOAuth("discord")}
-          className="gap-2 normal-case tracking-normal text-sm"
+          className="gap-3 normal-case tracking-normal text-sm"
         >
           <svg viewBox="0 0 24 24" className="size-4" fill="currentColor" aria-hidden="true">
             <path d="M20.32 5.36A19.8 19.8 0 0015.3 3.6a.08.08 0 00-.08.04c-.35.62-.74 1.43-1.01 2.06a18.3 18.3 0 00-5.42 0 13 13 0 00-1.03-2.06.08.08 0 00-.08-.04 19.7 19.7 0 00-5.02 1.76.07.07 0 00-.03.03C.9 9.6.2 13.7.55 17.75a.08.08 0 00.03.06 20 20 0 005.99 3.03.08.08 0 00.09-.03c.46-.63.87-1.3 1.23-2a.08.08 0 00-.04-.11 13 13 0 01-1.86-.89.08.08 0 01-.01-.13c.12-.1.25-.2.37-.3a.08.08 0 01.08-.01 14.2 14.2 0 0012.1 0 .08.08 0 01.08.01c.12.1.24.2.37.3a.08.08 0 010 .13c-.6.35-1.22.65-1.87.89a.08.08 0 00-.04.12c.37.7.78 1.37 1.23 2a.08.08 0 00.09.03 19.9 19.9 0 006-3.03.08.08 0 00.03-.06c.42-4.7-.7-8.76-2.95-12.36a.06.06 0 00-.03-.03zM8.68 15.32c-1 0-1.82-.92-1.82-2.04 0-1.12.8-2.04 1.82-2.04s1.84.93 1.82 2.04c0 1.12-.8 2.04-1.82 2.04zm6.65 0c-1 0-1.82-.92-1.82-2.04 0-1.12.8-2.04 1.82-2.04s1.84.93 1.82 2.04c0 1.12-.8 2.04-1.82 2.04z" />

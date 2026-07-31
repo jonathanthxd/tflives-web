@@ -24,6 +24,8 @@ export async function GET() {
       role: true,
       bio: true,
       bannerUrl: true,
+      minecraftUsername: true,
+      socialLinks: true,
     },
   });
 

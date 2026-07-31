@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormField } from "@/components/ui/form-field";
 import { OAuthButtons } from "@/components/auth/oauth-buttons";
+import HeroGlow from "@/components/effects/hero-glow";
 
 export default function LoginPage() {
   return (
@@ -21,7 +22,8 @@ export default function LoginPage() {
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirect") || "/dashboard";
+  const explicitRedirect = searchParams.get("redirect");
+  const redirectTo = explicitRedirect || "/onboarding/username";
 
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState("");
@@ -70,11 +72,12 @@ function LoginForm() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center pt-20 px-4">
+    <main className="relative min-h-screen flex items-center justify-center pt-20 px-4 overflow-hidden">
+      <HeroGlow />
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="font-display text-3xl font-bold text-foreground mb-2">Iniciar Sesión</h1>
-          <p className="text-muted-foreground">Bienvenido de vuelta a TFLives</p>
+          <p className="text-foreground/70">Accedé para seguir tu progreso y tu comunidad en TFLives</p>
         </div>
 
         {formError && (

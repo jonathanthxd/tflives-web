@@ -50,11 +50,11 @@ export default function DiscordWidget() {
         href="https://discord.com/invite/c3jFPyJ9vd"
         target="_blank"
         rel="noopener noreferrer"
-        className="relative flex items-center gap-3 px-5 py-3 bg-gradient-to-br from-[#5865F2] to-[#4752C4] backdrop-blur-md border border-white/10 rounded-2xl text-white font-medium shadow-lg shadow-[#5865F2]/20 hover:shadow-[#5865F2]/40 hover:scale-105 active:scale-95 transition-all duration-300 group"
+        className="relative flex items-center gap-2.5 px-4 py-2.5 bg-gradient-to-br from-[#5865F2] to-[#4752C4] backdrop-blur-md border border-white/10 rounded-2xl text-white font-medium opacity-80 shadow-md shadow-[#5865F2]/10 hover:opacity-100 hover:shadow-lg hover:shadow-[#5865F2]/25 active:scale-95 transition-all duration-300 group"
       >
         {/* Icono de Discord con leve rotación al hover */}
         <motion.svg
-          className="w-6 h-6"
+          className="w-5 h-5"
           fill="currentColor"
           viewBox="0 0 24 24"
           whileHover={{ rotate: [0, -10, 10, -5, 0], transition: { duration: 0.5 } }}
