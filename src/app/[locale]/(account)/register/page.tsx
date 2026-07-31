@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { useRouter, Link } from "@/i18n/navigation";
 import { createClient } from "@/infrastructure/auth/client";
 import { registerSchema } from "@/modules/authentication/validation";
 import { flattenZodErrors } from "@/shared/validation/zod-helpers";
@@ -13,6 +13,8 @@ import { OAuthButtons } from "@/modules/authentication/components/oauth-buttons"
 import HeroGlow from "@/shared/ui/effects/hero-glow";
 
 export default function RegisterPage() {
+  const t = useTranslations("Register");
+  const tAuth = useTranslations("Auth");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState("");
@@ -31,7 +33,13 @@ export default function RegisterPage() {
     return strength;
   }, [passwordValue]);
 
-  const strengthLabels = ["Muy débil", "Débil", "Media", "Fuerte", "Muy fuerte"];
+  const strengthLabels = [
+    t("fuerzaMuyDebil"),
+    t("fuerzaDebil"),
+    t("fuerzaMedia"),
+    t("fuerzaFuerte"),
+    t("fuerzaMuyFuerte"),
+  ];
   const strengthColors = ["bg-red-500", "bg-orange-500", "bg-yellow-500", "bg-green-500", "bg-emerald-500"];
 
   async function handleUsernameBlur(username: string) {
@@ -73,7 +81,7 @@ export default function RegisterPage() {
     }
 
     if (usernameTaken) {
-      setFieldErrors((prev) => ({ ...prev, username: "Este username ya está en uso" }));
+      setFieldErrors((prev) => ({ ...prev, username: t("usernameEnUso") }));
       return;
     }
 
@@ -96,9 +104,9 @@ export default function RegisterPage() {
 
       if (error) {
         if (error.message.toLowerCase().includes("database")) {
-          setFormError("Este username o email ya está en uso.");
+          setFormError(t("credencialesEnUso"));
         } else if (error.message.toLowerCase().includes("already registered")) {
-          setFormError("Este email ya está registrado.");
+          setFormError(t("emailRegistrado"));
         } else {
           setFormError(error.message);
         }
@@ -133,7 +141,7 @@ export default function RegisterPage() {
 
       setRegistered(true);
     } catch {
-      setFormError("Error de conexión");
+      setFormError(tAuth("conexionError"));
     } finally {
       setLoading(false);
     }
@@ -170,9 +178,9 @@ export default function RegisterPage() {
             </svg>
           </div>
 
-          <h1 className="font-display text-3xl font-bold text-foreground mb-2">Revisá tu email</h1>
+          <h1 className="font-display text-3xl font-bold text-foreground mb-2">{t("revisaTuEmail")}</h1>
           <p className="text-foreground/70 mb-8">
-            Te enviamos un link de confirmación. Confirmá tu cuenta para poder iniciar sesión en TFLives.
+            {t("emailEnviado")}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -185,21 +193,21 @@ export default function RegisterPage() {
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0-1.036.84-1.875 1.875-1.875h15.75c1.035 0 1.875.84 1.875 1.875v10.5A1.875 1.875 0 0119.875 19.125H4.125A1.875 1.875 0 012.25 17.25V6.75zM3.622 6.44l7.803 5.457a1.125 1.125 0 001.25 0l7.803-5.457" />
               </svg>
-              Abrir email
+              {t("abrirEmail")}
             </a>
             <Button variant="outline" onClick={() => router.push("/login")}>
-              Ir a iniciar sesión
+              {t("irAIniciarSesion")}
             </Button>
           </div>
 
           <p className="mt-8 text-xs text-muted-foreground">
-            ¿No llegó nada? Revisá spam o{" "}
+            {t("noLlegoNada")}{" "}
             <button
               type="button"
               onClick={() => setRegistered(false)}
               className="text-primary hover:underline"
             >
-              probá con otro email
+              {t("probarOtroEmail")}
             </button>
             .
           </p>
@@ -213,8 +221,8 @@ export default function RegisterPage() {
       <HeroGlow />
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="font-display text-3xl font-bold text-foreground mb-2">Crear Cuenta</h1>
-          <p className="text-foreground/70">Sumate a la comunidad y empezá a construir tu perfil en TFLives</p>
+          <h1 className="font-display text-3xl font-bold text-foreground mb-2">{t("titulo")}</h1>
+          <p className="text-foreground/70">{t("subtitulo")}</p>
         </div>
 
         {formError && (
@@ -227,21 +235,21 @@ export default function RegisterPage() {
 
         <div className="flex items-center gap-3 my-6">
           <div className="h-px flex-1 bg-border" />
-          <span className="text-xs text-muted-foreground uppercase tracking-widest">o con email</span>
+          <span className="text-xs text-muted-foreground uppercase tracking-widest">{tAuth("oCorreo")}</span>
           <div className="h-px flex-1 bg-border" />
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5" noValidate>
           <div className="grid grid-cols-2 gap-4">
-            <FormField label="Nombre" htmlFor="firstName" error={fieldErrors.firstName}>
+            <FormField label={t("nombre")} htmlFor="firstName" error={fieldErrors.firstName}>
               <Input id="firstName" name="firstName" type="text" placeholder="Jonathan" aria-invalid={!!fieldErrors.firstName} />
             </FormField>
-            <FormField label="Apellido" htmlFor="lastName" error={fieldErrors.lastName}>
+            <FormField label={t("apellido")} htmlFor="lastName" error={fieldErrors.lastName}>
               <Input id="lastName" name="lastName" type="text" placeholder="Thompson" aria-invalid={!!fieldErrors.lastName} />
             </FormField>
           </div>
 
-          <FormField label="Username" htmlFor="username" error={fieldErrors.username}>
+          <FormField label={t("username")} htmlFor="username" error={fieldErrors.username}>
             <Input
               id="username"
               name="username"
@@ -251,19 +259,19 @@ export default function RegisterPage() {
               onBlur={(e) => handleUsernameBlur(e.target.value.toLowerCase())}
               onChange={() => setUsernameTaken(false)}
             />
-            {checkingUsername && <p className="mt-1.5 text-xs text-muted-foreground">Verificando disponibilidad…</p>}
+            {checkingUsername && <p className="mt-1.5 text-xs text-muted-foreground">{t("verificandoDisponibilidad")}</p>}
           </FormField>
 
-          <FormField label="Email" htmlFor="email" error={fieldErrors.email}>
-            <Input id="email" name="email" type="email" placeholder="tu@email.com" aria-invalid={!!fieldErrors.email} />
+          <FormField label={tAuth("email")} htmlFor="email" error={fieldErrors.email}>
+            <Input id="email" name="email" type="email" placeholder={tAuth("emailPlaceholder")} aria-invalid={!!fieldErrors.email} />
           </FormField>
 
-          <FormField label="Contraseña" htmlFor="password" error={fieldErrors.password}>
+          <FormField label={tAuth("password")} htmlFor="password" error={fieldErrors.password}>
             <Input
               id="password"
               name="password"
               type="password"
-              placeholder="••••••••"
+              placeholder={tAuth("passwordPlaceholder")}
               aria-invalid={!!fieldErrors.password}
               onChange={(e) => setPasswordValue(e.target.value)}
             />
@@ -286,24 +294,24 @@ export default function RegisterPage() {
             </div>
           </FormField>
 
-          <FormField label="Confirmar Contraseña" htmlFor="confirmPassword" error={fieldErrors.confirmPassword}>
+          <FormField label={t("confirmarContrasena")} htmlFor="confirmPassword" error={fieldErrors.confirmPassword}>
             <Input
               id="confirmPassword"
               name="confirmPassword"
               type="password"
-              placeholder="••••••••"
+              placeholder={tAuth("passwordPlaceholder")}
               aria-invalid={!!fieldErrors.confirmPassword}
             />
           </FormField>
 
           <Button type="submit" disabled={loading} className="w-full">
-            {loading ? "Creando cuenta..." : "Crear Cuenta"}
+            {loading ? t("creandoCuenta") : t("crearCuentaBoton")}
           </Button>
 
           <p className="text-center text-sm text-muted-foreground">
-            ¿Ya tienes cuenta?{" "}
+            {t("yaTenesCuenta")}{" "}
             <Link href="/login" className="text-primary hover:underline">
-              Iniciar sesión
+              {t("iniciarSesion")}
             </Link>
           </p>
         </form>

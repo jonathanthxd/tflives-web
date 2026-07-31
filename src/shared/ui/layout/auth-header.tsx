@@ -1,8 +1,10 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 export default function AuthHeader() {
+  const t = useTranslations("AuthHeader");
   return (
     <header className="fixed top-0 left-0 right-0 z-50">
       <div className="absolute inset-0 bg-background/70 backdrop-blur-xl border-b border-primary/10" />
@@ -19,7 +21,7 @@ export default function AuthHeader() {
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
-          Volver
+          {t("volver")}
         </Link>
       </div>
     </header>

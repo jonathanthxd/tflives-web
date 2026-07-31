@@ -1,5 +1,6 @@
+import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/infrastructure/database/prisma";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 
@@ -11,6 +12,9 @@ interface PostPageProps {
 
 export default async function PostDetailPage({ params }: PostPageProps) {
   const { slug } = await params; // ✅ esperamos la promesa
+  const t = await getTranslations("Network");
+  const tPost = await getTranslations("PostCard");
+  const locale = await getLocale();
 
   const post = await prisma.post.findUnique({
     where: { slug },
@@ -25,10 +29,10 @@ export default async function PostDetailPage({ params }: PostPageProps) {
   }
 
   const typeLabels: Record<string, string> = {
-    UPDATE: "Update",
-    PATCH: "Parche",
-    NEWS: "Noticia",
-    EVENT: "Evento",
+    UPDATE: tPost("update"),
+    PATCH: tPost("parche"),
+    NEWS: tPost("noticia"),
+    EVENT: tPost("evento"),
   };
 
   const typeColors: Record<string, string> = {
@@ -51,7 +55,7 @@ export default async function PostDetailPage({ params }: PostPageProps) {
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
-          Volver a TFL Network
+          {t("volver")}
         </Link>
 
         <div className="mb-8">
@@ -75,11 +79,11 @@ export default async function PostDetailPage({ params }: PostPageProps) {
                   {(post.author.name?.[0] || "U").toUpperCase()}
                 </div>
               )}
-              <span>{post.author.name || "Autor desconocido"}</span>
+              <span>{post.author.name || t("autorDesconocido")}</span>
             </div>
             <span>•</span>
             <span>
-              {new Date(post.createdAt).toLocaleDateString("es-ES", {
+              {new Date(post.createdAt).toLocaleDateString(locale, {
                 year: "numeric",
                 month: "long",
                 day: "numeric",

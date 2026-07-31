@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { useTheme } from "next-themes";
 import { createClient } from "@/infrastructure/auth/client";
 import AuthHeader from "@/shared/ui/layout/auth-header";
@@ -23,7 +23,11 @@ function NavPlaceholderLink({ label, className = "" }: { label: string; classNam
 }
 
 export default function Navbar() {
+  const t = useTranslations("Navbar");
+  const tUser = useTranslations("UserMenu");
+  const locale = useLocale();
   const pathname = usePathname();
+  const router = useRouter();
   const isAuthRoute = MINIMAL_HEADER_ROUTES.includes(pathname);
 
   // resolvedTheme (y no theme) porque ThemeProvider usa enableSystem: con
@@ -69,7 +73,8 @@ export default function Navbar() {
   const handleLogout = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
-    window.location.href = "/";
+    router.push("/");
+    router.refresh();
   };
 
   const displayName = user?.name || user?.username || "";
@@ -85,12 +90,12 @@ export default function Navbar() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Left: Theme toggle (flex-1 para que ocupe espacio) */}
-          <div className="flex-1 flex items-center justify-start">
+          {/* Left: Theme toggle + locale switch (flex-1 para que ocupe espacio) */}
+          <div className="flex-1 flex items-center justify-start gap-1">
             <button
               onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-              aria-label="Cambiar tema"
-              title="Cambiar tema"
+              aria-label={t("cambiarTema")}
+              title={t("cambiarTema")}
               className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300"
             >
               <svg
@@ -107,18 +112,25 @@ export default function Navbar() {
                 />
               </svg>
             </button>
+            <Link
+              href={pathname}
+              locale={locale === "es" ? "en" : "es"}
+              className="px-2 py-1.5 rounded-lg text-xs font-semibold text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300 uppercase"
+            >
+              {locale === "es" ? "EN" : "ES"}
+            </Link>
           </div>
 
           {/* Center: Logo + Links (centrado absoluto) */}
           <div className="flex items-center gap-3 sm:gap-5 md:gap-7 flex-shrink-0">
-            <NavPlaceholderLink label="Streamers" className="hidden lg:inline-flex" />
-            <NavPlaceholderLink label="Comunidad" className="hidden md:inline-flex" />
+            <NavPlaceholderLink label={t("streamers")} className="hidden lg:inline-flex" />
+            <NavPlaceholderLink label={t("comunidad")} className="hidden md:inline-flex" />
 
             <Link
               href="/network"
               className="relative text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-300 tracking-wide py-1 after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-primary/70 after:transition-all after:duration-300 hover:after:w-full whitespace-nowrap"
             >
-              TFL Network
+              {t("network")}
             </Link>
 
             <Link href="/" className="flex flex-col items-center group">
@@ -133,9 +145,9 @@ export default function Navbar() {
               <span className="w-0 group-hover:w-full h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent transition-all duration-500 mt-0.5" />
             </Link>
 
-            <NavPlaceholderLink label="Trayectoria" className="hidden md:inline-flex" />
-            <NavPlaceholderLink label="Tienda" className="hidden lg:inline-flex" />
-            <NavPlaceholderLink label="Equipo" className="hidden lg:inline-flex" />
+            <NavPlaceholderLink label={t("trayectoria")} className="hidden md:inline-flex" />
+            <NavPlaceholderLink label={t("tienda")} className="hidden lg:inline-flex" />
+            <NavPlaceholderLink label={t("equipo")} className="hidden lg:inline-flex" />
           </div>
 
           {/* Right: User / Login (flex-1 para que ocupe espacio) */}
@@ -144,7 +156,7 @@ export default function Navbar() {
               <div className="flex items-center gap-1 md:gap-2 ml-4 md:ml-8 lg:ml-12">
                 <button
                   onClick={(e) => e.preventDefault()}
-                  title="Notificaciones"
+                  title={t("notificaciones")}
                   className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300 hidden sm:inline-flex"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -153,7 +165,7 @@ export default function Navbar() {
                 </button>
                 <button
                   onClick={(e) => e.preventDefault()}
-                  title="Mensajes"
+                  title={t("mensajes")}
                   className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300 hidden sm:inline-flex"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -162,7 +174,7 @@ export default function Navbar() {
                 </button>
                 <button
                   onClick={(e) => e.preventDefault()}
-                  title="Amigos"
+                  title={t("amigos")}
                   className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300 hidden md:inline-flex"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -182,14 +194,14 @@ export default function Navbar() {
                 href="/login"
                 className="px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-medium text-muted-foreground border border-muted-foreground/20 rounded-full hover:border-primary/50 hover:text-primary hover:bg-primary/5 transition-all duration-300 backdrop-blur-sm whitespace-nowrap"
               >
-                Login
+                {t("login")}
               </Link>
             )}
 
             <button
               onClick={() => setMobileOpen((v) => !v)}
               aria-expanded={mobileOpen}
-              aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
+              aria-label={mobileOpen ? t("cerrarMenu") : t("abrirMenu")}
               className="ml-1 p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300 md:hidden"
             >
               {mobileOpen ? (
@@ -228,22 +240,22 @@ export default function Navbar() {
               className="block py-2 text-muted-foreground hover:text-primary transition-colors"
               onClick={() => setMobileOpen(false)}
             >
-              TFL Network
+              {t("network")}
             </Link>
             <a href="#" onClick={(e) => e.preventDefault()} className="block py-2 text-muted-foreground hover:text-primary transition-colors">
-              Streamers
+              {t("streamers")}
             </a>
             <a href="#" onClick={(e) => e.preventDefault()} className="block py-2 text-muted-foreground hover:text-primary transition-colors">
-              Comunidad
+              {t("comunidad")}
             </a>
             <a href="#" onClick={(e) => e.preventDefault()} className="block py-2 text-muted-foreground hover:text-primary transition-colors">
-              Trayectoria
+              {t("trayectoria")}
             </a>
             <a href="#" onClick={(e) => e.preventDefault()} className="block py-2 text-muted-foreground hover:text-primary transition-colors">
-              Tienda
+              {t("tienda")}
             </a>
             <a href="#" onClick={(e) => e.preventDefault()} className="block py-2 text-muted-foreground hover:text-primary transition-colors">
-              Equipo
+              {t("equipo")}
             </a>
 
             {user ? (
@@ -253,23 +265,21 @@ export default function Navbar() {
                   className="block py-2 text-primary font-medium"
                   onClick={() => setMobileOpen(false)}
                 >
-                  Mi perfil
+                  {tUser("miPerfil")}
                 </Link>
-                <div className="flex items-center gap-2 py-1 text-muted-foreground/40 text-sm cursor-not-allowed" title="Próximamente">
-                  Amigos
-                  <span className="text-[10px] uppercase tracking-wide">Pronto</span>
-                </div>
-                <div className="flex items-center gap-2 py-1 text-muted-foreground/40 text-sm cursor-not-allowed" title="Próximamente">
-                  Mensajes
-                  <span className="text-[10px] uppercase tracking-wide">Pronto</span>
-                </div>
+                <a href="#" onClick={(e) => e.preventDefault()} className="block py-2 text-muted-foreground hover:text-primary transition-colors">
+                  {t("amigos")}
+                </a>
+                <a href="#" onClick={(e) => e.preventDefault()} className="block py-2 text-muted-foreground hover:text-primary transition-colors">
+                  {t("mensajes")}
+                </a>
                 {user.role === "ADMIN" && (
                   <Link
                     href="/admin"
                     className="block py-2 text-foreground hover:text-primary transition-colors"
                     onClick={() => setMobileOpen(false)}
                   >
-                    Panel Admin
+                    {tUser("panelAdmin")}
                   </Link>
                 )}
                 <button
@@ -279,7 +289,7 @@ export default function Navbar() {
                   }}
                   className="block w-full text-left py-2 text-red-700 dark:text-red-400"
                 >
-                  Cerrar sesión
+                  {tUser("cerrarSesion")}
                 </button>
               </div>
             ) : (
@@ -289,7 +299,7 @@ export default function Navbar() {
                   className="block py-2 text-muted-foreground hover:text-primary transition-colors"
                   onClick={() => setMobileOpen(false)}
                 >
-                  Login
+                  {t("login")}
                 </Link>
               </div>
             )}

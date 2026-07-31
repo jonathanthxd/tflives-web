@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 function PlaceholderLink({ label }: { label: string }) {
   return (
@@ -11,6 +12,8 @@ function PlaceholderLink({ label }: { label: string }) {
 }
 
 export default function Footer() {
+  const t = useTranslations("Footer");
+
   return (
     <footer className="relative border-t border-border mt-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -22,26 +25,26 @@ export default function Footer() {
 
           <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
             <Link href="/network" className="hover:text-primary transition-colors">
-              TFL Network
+              {t("network")}
             </Link>
-            <PlaceholderLink label="Streamers" />
-            <PlaceholderLink label="Comunidad" />
-            <PlaceholderLink label="Trayectoria" />
-            <PlaceholderLink label="Tienda" />
-            <PlaceholderLink label="Equipo" />
+            <PlaceholderLink label={t("streamers")} />
+            <PlaceholderLink label={t("comunidad")} />
+            <PlaceholderLink label={t("trayectoria")} />
+            <PlaceholderLink label={t("tienda")} />
+            <PlaceholderLink label={t("equipo")} />
             <a
               href="https://discord.com/invite/c3jFPyJ9vd"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-primary transition-colors"
             >
-              Discord
+              {t("discord")}
             </a>
           </nav>
         </div>
 
         <p className="mt-8 text-center md:text-left text-xs text-muted-foreground/70">
-          © {new Date().getFullYear()} TFLives — Time For Lives. Todos los derechos reservados.
+          {t("copyright", { year: new Date().getFullYear() })}
         </p>
       </div>
     </footer>

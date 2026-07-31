@@ -1,6 +1,7 @@
+import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/infrastructure/database/prisma";
 import PostCard from "@/modules/editorial/components/post-card";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -9,6 +10,8 @@ interface NetworkPageProps {
 }
 
 export default async function NetworkPage({ searchParams }: NetworkPageProps) {
+  const t = await getTranslations("Network");
+  const locale = await getLocale();
   const params = await searchParams;
   const modalityFilter = typeof params.modality === "string" ? params.modality : "all";
 
@@ -32,7 +35,7 @@ export default async function NetworkPage({ searchParams }: NetworkPageProps) {
             TFL <span className="text-primary">Network</span>
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Actualizaciones, parches y noticias de todos nuestros servidores.
+            {t("subtitulo")}
           </p>
         </div>
 
@@ -46,7 +49,7 @@ export default async function NetworkPage({ searchParams }: NetworkPageProps) {
                 : "bg-transparent text-muted-foreground border-muted-foreground/20 hover:border-primary/30 hover:text-primary"
             }`}
           >
-            Todas
+            {t("todas")}
           </Link>
           {modalities.map((mod) => (
             <Link
@@ -75,7 +78,7 @@ export default async function NetworkPage({ searchParams }: NetworkPageProps) {
                 excerpt={post.excerpt || ""}
                 type={post.type}
                 modality={post.modality.name}
-                date={new Date(post.createdAt).toLocaleDateString("es-ES", {
+                date={new Date(post.createdAt).toLocaleDateString(locale, {
                   day: "numeric",
                   month: "long",
                   year: "numeric",
@@ -92,8 +95,8 @@ export default async function NetworkPage({ searchParams }: NetworkPageProps) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
               </svg>
             </div>
-            <h3 className="font-display text-xl text-foreground mb-2">No hay posts aún</h3>
-            <p className="text-muted-foreground">Los updates aparecerán aquí próximamente.</p>
+            <h3 className="font-display text-xl text-foreground mb-2">{t("sinPosts")}</h3>
+            <p className="text-muted-foreground">{t("sinPostsDescripcion")}</p>
           </div>
         )}
       </div>

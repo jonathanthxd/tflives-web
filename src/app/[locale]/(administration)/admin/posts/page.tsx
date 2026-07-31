@@ -1,5 +1,5 @@
 import { prisma } from "@/infrastructure/database/prisma";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 export const dynamic = "force-dynamic";
 

@@ -1,4 +1,5 @@
 import { prisma } from "@/infrastructure/database/prisma";
+import { Link } from "@/i18n/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -38,18 +39,18 @@ export default async function AdminDashboard() {
       <div className="mt-12">
         <h2 className="font-display text-xl font-semibold text-foreground mb-6">Acciones rápidas</h2>
         <div className="flex flex-wrap gap-4">
-          <a
+          <Link
             href="/admin/posts/new"
             className="px-6 py-3 bg-primary/10 border border-primary/30 rounded-xl text-primary font-medium hover:bg-primary/20 transition-all duration-300"
           >
             + Nuevo Post
-          </a>
-          <a
+          </Link>
+          <Link
             href="/admin/modalities"
             className="px-6 py-3 bg-muted/30 border border-muted-foreground/20 rounded-xl text-muted-foreground font-medium hover:border-primary/30 hover:text-primary transition-all duration-300"
           >
             Gestionar Modalidades
-          </a>
+          </Link>
         </div>
       </div>
     </div>

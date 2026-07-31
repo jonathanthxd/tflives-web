@@ -1,8 +1,9 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useRouter, Link } from "@/i18n/navigation";
 import { createClient } from "@/infrastructure/auth/client";
 import { loginSchema } from "@/modules/authentication/validation";
 import { flattenZodErrors } from "@/shared/validation/zod-helpers";
@@ -21,6 +22,8 @@ export default function LoginPage() {
 }
 
 function LoginForm() {
+  const t = useTranslations("Login");
+  const tAuth = useTranslations("Auth");
   const router = useRouter();
   const searchParams = useSearchParams();
   const explicitRedirect = searchParams.get("redirect");
@@ -54,9 +57,9 @@ function LoginForm() {
 
       if (error) {
         if (error.message.toLowerCase().includes("invalid login credentials")) {
-          setFormError("Email o contraseña incorrectos");
+          setFormError(t("credencialesInvalidas"));
         } else if (error.message.toLowerCase().includes("email not confirmed")) {
-          setFormError("Confirmá tu email antes de iniciar sesión — revisá tu bandeja de entrada.");
+          setFormError(t("emailNoConfirmado"));
         } else {
           setFormError(error.message);
         }
@@ -66,7 +69,7 @@ function LoginForm() {
       router.push(redirectTo);
       router.refresh();
     } catch {
-      setFormError("Error de conexión");
+      setFormError(tAuth("conexionError"));
     } finally {
       setLoading(false);
     }
@@ -77,8 +80,8 @@ function LoginForm() {
       <HeroGlow />
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="font-display text-3xl font-bold text-foreground mb-2">Iniciar Sesión</h1>
-          <p className="text-foreground/70">Accedé para seguir tu progreso y tu comunidad en TFLives</p>
+          <h1 className="font-display text-3xl font-bold text-foreground mb-2">{t("titulo")}</h1>
+          <p className="text-foreground/70">{t("subtitulo")}</p>
         </div>
 
         {formError && (
@@ -91,32 +94,32 @@ function LoginForm() {
 
         <div className="flex items-center gap-3 my-6">
           <div className="h-px flex-1 bg-border" />
-          <span className="text-xs text-muted-foreground uppercase tracking-widest">o con email</span>
+          <span className="text-xs text-muted-foreground uppercase tracking-widest">{tAuth("oCorreo")}</span>
           <div className="h-px flex-1 bg-border" />
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-          <FormField label="Email" htmlFor="email" error={fieldErrors.email}>
-            <Input id="email" name="email" type="email" placeholder="tu@email.com" aria-invalid={!!fieldErrors.email} />
+          <FormField label={tAuth("email")} htmlFor="email" error={fieldErrors.email}>
+            <Input id="email" name="email" type="email" placeholder={tAuth("emailPlaceholder")} aria-invalid={!!fieldErrors.email} />
           </FormField>
 
-          <FormField label="Contraseña" htmlFor="password" error={fieldErrors.password}>
-            <Input id="password" name="password" type="password" placeholder="••••••••" aria-invalid={!!fieldErrors.password} />
+          <FormField label={tAuth("password")} htmlFor="password" error={fieldErrors.password}>
+            <Input id="password" name="password" type="password" placeholder={tAuth("passwordPlaceholder")} aria-invalid={!!fieldErrors.password} />
             <div className="text-right mt-1.5">
               <Link href="/forgot-password" className="text-xs text-primary hover:underline">
-                ¿Olvidaste tu contraseña?
+                {t("olvidasteContrasena")}
               </Link>
             </div>
           </FormField>
 
           <Button type="submit" disabled={loading} className="w-full">
-            {loading ? "Entrando..." : "Entrar"}
+            {loading ? t("entrando") : t("entrar")}
           </Button>
 
           <p className="text-center text-sm text-muted-foreground">
-            ¿No tienes cuenta?{" "}
+            {t("noTenesCuenta")}{" "}
             <Link href="/register" className="text-primary hover:underline">
-              Crear cuenta
+              {t("crearCuenta")}
             </Link>
           </p>
         </form>

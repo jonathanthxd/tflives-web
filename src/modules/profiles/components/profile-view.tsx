@@ -1,8 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
+import { useRouter, Link } from "@/i18n/navigation";
 import { createClient } from "@/infrastructure/auth/client";
 import { uploadProfileAsset } from "@/infrastructure/storage/avatars";
 import { Button } from "@/shared/ui/button";
@@ -43,6 +43,8 @@ function parseSocialLinks(value: unknown): SocialLink[] {
 }
 
 export default function ProfileView({ profile, isOwner }: { profile: Profile; isOwner: boolean }) {
+  const t = useTranslations("Profile");
+  const locale = useLocale();
   const router = useRouter();
   const [current, setCurrent] = useState(profile);
   const [editing, setEditing] = useState(false);
@@ -58,7 +60,7 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
 
   const displayName = current.displayName || current.name || current.username || "Usuario";
   const initial = (displayName[0] || "U").toUpperCase();
-  const joinedDate = new Date(current.createdAt).toLocaleDateString("es-ES", {
+  const joinedDate = new Date(current.createdAt).toLocaleDateString(locale, {
     month: "long",
     year: "numeric",
   });
@@ -83,7 +85,7 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
       const data = await res.json();
       setCurrent((prev) => ({ ...prev, ...data.user }));
     } catch {
-      setSaveError(`No se pudo subir ${kind === "avatar" ? "el avatar" : "el banner"}`);
+      setSaveError(kind === "avatar" ? t("errorSubirAvatar") : t("errorSubirBanner"));
     } finally {
       setUploading(false);
     }
@@ -104,13 +106,13 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
       });
       const data = await res.json();
       if (!res.ok) {
-        setSaveError(data.error || "No se pudo guardar");
+        setSaveError(data.error || t("errorGuardar"));
         return;
       }
       setCurrent((prev) => ({ ...prev, ...data.user }));
       setEditing(false);
     } catch {
-      setSaveError("Error de conexión");
+      setSaveError(t("errorConexion"));
     } finally {
       setSaving(false);
     }
@@ -153,7 +155,7 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
                 disabled={uploadingBanner}
                 className="absolute bottom-2 right-2 flex items-center gap-1.5 rounded-full bg-background/80 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-foreground border border-border hover:border-primary/40 transition-colors disabled:opacity-50"
               >
-                {uploadingBanner ? "Subiendo..." : "Cambiar banner"}
+                {uploadingBanner ? t("subiendoBanner") : t("cambiarBanner")}
               </button>
             )}
             <input
@@ -183,7 +185,7 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
                 <button
                   onClick={() => avatarInputRef.current?.click()}
                   disabled={uploadingAvatar}
-                  aria-label="Cambiar avatar"
+                  aria-label={t("cambiarAvatar")}
                   className="absolute bottom-0 right-0 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
                 >
                   <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -209,7 +211,7 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
 
               {isOwner && !editing && (
                 <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
-                  Editar perfil
+                  {t("editarPerfil")}
                 </Button>
               )}
             </div>
@@ -219,13 +221,13 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
             {editing ? (
               <div className="mt-5 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-muted-foreground mb-1.5">Sobre mí</label>
+                  <label className="block text-sm font-medium text-muted-foreground mb-1.5">{t("sobreMi")}</label>
                   <textarea
                     value={bioDraft}
                     onChange={(e) => setBioDraft(e.target.value)}
                     maxLength={280}
                     rows={3}
-                    placeholder="Contá algo sobre vos..."
+                    placeholder={t("sobreMiPlaceholder")}
                     className="w-full rounded-xl border border-input bg-input/30 px-4 py-2 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-all duration-200 focus-visible:border-ring focus-visible:ring-4 focus-visible:ring-ring/15 resize-none"
                   />
                   <span className="text-xs text-muted-foreground">{bioDraft.length}/280</span>
@@ -233,7 +235,7 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
 
                 <div>
                   <label className="block text-sm font-medium text-muted-foreground mb-1.5">
-                    Username de Minecraft (opcional)
+                    {t("usernameMinecraft")}
                   </label>
                   <Input
                     value={mcDraft}
@@ -244,7 +246,7 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
 
                 <div>
                   <label className="block text-sm font-medium text-muted-foreground mb-1.5">
-                    Enlaces sociales
+                    {t("enlacesSociales")}
                   </label>
                   <div className="space-y-2">
                     {linksDraft.map((link, i) => (
@@ -272,7 +274,7 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
                           type="button"
                           onClick={() => setLinksDraft((prev) => prev.filter((_, idx) => idx !== i))}
                           className="px-2 text-muted-foreground hover:text-destructive transition-colors"
-                          aria-label="Quitar enlace"
+                          aria-label={t("quitarEnlace")}
                         >
                           ✕
                         </button>
@@ -284,7 +286,7 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
                         onClick={() => setLinksDraft((prev) => [...prev, { platform: "", url: "" }])}
                         className="text-xs text-primary hover:underline"
                       >
-                        + Agregar enlace
+                        {t("agregarEnlace")}
                       </button>
                     )}
                   </div>
@@ -292,10 +294,10 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
 
                 <div className="flex gap-3 pt-1">
                   <Button size="sm" onClick={handleSave} disabled={saving}>
-                    {saving ? "Guardando..." : "Guardar cambios"}
+                    {saving ? t("guardando") : t("guardarCambios")}
                   </Button>
                   <Button size="sm" variant="ghost" onClick={handleCancel} disabled={saving}>
-                    Cancelar
+                    {t("cancelar")}
                   </Button>
                 </div>
               </div>
@@ -304,9 +306,9 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
                 {current.bio && <p className="mt-4 text-foreground/90 whitespace-pre-line">{current.bio}</p>}
                 {!current.bio && isOwner && (
                   <p className="mt-4 text-sm text-muted-foreground italic">
-                    Todavía no escribiste tu bio —{" "}
+                    {t("bioVacia")}{" "}
                     <button onClick={() => setEditing(true)} className="text-primary hover:underline">
-                      agregá una
+                      {t("agregarUna")}
                     </button>
                     .
                   </p>
@@ -332,7 +334,7 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
                 )}
 
                 <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                  <span>Se unió en {joinedDate}</span>
+                  <span>{t("seUnioEn")} {joinedDate}</span>
                   {current.minecraftUsername && (
                     <span className="px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
                       MC: {current.minecraftUsername}
@@ -352,12 +354,12 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
                 {current.role === "ADMIN" && (
                   <Link href="/admin">
                     <Button variant="outline" size="sm">
-                      Panel Admin
+                      {t("panelAdmin")}
                     </Button>
                   </Link>
                 )}
                 <Button variant="ghost" size="sm" onClick={handleLogout}>
-                  Cerrar sesión
+                  {t("cerrarSesion")}
                 </Button>
               </div>
             )}

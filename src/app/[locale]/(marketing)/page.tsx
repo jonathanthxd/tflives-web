@@ -1,8 +1,12 @@
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import OwnersSection from "@/modules/administration/components/owners-section";
 import HeroGlow from "@/shared/ui/effects/hero-glow";
 import Reveal from "@/shared/ui/reveal";
 
 export default function Home() {
+  const t = useTranslations("Home");
+
   return (
     <main className="relative overflow-hidden pt-20">
       {/* Hero Section */}
@@ -17,24 +21,22 @@ export default function Home() {
           </h1>
 
           <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto mb-8 leading-relaxed">
-            La red de servidores Minecraft más innovadora.
-            SurvivalRPG, Skyblock, Gens Tycoon y más.
-            Únete a la comunidad que redefine el gaming.
+            {t("subtitle")}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <a
+            <Link
               href="/network"
               className="px-8 py-4 border border-muted-foreground/30 rounded-xl text-muted-foreground font-medium transition-all duration-300 hover:border-primary/50 hover:text-primary"
             >
-              Explorar Network
-            </a>
+              {t("explorarNetwork")}
+            </Link>
           </div>
         </div>
 
         {/* Scroll indicator */}
         <div className="absolute bottom-8 left-0 right-0 flex flex-col items-center gap-2 text-muted-foreground/50 animate-bounce">
-          <span className="text-xs uppercase tracking-widest">Scroll</span>
+          <span className="text-xs uppercase tracking-widest">{t("scroll")}</span>
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
           </svg>

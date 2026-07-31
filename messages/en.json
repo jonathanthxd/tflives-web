@@ -1,0 +1,169 @@
+{
+  "Navbar": {
+    "streamers": "Streamers",
+    "comunidad": "Community",
+    "network": "TFL Network",
+    "trayectoria": "Trajectory",
+    "tienda": "Shop",
+    "equipo": "Team",
+    "notificaciones": "Notifications",
+    "mensajes": "Messages",
+    "amigos": "Friends",
+    "login": "Login",
+    "cambiarTema": "Toggle theme",
+    "abrirMenu": "Open menu",
+    "cerrarMenu": "Close menu"
+  },
+  "Footer": {
+    "streamers": "Streamers",
+    "comunidad": "Community",
+    "trayectoria": "Trajectory",
+    "tienda": "Shop",
+    "equipo": "Team",
+    "network": "TFL Network",
+    "discord": "Discord",
+    "copyright": "© {year} TFLives — Time For Lives. All rights reserved."
+  },
+  "UserMenu": {
+    "miPerfil": "My profile",
+    "amigos": "Friends",
+    "suscripcion": "Subscription",
+    "panelAdmin": "Admin Panel",
+    "cerrarSesion": "Log out"
+  },
+  "AuthHeader": {
+    "volver": "Back"
+  },
+  "Home": {
+    "subtitle": "The most innovative Minecraft server network. SurvivalRPG, Skyblock, Gens Tycoon and more. Join the community redefining gaming.",
+    "explorarNetwork": "Explore Network",
+    "scroll": "Scroll"
+  },
+  "Owners": {
+    "titulo": "The Founders",
+    "tag": "Owner"
+  },
+  "Auth": {
+    "oCorreo": "or with email",
+    "email": "Email",
+    "emailPlaceholder": "you@email.com",
+    "password": "Password",
+    "passwordPlaceholder": "••••••••",
+    "conexionError": "Connection error"
+  },
+  "Login": {
+    "titulo": "Log In",
+    "subtitulo": "Sign in to keep track of your progress and your community on TFLives",
+    "olvidasteContrasena": "Forgot your password?",
+    "entrar": "Log in",
+    "entrando": "Logging in...",
+    "noTenesCuenta": "Don't have an account?",
+    "crearCuenta": "Create account",
+    "credencialesInvalidas": "Incorrect email or password",
+    "emailNoConfirmado": "Confirm your email before logging in — check your inbox."
+  },
+  "Register": {
+    "titulo": "Create Account",
+    "subtitulo": "Join the community and start building your profile on TFLives",
+    "nombre": "First name",
+    "apellido": "Last name",
+    "username": "Username",
+    "verificandoDisponibilidad": "Checking availability…",
+    "confirmarContrasena": "Confirm Password",
+    "crearCuentaBoton": "Create Account",
+    "creandoCuenta": "Creating account...",
+    "yaTenesCuenta": "Already have an account?",
+    "iniciarSesion": "Log in",
+    "usernameEnUso": "This username is already taken",
+    "credencialesEnUso": "This username or email is already in use.",
+    "emailRegistrado": "This email is already registered.",
+    "fuerzaMuyDebil": "Very weak",
+    "fuerzaDebil": "Weak",
+    "fuerzaMedia": "Medium",
+    "fuerzaFuerte": "Strong",
+    "fuerzaMuyFuerte": "Very strong",
+    "revisaTuEmail": "Check your email",
+    "emailEnviado": "We sent you a confirmation link. Confirm your account to be able to log in to TFLives.",
+    "abrirEmail": "Open email",
+    "irAIniciarSesion": "Go to log in",
+    "noLlegoNada": "Didn't get anything? Check spam or",
+    "probarOtroEmail": "try another email"
+  },
+  "ForgotPassword": {
+    "titulo": "Reset password",
+    "subtitulo": "We'll send you a link to create a new one",
+    "enviarLink": "Send link",
+    "enviando": "Sending...",
+    "volverAIniciarSesion": "Back to log in",
+    "revisaTuEmail": "Check your email",
+    "emailEnviado": "If an account exists with that email, we sent you a link to reset your password."
+  },
+  "ResetPassword": {
+    "titulo": "New password",
+    "subtitulo": "Choose a new password for your account",
+    "nuevaContrasena": "New password",
+    "confirmarContrasena": "Confirm password",
+    "guardarContrasena": "Save password",
+    "guardando": "Saving..."
+  },
+  "Onboarding": {
+    "username": "Username",
+    "titulo": "Choose your username",
+    "subtitulo": "It's the name people will use to find you on your public profile.",
+    "verificandoDisponibilidad": "Checking availability…",
+    "continuar": "Continue",
+    "guardando": "Saving...",
+    "usernameEnUso": "This username is already taken",
+    "errorGuardar": "Couldn't save the username"
+  },
+  "Profile": {
+    "cambiarBanner": "Change banner",
+    "subiendoBanner": "Uploading...",
+    "cambiarAvatar": "Change avatar",
+    "editarPerfil": "Edit profile",
+    "sobreMi": "About me",
+    "sobreMiPlaceholder": "Tell us something about yourself...",
+    "usernameMinecraft": "Minecraft username (optional)",
+    "enlacesSociales": "Social links",
+    "quitarEnlace": "Remove link",
+    "agregarEnlace": "+ Add link",
+    "guardarCambios": "Save changes",
+    "guardando": "Saving...",
+    "cancelar": "Cancel",
+    "bioVacia": "You haven't written your bio yet —",
+    "agregarUna": "add one",
+    "seUnioEn": "Joined on",
+    "panelAdmin": "Admin Panel",
+    "cerrarSesion": "Log out",
+    "errorSubirAvatar": "Couldn't upload the avatar",
+    "errorSubirBanner": "Couldn't upload the banner",
+    "errorGuardar": "Couldn't save",
+    "errorConexion": "Connection error"
+  },
+  "ProfilePlaceholders": {
+    "comunidad": "Community",
+    "amigos": "Friends",
+    "seguidores": "Followers",
+    "logros": "Achievements & badges",
+    "nivel": "Level",
+    "actividadReciente": "Recent activity",
+    "sinActividad": "No activity yet.",
+    "cosmeticos": "Cosmetics"
+  },
+  "Network": {
+    "titulo": "TFL Network",
+    "subtitulo": "Updates, patches and news from all our servers.",
+    "todas": "All",
+    "sinPosts": "No posts yet",
+    "sinPostsDescripcion": "Updates will show up here soon.",
+    "volver": "Back to TFL Network",
+    "autorDesconocido": "Unknown author"
+  },
+  "PostCard": {
+    "leerMas": "Read more",
+    "update": "Update",
+    "parche": "Patch",
+    "noticia": "News",
+    "evento": "Event"
+  }
+}

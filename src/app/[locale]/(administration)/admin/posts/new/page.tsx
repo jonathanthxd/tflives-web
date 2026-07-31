@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, Link } from "@/i18n/navigation";
 
 interface Modality {
   id: string;
@@ -185,12 +185,12 @@ export default function NewPostPage() {
           >
             {loading ? "Creando..." : "Crear Post"}
           </button>
-          <a
+          <Link
             href="/admin/posts"
             className="px-8 py-3 border border-muted-foreground/20 rounded-xl text-muted-foreground font-medium hover:border-primary/30 hover:text-primary transition-all duration-300"
           >
             Cancelar
-          </a>
+          </Link>
         </div>
       </form>
     </div>

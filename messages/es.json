@@ -1,0 +1,169 @@
+{
+  "Navbar": {
+    "streamers": "Streamers",
+    "comunidad": "Comunidad",
+    "network": "TFL Network",
+    "trayectoria": "Trayectoria",
+    "tienda": "Tienda",
+    "equipo": "Equipo",
+    "notificaciones": "Notificaciones",
+    "mensajes": "Mensajes",
+    "amigos": "Amigos",
+    "login": "Login",
+    "cambiarTema": "Cambiar tema",
+    "abrirMenu": "Abrir menú",
+    "cerrarMenu": "Cerrar menú"
+  },
+  "Footer": {
+    "streamers": "Streamers",
+    "comunidad": "Comunidad",
+    "trayectoria": "Trayectoria",
+    "tienda": "Tienda",
+    "equipo": "Equipo",
+    "network": "TFL Network",
+    "discord": "Discord",
+    "copyright": "© {year} TFLives — Time For Lives. Todos los derechos reservados."
+  },
+  "UserMenu": {
+    "miPerfil": "Mi perfil",
+    "amigos": "Amigos",
+    "suscripcion": "Suscripción",
+    "panelAdmin": "Panel Admin",
+    "cerrarSesion": "Cerrar sesión"
+  },
+  "AuthHeader": {
+    "volver": "Volver"
+  },
+  "Home": {
+    "subtitle": "La red de servidores Minecraft más innovadora. SurvivalRPG, Skyblock, Gens Tycoon y más. Únete a la comunidad que redefine el gaming.",
+    "explorarNetwork": "Explorar Network",
+    "scroll": "Scroll"
+  },
+  "Owners": {
+    "titulo": "Los Fundadores",
+    "tag": "Owner"
+  },
+  "Auth": {
+    "oCorreo": "o con email",
+    "email": "Email",
+    "emailPlaceholder": "tu@email.com",
+    "password": "Contraseña",
+    "passwordPlaceholder": "••••••••",
+    "conexionError": "Error de conexión"
+  },
+  "Login": {
+    "titulo": "Iniciar Sesión",
+    "subtitulo": "Accedé para seguir tu progreso y tu comunidad en TFLives",
+    "olvidasteContrasena": "¿Olvidaste tu contraseña?",
+    "entrar": "Entrar",
+    "entrando": "Entrando...",
+    "noTenesCuenta": "¿No tienes cuenta?",
+    "crearCuenta": "Crear cuenta",
+    "credencialesInvalidas": "Email o contraseña incorrectos",
+    "emailNoConfirmado": "Confirmá tu email antes de iniciar sesión — revisá tu bandeja de entrada."
+  },
+  "Register": {
+    "titulo": "Crear Cuenta",
+    "subtitulo": "Sumate a la comunidad y empezá a construir tu perfil en TFLives",
+    "nombre": "Nombre",
+    "apellido": "Apellido",
+    "username": "Username",
+    "verificandoDisponibilidad": "Verificando disponibilidad…",
+    "confirmarContrasena": "Confirmar Contraseña",
+    "crearCuentaBoton": "Crear Cuenta",
+    "creandoCuenta": "Creando cuenta...",
+    "yaTenesCuenta": "¿Ya tienes cuenta?",
+    "iniciarSesion": "Iniciar sesión",
+    "usernameEnUso": "Este username ya está en uso",
+    "credencialesEnUso": "Este username o email ya está en uso.",
+    "emailRegistrado": "Este email ya está registrado.",
+    "fuerzaMuyDebil": "Muy débil",
+    "fuerzaDebil": "Débil",
+    "fuerzaMedia": "Media",
+    "fuerzaFuerte": "Fuerte",
+    "fuerzaMuyFuerte": "Muy fuerte",
+    "revisaTuEmail": "Revisá tu email",
+    "emailEnviado": "Te enviamos un link de confirmación. Confirmá tu cuenta para poder iniciar sesión en TFLives.",
+    "abrirEmail": "Abrir email",
+    "irAIniciarSesion": "Ir a iniciar sesión",
+    "noLlegoNada": "¿No llegó nada? Revisá spam o",
+    "probarOtroEmail": "probá con otro email"
+  },
+  "ForgotPassword": {
+    "titulo": "Recuperar contraseña",
+    "subtitulo": "Te mandamos un link para crear una nueva",
+    "enviarLink": "Enviar link",
+    "enviando": "Enviando...",
+    "volverAIniciarSesion": "Volver a iniciar sesión",
+    "revisaTuEmail": "Revisá tu email",
+    "emailEnviado": "Si existe una cuenta con ese email, te enviamos un link para restablecer tu contraseña."
+  },
+  "ResetPassword": {
+    "titulo": "Nueva contraseña",
+    "subtitulo": "Elegí una contraseña nueva para tu cuenta",
+    "nuevaContrasena": "Nueva contraseña",
+    "confirmarContrasena": "Confirmar contraseña",
+    "guardarContrasena": "Guardar contraseña",
+    "guardando": "Guardando..."
+  },
+  "Onboarding": {
+    "username": "Username",
+    "titulo": "Elegí tu username",
+    "subtitulo": "Es el nombre con el que te van a encontrar en tu perfil público.",
+    "verificandoDisponibilidad": "Verificando disponibilidad…",
+    "continuar": "Continuar",
+    "guardando": "Guardando...",
+    "usernameEnUso": "Este username ya está en uso",
+    "errorGuardar": "No se pudo guardar el username"
+  },
+  "Profile": {
+    "cambiarBanner": "Cambiar banner",
+    "subiendoBanner": "Subiendo...",
+    "cambiarAvatar": "Cambiar avatar",
+    "editarPerfil": "Editar perfil",
+    "sobreMi": "Sobre mí",
+    "sobreMiPlaceholder": "Contá algo sobre vos...",
+    "usernameMinecraft": "Username de Minecraft (opcional)",
+    "enlacesSociales": "Enlaces sociales",
+    "quitarEnlace": "Quitar enlace",
+    "agregarEnlace": "+ Agregar enlace",
+    "guardarCambios": "Guardar cambios",
+    "guardando": "Guardando...",
+    "cancelar": "Cancelar",
+    "bioVacia": "Todavía no escribiste tu bio —",
+    "agregarUna": "agregá una",
+    "seUnioEn": "Se unió en",
+    "panelAdmin": "Panel Admin",
+    "cerrarSesion": "Cerrar sesión",
+    "errorSubirAvatar": "No se pudo subir el avatar",
+    "errorSubirBanner": "No se pudo subir el banner",
+    "errorGuardar": "No se pudo guardar",
+    "errorConexion": "Error de conexión"
+  },
+  "ProfilePlaceholders": {
+    "comunidad": "Comunidad",
+    "amigos": "Amigos",
+    "seguidores": "Seguidores",
+    "logros": "Logros e insignias",
+    "nivel": "Nivel",
+    "actividadReciente": "Actividad reciente",
+    "sinActividad": "Sin actividad todavía.",
+    "cosmeticos": "Cosméticos"
+  },
+  "Network": {
+    "titulo": "TFL Network",
+    "subtitulo": "Actualizaciones, parches y noticias de todos nuestros servidores.",
+    "todas": "Todas",
+    "sinPosts": "No hay posts aún",
+    "sinPostsDescripcion": "Los updates aparecerán aquí próximamente.",
+    "volver": "Volver a TFL Network",
+    "autorDesconocido": "Autor desconocido"
+  },
+  "PostCard": {
+    "leerMas": "Leer más",
+    "update": "Update",
+    "parche": "Parche",
+    "noticia": "Noticia",
+    "evento": "Evento"
+  }
+}

@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { GeistSans } from "geist/font/sans";
+import { routing } from "@/i18n/routing";
 import { ThemeProvider } from "@/providers/theme-provider";
 import Navbar from "@/shared/ui/layout/navbar";
 import Footer from "@/shared/ui/layout/footer";
@@ -18,26 +21,39 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = siteMetadata;
 
-export default function RootLayout({
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+export default async function RootLayout({
   children,
-}: Readonly<{
+  params,
+}: {
   children: React.ReactNode;
-}>) {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
+
   return (
-    <html lang="es" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <body
         className={`${inter.variable} ${spaceGrotesk.variable} ${GeistSans.variable} font-sans antialiased min-h-screen relative`}
       >
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-          <AmbientBackground />
+        <NextIntlClientProvider>
+          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+            <AmbientBackground />
 
-          <Navbar />
-          {children}
-          <Footer />
+            <Navbar />
+            {children}
+            <Footer />
 
-          {/* Discord Widget */}
-          <DiscordWidget />
-        </ThemeProvider>
+            {/* Discord Widget */}
+            <DiscordWidget />
+          </ThemeProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

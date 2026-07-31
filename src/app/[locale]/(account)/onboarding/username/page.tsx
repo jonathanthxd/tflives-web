@@ -1,13 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import { usernameSchema } from "@/modules/authentication/validation";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { FormField } from "@/shared/ui/form-field";
 
 export default function UsernameOnboardingPage() {
+  const t = useTranslations("Onboarding");
+  const tAuth = useTranslations("Auth");
   const router = useRouter();
   const [checking, setChecking] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -73,7 +76,7 @@ export default function UsernameOnboardingPage() {
     }
 
     if (usernameTaken) {
-      setFieldErrors((prev) => ({ ...prev, username: "Este username ya está en uso" }));
+      setFieldErrors((prev) => ({ ...prev, username: t("usernameEnUso") }));
       return;
     }
 
@@ -87,14 +90,14 @@ export default function UsernameOnboardingPage() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setFormError(data.error || "No se pudo guardar el username");
+        setFormError(data.error || t("errorGuardar"));
         return;
       }
 
       router.replace(`/perfil/${parsed.data}`);
       router.refresh();
     } catch {
-      setFormError("Error de conexión");
+      setFormError(tAuth("conexionError"));
     } finally {
       setLoading(false);
     }
@@ -113,10 +116,10 @@ export default function UsernameOnboardingPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="font-display text-3xl font-bold text-foreground mb-2">
-            Elegí tu username
+            {t("titulo")}
           </h1>
           <p className="text-muted-foreground">
-            Es el nombre con el que te van a encontrar en tu perfil público.
+            {t("subtitulo")}
           </p>
         </div>
 
@@ -130,7 +133,7 @@ export default function UsernameOnboardingPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-          <FormField label="Username" htmlFor="username" error={fieldErrors.username}>
+          <FormField label={t("username")} htmlFor="username" error={fieldErrors.username}>
             <Input
               id="username"
               name="username"
@@ -146,13 +149,13 @@ export default function UsernameOnboardingPage() {
             />
             {checkingUsername && (
               <p className="mt-1.5 text-xs text-muted-foreground">
-                Verificando disponibilidad…
+                {t("verificandoDisponibilidad")}
               </p>
             )}
           </FormField>
 
           <Button type="submit" disabled={loading} className="w-full">
-            {loading ? "Guardando..." : "Continuar"}
+            {loading ? t("guardando") : t("continuar")}
           </Button>
         </form>
       </div>

@@ -1,36 +1,21 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 interface Owner {
   name: string;
-  tag: string;
   initials: string;
   gradient: string;
 }
 
 const owners: Owner[] = [
-  {
-    name: "Jonathan",
-    tag: "Owner",
-    initials: "J",
-    gradient: "from-primary/30 to-primary/20",
-  },
-  {
-    name: "Sebas",
-    tag: "Owner",
-    initials: "S",
-    gradient: "from-primary/30 to-primary/20",
-  },
-  {
-    name: "bStive",
-    tag: "Owner",
-    initials: "B",
-    gradient: "from-primary/30 to-primary/20",
-  },
+  { name: "Jonathan", initials: "J", gradient: "from-primary/30 to-primary/20" },
+  { name: "Sebas", initials: "S", gradient: "from-primary/30 to-primary/20" },
+  { name: "bStive", initials: "B", gradient: "from-primary/30 to-primary/20" },
 ];
 
-function OwnerCard({ owner, index }: { owner: Owner; index: number }) {
+function OwnerCard({ owner, tag, index }: { owner: Owner; tag: string; index: number }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
@@ -64,7 +49,7 @@ function OwnerCard({ owner, index }: { owner: Owner; index: number }) {
 
           {/* Tag */}
           <span className="px-3 py-1 text-xs font-medium tracking-wider uppercase text-primary/80 bg-primary/10 rounded-full border border-primary/20">
-            {owner.tag}
+            {tag}
           </span>
 
           {/* Decorative line */}
@@ -79,6 +64,8 @@ function OwnerCard({ owner, index }: { owner: Owner; index: number }) {
 }
 
 export default function OwnersSection() {
+  const t = useTranslations("Owners");
+
   return (
     <section className="relative py-24 md:py-32 overflow-hidden">
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -91,7 +78,7 @@ export default function OwnersSection() {
           className="text-center mb-16"
         >
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            Los Fundadores
+            {t("titulo")}
           </h2>
           <div className="w-16 h-[2px] bg-primary/50 mx-auto rounded-full" />
         </motion.div>
@@ -99,7 +86,7 @@ export default function OwnersSection() {
         {/* Owners grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 items-start">
           {owners.map((owner, index) => (
-            <OwnerCard key={owner.name} owner={owner} index={index} />
+            <OwnerCard key={owner.name} owner={owner} tag={t("tag")} index={index} />
           ))}
         </div>
       </div>
