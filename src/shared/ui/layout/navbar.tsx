@@ -141,7 +141,7 @@ export default function Navbar() {
           {/* Right: User / Login (flex-1 para que ocupe espacio) */}
           <div className="flex-1 flex items-center justify-end">
             {user ? (
-              <div className="flex items-center gap-1 md:gap-2">
+              <div className="flex items-center gap-1 md:gap-2 ml-4 md:ml-8 lg:ml-12">
                 <button
                   onClick={(e) => e.preventDefault()}
                   title="Notificaciones"
