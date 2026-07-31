@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createAdminClient } from "@/infrastructure/auth/admin";
 
 // Solo para desarrollo local: evita tener que revisar el email real cada vez
 // que se prueba el registro. Nunca debe correr en producción — devolver un

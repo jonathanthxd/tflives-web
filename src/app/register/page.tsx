@@ -3,13 +3,14 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
-import { registerSchema, flattenZodErrors } from "@/lib/validations/auth";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { FormField } from "@/components/ui/form-field";
-import { OAuthButtons } from "@/components/auth/oauth-buttons";
-import HeroGlow from "@/components/effects/hero-glow";
+import { createClient } from "@/infrastructure/auth/client";
+import { registerSchema } from "@/modules/authentication/validation";
+import { flattenZodErrors } from "@/shared/validation/zod-helpers";
+import { Button } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
+import { FormField } from "@/shared/ui/form-field";
+import { OAuthButtons } from "@/modules/authentication/components/oauth-buttons";
+import HeroGlow from "@/shared/ui/effects/hero-glow";
 
 export default function RegisterPage() {
   const router = useRouter();

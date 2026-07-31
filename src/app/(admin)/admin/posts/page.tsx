@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/infrastructure/database/prisma";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
-import AdminSidebar from "@/components/layout/admin-sidebar";
-import { createClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/prisma";
+import AdminSidebar from "@/modules/administration/components/admin-sidebar";
+import { createClient } from "@/infrastructure/auth/server";
+import { prisma } from "@/infrastructure/database/prisma";
 
 export default async function AdminLayout({
   children,

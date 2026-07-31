@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { usernameSchema } from "@/lib/validations/auth";
+import { prisma } from "@/infrastructure/database/prisma";
+import { usernameSchema } from "@/modules/authentication/validation";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

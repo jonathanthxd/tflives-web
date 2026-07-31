@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/prisma";
+import { createClient } from "@/infrastructure/auth/server";
+import { prisma } from "@/infrastructure/database/prisma";
 
 export async function GET() {
   const supabase = await createClient();

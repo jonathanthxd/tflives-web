@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
-import { forgotPasswordSchema, flattenZodErrors } from "@/lib/validations/auth";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { FormField } from "@/components/ui/form-field";
-import HeroGlow from "@/components/effects/hero-glow";
+import { createClient } from "@/infrastructure/auth/client";
+import { forgotPasswordSchema } from "@/modules/authentication/validation";
+import { flattenZodErrors } from "@/shared/validation/zod-helpers";
+import { Button } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
+import { FormField } from "@/shared/ui/form-field";
+import HeroGlow from "@/shared/ui/effects/hero-glow";
 
 export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false);

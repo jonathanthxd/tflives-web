@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
-import { createClient } from "@/lib/supabase/server";
-import ProfileView from "@/components/profile/profile-view";
+import { prisma } from "@/infrastructure/database/prisma";
+import { createClient } from "@/infrastructure/auth/server";
+import ProfileView from "@/modules/profiles/components/profile-view";
 
 interface ProfilePageProps {
   params: Promise<{ username: string }>;

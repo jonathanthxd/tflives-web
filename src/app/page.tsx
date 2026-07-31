@@ -1,6 +1,6 @@
-import OwnersSection from "@/components/home/owners-section";
-import HeroGlow from "@/components/effects/hero-glow";
-import Reveal from "@/components/ui/reveal";
+import OwnersSection from "@/modules/administration/components/owners-section";
+import HeroGlow from "@/shared/ui/effects/hero-glow";
+import Reveal from "@/shared/ui/reveal";
 
 export default function Home() {
   return (

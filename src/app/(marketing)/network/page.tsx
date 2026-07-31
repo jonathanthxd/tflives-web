@@ -1,5 +1,5 @@
-import { prisma } from "@/lib/prisma";
-import PostCard from "@/components/network/post-card";
+import { prisma } from "@/infrastructure/database/prisma";
+import PostCard from "@/modules/editorial/components/post-card";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";

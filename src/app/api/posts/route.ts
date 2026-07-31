@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { postSchema } from "@/lib/validators";
-import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/infrastructure/database/prisma";
+import { postSchema } from "@/modules/editorial/validation";
+import { createClient } from "@/infrastructure/auth/server";
 
 export async function POST(request: Request) {
   const supabase = await createClient();

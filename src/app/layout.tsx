@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { GeistSans } from "geist/font/sans";
-import { ThemeProvider } from "@/components/theme-provider";
-import Navbar from "@/components/layout/navbar";
-import Footer from "@/components/layout/footer";
-import AmbientBackground from "@/components/effects/ambient-background";
-import DiscordWidget from "@/components/effects/discord-widget";
-import "./globals.css";
+import { ThemeProvider } from "@/providers/theme-provider";
+import Navbar from "@/shared/ui/layout/navbar";
+import Footer from "@/shared/ui/layout/footer";
+import AmbientBackground from "@/shared/ui/effects/ambient-background";
+import DiscordWidget from "@/shared/ui/effects/discord-widget";
+import { siteMetadata } from "@/config/site";
+import "@/styles/globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const spaceGrotesk = Space_Grotesk({
@@ -15,11 +16,7 @@ const spaceGrotesk = Space_Grotesk({
   weight: ["400", "500", "600", "700"],
 });
 
-export const metadata: Metadata = {
-  title: "TFLives — Gaming Network",
-  description:
-    "La red de servidores Minecraft más innovadora. SurvivalRPG, Skyblock, Gens Tycoon y más.",
-};
+export const metadata: Metadata = siteMetadata;
 
 export default function RootLayout({
   children,

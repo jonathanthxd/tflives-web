@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
-import { createClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/prisma";
-import { usernameSchema } from "@/lib/validations/auth";
+import { createClient } from "@/infrastructure/auth/server";
+import { prisma } from "@/infrastructure/database/prisma";
+import { usernameSchema } from "@/modules/authentication/validation";
 
 const ALLOWED_FIELDS = [
   "image",

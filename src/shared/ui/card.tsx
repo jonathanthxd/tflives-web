@@ -1,0 +1,16 @@
+import { cn } from "@/shared/utilities/utils";
+
+function Card({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card"
+      className={cn(
+        "rounded-2xl border border-border bg-card/50 backdrop-blur-sm text-card-foreground",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
+export { Card };

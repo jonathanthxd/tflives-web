@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { usernameSchema } from "@/lib/validations/auth";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { FormField } from "@/components/ui/form-field";
+import { usernameSchema } from "@/modules/authentication/validation";
+import { Button } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
+import { FormField } from "@/shared/ui/form-field";
 
 export default function UsernameOnboardingPage() {
   const router = useRouter();
