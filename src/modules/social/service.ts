@@ -20,6 +20,11 @@ async function findFriendship(userAId: string, userBId: string) {
   });
 }
 
+export async function areFriends(userAId: string, userBId: string) {
+  const friendship = await findFriendship(userAId, userBId);
+  return friendship?.status === "ACCEPTED";
+}
+
 export async function sendFriendRequest(requesterId: string, addresseeId: string) {
   if (requesterId === addresseeId) {
     throw new SocialError("No podés enviarte una solicitud a vos mismo");

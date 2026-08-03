@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { Card } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import ConfirmDialog from "@/shared/ui/confirm-dialog";
@@ -19,6 +19,7 @@ interface SocialStatus {
 
 export default function SocialCard({ username }: { username: string }) {
   const t = useTranslations("ProfilePlaceholders");
+  const router = useRouter();
   const [status, setStatus] = useState<SocialStatus | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -84,6 +85,23 @@ export default function SocialCard({ username }: { username: string }) {
     setConfirmingRemove(false);
   }
 
+  async function openConversation() {
+    setBusy(true);
+    setError("");
+    const res = await fetch("/api/messaging/conversations", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username }),
+    });
+    const data = await res.json().catch(() => ({}));
+    setBusy(false);
+    if (!res.ok) {
+      setError(data.error || t("errorGenerico"));
+      return;
+    }
+    router.push(`/mensajes?c=${data.conversation.id}`);
+  }
+
   async function toggleFollow() {
     setBusy(true);
     setError("");
@@ -147,11 +165,9 @@ export default function SocialCard({ username }: { username: string }) {
               <Button size="sm" variant="outline" onClick={() => setConfirmingRemove(true)} disabled={busy}>
                 {t("eliminarAmigo")}
               </Button>
-              <Link href="/mensajes">
-                <Button size="sm" variant="ghost">
-                  {t("mensaje")}
-                </Button>
-              </Link>
+              <Button size="sm" variant="ghost" onClick={openConversation} disabled={busy}>
+                {t("mensaje")}
+              </Button>
             </>
           )}
           <Button size="sm" variant={status.isFollowing ? "outline" : "default"} onClick={toggleFollow} disabled={busy}>

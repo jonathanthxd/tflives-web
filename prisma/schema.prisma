@@ -33,6 +33,12 @@ model User {
   followers               Follow[]                 @relation("Following")
   notifications           Notification[]
   notificationPreferences NotificationPreference[]
+
+  conversationParticipations ConversationParticipant[]
+  directMessages             DirectMessage[]
+  blocking                   Block[]                   @relation("Blocker")
+  blockedBy                  Block[]                   @relation("Blocked")
+  reportsMade                Report[]                  @relation("Reporter")
 }
 
 model Friendship {
@@ -94,6 +100,75 @@ enum FriendsListVisibility {
   PUBLIC
   FRIENDS_ONLY
   PRIVATE
+}
+
+model Conversation {
+  id           String                    @id @default(cuid())
+  isGroup      Boolean                   @default(false)
+  name         String?
+  createdById  String
+  createdAt    DateTime                  @default(now())
+  updatedAt    DateTime                  @updatedAt
+  participants ConversationParticipant[]
+  messages     DirectMessage[]
+}
+
+model ConversationParticipant {
+  id             String            @id @default(cuid())
+  conversationId String
+  conversation   Conversation      @relation(fields: [conversationId], references: [id])
+  userId         String
+  user           User              @relation(fields: [userId], references: [id])
+  role           ParticipantRole   @default(MEMBER)
+  status         ParticipantStatus @default(ACTIVE)
+  lastReadAt     DateTime?
+  joinedAt       DateTime          @default(now())
+
+  @@unique([conversationId, userId])
+}
+
+model DirectMessage {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  senderId       String
+  sender         User         @relation(fields: [senderId], references: [id])
+  content        String       @db.Text
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId, createdAt])
+}
+
+model Block {
+  id        String   @id @default(cuid())
+  blockerId String
+  blocker   User     @relation("Blocker", fields: [blockerId], references: [id])
+  blockedId String
+  blocked   User     @relation("Blocked", fields: [blockedId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([blockerId, blockedId])
+}
+
+model Report {
+  id         String   @id @default(cuid())
+  reporterId String
+  reporter   User     @relation("Reporter", fields: [reporterId], references: [id])
+  targetType String
+  targetId   String
+  reason     String   @db.Text
+  createdAt  DateTime @default(now())
+}
+
+enum ParticipantRole {
+  OWNER
+  MEMBER
+}
+
+enum ParticipantStatus {
+  ACTIVE
+  PENDING
+  LEFT
 }
 
 enum NotificationType {
