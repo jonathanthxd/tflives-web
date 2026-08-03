@@ -16,5 +16,9 @@ export async function GET(request: Request) {
     select: { id: true },
   });
 
-  return NextResponse.json({ available: !existing });
+  if (existing) {
+    return NextResponse.json({ available: false, error: "Este username ya está en uso" });
+  }
+
+  return NextResponse.json({ available: true });
 }

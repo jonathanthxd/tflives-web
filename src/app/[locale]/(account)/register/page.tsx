@@ -22,6 +22,7 @@ export default function RegisterPage() {
   const [passwordValue, setPasswordValue] = useState("");
   const [checkingUsername, setCheckingUsername] = useState(false);
   const [usernameTaken, setUsernameTaken] = useState(false);
+  const [usernameAvailable, setUsernameAvailable] = useState(false);
   const [registered, setRegistered] = useState(false);
 
   const passwordStrength = useMemo(() => {
@@ -49,8 +50,11 @@ export default function RegisterPage() {
       const res = await fetch(`/api/auth/check-username?username=${encodeURIComponent(username)}`);
       const data = await res.json();
       setUsernameTaken(!data.available);
+      setUsernameAvailable(!!data.available);
       if (!data.available && data.error) {
         setFieldErrors((prev) => ({ ...prev, username: data.error }));
+      } else {
+        setFieldErrors((prev) => ({ ...prev, username: "" }));
       }
     } catch {
       // Si falla el chequeo, no bloqueamos — la unicidad la garantiza la DB igual.
@@ -257,9 +261,18 @@ export default function RegisterPage() {
               placeholder="jonathanthxd"
               aria-invalid={!!fieldErrors.username}
               onBlur={(e) => handleUsernameBlur(e.target.value.toLowerCase())}
-              onChange={() => setUsernameTaken(false)}
+              onChange={() => {
+                setUsernameTaken(false);
+                setUsernameAvailable(false);
+                setFieldErrors((prev) => ({ ...prev, username: "" }));
+              }}
             />
-            {checkingUsername && <p className="mt-1.5 text-xs text-muted-foreground">{t("verificandoDisponibilidad")}</p>}
+            {checkingUsername && (
+              <p className="mt-1.5 text-xs text-muted-foreground">{t("verificandoDisponibilidad")}</p>
+            )}
+            {!checkingUsername && usernameAvailable && !fieldErrors.username && (
+              <p className="mt-1.5 text-xs text-emerald-600 dark:text-emerald-400">{t("usernameDisponible")}</p>
+            )}
           </FormField>
 
           <FormField label={tAuth("email")} htmlFor="email" error={fieldErrors.email}>

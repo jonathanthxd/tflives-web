@@ -18,6 +18,7 @@ export default function UsernameOnboardingPage() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [checkingUsername, setCheckingUsername] = useState(false);
   const [usernameTaken, setUsernameTaken] = useState(false);
+  const [usernameAvailable, setUsernameAvailable] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -49,8 +50,11 @@ export default function UsernameOnboardingPage() {
       );
       const data = await res.json();
       setUsernameTaken(!data.available);
+      setUsernameAvailable(!!data.available);
       if (!data.available && data.error) {
         setFieldErrors((prev) => ({ ...prev, username: data.error }));
+      } else {
+        setFieldErrors((prev) => ({ ...prev, username: "" }));
       }
     } catch {
       // Si falla el chequeo, no bloqueamos — la unicidad la garantiza la DB igual.
@@ -144,12 +148,18 @@ export default function UsernameOnboardingPage() {
               onBlur={(e) => handleUsernameBlur(e.target.value.toLowerCase())}
               onChange={() => {
                 setUsernameTaken(false);
+                setUsernameAvailable(false);
                 setFieldErrors((prev) => ({ ...prev, username: "" }));
               }}
             />
             {checkingUsername && (
               <p className="mt-1.5 text-xs text-muted-foreground">
                 {t("verificandoDisponibilidad")}
+              </p>
+            )}
+            {!checkingUsername && usernameAvailable && !fieldErrors.username && (
+              <p className="mt-1.5 text-xs text-emerald-600 dark:text-emerald-400">
+                {t("usernameDisponible")}
               </p>
             )}
           </FormField>

@@ -9,7 +9,17 @@
     "visibilidadNadie": "No one",
     "preferenciasNotificaciones": "Notification preferences",
     "enApp": "In app",
-    "enNavegador": "In browser"
+    "enNavegador": "In browser",
+    "categoria": {
+      "FRIEND_REQUEST": "Friend requests",
+      "FRIEND_ACCEPTED": "Accepted friendships",
+      "REPLY": "Replies",
+      "REACTION": "Reactions",
+      "MENTION": "Mentions",
+      "MESSAGE": "Messages",
+      "ACHIEVEMENT": "Achievements",
+      "POST_PUBLISHED": "Official announcements"
+    }
   },
   "Notifications": {
     "titulo": "Notifications",
@@ -97,6 +107,7 @@
     "apellido": "Last name",
     "username": "Username",
     "verificandoDisponibilidad": "Checking availability…",
+    "usernameDisponible": "Available!",
     "confirmarContrasena": "Confirm Password",
     "crearCuentaBoton": "Create Account",
     "creandoCuenta": "Creating account...",
@@ -139,6 +150,7 @@
     "titulo": "Choose your username",
     "subtitulo": "It's the name people will use to find you on your public profile.",
     "verificandoDisponibilidad": "Checking availability…",
+    "usernameDisponible": "Available!",
     "continuar": "Continue",
     "guardando": "Saving...",
     "usernameEnUso": "This username is already taken",

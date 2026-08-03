@@ -17,15 +17,16 @@ interface Preference {
 function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
   return (
     <button
+      type="button"
       role="switch"
       aria-checked={checked}
       onClick={() => onChange(!checked)}
-      className={`relative h-6 w-11 rounded-full transition-colors duration-200 ${
-        checked ? "bg-primary" : "bg-muted"
+      className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 ${
+        checked ? "bg-primary" : "bg-muted border border-muted-foreground/30"
       }`}
     >
       <span
-        className={`absolute top-0.5 h-5 w-5 rounded-full bg-background shadow-sm transition-transform duration-200 ${
+        className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-md transition-transform duration-200 ${
           checked ? "translate-x-5" : "translate-x-0.5"
         }`}
       />
@@ -35,7 +36,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
 
 export default function SettingsPage() {
   const t = useTranslations("Settings");
-  const tNotif = useTranslations("Notifications");
+  const tCategory = useTranslations("Settings.categoria");
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [allowFriendRequests, setAllowFriendRequests] = useState(true);
@@ -136,7 +137,7 @@ export default function SettingsPage() {
               const pref = preferences.find((p) => p.category === category);
               return (
                 <div key={category} className="flex items-center justify-between py-2 border-b border-border last:border-0">
-                  <span className="text-sm text-foreground">{tNotif(`message.${category}`)}</span>
+                  <span className="text-sm text-foreground">{tCategory(category)}</span>
                   <div className="flex items-center gap-4">
                     <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
                       {t("enApp")}

@@ -9,7 +9,17 @@
     "visibilidadNadie": "Nadie",
     "preferenciasNotificaciones": "Preferencias de notificaciones",
     "enApp": "En la app",
-    "enNavegador": "En el navegador"
+    "enNavegador": "En el navegador",
+    "categoria": {
+      "FRIEND_REQUEST": "Solicitudes de amistad",
+      "FRIEND_ACCEPTED": "Amistades aceptadas",
+      "REPLY": "Respuestas",
+      "REACTION": "Reacciones",
+      "MENTION": "Menciones",
+      "MESSAGE": "Mensajes",
+      "ACHIEVEMENT": "Logros",
+      "POST_PUBLISHED": "Novedades oficiales"
+    }
   },
   "Notifications": {
     "titulo": "Notificaciones",
@@ -97,6 +107,7 @@
     "apellido": "Apellido",
     "username": "Username",
     "verificandoDisponibilidad": "Verificando disponibilidad…",
+    "usernameDisponible": "¡Disponible!",
     "confirmarContrasena": "Confirmar Contraseña",
     "crearCuentaBoton": "Crear Cuenta",
     "creandoCuenta": "Creando cuenta...",
@@ -139,6 +150,7 @@
     "titulo": "Elegí tu username",
     "subtitulo": "Es el nombre con el que te van a encontrar en tu perfil público.",
     "verificandoDisponibilidad": "Verificando disponibilidad…",
+    "usernameDisponible": "¡Disponible!",
     "continuar": "Continuar",
     "guardando": "Guardando...",
     "usernameEnUso": "Este username ya está en uso",
