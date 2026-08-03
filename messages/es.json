@@ -1,4 +1,31 @@
 {
+  "Settings": {
+    "titulo": "Configuración",
+    "privacidad": "Privacidad",
+    "permitirSolicitudes": "Permitir solicitudes de amistad",
+    "visibilidadAmigos": "Quién puede ver mi lista de amigos",
+    "visibilidadTodos": "Todos",
+    "visibilidadSoloAmigos": "Solo amigos",
+    "visibilidadNadie": "Nadie",
+    "preferenciasNotificaciones": "Preferencias de notificaciones",
+    "enApp": "En la app",
+    "enNavegador": "En el navegador"
+  },
+  "Notifications": {
+    "titulo": "Notificaciones",
+    "marcarTodoLeido": "Marcar todo como leído",
+    "sinNotificaciones": "No tenés notificaciones todavía",
+    "message": {
+      "FRIEND_REQUEST": "te envió una solicitud de amistad",
+      "FRIEND_ACCEPTED": "aceptó tu solicitud de amistad",
+      "REPLY": "respondió tu comentario",
+      "REACTION": "reaccionó a tu contenido",
+      "MENTION": "te mencionó",
+      "MESSAGE": "te envió un mensaje",
+      "ACHIEVEMENT": "desbloqueaste un logro",
+      "POST_PUBLISHED": "publicó algo nuevo en TFL Network"
+    }
+  },
   "Navbar": {
     "streamers": "Streamers",
     "comunidad": "Comunidad",
@@ -28,6 +55,7 @@
     "miPerfil": "Mi perfil",
     "amigos": "Amigos",
     "suscripcion": "Suscripción",
+    "configuracion": "Configuración",
     "panelAdmin": "Panel Admin",
     "cerrarSesion": "Cerrar sesión"
   },
@@ -144,6 +172,13 @@
     "comunidad": "Comunidad",
     "amigos": "Amigos",
     "seguidores": "Seguidores",
+    "agregarAmigo": "Agregar amigo",
+    "solicitudEnviada": "Solicitud enviada",
+    "aceptarSolicitud": "Aceptar solicitud",
+    "rechazar": "Rechazar",
+    "sonAmigos": "Ya son amigos",
+    "seguir": "Seguir",
+    "dejarDeSeguir": "Dejar de seguir",
     "logros": "Logros e insignias",
     "nivel": "Nivel",
     "actividadReciente": "Actividad reciente",

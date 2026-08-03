@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/infrastructure/database/prisma";
 import { postSchema } from "@/modules/editorial/validation";
 import { createClient } from "@/infrastructure/auth/server";
+import { notifyPostPublished } from "@/modules/notifications/service";
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -42,6 +43,12 @@ export async function POST(request: Request) {
         authorId: user.id,
       },
     });
+
+    if (post.published) {
+      notifyPostPublished(post.id, user.id).catch((err) =>
+        console.error("Error notificando post publicado:", err)
+      );
+    }
 
     return NextResponse.json({ success: true, post }, { status: 201 });
   } catch (error) {

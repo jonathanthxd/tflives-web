@@ -7,6 +7,7 @@ import { useTheme } from "next-themes";
 import { createClient } from "@/infrastructure/auth/client";
 import AuthHeader from "@/shared/ui/layout/auth-header";
 import UserMenu from "@/shared/ui/layout/user-menu";
+import NotificationBell from "@/modules/notifications/components/notification-bell";
 
 const MINIMAL_HEADER_ROUTES = ["/login", "/register", "/forgot-password", "/reset-password"];
 
@@ -35,6 +36,7 @@ export default function Navbar() {
   const { resolvedTheme, setTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState<{
+    id: string;
     name: string | null;
     username: string | null;
     role: string;
@@ -49,6 +51,7 @@ export default function Navbar() {
       const data = await res.json();
       if (data.user) {
         setUser({
+          id: data.user.id,
           name: data.user.displayName || data.user.name || null,
           username: data.user.username || null,
           role: data.user.role,
@@ -154,15 +157,7 @@ export default function Navbar() {
           <div className="flex-1 flex items-center justify-end">
             {user ? (
               <div className="flex items-center gap-1 md:gap-2 ml-4 md:ml-8 lg:ml-12">
-                <button
-                  onClick={(e) => e.preventDefault()}
-                  title={t("notificaciones")}
-                  className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300 hidden sm:inline-flex"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                  </svg>
-                </button>
+                <NotificationBell userId={user.id} />
                 <button
                   onClick={(e) => e.preventDefault()}
                   title={t("mensajes")}

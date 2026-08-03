@@ -1,4 +1,31 @@
 {
+  "Settings": {
+    "titulo": "Settings",
+    "privacidad": "Privacy",
+    "permitirSolicitudes": "Allow friend requests",
+    "visibilidadAmigos": "Who can see my friends list",
+    "visibilidadTodos": "Everyone",
+    "visibilidadSoloAmigos": "Friends only",
+    "visibilidadNadie": "No one",
+    "preferenciasNotificaciones": "Notification preferences",
+    "enApp": "In app",
+    "enNavegador": "In browser"
+  },
+  "Notifications": {
+    "titulo": "Notifications",
+    "marcarTodoLeido": "Mark all as read",
+    "sinNotificaciones": "You don't have any notifications yet",
+    "message": {
+      "FRIEND_REQUEST": "sent you a friend request",
+      "FRIEND_ACCEPTED": "accepted your friend request",
+      "REPLY": "replied to your comment",
+      "REACTION": "reacted to your content",
+      "MENTION": "mentioned you",
+      "MESSAGE": "sent you a message",
+      "ACHIEVEMENT": "unlocked an achievement",
+      "POST_PUBLISHED": "posted something new on TFL Network"
+    }
+  },
   "Navbar": {
     "streamers": "Streamers",
     "comunidad": "Community",
@@ -28,6 +55,7 @@
     "miPerfil": "My profile",
     "amigos": "Friends",
     "suscripcion": "Subscription",
+    "configuracion": "Settings",
     "panelAdmin": "Admin Panel",
     "cerrarSesion": "Log out"
   },
@@ -144,6 +172,13 @@
     "comunidad": "Community",
     "amigos": "Friends",
     "seguidores": "Followers",
+    "agregarAmigo": "Add friend",
+    "solicitudEnviada": "Request sent",
+    "aceptarSolicitud": "Accept request",
+    "rechazar": "Decline",
+    "sonAmigos": "Already friends",
+    "seguir": "Follow",
+    "dejarDeSeguir": "Unfollow",
     "logros": "Achievements & badges",
     "nivel": "Level",
     "actividadReciente": "Recent activity",

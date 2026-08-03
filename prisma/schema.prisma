@@ -8,21 +8,103 @@ datasource db {
 }
 
 model User {
-  id            String    @id
-  email         String    @unique
-  name          String?
-  displayName   String?   @map("display_name")
-  username      String?   @unique
-  emailVerified Boolean   @default(false) @map("email_verified")
-  image         String?
-  bannerUrl     String?   @map("banner_url")
-  bio           String?   @db.Text
-  minecraftUsername String? @map("minecraft_username")
-  socialLinks   Json?     @map("social_links")
-  role          Role      @default(USER)
-  messages      Message[]
-  posts         Post[]
-  createdAt     DateTime  @default(now())
+  id                String    @id
+  email             String    @unique
+  name              String?
+  displayName       String?   @map("display_name")
+  username          String?   @unique
+  emailVerified     Boolean   @default(false) @map("email_verified")
+  image             String?
+  bannerUrl         String?   @map("banner_url")
+  bio               String?   @db.Text
+  minecraftUsername String?   @map("minecraft_username")
+  socialLinks       Json?     @map("social_links")
+  role              Role      @default(USER)
+  messages          Message[]
+  posts             Post[]
+  createdAt         DateTime  @default(now())
+
+  allowFriendRequests   Boolean               @default(true) @map("allow_friend_requests")
+  friendsListVisibility FriendsListVisibility @default(PUBLIC) @map("friends_list_visibility")
+
+  sentFriendRequests      Friendship[]             @relation("FriendshipRequester")
+  receivedFriendRequests  Friendship[]             @relation("FriendshipAddressee")
+  following               Follow[]                 @relation("Follower")
+  followers               Follow[]                 @relation("Following")
+  notifications           Notification[]
+  notificationPreferences NotificationPreference[]
+}
+
+model Friendship {
+  id          String           @id @default(cuid())
+  requesterId String
+  requester   User             @relation("FriendshipRequester", fields: [requesterId], references: [id])
+  addresseeId String
+  addressee   User             @relation("FriendshipAddressee", fields: [addresseeId], references: [id])
+  status      FriendshipStatus @default(PENDING)
+  createdAt   DateTime         @default(now())
+  respondedAt DateTime?
+
+  @@unique([requesterId, addresseeId])
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  follower    User     @relation("Follower", fields: [followerId], references: [id])
+  followingId String
+  following   User     @relation("Following", fields: [followingId], references: [id])
+  createdAt   DateTime @default(now())
+
+  @@unique([followerId, followingId])
+}
+
+model Notification {
+  id         String           @id @default(cuid())
+  userId     String
+  user       User             @relation(fields: [userId], references: [id])
+  type       NotificationType
+  actorId    String?
+  entityType String?
+  entityId   String?
+  read       Boolean          @default(false)
+  createdAt  DateTime         @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model NotificationPreference {
+  id             String           @id @default(cuid())
+  userId         String
+  user           User             @relation(fields: [userId], references: [id])
+  category       NotificationType
+  inAppEnabled   Boolean          @default(true)
+  browserEnabled Boolean          @default(true)
+
+  @@unique([userId, category])
+}
+
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+enum FriendsListVisibility {
+  PUBLIC
+  FRIENDS_ONLY
+  PRIVATE
+}
+
+enum NotificationType {
+  FRIEND_REQUEST
+  FRIEND_ACCEPTED
+  REPLY
+  REACTION
+  MENTION
+  MESSAGE
+  ACHIEVEMENT
+  POST_PUBLISHED
 }
 
 model Post {
@@ -43,8 +125,8 @@ model Post {
 }
 
 model Modality {
-  id          String @id @default(cuid())
-  name        String @unique
+  id          String  @id @default(cuid())
+  name        String  @unique
   description String?
   icon        String?
   posts       Post[]

@@ -9,7 +9,7 @@ import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Card } from "@/shared/ui/card";
 import Reveal from "@/shared/ui/reveal";
-import FriendsPlaceholder from "@/modules/social/components/friends-placeholder";
+import SocialCard from "@/modules/social/components/social-card";
 import BadgesPlaceholder from "@/modules/achievements/components/badges-placeholder";
 import RecentActivityPlaceholder from "@/modules/community/components/recent-activity-placeholder";
 import CosmeticsPlaceholder from "@/modules/cosmetics/components/cosmetics-placeholder";
@@ -369,7 +369,7 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
         {!editing && (
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
             <Reveal delay={0.05}>
-              <FriendsPlaceholder />
+              <SocialCard username={current.username!} />
             </Reveal>
 
             <Reveal delay={0.15}>
