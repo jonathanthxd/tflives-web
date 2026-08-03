@@ -49,7 +49,7 @@ export async function createNotification({
  * de "seguir contenido" todavía, así que por ahora es un anuncio global — ver
  * spec docs/superpowers/specs/2026-08-03-social-notifications-design.md.
  */
-export async function notifyPostPublished(postId: string, authorId: string) {
+export async function notifyPostPublished(postSlug: string, authorId: string) {
   const users = await prisma.user.findMany({
     where: { id: { not: authorId } },
     select: { id: true },
@@ -62,7 +62,7 @@ export async function notifyPostPublished(postId: string, authorId: string) {
         type: "POST_PUBLISHED",
         actorId: authorId,
         entityType: "Post",
-        entityId: postId,
+        entityId: postSlug,
       })
     )
   );

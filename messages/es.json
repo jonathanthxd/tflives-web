@@ -25,6 +25,7 @@
     "titulo": "Notificaciones",
     "marcarTodoLeido": "Marcar todo como leído",
     "sinNotificaciones": "No tenés notificaciones todavía",
+    "cerrar": "Cerrar",
     "message": {
       "FRIEND_REQUEST": "te envió una solicitud de amistad",
       "FRIEND_ACCEPTED": "aceptó tu solicitud de amistad",
@@ -188,7 +189,10 @@
     "solicitudEnviada": "Solicitud enviada",
     "aceptarSolicitud": "Aceptar solicitud",
     "rechazar": "Rechazar",
-    "sonAmigos": "Ya son amigos",
+    "eliminarAmigo": "Eliminar amigo",
+    "cancelar": "Cancelar",
+    "confirmarEliminarTitulo": "¿Eliminar a este amigo?",
+    "confirmarEliminarDescripcion": "Van a dejar de ser amigos. Podés volver a enviarle una solicitud más adelante si cambiás de idea.",
     "mensaje": "Mensaje",
     "seguir": "Seguir",
     "dejarDeSeguir": "Dejar de seguir",
@@ -196,7 +200,8 @@
     "nivel": "Nivel",
     "actividadReciente": "Actividad reciente",
     "sinActividad": "Sin actividad todavía.",
-    "cosmeticos": "Cosméticos"
+    "cosmeticos": "Cosméticos",
+    "errorGenerico": "No se pudo completar la acción"
   },
   "FriendsPage": {
     "titulo": "Amigos",
@@ -214,7 +219,8 @@
     "aceptar": "Aceptar",
     "rechazar": "Rechazar",
     "cancelar": "Cancelar",
-    "mensaje": "Mensaje"
+    "mensaje": "Mensaje",
+    "errorGenerico": "No se pudo completar la acción"
   },
   "MessagesPage": {
     "titulo": "Mensajes",

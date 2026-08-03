@@ -8,6 +8,7 @@ import { createClient } from "@/infrastructure/auth/client";
 import AuthHeader from "@/shared/ui/layout/auth-header";
 import UserMenu from "@/shared/ui/layout/user-menu";
 import NotificationBell from "@/modules/notifications/components/notification-bell";
+import NotificationToasts from "@/modules/notifications/components/notification-toasts";
 
 const MINIMAL_HEADER_ROUTES = ["/login", "/register", "/forgot-password", "/reset-password"];
 
@@ -158,6 +159,7 @@ export default function Navbar() {
             {user ? (
               <div className="flex items-center gap-1 md:gap-2 ml-4 md:ml-8 lg:ml-12">
                 <NotificationBell userId={user.id} />
+                <NotificationToasts />
                 <Link
                   href="/mensajes"
                   title={t("mensajes")}

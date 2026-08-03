@@ -25,6 +25,7 @@
     "titulo": "Notifications",
     "marcarTodoLeido": "Mark all as read",
     "sinNotificaciones": "You don't have any notifications yet",
+    "cerrar": "Close",
     "message": {
       "FRIEND_REQUEST": "sent you a friend request",
       "FRIEND_ACCEPTED": "accepted your friend request",
@@ -188,7 +189,10 @@
     "solicitudEnviada": "Request sent",
     "aceptarSolicitud": "Accept request",
     "rechazar": "Decline",
-    "sonAmigos": "Already friends",
+    "eliminarAmigo": "Remove friend",
+    "cancelar": "Cancel",
+    "confirmarEliminarTitulo": "Remove this friend?",
+    "confirmarEliminarDescripcion": "You'll no longer be friends. You can always send another request later if you change your mind.",
     "mensaje": "Message",
     "seguir": "Follow",
     "dejarDeSeguir": "Unfollow",
@@ -196,7 +200,8 @@
     "nivel": "Level",
     "actividadReciente": "Recent activity",
     "sinActividad": "No activity yet.",
-    "cosmeticos": "Cosmetics"
+    "cosmeticos": "Cosmetics",
+    "errorGenerico": "Couldn't complete the action"
   },
   "FriendsPage": {
     "titulo": "Friends",
@@ -214,7 +219,8 @@
     "aceptar": "Accept",
     "rechazar": "Decline",
     "cancelar": "Cancel",
-    "mensaje": "Message"
+    "mensaje": "Message",
+    "errorGenerico": "Couldn't complete the action"
   },
   "MessagesPage": {
     "titulo": "Messages",

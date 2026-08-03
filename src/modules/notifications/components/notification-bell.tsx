@@ -2,7 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { createClient } from "@/infrastructure/auth/client";
+import { getNotificationHref } from "@/modules/notifications/links";
+import { publishNotificationToast } from "@/modules/notifications/toast-store";
 
 interface Actor {
   id: string;
@@ -17,6 +20,8 @@ interface NotificationItem {
   type: string;
   read: boolean;
   createdAt: string;
+  entityType: string | null;
+  entityId: string | null;
   actor: Actor | null;
 }
 
@@ -67,13 +72,30 @@ export default function NotificationBell({ userId }: { userId: string }) {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "Notification", filter: `userId=eq.${userId}` },
         async (payload) => {
-          const row = payload.new as { id: string; type: string; createdAt: string };
+          const row = payload.new as {
+            id: string;
+            type: string;
+            createdAt: string;
+            entityType: string | null;
+            entityId: string | null;
+          };
 
           setUnreadCount((c) => c + 1);
           // Refetch para traer el actor resuelto (el payload de Realtime solo trae actorId).
           fetch("/api/notifications")
             .then((res) => res.json())
-            .then((data) => setItems(data.notifications || []));
+            .then((data) => {
+              const fresh: NotificationItem[] = data.notifications || [];
+              setItems(fresh);
+              const inserted = fresh.find((n) => n.id === row.id);
+              publishNotificationToast({
+                id: row.id,
+                type: row.type,
+                actorName: inserted ? actorName(inserted.actor) : null,
+                entityType: row.entityType,
+                entityId: row.entityId,
+              });
+            });
 
           if (
             typeof Notification !== "undefined" &&
@@ -159,23 +181,45 @@ export default function NotificationBell({ userId }: { userId: string }) {
           {items.length === 0 ? (
             <p className="px-3 py-6 text-center text-sm text-muted-foreground">{t("sinNotificaciones")}</p>
           ) : (
-            items.map((n) => (
-              <button
-                key={n.id}
-                onClick={() => !n.read && markRead(n.id)}
-                className={`flex w-full flex-col items-start gap-0.5 px-3 py-2.5 rounded-xl text-left text-sm transition-colors ${
-                  n.read ? "text-muted-foreground hover:bg-primary/5" : "text-foreground bg-primary/5 hover:bg-primary/10"
-                }`}
-              >
-                <span>
-                  {actorName(n.actor) ? `${actorName(n.actor)} — ` : ""}
-                  {t(`message.${n.type}`)}
-                </span>
-                <span className="text-xs text-muted-foreground/60">
-                  {new Date(n.createdAt).toLocaleString(locale)}
-                </span>
-              </button>
-            ))
+            items.map((n) => {
+              const href = getNotificationHref(n);
+              const itemClassName = `flex w-full flex-col items-start gap-0.5 px-3 py-2.5 rounded-xl text-left text-sm transition-colors ${
+                n.read ? "text-muted-foreground hover:bg-primary/5" : "text-foreground bg-primary/5 hover:bg-primary/10"
+              }`;
+              const content = (
+                <>
+                  <span>
+                    {actorName(n.actor) ? `${actorName(n.actor)} — ` : ""}
+                    {t(`message.${n.type}`)}
+                  </span>
+                  <span className="text-xs text-muted-foreground/60">
+                    {new Date(n.createdAt).toLocaleString(locale)}
+                  </span>
+                </>
+              );
+
+              if (href) {
+                return (
+                  <Link
+                    key={n.id}
+                    href={href}
+                    onClick={() => {
+                      if (!n.read) markRead(n.id);
+                      setOpen(false);
+                    }}
+                    className={itemClassName}
+                  >
+                    {content}
+                  </Link>
+                );
+              }
+
+              return (
+                <button key={n.id} onClick={() => !n.read && markRead(n.id)} className={itemClassName}>
+                  {content}
+                </button>
+              );
+            })
           )}
         </div>
       )}

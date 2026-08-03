@@ -45,7 +45,7 @@ export async function POST(request: Request) {
     });
 
     if (post.published) {
-      notifyPostPublished(post.id, user.id).catch((err) =>
+      notifyPostPublished(post.slug, user.id).catch((err) =>
         console.error("Error notificando post publicado:", err)
       );
     }

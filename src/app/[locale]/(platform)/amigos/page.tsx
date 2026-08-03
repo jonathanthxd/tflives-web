@@ -65,6 +65,7 @@ export default function FriendsPage() {
   const [results, setResults] = useState<PersonSummary[]>([]);
   const [searching, setSearching] = useState(false);
   const [sentUsernames, setSentUsernames] = useState<Set<string>>(new Set());
+  const [error, setError] = useState("");
 
   async function loadOverview() {
     const res = await fetch("/api/social/friends");
@@ -100,30 +101,46 @@ export default function FriendsPage() {
   }, [query]);
 
   async function sendRequest(username: string) {
-    setSentUsernames((prev) => new Set(prev).add(username));
-    await fetch("/api/social/friends", {
+    setError("");
+    const res = await fetch("/api/social/friends", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username }),
     });
+    if (res.ok) {
+      setSentUsernames((prev) => new Set(prev).add(username));
+    } else {
+      const data = await res.json().catch(() => ({}));
+      setError(data.error || t("errorGenerico"));
+    }
     loadOverview();
   }
 
   async function respond(friendshipId: string, action: "accept" | "decline") {
-    await fetch("/api/social/friends", {
+    setError("");
+    const res = await fetch("/api/social/friends", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ friendshipId, action }),
     });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setError(data.error || t("errorGenerico"));
+    }
     loadOverview();
   }
 
   async function cancelRequest(friendshipId: string) {
-    await fetch("/api/social/friends", {
+    setError("");
+    const res = await fetch("/api/social/friends", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ friendshipId }),
     });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setError(data.error || t("errorGenerico"));
+    }
     loadOverview();
   }
 
@@ -139,6 +156,12 @@ export default function FriendsPage() {
     <main className="min-h-screen pt-24 pb-16 px-4">
       <div className="max-w-2xl mx-auto space-y-6">
         <h1 className="font-display text-2xl font-bold text-foreground">{t("titulo")}</h1>
+
+        {error && (
+          <div role="alert" className="p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive text-sm">
+            {error}
+          </div>
+        )}
 
         <Card className="p-6">
           <Input
