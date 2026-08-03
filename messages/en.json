@@ -189,6 +189,7 @@
     "aceptarSolicitud": "Accept request",
     "rechazar": "Decline",
     "sonAmigos": "Already friends",
+    "mensaje": "Message",
     "seguir": "Follow",
     "dejarDeSeguir": "Unfollow",
     "logros": "Achievements & badges",
@@ -196,6 +197,32 @@
     "actividadReciente": "Recent activity",
     "sinActividad": "No activity yet.",
     "cosmeticos": "Cosmetics"
+  },
+  "FriendsPage": {
+    "titulo": "Friends",
+    "buscarPlaceholder": "Search by username or name...",
+    "resultados": "Results",
+    "sinResultados": "We couldn't find anyone with that name.",
+    "solicitudesRecibidas": "Received requests",
+    "sinSolicitudesRecibidas": "You don't have any pending requests.",
+    "solicitudesEnviadas": "Sent requests",
+    "sinSolicitudesEnviadas": "You haven't sent any requests.",
+    "tusAmigos": "Your friends",
+    "sinAmigos": "You don't have any friends yet — search for someone above to get started.",
+    "agregar": "Add",
+    "solicitudEnviada": "Request sent",
+    "aceptar": "Accept",
+    "rechazar": "Decline",
+    "cancelar": "Cancel",
+    "mensaje": "Message"
+  },
+  "MessagesPage": {
+    "titulo": "Messages",
+    "proximamente": "Chat coming soon",
+    "descripcion": "Soon you'll be able to chat here with your friends.",
+    "elegiAmigo": "Pick a friend from the list to get started",
+    "sinAmigos": "Add friends to be able to chat with them.",
+    "irAAmigos": "Find friends"
   },
   "Network": {
     "titulo": "TFL Network",

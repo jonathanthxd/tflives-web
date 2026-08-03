@@ -3,6 +3,9 @@ import { createClient } from "@/infrastructure/auth/server";
 import { prisma } from "@/infrastructure/database/prisma";
 import {
   SocialError,
+  cancelFriendRequest,
+  getFriendRequests,
+  listFriends,
   removeFriendship,
   respondToFriendRequest,
   sendFriendRequest,
@@ -14,6 +17,18 @@ async function requireUser() {
     data: { user: authUser },
   } = await supabase.auth.getUser();
   return authUser;
+}
+
+export async function GET() {
+  const authUser = await requireUser();
+  if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+
+  const [friends, requests] = await Promise.all([
+    listFriends(authUser.id),
+    getFriendRequests(authUser.id),
+  ]);
+
+  return NextResponse.json({ friends, ...requests });
 }
 
 export async function POST(request: Request) {
@@ -61,13 +76,18 @@ export async function DELETE(request: Request) {
   const authUser = await requireUser();
   if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
-  const { username } = await request.json().catch(() => ({}));
-  if (!username) return NextResponse.json({ error: "Falta username" }, { status: 400 });
-
-  const target = await prisma.user.findUnique({ where: { username }, select: { id: true } });
-  if (!target) return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 });
+  const { username, friendshipId } = await request.json().catch(() => ({}));
 
   try {
+    if (friendshipId) {
+      await cancelFriendRequest(authUser.id, friendshipId);
+      return NextResponse.json({ ok: true });
+    }
+
+    if (!username) return NextResponse.json({ error: "Falta username" }, { status: 400 });
+    const target = await prisma.user.findUnique({ where: { username }, select: { id: true } });
+    if (!target) return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 });
+
     await removeFriendship(authUser.id, target.id);
     return NextResponse.json({ ok: true });
   } catch (error) {

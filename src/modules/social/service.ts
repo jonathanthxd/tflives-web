@@ -92,6 +92,62 @@ export async function removeFriendship(userId: string, otherUserId: string) {
   await prisma.friendship.delete({ where: { id: friendship.id } });
 }
 
+/** Cancela una solicitud PENDING que el propio usuario envió. */
+export async function cancelFriendRequest(requesterId: string, friendshipId: string) {
+  const friendship = await prisma.friendship.findUnique({ where: { id: friendshipId } });
+  if (!friendship || friendship.requesterId !== requesterId || friendship.status !== "PENDING") {
+    throw new SocialError("No se puede cancelar esta solicitud", 404);
+  }
+  await prisma.friendship.delete({ where: { id: friendshipId } });
+}
+
+export async function getFriendRequests(userId: string) {
+  const [received, sent] = await Promise.all([
+    prisma.friendship.findMany({
+      where: { addresseeId: userId, status: "PENDING" },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.friendship.findMany({
+      where: { requesterId: userId, status: "PENDING" },
+      orderBy: { createdAt: "desc" },
+    }),
+  ]);
+
+  const otherIds = [
+    ...received.map((f) => f.requesterId),
+    ...sent.map((f) => f.addresseeId),
+  ];
+  const users = otherIds.length
+    ? await prisma.user.findMany({
+        where: { id: { in: otherIds } },
+        select: { id: true, username: true, displayName: true, name: true, image: true },
+      })
+    : [];
+  const usersById = new Map(users.map((u) => [u.id, u]));
+
+  return {
+    received: received.map((f) => ({ friendshipId: f.id, user: usersById.get(f.requesterId) ?? null })),
+    sent: sent.map((f) => ({ friendshipId: f.id, user: usersById.get(f.addresseeId) ?? null })),
+  };
+}
+
+export async function searchUsers(query: string, excludeUserId: string) {
+  if (!query || query.trim().length < 2) return [];
+  return prisma.user.findMany({
+    where: {
+      id: { not: excludeUserId },
+      OR: [
+        { username: { contains: query, mode: "insensitive" } },
+        { displayName: { contains: query, mode: "insensitive" } },
+        { name: { contains: query, mode: "insensitive" } },
+      ],
+      username: { not: null },
+    },
+    select: { id: true, username: true, displayName: true, name: true, image: true },
+    take: 20,
+  });
+}
+
 export async function follow(followerId: string, followingId: string) {
   if (followerId === followingId) {
     throw new SocialError("No podés seguirte a vos mismo");

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { Card } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 
@@ -116,9 +117,16 @@ export default function SocialCard({ username }: { username: string }) {
             </>
           )}
           {status.friendship.status === "FRIENDS" && (
-            <Button size="sm" variant="outline" onClick={removeFriend} disabled={busy}>
-              {t("sonAmigos")}
-            </Button>
+            <>
+              <Button size="sm" variant="outline" onClick={removeFriend} disabled={busy}>
+                {t("sonAmigos")}
+              </Button>
+              <Link href="/mensajes">
+                <Button size="sm" variant="ghost">
+                  {t("mensaje")}
+                </Button>
+              </Link>
+            </>
           )}
           <Button size="sm" variant={status.isFollowing ? "outline" : "default"} onClick={toggleFollow} disabled={busy}>
             {status.isFollowing ? t("dejarDeSeguir") : t("seguir")}

@@ -189,6 +189,7 @@
     "aceptarSolicitud": "Aceptar solicitud",
     "rechazar": "Rechazar",
     "sonAmigos": "Ya son amigos",
+    "mensaje": "Mensaje",
     "seguir": "Seguir",
     "dejarDeSeguir": "Dejar de seguir",
     "logros": "Logros e insignias",
@@ -196,6 +197,32 @@
     "actividadReciente": "Actividad reciente",
     "sinActividad": "Sin actividad todavía.",
     "cosmeticos": "Cosméticos"
+  },
+  "FriendsPage": {
+    "titulo": "Amigos",
+    "buscarPlaceholder": "Buscar por username o nombre...",
+    "resultados": "Resultados",
+    "sinResultados": "No encontramos a nadie con ese nombre.",
+    "solicitudesRecibidas": "Solicitudes recibidas",
+    "sinSolicitudesRecibidas": "No tenés solicitudes pendientes.",
+    "solicitudesEnviadas": "Solicitudes enviadas",
+    "sinSolicitudesEnviadas": "No enviaste ninguna solicitud.",
+    "tusAmigos": "Tus amigos",
+    "sinAmigos": "Todavía no tenés amigos — buscá a alguien arriba para empezar.",
+    "agregar": "Agregar",
+    "solicitudEnviada": "Solicitud enviada",
+    "aceptar": "Aceptar",
+    "rechazar": "Rechazar",
+    "cancelar": "Cancelar",
+    "mensaje": "Mensaje"
+  },
+  "MessagesPage": {
+    "titulo": "Mensajes",
+    "proximamente": "Chat próximamente",
+    "descripcion": "Muy pronto vas a poder chatear acá con tus amigos.",
+    "elegiAmigo": "Elegí un amigo de la lista para empezar",
+    "sinAmigos": "Agregá amigos para poder chatear con ellos.",
+    "irAAmigos": "Buscar amigos"
   },
   "Network": {
     "titulo": "TFL Network",
