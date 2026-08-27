@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
+import { Users, UserPlus2 } from "lucide-react";
 import { Card } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import ConfirmDialog from "@/shared/ui/confirm-dialog";
@@ -119,19 +120,21 @@ export default function SocialCard({ username }: { username: string }) {
   }
 
   return (
-    <Card className="p-6 h-full">
-      <div className="mb-4">
+    <Card className="p-6 h-full relative overflow-hidden">
+      <div aria-hidden className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-primary/10 blur-2xl" />
+      <div className="relative mb-5 flex items-center gap-2">
+        <Users className="h-4 w-4 text-primary" strokeWidth={1.75} />
         <h2 className="font-display text-sm font-semibold text-foreground uppercase tracking-wide">
           {t("comunidad")}
         </h2>
       </div>
-      <div className="flex gap-6 text-sm mb-4">
+      <div className="relative flex gap-8 text-sm mb-5">
         <div>
-          <p className="text-lg font-bold text-foreground">{status?.friendCount ?? 0}</p>
+          <p className="font-display text-2xl font-bold text-foreground">{status?.friendCount ?? 0}</p>
           <p className="text-muted-foreground">{t("amigos")}</p>
         </div>
         <div>
-          <p className="text-lg font-bold text-foreground">{status?.followerCount ?? 0}</p>
+          <p className="font-display text-2xl font-bold text-foreground">{status?.followerCount ?? 0}</p>
           <p className="text-muted-foreground">{t("seguidores")}</p>
         </div>
       </div>
@@ -139,9 +142,10 @@ export default function SocialCard({ username }: { username: string }) {
       {error && <p className="text-xs text-destructive mb-2">{error}</p>}
 
       {status && !status.isOwner && (
-        <div className="flex flex-wrap gap-2">
+        <div className="relative flex flex-wrap gap-2">
           {status.friendship.status === "NONE" && (
             <Button size="sm" onClick={sendRequest} disabled={busy}>
+              <UserPlus2 className="h-3.5 w-3.5" strokeWidth={2} data-icon="inline-start" />
               {t("agregarAmigo")}
             </Button>
           )}

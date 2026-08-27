@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { Shirt } from "lucide-react";
 import { Card } from "@/shared/ui/card";
 
 /**
@@ -12,19 +13,21 @@ export default function CosmeticsPlaceholder() {
 
   return (
     <Card className="p-6 h-full">
-      <div className="mb-4">
+      <div className="mb-4 flex items-center gap-2">
+        <Shirt className="h-4 w-4 text-primary" strokeWidth={1.75} />
         <h2 className="font-display text-sm font-semibold text-foreground uppercase tracking-wide">
           {t("cosmeticos")}
         </h2>
       </div>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 gap-2 mb-3">
         {[0, 1, 2].map((i) => (
           <div
             key={i}
-            className="aspect-square rounded-lg border border-border bg-primary/5"
+            className="aspect-square rounded-lg border border-dashed border-border bg-primary/5"
           />
         ))}
       </div>
+      <p className="text-xs text-muted-foreground leading-relaxed">{t("cosmeticosProximamente")}</p>
     </Card>
   );
 }

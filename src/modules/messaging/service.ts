@@ -1,6 +1,7 @@
 import { prisma } from "@/infrastructure/database/prisma";
 import { createNotification } from "@/modules/notifications/service";
 import { areFriends } from "@/modules/social/service";
+import { getActiveBanOrSuspension, isMuted } from "@/modules/administration/sanctions";
 
 export class MessagingError extends Error {
   status: number;
@@ -120,6 +121,9 @@ export async function sendMessage(conversationId: string, senderId: string, cont
   if (!trimmed) throw new MessagingError("El mensaje no puede estar vacío");
   if (trimmed.length > 4000) throw new MessagingError("El mensaje es demasiado largo");
 
+  const activeBan = await getActiveBanOrSuspension(senderId);
+  if (activeBan) throw new MessagingError("Tu cuenta está suspendida", 403);
+  if (await isMuted(senderId)) throw new MessagingError("Tenés el chat silenciado", 403);
   await requireParticipant(conversationId, senderId);
 
   const message = await prisma.$transaction(async (tx) => {

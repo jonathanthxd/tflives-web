@@ -1,21 +1,17 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 
-interface Owner {
+interface TeamMember {
+  id: string;
   name: string;
-  initials: string;
-  gradient: string;
+  roleTitle: string;
+  avatarUrl: string | null;
 }
 
-const owners: Owner[] = [
-  { name: "Jonathan", initials: "J", gradient: "from-primary/30 to-primary/20" },
-  { name: "Sebas", initials: "S", gradient: "from-primary/30 to-primary/20" },
-  { name: "bStive", initials: "B", gradient: "from-primary/30 to-primary/20" },
-];
-
-function OwnerCard({ owner, tag, index }: { owner: Owner; tag: string; index: number }) {
+function OwnerCard({ member, index }: { member: TeamMember; index: number }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
@@ -28,28 +24,29 @@ function OwnerCard({ owner, tag, index }: { owner: Owner; tag: string; index: nu
       <div className="relative w-full max-w-[280px]">
         {/* Glow effect behind */}
         <div className="absolute inset-0 bg-primary/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        
+
         {/* Card container - glassmorphism para ver el silk detrás */}
         <div className="relative bg-card/60 backdrop-blur-md border border-primary/10 rounded-2xl p-8 flex flex-col items-center transition-all duration-500 group-hover:-translate-y-3 group-hover:border-primary/30 group-hover:shadow-[0_0_40px_hsl(var(--primary)/0.1)]">
-          
+
           {/* Avatar circle */}
-          <div className={`relative w-24 h-24 rounded-full bg-gradient-to-br ${owner.gradient} border-2 border-primary/20 flex items-center justify-center mb-5 group-hover:border-primary/50 group-hover:shadow-[0_0_20px_hsl(var(--primary)/0.2)] transition-all duration-500`}>
-            <span className="font-display text-3xl font-bold text-foreground/90">
-              {owner.initials}
-            </span>
-            
-            {/* Online dot */}
-            <div className="absolute bottom-1 right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-background" />
+          <div className="relative w-24 h-24 rounded-full bg-gradient-to-br from-primary/30 to-primary/20 border-2 border-primary/20 flex items-center justify-center mb-5 overflow-hidden group-hover:border-primary/50 group-hover:shadow-[0_0_20px_hsl(var(--primary)/0.2)] transition-all duration-500">
+            {member.avatarUrl ? (
+              <img src={member.avatarUrl} alt={member.name} className="h-full w-full object-cover" />
+            ) : (
+              <span className="font-display text-3xl font-bold text-foreground/90">
+                {member.name.charAt(0).toUpperCase()}
+              </span>
+            )}
           </div>
 
           {/* Name */}
           <h3 className="font-display text-xl font-semibold text-foreground mb-1 group-hover:text-primary transition-colors duration-300">
-            {owner.name}
+            {member.name}
           </h3>
 
           {/* Tag */}
           <span className="px-3 py-1 text-xs font-medium tracking-wider uppercase text-primary/80 bg-primary/10 rounded-full border border-primary/20">
-            {tag}
+            {member.roleTitle}
           </span>
 
           {/* Decorative line */}
@@ -65,6 +62,16 @@ function OwnerCard({ owner, tag, index }: { owner: Owner; tag: string; index: nu
 
 export default function OwnersSection() {
   const t = useTranslations("Owners");
+  const [team, setTeam] = useState<TeamMember[] | null>(null);
+
+  useEffect(() => {
+    fetch("/api/team")
+      .then((res) => res.json())
+      .then((data) => setTeam(data.team ?? []))
+      .catch(() => setTeam([]));
+  }, []);
+
+  if (team && team.length === 0) return null;
 
   return (
     <section className="relative py-24 md:py-32 overflow-hidden">
@@ -84,11 +91,13 @@ export default function OwnersSection() {
         </motion.div>
 
         {/* Owners grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 items-start">
-          {owners.map((owner, index) => (
-            <OwnerCard key={owner.name} owner={owner} tag={t("tag")} index={index} />
-          ))}
-        </div>
+        {team && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 items-start">
+            {team.map((member, index) => (
+              <OwnerCard key={member.id} member={member} index={index} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

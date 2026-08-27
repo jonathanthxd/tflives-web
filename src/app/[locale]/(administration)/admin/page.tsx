@@ -1,56 +1,82 @@
 import { prisma } from "@/infrastructure/database/prisma";
 import { Link } from "@/i18n/navigation";
+import { LayoutDashboard, Plus, Gamepad2, Flag } from "lucide-react";
+import { PageHeader } from "@/modules/administration/components/ui/page-header";
+import { StatCard } from "@/modules/administration/components/ui/stat-card";
+import { SECTION_ICONS } from "@/modules/administration/components/ui/icons";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboard() {
-  const [postsCount, usersCount, modalitiesCount, messagesCount] = await Promise.all([
+  const now = new Date();
+  const [
+    postsCount,
+    usersCount,
+    modalitiesCount,
+    friendshipsCount,
+    messagesCount,
+    openReports,
+    activeSanctions,
+  ] = await Promise.all([
     prisma.post.count(),
     prisma.user.count(),
     prisma.modality.count(),
-    prisma.message.count(),
+    prisma.friendship.count({ where: { status: "ACCEPTED" } }),
+    prisma.directMessage.count(),
+    prisma.report.count({ where: { status: "OPEN" } }),
+    prisma.userSanction.count({
+      where: { revokedAt: null, OR: [{ expiresAt: null }, { expiresAt: { gt: now } }] },
+    }),
   ]);
 
   const stats = [
-    { label: "Posts", value: postsCount, icon: "📝", color: "from-primary/20 to-primary/5" },
-    { label: "Usuarios", value: usersCount, icon: "👥", color: "from-emerald-500/20 to-emerald-500/5" },
-    { label: "Modalidades", value: modalitiesCount, icon: "🎮", color: "from-purple-500/20 to-purple-500/5" },
-    { label: "Mensajes", value: messagesCount, icon: "💬", color: "from-amber-500/20 to-amber-500/5" },
+    { label: "Posts", value: postsCount, icon: SECTION_ICONS.posts, tone: "default" as const },
+    { label: "Usuarios", value: usersCount, icon: SECTION_ICONS.users, tone: "default" as const },
+    { label: "Modalidades", value: modalitiesCount, icon: SECTION_ICONS.modalities, tone: "default" as const },
+    { label: "Amistades", value: friendshipsCount, icon: SECTION_ICONS.dashboard, tone: "success" as const },
+    { label: "Mensajes", value: messagesCount, icon: SECTION_ICONS.dashboard, tone: "success" as const },
+    { label: "Reportes abiertos", value: openReports, icon: SECTION_ICONS.reports, tone: openReports > 0 ? ("danger" as const) : ("default" as const) },
+    { label: "Sanciones activas", value: activeSanctions, icon: SECTION_ICONS.moderation, tone: activeSanctions > 0 ? ("warning" as const) : ("default" as const) },
   ];
 
   return (
     <div>
-      <h1 className="font-display text-3xl font-bold text-foreground mb-8">Dashboard</h1>
+      <PageHeader icon={LayoutDashboard} title="Dashboard" description="Estado general de la comunidad, en vivo." />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
-          <div
-            key={stat.label}
-            className={`relative bg-gradient-to-br ${stat.color} backdrop-blur-sm border border-primary/10 rounded-2xl p-6`}
-          >
-            <div className="text-3xl mb-3">{stat.icon}</div>
-            <div className="font-display text-3xl font-bold text-foreground mb-1">{stat.value}</div>
-            <div className="text-sm text-muted-foreground">{stat.label}</div>
-          </div>
+          <StatCard key={stat.label} icon={stat.icon} label={stat.label} value={stat.value} tone={stat.tone} />
         ))}
       </div>
 
-      {/* Quick actions */}
       <div className="mt-12">
-        <h2 className="font-display text-xl font-semibold text-foreground mb-6">Acciones rápidas</h2>
-        <div className="flex flex-wrap gap-4">
+        <p className="mb-4 font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-muted-foreground/50">
+          Acciones rápidas
+        </p>
+        <div className="flex flex-wrap gap-3">
           <Link
             href="/admin/posts/new"
-            className="px-6 py-3 bg-primary/10 border border-primary/30 rounded-xl text-primary font-medium hover:bg-primary/20 transition-all duration-300"
+            className="inline-flex items-center gap-2 rounded-xl border border-primary/30 bg-primary/10 px-5 py-2.5 text-sm font-medium text-primary transition-colors duration-200 hover:bg-primary/20"
           >
-            + Nuevo Post
+            <Plus className="h-4 w-4" strokeWidth={2} />
+            Nuevo post
           </Link>
           <Link
             href="/admin/modalities"
-            className="px-6 py-3 bg-muted/30 border border-muted-foreground/20 rounded-xl text-muted-foreground font-medium hover:border-primary/30 hover:text-primary transition-all duration-300"
+            className="inline-flex items-center gap-2 rounded-xl border border-border bg-card/30 px-5 py-2.5 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:border-primary/30 hover:text-primary"
           >
-            Gestionar Modalidades
+            <Gamepad2 className="h-4 w-4" strokeWidth={1.75} />
+            Gestionar modalidades
           </Link>
+          {openReports > 0 && (
+            <Link
+              href="/admin/reports"
+              className="inline-flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 px-5 py-2.5 text-sm font-medium text-red-600 transition-colors duration-200 hover:bg-red-500/20 dark:text-red-400"
+            >
+              <Flag className="h-4 w-4" strokeWidth={1.75} />
+              Revisar {openReports} reporte{openReports === 1 ? "" : "s"} pendiente{openReports === 1 ? "" : "s"}
+            </Link>
+          )}
         </div>
       </div>
     </div>

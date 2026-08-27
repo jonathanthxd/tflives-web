@@ -1,5 +1,6 @@
 import { prisma } from "@/infrastructure/database/prisma";
 import { createNotification } from "@/modules/notifications/service";
+import { getActiveBanOrSuspension } from "@/modules/administration/sanctions";
 
 export class SocialError extends Error {
   status: number;
@@ -28,6 +29,10 @@ export async function areFriends(userAId: string, userBId: string) {
 export async function sendFriendRequest(requesterId: string, addresseeId: string) {
   if (requesterId === addresseeId) {
     throw new SocialError("No podés enviarte una solicitud a vos mismo");
+  }
+
+  if (await getActiveBanOrSuspension(requesterId)) {
+    throw new SocialError("Tu cuenta está suspendida", 403);
   }
 
   const addressee = await prisma.user.findUnique({

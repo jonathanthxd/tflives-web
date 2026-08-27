@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Card } from "@/shared/ui/card";
 import { NOTIFICATION_CATEGORIES } from "@/modules/notifications/service";
+import MySanctionsCard from "@/modules/administration/components/my-sanctions-card";
 
 type Visibility = "PUBLIC" | "FRIENDS_ONLY" | "PRIVATE";
 
@@ -99,6 +100,8 @@ export default function SettingsPage() {
     <main className="min-h-screen pt-24 pb-16 px-4">
       <div className="max-w-2xl mx-auto space-y-6">
         <h1 className="font-display text-2xl font-bold text-foreground">{t("titulo")}</h1>
+
+        <MySanctionsCard />
 
         <Card className="p-6">
           <h2 className="font-display text-sm font-semibold text-foreground uppercase tracking-wide mb-4">

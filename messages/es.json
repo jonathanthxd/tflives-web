@@ -18,7 +18,8 @@
       "MENTION": "Menciones",
       "MESSAGE": "Mensajes",
       "ACHIEVEMENT": "Logros",
-      "POST_PUBLISHED": "Novedades oficiales"
+      "POST_PUBLISHED": "Novedades oficiales",
+      "ANNOUNCEMENT": "Anuncios globales"
     }
   },
   "Notifications": {
@@ -34,7 +35,8 @@
       "MENTION": "te mencionó",
       "MESSAGE": "te envió un mensaje",
       "ACHIEVEMENT": "desbloqueaste un logro",
-      "POST_PUBLISHED": "publicó algo nuevo en TFL Network"
+      "POST_PUBLISHED": "publicó algo nuevo en TFL Network",
+      "ANNOUNCEMENT": "hay un anuncio nuevo"
     }
   },
   "Navbar": {
@@ -79,8 +81,7 @@
     "scroll": "Scroll"
   },
   "Owners": {
-    "titulo": "Los Fundadores",
-    "tag": "Owner"
+    "titulo": "Los Fundadores"
   },
   "Auth": {
     "oCorreo": "o con email",
@@ -201,7 +202,17 @@
     "actividadReciente": "Actividad reciente",
     "sinActividad": "Sin actividad todavía.",
     "cosmeticos": "Cosméticos",
-    "errorGenerico": "No se pudo completar la acción"
+    "errorGenerico": "No se pudo completar la acción",
+    "proximamente": "Próximamente",
+    "logrosProximamente": "Los logros e insignias todavía no están activos — pronto vas a poder desbloquearlos jugando.",
+    "cosmeticosProximamente": "La tienda de cosméticos todavía no está activa — pronto vas a poder personalizar tu perfil.",
+    "comento": "comentó en",
+    "leGusto": "le gustó",
+    "verPost": "Ver post",
+    "explorarNetwork": "Explorar TFL Network",
+    "sinActividadCta": "Todavía no hay actividad — comentá o reaccioná a un post en TFL Network para que aparezca acá.",
+    "mas": "Insignias, cosméticos y más funciones de progresión llegan pronto.",
+    "sinLogros": "Todavía no tiene logros."
   },
   "FriendsPage": {
     "titulo": "Amigos",

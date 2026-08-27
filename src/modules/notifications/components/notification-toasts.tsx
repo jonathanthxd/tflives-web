@@ -53,8 +53,14 @@ export default function NotificationToasts() {
 
           const body = (
             <p className="text-sm text-foreground leading-snug">
-              {toast.actorName && <span className="font-semibold">{toast.actorName} </span>}
-              {t(`message.${toast.type}`)}
+              {toast.type === "ANNOUNCEMENT" && toast.announcementTitle ? (
+                <span className="font-semibold">{toast.announcementTitle}</span>
+              ) : (
+                <>
+                  {toast.actorName && <span className="font-semibold">{toast.actorName} </span>}
+                  {t(`message.${toast.type}`)}
+                </>
+              )}
             </p>
           );
 

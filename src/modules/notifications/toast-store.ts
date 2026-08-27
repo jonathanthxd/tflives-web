@@ -4,6 +4,7 @@ export interface NotificationToast {
   actorName: string | null;
   entityType: string | null;
   entityId: string | null;
+  announcementTitle?: string | null;
 }
 
 type Listener = (toast: NotificationToast) => void;

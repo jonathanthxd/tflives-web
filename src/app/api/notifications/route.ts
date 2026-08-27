@@ -32,9 +32,27 @@ export async function GET(request: Request) {
       })
     : [];
   const actorsById = new Map(actors.map((a) => [a.id, a]));
+
+  const announcementIds = [
+    ...new Set(
+      notifications
+        .filter((n) => n.entityType === "Announcement" && n.entityId)
+        .map((n) => n.entityId as string)
+    ),
+  ];
+  const announcements = announcementIds.length
+    ? await prisma.announcement.findMany({
+        where: { id: { in: announcementIds } },
+        select: { id: true, title: true, body: true },
+      })
+    : [];
+  const announcementsById = new Map(announcements.map((a) => [a.id, a]));
+
   const enriched = notifications.map((n) => ({
     ...n,
     actor: n.actorId ? actorsById.get(n.actorId) ?? null : null,
+    announcement:
+      n.entityType === "Announcement" && n.entityId ? announcementsById.get(n.entityId) ?? null : null,
   }));
 
   return NextResponse.json({ notifications: enriched, unreadCount });

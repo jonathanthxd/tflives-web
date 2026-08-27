@@ -3,6 +3,9 @@ import { prisma } from "@/infrastructure/database/prisma";
 import { Link } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import LikeButton from "@/modules/community/components/like-button";
+import CommentsSection from "@/modules/community/components/comments-section";
 
 export const dynamic = "force-dynamic";
 
@@ -98,9 +101,15 @@ export default async function PostDetailPage({ params }: PostPageProps) {
           </div>
         )}
 
-        <div className="prose prose-invert prose-tfl max-w-none">
-          <ReactMarkdown>{post.content}</ReactMarkdown>
+        <div className="prose prose-tfl max-w-none">
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
         </div>
+
+        <div className="mt-10 flex items-center justify-between border-y border-primary/10 py-4">
+          <LikeButton targetType="POST" targetId={post.id} size="lg" />
+        </div>
+
+        <CommentsSection postId={post.id} />
       </div>
     </main>
   );

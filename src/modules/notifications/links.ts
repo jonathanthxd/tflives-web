@@ -17,6 +17,9 @@ export function getNotificationHref(n: NotificationLike): string | null {
     case "FRIEND_ACCEPTED":
       return n.actor?.username ? `/perfil/${n.actor.username}` : "/amigos";
     case "POST_PUBLISHED":
+    case "REPLY":
+    case "MENTION":
+    case "REACTION":
       return n.entityId ? `/network/${n.entityId}` : "/network";
     case "MESSAGE":
       return "/mensajes";

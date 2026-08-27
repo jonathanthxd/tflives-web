@@ -1,0 +1,67 @@
+import {
+  LayoutDashboard,
+  Newspaper,
+  Gamepad2,
+  Users,
+  ShieldAlert,
+  Flag,
+  ScrollText,
+  BarChart3,
+  BookOpen,
+  UsersRound,
+  Trophy,
+  Coins,
+  Palette,
+  CreditCard,
+  Radio,
+  Megaphone,
+  Star,
+  Medal,
+  Crown,
+  Flame,
+  Gem,
+  Rocket,
+  Swords,
+  Target,
+  Heart,
+  Zap,
+  type LucideIcon,
+} from "lucide-react";
+import type { AdminSection } from "@/modules/administration/permissions";
+
+export const SECTION_ICONS: Record<AdminSection, LucideIcon> = {
+  dashboard: LayoutDashboard,
+  posts: Newspaper,
+  modalities: Gamepad2,
+  users: Users,
+  reports: Flag,
+  moderation: ShieldAlert,
+  staffLog: ScrollText,
+  analytics: BarChart3,
+  announcements: Megaphone,
+  team: UsersRound,
+  achievements: Trophy,
+};
+
+export const PLACEHOLDER_ICONS: Record<string, LucideIcon> = {
+  wiki: BookOpen,
+  coins: Coins,
+  cosmetics: Palette,
+  subscriptions: CreditCard,
+  streamers: Radio,
+};
+
+/** Set curado de íconos para logros — el admin elige uno, no texto libre. */
+export const ACHIEVEMENT_ICONS: Record<string, LucideIcon> = {
+  trophy: Trophy,
+  star: Star,
+  medal: Medal,
+  crown: Crown,
+  flame: Flame,
+  gem: Gem,
+  rocket: Rocket,
+  swords: Swords,
+  target: Target,
+  heart: Heart,
+  zap: Zap,
+};

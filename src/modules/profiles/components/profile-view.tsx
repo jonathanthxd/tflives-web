@@ -3,6 +3,18 @@
 import { useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter, Link } from "@/i18n/navigation";
+import {
+  Camera,
+  Pencil,
+  ShieldCheck,
+  ShieldAlert,
+  CalendarDays,
+  Gamepad2,
+  LogOut,
+  LayoutDashboard,
+  Link as LinkIcon,
+  Sparkles,
+} from "lucide-react";
 import { createClient } from "@/infrastructure/auth/client";
 import { uploadProfileAsset } from "@/infrastructure/storage/avatars";
 import { Button } from "@/shared/ui/button";
@@ -10,8 +22,8 @@ import { Input } from "@/shared/ui/input";
 import { Card } from "@/shared/ui/card";
 import Reveal from "@/shared/ui/reveal";
 import SocialCard from "@/modules/social/components/social-card";
-import BadgesPlaceholder from "@/modules/achievements/components/badges-placeholder";
-import RecentActivityPlaceholder from "@/modules/community/components/recent-activity-placeholder";
+import AchievementsCard from "@/modules/achievements/components/achievements-card";
+import RecentActivity from "@/modules/community/components/recent-activity";
 import CosmeticsPlaceholder from "@/modules/cosmetics/components/cosmetics-placeholder";
 
 interface SocialLink {
@@ -44,6 +56,7 @@ function parseSocialLinks(value: unknown): SocialLink[] {
 
 export default function ProfileView({ profile, isOwner }: { profile: Profile; isOwner: boolean }) {
   const t = useTranslations("Profile");
+  const tp = useTranslations("ProfilePlaceholders");
   const locale = useLocale();
   const router = useRouter();
   const [current, setCurrent] = useState(profile);
@@ -65,6 +78,7 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
     year: "numeric",
   });
   const links = parseSocialLinks(current.socialLinks);
+  const isStaff = current.role === "ADMIN" || current.role === "MOD";
 
   async function uploadAsset(file: File, kind: "avatar" | "banner") {
     const setUploading = kind === "avatar" ? setUploadingAvatar : setUploadingBanner;
@@ -134,27 +148,55 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
   }
 
   return (
-    <main className="min-h-screen pt-24 pb-16 px-4">
-      <Reveal className="max-w-3xl mx-auto">
-        <Card className="overflow-hidden">
-          <div
-            className="relative h-32 sm:h-44 bg-gradient-to-br from-primary/30 to-primary/5"
-            style={
-              current.bannerUrl
-                ? {
-                    backgroundImage: `url(${current.bannerUrl})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }
-                : undefined
-            }
-          >
+    <main className="relative min-h-screen pt-24 pb-16 px-4 overflow-hidden">
+      {/* Atmosphere: page-wide ambient glow behind everything */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[560px] overflow-hidden">
+        <div className="absolute left-1/2 top-[-180px] h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-primary/10 blur-[140px]" />
+      </div>
+
+      <Reveal className="max-w-5xl mx-auto">
+        {/* ---------- HERO ---------- */}
+        <div className="relative overflow-hidden rounded-3xl border border-primary/10 bg-card/40 shadow-[0_20px_60px_-30px_hsl(var(--primary)/0.35)]">
+          {/* Banner */}
+          <div className="relative h-48 sm:h-64">
+            {current.bannerUrl ? (
+              <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{ backgroundImage: `url(${current.bannerUrl})` }}
+              />
+            ) : (
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/25 via-card to-background">
+                <div aria-hidden className="absolute inset-0 overflow-hidden">
+                  <div className="absolute -left-10 -top-16 h-64 w-64 rounded-full bg-primary/40 blur-[90px] animate-aurora-drift" />
+                  <div className="absolute right-0 top-1/3 h-56 w-56 rounded-full bg-primary/25 blur-[80px] animate-aurora-drift-slow" />
+                  <div className="absolute bottom-[-40px] left-1/3 h-48 w-48 rounded-full bg-primary/20 blur-[70px] animate-aurora-drift" />
+                </div>
+                <div
+                  aria-hidden
+                  className="absolute inset-0 opacity-[0.05] mix-blend-overlay"
+                  style={{
+                    backgroundImage:
+                      "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+                  }}
+                />
+              </div>
+            )}
+
+            {/* gloss sweep */}
+            <div aria-hidden className="absolute inset-0 overflow-hidden">
+              <div className="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer-sweep" />
+            </div>
+
+            {/* fade into content */}
+            <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-card/95 to-transparent" />
+
             {isOwner && (
               <button
                 onClick={() => bannerInputRef.current?.click()}
                 disabled={uploadingBanner}
-                className="absolute bottom-2 right-2 flex items-center gap-1.5 rounded-full bg-background/80 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-foreground border border-border hover:border-primary/40 transition-colors disabled:opacity-50"
+                className="absolute top-4 right-4 inline-flex items-center gap-1.5 rounded-full bg-background/70 backdrop-blur-md px-3.5 py-2 text-xs font-medium text-foreground border border-white/10 hover:border-primary/40 hover:bg-background/90 transition-all duration-200 disabled:opacity-50"
               >
+                <Camera className="h-3.5 w-3.5" strokeWidth={1.75} />
                 {uploadingBanner ? t("subiendoBanner") : t("cambiarBanner")}
               </button>
             )}
@@ -167,31 +209,40 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
             />
           </div>
 
-          <div className="px-6 pb-6">
-            <div className="-mt-10 mb-4 relative inline-block">
-              {current.image ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={current.image}
-                  alt={displayName}
-                  className="w-20 h-20 rounded-full object-cover border-4 border-card"
-                />
-              ) : (
-                <div className="w-20 h-20 rounded-full bg-primary/10 border-4 border-card flex items-center justify-center">
-                  <span className="font-display text-2xl font-bold text-primary">{initial}</span>
-                </div>
-              )}
+          <div className="relative px-6 sm:px-8 pb-8">
+            {/* Avatar with animated ring */}
+            <div className="-mt-14 sm:-mt-16 mb-4 relative inline-block">
+              <div
+                className="absolute -inset-1.5 rounded-full opacity-80 animate-[spin_7s_linear_infinite]"
+                style={{
+                  background:
+                    "conic-gradient(from 0deg, hsl(var(--primary)) 0deg, transparent 110deg, transparent 250deg, hsl(var(--primary)) 360deg)",
+                }}
+                aria-hidden
+              />
+              <div className="absolute -inset-1.5 rounded-full bg-primary/25 blur-md animate-glow-pulse" aria-hidden />
+              <div className="relative rounded-full bg-card p-1">
+                {current.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={current.image}
+                    alt={displayName}
+                    className="h-28 w-28 sm:h-32 sm:w-32 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="h-28 w-28 sm:h-32 sm:w-32 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center">
+                    <span className="font-display text-4xl font-bold text-primary">{initial}</span>
+                  </div>
+                )}
+              </div>
               {isOwner && (
                 <button
                   onClick={() => avatarInputRef.current?.click()}
                   disabled={uploadingAvatar}
                   aria-label={t("cambiarAvatar")}
-                  className="absolute bottom-0 right-0 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
+                  className="absolute bottom-1 right-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_4px_14px_hsl(var(--primary)/0.5)] hover:bg-primary/90 hover:scale-105 transition-all duration-200 disabled:opacity-50"
                 >
-                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.174C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" />
-                  </svg>
+                  <Camera className="h-4 w-4" strokeWidth={2} />
                 </button>
               )}
               <input
@@ -205,12 +256,35 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
 
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div>
-                <h1 className="font-display text-2xl font-bold text-foreground">{displayName}</h1>
-                {current.username && <p className="text-primary text-sm">@{current.username}</p>}
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
+                    {displayName}
+                  </h1>
+                  {isStaff && (
+                    <span
+                      className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider ${
+                        current.role === "ADMIN"
+                          ? "border-primary/30 bg-primary/10 text-primary shadow-[0_0_16px_hsl(var(--primary)/0.25)]"
+                          : "border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400 shadow-[0_0_16px_hsl(38_92%_50%/0.2)]"
+                      }`}
+                    >
+                      {current.role === "ADMIN" ? (
+                        <ShieldCheck className="h-3 w-3" strokeWidth={2.25} />
+                      ) : (
+                        <ShieldAlert className="h-3 w-3" strokeWidth={2.25} />
+                      )}
+                      {current.role}
+                    </span>
+                  )}
+                </div>
+                {current.username && (
+                  <p className="mt-1 font-mono text-sm text-primary/80">@{current.username}</p>
+                )}
               </div>
 
               {isOwner && !editing && (
                 <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
+                  <Pencil className="h-3.5 w-3.5" strokeWidth={2} data-icon="inline-start" />
                   {t("editarPerfil")}
                 </Button>
               )}
@@ -219,7 +293,7 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
             {saveError && <p className="mt-3 text-xs text-destructive">{saveError}</p>}
 
             {editing ? (
-              <div className="mt-5 space-y-4">
+              <div className="mt-6 space-y-4 animate-rise-in">
                 <div>
                   <label className="block text-sm font-medium text-muted-foreground mb-1.5">{t("sobreMi")}</label>
                   <textarea
@@ -303,7 +377,11 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
               </div>
             ) : (
               <>
-                {current.bio && <p className="mt-4 text-foreground/90 whitespace-pre-line">{current.bio}</p>}
+                {current.bio && (
+                  <p className="mt-4 max-w-2xl text-foreground/85 leading-relaxed whitespace-pre-line">
+                    {current.bio}
+                  </p>
+                )}
                 {!current.bio && isOwner && (
                   <p className="mt-4 text-sm text-muted-foreground italic">
                     {t("bioVacia")}{" "}
@@ -322,27 +400,24 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
                         href={link.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/50 px-3 py-1 text-xs font-medium text-foreground hover:border-primary/40 hover:text-primary transition-colors"
+                        className="group inline-flex items-center gap-1.5 rounded-full border border-border bg-card/50 px-3.5 py-1.5 text-xs font-medium text-foreground transition-all duration-200 hover:border-primary/40 hover:bg-primary/5 hover:text-primary hover:-translate-y-0.5"
                       >
-                        <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                        </svg>
+                        <LinkIcon className="h-3 w-3 transition-transform group-hover:rotate-45" strokeWidth={2} />
                         {link.platform}
                       </a>
                     ))}
                   </div>
                 )}
 
-                <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                  <span>{t("seUnioEn")} {joinedDate}</span>
+                <div className="mt-5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-border/60 px-2.5 py-1">
+                    <CalendarDays className="h-3 w-3" strokeWidth={1.75} />
+                    {t("seUnioEn")} {joinedDate}
+                  </span>
                   {current.minecraftUsername && (
-                    <span className="px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
-                      MC: {current.minecraftUsername}
-                    </span>
-                  )}
-                  {current.role !== "USER" && (
-                    <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                      {current.role}
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 px-2.5 py-1">
+                      <Gamepad2 className="h-3 w-3" strokeWidth={1.75} />
+                      {current.minecraftUsername}
                     </span>
                   )}
                 </div>
@@ -350,38 +425,47 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
             )}
 
             {isOwner && !editing && (
-              <div className="mt-6 pt-6 border-t border-border flex flex-wrap gap-3">
+              <div className="mt-6 pt-6 border-t border-border/60 flex flex-wrap gap-3">
                 {current.role === "ADMIN" && (
                   <Link href="/admin">
                     <Button variant="outline" size="sm">
+                      <LayoutDashboard className="h-3.5 w-3.5" strokeWidth={2} data-icon="inline-start" />
                       {t("panelAdmin")}
                     </Button>
                   </Link>
                 )}
                 <Button variant="ghost" size="sm" onClick={handleLogout}>
+                  <LogOut className="h-3.5 w-3.5" strokeWidth={2} data-icon="inline-start" />
                   {t("cerrarSesion")}
                 </Button>
               </div>
             )}
           </div>
-        </Card>
+        </div>
 
+        {/* ---------- CONTENT GRID ---------- */}
         {!editing && (
-          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <Reveal delay={0.05}>
+          <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <Reveal delay={0.05} className="lg:col-span-2">
+              <RecentActivity username={current.username!} />
+            </Reveal>
+
+            <Reveal delay={0.1}>
               <SocialCard username={current.username!} />
             </Reveal>
 
-            <Reveal delay={0.15}>
-              <BadgesPlaceholder />
-            </Reveal>
-
-            <Reveal delay={0.05}>
-              <RecentActivityPlaceholder />
-            </Reveal>
-
-            <Reveal delay={0.15}>
+            <Reveal delay={0.15} className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <AchievementsCard username={current.username!} />
               <CosmeticsPlaceholder />
+            </Reveal>
+
+            <Reveal delay={0.2}>
+              <Card className="p-6 h-full flex flex-col items-center justify-center text-center bg-gradient-to-br from-primary/5 to-transparent">
+                <Sparkles className="h-6 w-6 text-primary/60 mb-2" strokeWidth={1.5} />
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {tp("mas")}
+                </p>
+              </Card>
             </Reveal>
           </div>
         )}

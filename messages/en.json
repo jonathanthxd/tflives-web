@@ -18,7 +18,8 @@
       "MENTION": "Mentions",
       "MESSAGE": "Messages",
       "ACHIEVEMENT": "Achievements",
-      "POST_PUBLISHED": "Official announcements"
+      "POST_PUBLISHED": "Official announcements",
+      "ANNOUNCEMENT": "Global announcements"
     }
   },
   "Notifications": {
@@ -34,7 +35,8 @@
       "MENTION": "mentioned you",
       "MESSAGE": "sent you a message",
       "ACHIEVEMENT": "unlocked an achievement",
-      "POST_PUBLISHED": "posted something new on TFL Network"
+      "POST_PUBLISHED": "posted something new on TFL Network",
+      "ANNOUNCEMENT": "there's a new announcement"
     }
   },
   "Navbar": {
@@ -79,8 +81,7 @@
     "scroll": "Scroll"
   },
   "Owners": {
-    "titulo": "The Founders",
-    "tag": "Owner"
+    "titulo": "The Founders"
   },
   "Auth": {
     "oCorreo": "or with email",
@@ -201,7 +202,17 @@
     "actividadReciente": "Recent activity",
     "sinActividad": "No activity yet.",
     "cosmeticos": "Cosmetics",
-    "errorGenerico": "Couldn't complete the action"
+    "errorGenerico": "Couldn't complete the action",
+    "proximamente": "Coming soon",
+    "logrosProximamente": "Achievements and badges aren't active yet — soon you'll be able to unlock them by playing.",
+    "cosmeticosProximamente": "The cosmetics shop isn't active yet — soon you'll be able to customize your profile.",
+    "comento": "commented on",
+    "leGusto": "liked",
+    "verPost": "View post",
+    "explorarNetwork": "Explore TFL Network",
+    "sinActividadCta": "No activity yet — comment or react to a post on TFL Network for it to show up here.",
+    "mas": "Badges, cosmetics and more progression features are coming soon.",
+    "sinLogros": "No achievements yet."
   },
   "FriendsPage": {
     "titulo": "Friends",

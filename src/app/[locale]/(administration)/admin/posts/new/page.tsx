@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Plus, Pencil, Eye } from "lucide-react";
 import { useRouter, Link } from "@/i18n/navigation";
+import { PageHeader } from "@/modules/administration/components/ui/page-header";
+import { SECTION_ICONS } from "@/modules/administration/components/ui/icons";
+import { slugify } from "@/modules/editorial/validation";
+import MarkdownPreview from "@/modules/editorial/components/markdown-preview";
 
 interface Modality {
   id: string;
@@ -14,6 +19,17 @@ export default function NewPostPage() {
   const [error, setError] = useState("");
   const [modalities, setModalities] = useState<Modality[]>([]);
   const [modalitiesLoading, setModalitiesLoading] = useState(true);
+
+  const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
+  const [slugTouched, setSlugTouched] = useState(false);
+  const [modalityId, setModalityId] = useState("");
+  const [type, setType] = useState("UPDATE");
+  const [excerpt, setExcerpt] = useState("");
+  const [content, setContent] = useState("");
+  const [image, setImage] = useState("");
+  const [published, setPublished] = useState(false);
+  const [tab, setTab] = useState<"edit" | "preview">("edit");
 
   useEffect(() => {
     fetch("/api/modalities")
@@ -28,28 +44,30 @@ export default function NewPostPage() {
       });
   }, []);
 
+  function handleTitleChange(value: string) {
+    setTitle(value);
+    if (!slugTouched) setSlug(slugify(value));
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setError("");
 
-    const formData = new FormData(e.currentTarget);
-    const data = {
-      title: formData.get("title") as string,
-      slug: formData.get("slug") as string,
-      content: formData.get("content") as string,
-      excerpt: formData.get("excerpt") as string || undefined,
-      type: formData.get("type") as string,
-      modalityId: formData.get("modalityId") as string,
-      image: formData.get("image") as string || undefined,
-      published: formData.get("published") === "on",
-    };
-
     try {
       const res = await fetch("/api/posts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          title,
+          slug,
+          content,
+          excerpt: excerpt || undefined,
+          type,
+          modalityId,
+          image: image || undefined,
+          published,
+        }),
       });
 
       const result = await res.json();
@@ -70,7 +88,7 @@ export default function NewPostPage() {
 
   return (
     <div className="max-w-3xl">
-      <h1 className="font-display text-3xl font-bold text-foreground mb-8">Nuevo Post</h1>
+      <PageHeader icon={SECTION_ICONS.posts} title="Nuevo post" />
 
       {error && (
         <div className="mb-6 p-4 bg-red-600/10 dark:bg-red-500/10 border border-red-600/20 dark:border-red-500/20 rounded-xl text-red-700 dark:text-red-400 text-sm">
@@ -82,7 +100,8 @@ export default function NewPostPage() {
         <div>
           <label className="block text-sm font-medium text-muted-foreground mb-2">Título</label>
           <input
-            name="title"
+            value={title}
+            onChange={(e) => handleTitleChange(e.target.value)}
             type="text"
             required
             className="w-full px-4 py-3 bg-card/30 border border-primary/20 rounded-xl text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all"
@@ -93,21 +112,28 @@ export default function NewPostPage() {
         <div>
           <label className="block text-sm font-medium text-muted-foreground mb-2">Slug (URL)</label>
           <input
-            name="slug"
+            value={slug}
+            onChange={(e) => {
+              setSlugTouched(true);
+              setSlug(e.target.value);
+            }}
             type="text"
             required
             pattern="[a-z0-9-]+"
             className="w-full px-4 py-3 bg-card/30 border border-primary/20 rounded-xl text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all"
             placeholder="nueva-actualizacion-v1-5"
           />
-          <p className="text-xs text-muted-foreground/50 mt-1">Solo minúsculas, números y guiones</p>
+          <p className="text-xs text-muted-foreground/50 mt-1">
+            Se genera solo desde el título — editalo si querés otra cosa.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-muted-foreground mb-2">Modalidad</label>
             <select
-              name="modalityId"
+              value={modalityId}
+              onChange={(e) => setModalityId(e.target.value)}
               required
               disabled={modalitiesLoading}
               className="w-full px-4 py-3 bg-card/30 border border-primary/20 rounded-xl text-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all disabled:opacity-50"
@@ -124,7 +150,8 @@ export default function NewPostPage() {
           <div>
             <label className="block text-sm font-medium text-muted-foreground mb-2">Tipo</label>
             <select
-              name="type"
+              value={type}
+              onChange={(e) => setType(e.target.value)}
               required
               className="w-full px-4 py-3 bg-card/30 border border-primary/20 rounded-xl text-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all"
             >
@@ -139,7 +166,8 @@ export default function NewPostPage() {
         <div>
           <label className="block text-sm font-medium text-muted-foreground mb-2">Extracto</label>
           <input
-            name="excerpt"
+            value={excerpt}
+            onChange={(e) => setExcerpt(e.target.value)}
             type="text"
             className="w-full px-4 py-3 bg-card/30 border border-primary/20 rounded-xl text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all"
             placeholder="Breve descripción del post..."
@@ -147,20 +175,53 @@ export default function NewPostPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-muted-foreground mb-2">Contenido (Markdown)</label>
-          <textarea
-            name="content"
-            required
-            rows={12}
-            className="w-full px-4 py-3 bg-card/30 border border-primary/20 rounded-xl text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all resize-y font-mono text-sm"
-            placeholder="# Título&#10;&#10;Contenido en markdown..."
-          />
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-medium text-muted-foreground">Contenido (Markdown)</label>
+            <div className="inline-flex rounded-lg border border-border p-0.5">
+              <button
+                type="button"
+                onClick={() => setTab("edit")}
+                className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1 text-xs font-medium transition-colors ${
+                  tab === "edit" ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Pencil className="h-3 w-3" strokeWidth={2} />
+                Editar
+              </button>
+              <button
+                type="button"
+                onClick={() => setTab("preview")}
+                className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1 text-xs font-medium transition-colors ${
+                  tab === "preview" ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Eye className="h-3 w-3" strokeWidth={2} />
+                Vista previa
+              </button>
+            </div>
+          </div>
+
+          {tab === "edit" ? (
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              required
+              rows={14}
+              className="w-full px-4 py-3 bg-card/30 border border-primary/20 rounded-xl text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all resize-y font-mono text-sm"
+              placeholder={"# Título\n\nContenido en markdown..."}
+            />
+          ) : (
+            <div className="rounded-xl border border-primary/20 bg-card/30 px-6 py-5 min-h-[21rem]">
+              <MarkdownPreview content={content} />
+            </div>
+          )}
         </div>
 
         <div>
           <label className="block text-sm font-medium text-muted-foreground mb-2">Imagen URL (opcional)</label>
           <input
-            name="image"
+            value={image}
+            onChange={(e) => setImage(e.target.value)}
             type="url"
             className="w-full px-4 py-3 bg-card/30 border border-primary/20 rounded-xl text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all"
             placeholder="https://..."
@@ -169,7 +230,8 @@ export default function NewPostPage() {
 
         <div className="flex items-center gap-3">
           <input
-            name="published"
+            checked={published}
+            onChange={(e) => setPublished(e.target.checked)}
             type="checkbox"
             id="published"
             className="w-5 h-5 rounded border-primary/30 bg-card/30 text-primary focus:ring-primary/30"
@@ -181,9 +243,10 @@ export default function NewPostPage() {
           <button
             type="submit"
             disabled={loading || modalitiesLoading}
-            className="px-8 py-3 bg-primary/10 border border-primary/30 rounded-xl text-primary font-medium hover:bg-primary/20 transition-all duration-300 disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-8 py-3 bg-primary/10 border border-primary/30 rounded-xl text-primary font-medium hover:bg-primary/20 transition-all duration-300 disabled:opacity-50"
           >
-            {loading ? "Creando..." : "Crear Post"}
+            <Plus className="h-4 w-4" strokeWidth={2} />
+            {loading ? "Creando..." : "Crear post"}
           </button>
           <Link
             href="/admin/posts"

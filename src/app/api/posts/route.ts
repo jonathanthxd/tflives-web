@@ -1,32 +1,21 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/infrastructure/database/prisma";
 import { postSchema } from "@/modules/editorial/validation";
-import { createClient } from "@/infrastructure/auth/server";
 import { notifyPostPublished } from "@/modules/notifications/service";
+import { getActiveBanOrSuspension } from "@/modules/administration/sanctions";
+import { requireAdminSection, AdminGuardError } from "@/modules/administration/api-guard";
 
 export async function POST(request: Request) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return NextResponse.json(
-      { error: "Debes iniciar sesión para crear posts" },
-      { status: 401 }
-    );
-  }
-
-  const profile = await prisma.user.findUnique({
-    where: { id: user.id },
-    select: { role: true },
-  });
-
-  if (profile?.role !== "ADMIN") {
-    return NextResponse.json({ error: "No autorizado" }, { status: 403 });
-  }
-
   try {
+    const { userId } = await requireAdminSection("posts");
+
+    if (await getActiveBanOrSuspension(userId)) {
+      return NextResponse.json(
+        { error: "Tu cuenta está suspendida" },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json();
 
     const parsed = postSchema.safeParse(body);
@@ -40,18 +29,21 @@ export async function POST(request: Request) {
     const post = await prisma.post.create({
       data: {
         ...parsed.data,
-        authorId: user.id,
+        authorId: userId,
       },
     });
 
     if (post.published) {
-      notifyPostPublished(post.slug, user.id).catch((err) =>
+      notifyPostPublished(post.slug, userId).catch((err) =>
         console.error("Error notificando post publicado:", err)
       );
     }
 
     return NextResponse.json({ success: true, post }, { status: 201 });
   } catch (error) {
+    if (error instanceof AdminGuardError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error(error);
     return NextResponse.json(
       { error: "Error al crear el post" },

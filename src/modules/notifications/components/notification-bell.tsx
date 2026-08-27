@@ -23,6 +23,7 @@ interface NotificationItem {
   entityType: string | null;
   entityId: string | null;
   actor: Actor | null;
+  announcement: { id: string; title: string; body: string } | null;
 }
 
 function actorName(actor: Actor | null) {
@@ -94,6 +95,7 @@ export default function NotificationBell({ userId }: { userId: string }) {
                 actorName: inserted ? actorName(inserted.actor) : null,
                 entityType: row.entityType,
                 entityId: row.entityId,
+                announcementTitle: inserted?.announcement?.title ?? null,
               });
             });
 
@@ -186,17 +188,26 @@ export default function NotificationBell({ userId }: { userId: string }) {
               const itemClassName = `flex w-full flex-col items-start gap-0.5 px-3 py-2.5 rounded-xl text-left text-sm transition-colors ${
                 n.read ? "text-muted-foreground hover:bg-primary/5" : "text-foreground bg-primary/5 hover:bg-primary/10"
               }`;
-              const content = (
-                <>
-                  <span>
-                    {actorName(n.actor) ? `${actorName(n.actor)} — ` : ""}
-                    {t(`message.${n.type}`)}
-                  </span>
-                  <span className="text-xs text-muted-foreground/60">
-                    {new Date(n.createdAt).toLocaleString(locale)}
-                  </span>
-                </>
-              );
+              const content =
+                n.type === "ANNOUNCEMENT" && n.announcement ? (
+                  <>
+                    <span className="font-medium">{n.announcement.title}</span>
+                    <span className="text-xs text-muted-foreground/80 line-clamp-2">{n.announcement.body}</span>
+                    <span className="text-xs text-muted-foreground/60">
+                      {new Date(n.createdAt).toLocaleString(locale)}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span>
+                      {actorName(n.actor) ? `${actorName(n.actor)} — ` : ""}
+                      {t(`message.${n.type}`)}
+                    </span>
+                    <span className="text-xs text-muted-foreground/60">
+                      {new Date(n.createdAt).toLocaleString(locale)}
+                    </span>
+                  </>
+                );
 
               if (href) {
                 return (

@@ -12,3 +12,30 @@ export const postSchema = z.object({
 });
 
 export type PostFormData = z.infer<typeof postSchema>;
+
+export const postUpdateSchema = z.object({
+  title: z.string().min(1).max(200).optional(),
+  slug: z.string().min(1).max(200).regex(/^[a-z0-9-]+$/, "Solo minúsculas, números y guiones").optional(),
+  content: z.string().min(1).optional(),
+  excerpt: z.string().max(500).nullable().optional(),
+  type: z.enum(["UPDATE", "PATCH", "NEWS", "EVENT"]).optional(),
+  modalityId: z.string().min(1).optional(),
+  image: z.string().nullable().optional(),
+  published: z.boolean().optional(),
+  archived: z.boolean().optional(),
+  scheduledFor: z.string().datetime().nullable().optional(),
+});
+
+export type PostUpdateData = z.infer<typeof postUpdateSchema>;
+
+export function slugify(title: string): string {
+  return title
+    .normalize("NFD")
+    .replace(new RegExp("[\\u0300-\\u036f]", "g"), "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
