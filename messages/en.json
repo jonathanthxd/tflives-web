@@ -145,7 +145,8 @@
     "nuevaContrasena": "New password",
     "confirmarContrasena": "Confirm password",
     "guardarContrasena": "Save password",
-    "guardando": "Saving..."
+    "guardando": "Saving...",
+    "enlaceInvalido": "The recovery link is invalid or has expired."
   },
   "Onboarding": {
     "username": "Username",

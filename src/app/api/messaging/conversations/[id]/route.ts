@@ -1,12 +1,9 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/infrastructure/auth/server";
+import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { MessagingError, getConversation, markConversationRead, sendMessage } from "@/modules/messaging/service";
 
 async function requireUser() {
-  const supabase = await createClient();
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser();
+  const authUser = await getCurrentAuthUser();
   return authUser;
 }
 

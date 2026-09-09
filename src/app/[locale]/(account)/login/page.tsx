@@ -4,7 +4,7 @@ import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useRouter, Link } from "@/i18n/navigation";
-import { createClient } from "@/infrastructure/auth/client";
+import { authClient } from "@/infrastructure/auth/client";
 import { loginSchema } from "@/modules/authentication/validation";
 import { flattenZodErrors } from "@/shared/validation/zod-helpers";
 import { Button } from "@/shared/ui/button";
@@ -52,16 +52,20 @@ function LoginForm() {
 
     setLoading(true);
     try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.signInWithPassword(parsed.data);
+      const { error } = await authClient.signIn.email(parsed.data);
 
       if (error) {
-        if (error.message.toLowerCase().includes("invalid login credentials")) {
-          setFormError(t("credencialesInvalidas"));
-        } else if (error.message.toLowerCase().includes("email not confirmed")) {
+        const code = error.code?.toUpperCase() || "";
+        if (code.includes("EMAIL_NOT_VERIFIED")) {
           setFormError(t("emailNoConfirmado"));
+        } else if (
+          code.includes("INVALID") ||
+          code.includes("CREDENTIAL") ||
+          code.includes("PASSWORD")
+        ) {
+          setFormError(t("credencialesInvalidas"));
         } else {
-          setFormError(error.message);
+          setFormError(error.message || t("credencialesInvalidas"));
         }
         return;
       }

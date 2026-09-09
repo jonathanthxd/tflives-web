@@ -9,7 +9,7 @@
 - **`[locale]` es solo estructura de carpetas**, sin librería de i18n todavía. Para que el sitio siga funcionando (Next.js App Router trata `[locale]` como segmento dinámico obligatorio), se agrega:
   - Un middleware mínimo que redirige `/` → `/es/...` (todo el contenido sigue en español, fijo).
   - `app/[locale]/layout.tsx` valida que el segmento sea `"es"` (único soportado por ahora) y llama `notFound()` si no. Cuando se implemente i18n real (tarea aparte, no ahora), este layout es el punto donde se conecta.
-- Cada `page.tsx`/`layout.tsx`/`route.ts` sigue viviendo bajo `app/` (Next.js lo exige para el routing). Lo que se mueve a `modules/` es la lógica real: componentes, validaciones, llamadas a Supabase/Prisma. Las páginas quedan como wrappers finos que importan del módulo correspondiente.
+- Cada `page.tsx`/`layout.tsx`/`route.ts` sigue viviendo bajo `app/` (Next.js lo exige para el routing). Lo que se mueve a `modules/` es la lógica real: componentes, validaciones, llamadas a Better Auth/Prisma. Las páginas quedan como wrappers finos que importan del módulo correspondiente.
 
 ## Hallazgos durante el inventario
 
@@ -54,7 +54,7 @@
 
 | Módulo | Contenido que se mueve |
 |---|---|
-| `authentication/` | `lib/supabase/client.ts` (re-exportado o llamado desde acá) queda en infra; lo que se mueve acá: `lib/validations/auth.ts` (menos `flattenZodErrors`, que es genérico → shared), `components/auth/oauth-buttons.tsx` |
+| `authentication/` | `infrastructure/auth/client.ts` queda en infra; lo que se mueve acá: `lib/validations/auth.ts` (menos `flattenZodErrors`, que es genérico → shared), `components/auth/oauth-buttons.tsx` |
 | `profiles/` | `components/profile/profile-view.tsx` |
 | `roles/` | Vacío por ahora (el chequeo de rol ADMIN vive inline en el layout de administration hasta que roles tenga su propia lógica dedicada) — `README.md` con la fase pendiente |
 | `editorial/` | `lib/validators.ts` (postSchema), lógica de `app/api/posts`, `app/api/modalities`, `components/network/post-card.tsx` |
@@ -89,7 +89,7 @@
 | Carpeta | Contenido |
 |---|---|
 | `database/` | `lib/prisma.ts` |
-| `auth/` | `lib/supabase/client.ts`, `server.ts`, `middleware.ts`, `admin.ts` |
+| `auth/` | `infrastructure/auth/client.ts`, `auth.ts`, `server.ts` y `email.ts` |
 | `storage/` | Nuevo helper extraído de la lógica de upload de avatar/banner en `profile-view.tsx` |
 | `realtime/`, `cache/`, `logging/` | Vacíos, `README.md` (nada implementado, no es de ningún módulo tampoco) |
 | `external-services/` | Lógica de `app/api/discord/route.ts` extraída a `discord.ts` |

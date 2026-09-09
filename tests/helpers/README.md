@@ -1,3 +1,4 @@
-# helpers
+# Test helpers
 
-Utilidades para escribir tests (setup de cliente Supabase de prueba, factories, etc.). Vacío por ahora.
+Utilidades compartidas para tests (factories, sesiones de Better Auth de prueba,
+fixtures de Prisma/Neon, etc.). La carpeta está reservada para esas ayudas.

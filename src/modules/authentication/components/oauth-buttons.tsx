@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/infrastructure/auth/client";
+import { authClient } from "@/infrastructure/auth/client";
 import { Button } from "@/shared/ui/button";
 
 type Provider = "google" | "discord";
@@ -13,13 +13,9 @@ export function OAuthButtons({ redirectTo = "/onboarding/username" }: { redirect
   async function handleOAuth(provider: Provider) {
     setError("");
     setLoadingProvider(provider);
-    const supabase = createClient();
-
-    const { error } = await supabase.auth.signInWithOAuth({
+    const { error } = await authClient.signIn.social({
       provider,
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectTo)}`,
-      },
+      callbackURL: redirectTo,
     });
 
     if (error) {

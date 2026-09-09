@@ -109,7 +109,7 @@ enum ParticipantStatus { ACTIVE PENDING LEFT }
 
 ## Tiempo real
 
-- Igual que notificaciones: Supabase Realtime (`postgres_changes` sobre
+- Igual que notificaciones: polling autenticado sobre la API que consulta
   `DirectMessage`, filtrado por `conversationId`) mientras la conversación
   está abierta en pantalla. RLS: solo pueden leer mensajes los participantes
   con status ACTIVE o PENDING de esa conversación.

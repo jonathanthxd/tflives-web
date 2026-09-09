@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/infrastructure/auth/server";
+import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { toggleReaction, getReactionState, ReactionError, type ReactionTargetType } from "@/modules/community/reactions";
 
 function parseTargetType(value: unknown): ReactionTargetType | null {
@@ -13,21 +13,14 @@ export async function GET(request: Request) {
   if (!targetType || !targetId) {
     return NextResponse.json({ error: "Parámetros inválidos" }, { status: 400 });
   }
-
-  const supabase = await createClient();
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser();
+  const authUser = await getCurrentAuthUser();
 
   const state = await getReactionState(authUser?.id ?? null, targetType, targetId);
   return NextResponse.json(state, { status: 200 });
 }
 
 export async function POST(request: Request) {
-  const supabase = await createClient();
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser();
+  const authUser = await getCurrentAuthUser();
   if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
   try {

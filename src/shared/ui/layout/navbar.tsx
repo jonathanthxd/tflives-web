@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { useTheme } from "next-themes";
-import { createClient } from "@/infrastructure/auth/client";
+import { authClient } from "@/infrastructure/auth/client";
 import AuthHeader from "@/shared/ui/layout/auth-header";
 import UserMenu from "@/shared/ui/layout/user-menu";
 import NotificationBell from "@/modules/notifications/components/notification-bell";
@@ -30,6 +30,7 @@ export default function Navbar() {
   const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
+  const { data: session } = authClient.useSession();
   const isAuthRoute = MINIMAL_HEADER_ROUTES.includes(pathname);
 
   // resolvedTheme (y no theme) porque ThemeProvider usa enableSystem: con
@@ -45,38 +46,40 @@ export default function Navbar() {
   } | null>(null);
 
   useEffect(() => {
-    const supabase = createClient();
-
-    async function loadProfile() {
-      const res = await fetch("/api/me");
-      const data = await res.json();
-      if (data.user) {
-        setUser({
-          id: data.user.id,
-          name: data.user.displayName || data.user.name || null,
-          username: data.user.username || null,
-          role: data.user.role,
-          image: data.user.image || null,
-        });
-      } else {
-        setUser(null);
-      }
+    if (!session?.user) {
+      setUser(null);
+      return;
     }
 
-    loadProfile();
+    let cancelled = false;
+    fetch("/api/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (cancelled) return;
+        if (data.user) {
+          setUser({
+            id: data.user.id,
+            name: data.user.displayName || data.user.name || null,
+            username: data.user.username || null,
+            role: data.user.role,
+            image: data.user.image || null,
+          });
+        } else {
+          setUser(null);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setUser(null);
+      });
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(() => {
-      loadProfile();
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+    return () => {
+      cancelled = true;
+    };
+  }, [session?.user?.id]);
 
   const handleLogout = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
+    await authClient.signOut();
+    setUser(null);
     router.push("/");
     router.refresh();
   };

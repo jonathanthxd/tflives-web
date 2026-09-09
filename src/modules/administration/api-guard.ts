@@ -1,4 +1,4 @@
-import { createClient } from "@/infrastructure/auth/server";
+import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { prisma } from "@/infrastructure/database/prisma";
 import { canAccessSection, type AdminSection } from "@/modules/administration/permissions";
 import { Role } from "@prisma/client";
@@ -14,10 +14,7 @@ export class AdminGuardError extends Error {
 export async function requireAdminSection(
   section: AdminSection
 ): Promise<{ userId: string; role: Role }> {
-  const supabase = await createClient();
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser();
+  const authUser = await getCurrentAuthUser();
   if (!authUser) throw new AdminGuardError("No autenticado", 401);
 
   const profile = await prisma.user.findUnique({

@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter, Link } from "@/i18n/navigation";
-import { createClient } from "@/infrastructure/auth/client";
+import { authClient } from "@/infrastructure/auth/client";
 import { registerSchema } from "@/modules/authentication/validation";
 import { flattenZodErrors } from "@/shared/validation/zod-helpers";
 import { Button } from "@/shared/ui/button";
@@ -91,56 +91,47 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
-      const supabase = createClient();
       const displayName = `${parsed.data.firstName} ${parsed.data.lastName}`.trim();
 
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await authClient.signUp.email({
+        name: displayName,
         email: parsed.data.email,
         password: parsed.data.password,
-        options: {
-          data: {
-            username: parsed.data.username,
-            display_name: displayName,
-          },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
+        callbackURL: "/onboarding/username",
       });
 
       if (error) {
-        if (error.message.toLowerCase().includes("database")) {
-          setFormError(t("credencialesEnUso"));
-        } else if (error.message.toLowerCase().includes("already registered")) {
+        const code = error.code?.toUpperCase() || "";
+        if (code.includes("USER_ALREADY_EXISTS") || code.includes("EMAIL")) {
           setFormError(t("emailRegistrado"));
         } else {
-          setFormError(error.message);
+          setFormError(error.message || t("credencialesEnUso"));
         }
         return;
       }
 
-      if (data.session) {
+      // Si Better Auth creó una sesión (configuración local/predeterminada),
+      // terminamos el perfil de inmediato. Si la verificación de email está
+      // activada, este PATCH devolverá 401 y mostramos la pantalla de correo.
+      const profileRes = await fetch("/api/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: parsed.data.username,
+          displayName,
+        }),
+      });
+
+      if (profileRes.ok) {
         router.push(`/perfil/${parsed.data.username}`);
         router.refresh();
         return;
       }
 
-      // Sin sesión = falta confirmar el email (configuración por defecto de Supabase Auth).
-      if (process.env.NODE_ENV !== "production") {
-        fetch("/api/dev/confirmation-link", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: parsed.data.email, password: parsed.data.password }),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.link) {
-              console.log(
-                "%c[dev] Link de confirmación (no llega en prod):\n%s",
-                "color:#60A5FA;font-weight:bold",
-                data.link
-              );
-            }
-          })
-          .catch(() => {});
+      if (profileRes.status !== 401) {
+        const profileData = await profileRes.json().catch(() => ({}));
+        setFormError(profileData.error || t("credencialesEnUso"));
+        return;
       }
 
       setRegistered(true);

@@ -1,26 +1,19 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/infrastructure/auth/server";
+import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { listComments, createComment, CommentError } from "@/modules/community/comments";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const postId = searchParams.get("postId");
   if (!postId) return NextResponse.json({ error: "Falta postId" }, { status: 400 });
-
-  const supabase = await createClient();
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser();
+  const authUser = await getCurrentAuthUser();
 
   const comments = await listComments(postId, authUser?.id);
   return NextResponse.json({ comments }, { status: 200 });
 }
 
 export async function POST(request: Request) {
-  const supabase = await createClient();
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser();
+  const authUser = await getCurrentAuthUser();
   if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
   try {

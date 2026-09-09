@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter, Link as IntlLink } from "@/i18n/navigation";
 import { useSearchParams as useNextSearchParams } from "next/navigation";
-import { createClient } from "@/infrastructure/auth/client";
 import { Card } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
@@ -16,18 +15,6 @@ interface PersonSummary {
   displayName: string | null;
   name: string | null;
   image: string | null;
-}
-
-/**
- * Supabase Realtime manda los timestamps de Postgres sin sufijo de zona
- * horaria ("2026-08-03 15:58:00.123"), y `new Date(...)` los interpreta como
- * hora local en vez de UTC — a diferencia de Prisma, que sí serializa con
- * "Z". Sin esto, un mensaje recibido por Realtime se ve corrido por el
- * offset horario del navegador.
- */
-function normalizePgTimestamp(value: string): string {
-  if (/[zZ]|[+-]\d{2}:\d{2}$/.test(value)) return value;
-  return `${value.replace(" ", "T")}Z`;
 }
 
 interface InboxEntry {
@@ -161,27 +148,23 @@ export default function MessagesPage() {
 
   useEffect(() => {
     if (!activeId) return;
-    const supabase = createClient();
-    const channel = supabase
-      .channel(`conversation:${activeId}`)
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "DirectMessage", filter: `conversationId=eq.${activeId}` },
-        (payload) => {
-          const raw = payload.new as ConversationMessage;
-          const row: ConversationMessage = { ...raw, createdAt: normalizePgTimestamp(raw.createdAt) };
-          setConversation((prev) => {
-            if (!prev) return prev;
-            if (prev.messages.some((m) => m.id === row.id)) return prev;
-            return { ...prev, messages: [...prev.messages, row] };
-          });
-          loadInbox();
-        }
-      )
-      .subscribe();
+    let cancelled = false;
+
+    async function refreshConversation() {
+      if (cancelled || !activeId) return;
+      await Promise.all([loadConversation(activeId), loadInbox()]);
+    }
+
+    const interval = window.setInterval(refreshConversation, 2_500);
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") refreshConversation();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
 
     return () => {
-      supabase.removeChannel(channel);
+      cancelled = true;
+      window.clearInterval(interval);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeId]);

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/infrastructure/auth/server";
+import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { prisma } from "@/infrastructure/database/prisma";
 import { canViewFriendsList, getSocialStatus, listFriends } from "@/modules/social/service";
 
@@ -13,11 +13,7 @@ export async function GET(request: Request) {
     select: { id: true, allowFriendRequests: true, friendsListVisibility: true },
   });
   if (!target) return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 });
-
-  const supabase = await createClient();
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser();
+  const authUser = await getCurrentAuthUser();
 
   const isOwner = authUser?.id === target.id;
   const status = authUser

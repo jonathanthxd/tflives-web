@@ -145,7 +145,8 @@
     "nuevaContrasena": "Nueva contraseña",
     "confirmarContrasena": "Confirmar contraseña",
     "guardarContrasena": "Guardar contraseña",
-    "guardando": "Guardando..."
+    "guardando": "Guardando...",
+    "enlaceInvalido": "El enlace de recuperación no es válido o ya expiró."
   },
   "Onboarding": {
     "username": "Username",

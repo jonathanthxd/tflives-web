@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { createClient } from "@/infrastructure/auth/client";
+import { useSearchParams } from "next/navigation";
+import { authClient } from "@/infrastructure/auth/client";
 import { resetPasswordSchema } from "@/modules/authentication/validation";
 import { flattenZodErrors } from "@/shared/validation/zod-helpers";
 import { Button } from "@/shared/ui/button";
@@ -12,9 +13,19 @@ import { FormField } from "@/shared/ui/form-field";
 import HeroGlow from "@/shared/ui/effects/hero-glow";
 
 export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={null}>
+      <ResetPasswordForm />
+    </Suspense>
+  );
+}
+
+function ResetPasswordForm() {
   const t = useTranslations("ResetPassword");
   const tAuth = useTranslations("Auth");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -38,17 +49,22 @@ export default function ResetPasswordPage() {
 
     setLoading(true);
     try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
-
-      if (error) {
-        setFormError(error.message);
+      if (!token) {
+        setFormError(t("enlaceInvalido"));
         return;
       }
 
-      // updateUser deja al usuario logueado con la sesión de recuperación —
-      // mandarlo a /login lo dejaría autenticado en una pantalla de login.
-      router.push("/onboarding/username");
+      const { error } = await authClient.resetPassword({
+        newPassword: parsed.data.password,
+        token,
+      });
+
+      if (error) {
+        setFormError(error.message || t("enlaceInvalido"));
+        return;
+      }
+
+      router.push("/login");
       router.refresh();
     } catch {
       setFormError(tAuth("conexionError"));

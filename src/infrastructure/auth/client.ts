@@ -1,8 +1,6 @@
-import { createBrowserClient } from "@supabase/ssr";
+"use client";
 
-export function createClient() {
-  return createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
-  );
-}
+import { createAuthClient } from "better-auth/react";
+
+/** Cliente de autenticación de navegador. Todas las sesiones viven en Better Auth. */
+export const authClient = createAuthClient();

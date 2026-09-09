@@ -17,7 +17,7 @@ cuando se construyan esos módulos.
 
 ## Decisiones de arquitectura (confirmadas con Jonathan)
 
-1. **Tiempo real**: Supabase Realtime (`postgres_changes` sobre la tabla
+1. **Actualización cercana a tiempo real**: polling de las APIs de Next.js sobre la tabla
    `Notification`, filtrado por `userId`). Nada de polling.
 2. **Notificaciones de navegador**: `Notification` API estándar del browser,
    solo mientras haya una pestaña de TFLives abierta y el usuario haya dado
@@ -129,7 +129,7 @@ configuración simple, a decidir en el plan de implementación) con:
   - Aceptar `Friendship` → notifica al `requester` (`FRIEND_ACCEPTED`)
   - Publicar un `Post` (`published: true`) → notifica a todos los usuarios que siguen a... (no hay concepto de "seguir contenido" todavía) — se simplifica a: notifica a **todos los usuarios registrados** como anuncio oficial. Si el volumen de usuarios crece mucho, se revisita (fuera de alcance ahora).
 - **Centro de notificaciones**: dropdown en el ícono de campana del navbar (hoy inerte). Lista ordenada por fecha, separador visual leído/no-leído, click en un item lo marca como leído, botón "Marcar todo como leído".
-- **Badge de no-leídas**: contador en el ícono de campana, actualizado en vivo vía Supabase Realtime (`postgres_changes` INSERT/UPDATE sobre `Notification` filtrado por `userId`).
+- **Badge de no-leídas**: contador en el ícono de campana, actualizado mediante polling autenticado de la API de notificaciones. La capa podrá migrarse a WebSocket/SSE sin cambiar el modelo de dominio.
 - **Preferencias**: página nueva `/perfil/[username]/notificaciones` (o similar, a definir en el plan) con un toggle in-app/navegador por cada una de las 7 categorías.
 - **Notificación de navegador**: al recibir un evento de Realtime, si `Notification.permission === "granted"` y la preferencia `browserEnabled` de esa categoría está activa, se dispara `new Notification(...)`. Se pide permiso la primera vez que el usuario abre el centro de notificaciones (no automáticamente al cargar la página).
 

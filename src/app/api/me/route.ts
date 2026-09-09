@@ -1,13 +1,10 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/infrastructure/auth/server";
+import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { prisma } from "@/infrastructure/database/prisma";
 import { getActiveBanOrSuspension } from "@/modules/administration/sanctions";
 
 export async function GET() {
-  const supabase = await createClient();
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser();
+  const authUser = await getCurrentAuthUser();
 
   if (!authUser) {
     return NextResponse.json({ user: null }, { status: 200 });

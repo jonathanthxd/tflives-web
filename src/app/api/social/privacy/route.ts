@@ -1,15 +1,12 @@
 import { NextResponse } from "next/server";
 import { FriendsListVisibility } from "@prisma/client";
-import { createClient } from "@/infrastructure/auth/server";
+import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { prisma } from "@/infrastructure/database/prisma";
 
 const VISIBILITY_VALUES: FriendsListVisibility[] = ["PUBLIC", "FRIENDS_ONLY", "PRIVATE"];
 
 export async function GET() {
-  const supabase = await createClient();
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser();
+  const authUser = await getCurrentAuthUser();
   if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
   const profile = await prisma.user.findUnique({
@@ -21,10 +18,7 @@ export async function GET() {
 }
 
 export async function PATCH(request: Request) {
-  const supabase = await createClient();
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser();
+  const authUser = await getCurrentAuthUser();
   if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
   const body = await request.json().catch(() => ({}));

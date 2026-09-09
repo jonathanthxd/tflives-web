@@ -1,5 +1,5 @@
 import { redirect } from "@/i18n/navigation";
-import { createClient } from "@/infrastructure/auth/server";
+import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { prisma } from "@/infrastructure/database/prisma";
 import { canAccessSection, type AdminSection } from "@/modules/administration/permissions";
 import { Role } from "@prisma/client";
@@ -8,10 +8,7 @@ export async function requireSectionPage(
   section: AdminSection,
   locale: string
 ): Promise<{ userId: string; role: Role }> {
-  const supabase = await createClient();
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser();
+  const authUser = await getCurrentAuthUser();
   if (!authUser) {
     return redirect({ href: "/", locale });
   }

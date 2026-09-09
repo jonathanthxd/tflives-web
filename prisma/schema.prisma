@@ -10,7 +10,7 @@ datasource db {
 model User {
   id                String    @id
   email             String    @unique
-  name              String?
+  name              String
   displayName       String?   @map("display_name")
   username          String?   @unique
   emailVerified     Boolean   @default(false) @map("email_verified")
@@ -23,6 +23,11 @@ model User {
   messages          Message[]
   posts             Post[]
   createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  sessions          Session[]
+  accounts          Account[]
+  profileAssets     ProfileAsset[]
 
   allowFriendRequests   Boolean               @default(true) @map("allow_friend_requests")
   friendsListVisibility FriendsListVisibility @default(PUBLIC) @map("friends_list_visibility")
@@ -54,6 +59,71 @@ model User {
   achievementsCreated UserAchievement[] @relation("AchievementAwarder")
   achievementsEarned  UserAchievement[] @relation("AchievementRecipient")
   achievementCatalog  Achievement[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId             String
+  providerId            String
+  accessToken           String?   @db.Text
+  refreshToken          String?   @db.Text
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  idToken               String?   @db.Text
+  password              String?   @db.Text
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@unique([providerId, accountId])
+  @@index([userId])
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String   @db.Text
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@index([expiresAt])
+}
+
+model ProfileAsset {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind      ProfileAssetKind
+  mimeType  String
+  bytes     Bytes
+  updatedAt DateTime         @updatedAt
+
+  @@unique([userId, kind])
+  @@index([userId])
+}
+
+enum ProfileAssetKind {
+  AVATAR
+  BANNER
 }
 
 model Friendship {

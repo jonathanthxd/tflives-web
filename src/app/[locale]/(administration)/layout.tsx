@@ -1,6 +1,6 @@
 import { redirect } from "@/i18n/navigation";
 import AdminSidebar from "@/modules/administration/components/admin-sidebar";
-import { createClient } from "@/infrastructure/auth/server";
+import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { prisma } from "@/infrastructure/database/prisma";
 import { canAccessAdminPanel } from "@/modules/administration/permissions";
 
@@ -12,10 +12,7 @@ export default async function AdminLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const supabase = await createClient();
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser();
+  const authUser = await getCurrentAuthUser();
 
   if (!authUser) {
     return redirect({ href: "/", locale });

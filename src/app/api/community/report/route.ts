@@ -1,12 +1,9 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/infrastructure/auth/server";
+import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { reportComment, CommunityReportError } from "@/modules/community/report";
 
 export async function POST(request: Request) {
-  const supabase = await createClient();
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser();
+  const authUser = await getCurrentAuthUser();
   if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
   try {

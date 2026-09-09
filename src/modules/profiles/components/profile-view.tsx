@@ -15,8 +15,7 @@ import {
   Link as LinkIcon,
   Sparkles,
 } from "lucide-react";
-import { createClient } from "@/infrastructure/auth/client";
-import { uploadProfileAsset } from "@/infrastructure/storage/avatars";
+import { authClient } from "@/infrastructure/auth/client";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Card } from "@/shared/ui/card";
@@ -86,14 +85,13 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
     setSaveError("");
 
     try {
-      const supabase = createClient();
-      const url = await uploadProfileAsset(supabase, current.id, file, kind);
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("kind", kind);
 
-      const field = kind === "avatar" ? "image" : "bannerUrl";
-      const res = await fetch("/api/profile", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ [field]: url }),
+      const res = await fetch("/api/profile/assets", {
+        method: "POST",
+        body: formData,
       });
       if (!res.ok) throw new Error();
       const data = await res.json();
@@ -141,8 +139,7 @@ export default function ProfileView({ profile, isOwner }: { profile: Profile; is
   }
 
   async function handleLogout() {
-    const supabase = createClient();
-    await supabase.auth.signOut();
+    await authClient.signOut();
     router.push("/");
     router.refresh();
   }

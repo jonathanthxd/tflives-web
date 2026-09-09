@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
-import { createClient } from "@/infrastructure/auth/server";
+import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { prisma } from "@/infrastructure/database/prisma";
 import { usernameSchema } from "@/modules/authentication/validation";
 
@@ -18,8 +18,14 @@ type AllowedField = (typeof ALLOWED_FIELDS)[number];
 const FIELD_SCHEMAS: Partial<Record<AllowedField, z.ZodType<string>>> = {
   bio: z.string().max(280, "La bio no puede superar los 280 caracteres"),
   displayName: z.string().max(60, "El nombre no puede superar los 60 caracteres"),
-  image: z.string().url("URL de imagen inválida"),
-  bannerUrl: z.string().url("URL de banner inválida"),
+  image: z.string().refine(
+    (value) => value.startsWith("/api/profile/assets/") || z.string().url().safeParse(value).success,
+    "URL de imagen inválida"
+  ),
+  bannerUrl: z.string().refine(
+    (value) => value.startsWith("/api/profile/assets/") || z.string().url().safeParse(value).success,
+    "URL de banner inválida"
+  ),
   minecraftUsername: z
     .string()
     .regex(/^[A-Za-z0-9_]{3,16}$/, "Username de Minecraft inválido (3-16 caracteres, sin espacios)"),
@@ -35,10 +41,7 @@ const SOCIAL_LINK_SCHEMA = z
   .max(6, "Máximo 6 enlaces sociales");
 
 export async function PATCH(request: Request) {
-  const supabase = await createClient();
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser();
+  const authUser = await getCurrentAuthUser();
 
   if (!authUser) {
     return NextResponse.json({ error: "No autenticado" }, { status: 401 });

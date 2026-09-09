@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { createClient } from "@/infrastructure/auth/client";
+import { authClient } from "@/infrastructure/auth/client";
 import { forgotPasswordSchema } from "@/modules/authentication/validation";
 import { flattenZodErrors } from "@/shared/validation/zod-helpers";
 import { Button } from "@/shared/ui/button";
@@ -35,8 +35,8 @@ export default function ForgotPasswordPage() {
 
     setLoading(true);
     try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
+      const { error } = await authClient.requestPasswordReset({
+        email: parsed.data.email,
         redirectTo: `${window.location.origin}/reset-password`,
       });
 

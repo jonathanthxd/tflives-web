@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/infrastructure/database/prisma";
-import { createClient } from "@/infrastructure/auth/server";
+import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import ProfileView from "@/modules/profiles/components/profile-view";
 
 interface ProfilePageProps {
@@ -31,11 +31,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   if (!profile) {
     notFound();
   }
-
-  const supabase = await createClient();
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser();
+  const authUser = await getCurrentAuthUser();
 
   const isOwner = authUser?.id === profile.id;
 

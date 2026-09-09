@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { createClient } from "@/infrastructure/auth/client";
 import { getNotificationHref } from "@/modules/notifications/links";
 import { publishNotificationToast } from "@/modules/notifications/toast-store";
 
@@ -39,6 +38,8 @@ export default function NotificationBell({ userId }: { userId: string }) {
   const [unreadCount, setUnreadCount] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
   const preferencesRef = useRef<Record<string, boolean>>({});
+  const knownIdsRef = useRef<Set<string>>(new Set());
+  const initialLoadedRef = useRef(false);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -49,72 +50,75 @@ export default function NotificationBell({ userId }: { userId: string }) {
   }, []);
 
   useEffect(() => {
-    fetch("/api/notifications")
-      .then((res) => res.json())
-      .then((data) => {
-        setItems(data.notifications || []);
-        setUnreadCount(data.unreadCount || 0);
-      });
-
     fetch("/api/notifications/preferences")
       .then((res) => res.json())
       .then((data) => {
         const map: Record<string, boolean> = {};
         for (const p of data.preferences || []) map[p.category] = p.browserEnabled;
         preferencesRef.current = map;
-      });
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
-    const supabase = createClient();
-    const channel = supabase
-      .channel(`notifications:${userId}`)
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "Notification", filter: `userId=eq.${userId}` },
-        async (payload) => {
-          const row = payload.new as {
-            id: string;
-            type: string;
-            createdAt: string;
-            entityType: string | null;
-            entityId: string | null;
-          };
+    let cancelled = false;
 
-          setUnreadCount((c) => c + 1);
-          // Refetch para traer el actor resuelto (el payload de Realtime solo trae actorId).
-          fetch("/api/notifications")
-            .then((res) => res.json())
-            .then((data) => {
-              const fresh: NotificationItem[] = data.notifications || [];
-              setItems(fresh);
-              const inserted = fresh.find((n) => n.id === row.id);
-              publishNotificationToast({
-                id: row.id,
-                type: row.type,
-                actorName: inserted ? actorName(inserted.actor) : null,
-                entityType: row.entityType,
-                entityId: row.entityId,
-                announcementTitle: inserted?.announcement?.title ?? null,
-              });
+    async function refreshNotifications() {
+      try {
+        const res = await fetch("/api/notifications", { cache: "no-store" });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (cancelled) return;
+
+        const fresh: NotificationItem[] = data.notifications || [];
+        const previousIds = knownIdsRef.current;
+
+        if (initialLoadedRef.current) {
+          for (const notification of fresh) {
+            if (previousIds.has(notification.id)) continue;
+
+            publishNotificationToast({
+              id: notification.id,
+              type: notification.type,
+              actorName: actorName(notification.actor),
+              entityType: notification.entityType,
+              entityId: notification.entityId,
+              announcementTitle: notification.announcement?.title ?? null,
             });
 
-          if (
-            typeof Notification !== "undefined" &&
-            Notification.permission === "granted" &&
-            preferencesRef.current[row.type] !== false
-          ) {
-            new Notification("TFLives", { body: t(`message.${row.type}`) });
+            if (
+              typeof Notification !== "undefined" &&
+              Notification.permission === "granted" &&
+              preferencesRef.current[notification.type] !== false
+            ) {
+              new Notification("TFLives", { body: t(`message.${notification.type}`) });
+            }
           }
         }
-      )
-      .subscribe();
+
+        knownIdsRef.current = new Set(fresh.map((notification) => notification.id));
+        initialLoadedRef.current = true;
+        setItems(fresh);
+        setUnreadCount(data.unreadCount || 0);
+      } catch {
+        // Un fallo puntual de red no rompe el centro de notificaciones.
+      }
+    }
+
+    refreshNotifications();
+    const interval = window.setInterval(refreshNotifications, 10_000);
+
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") refreshNotifications();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
 
     return () => {
-      supabase.removeChannel(channel);
+      cancelled = true;
+      window.clearInterval(interval);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId]);
+  }, [userId, t]);
 
   async function requestPermissionIfNeeded() {
     if (typeof Notification === "undefined") return;

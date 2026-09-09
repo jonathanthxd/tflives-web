@@ -25,7 +25,7 @@ interface CreateNotificationInput {
  * Inserta una notificación respetando la preferencia in-app del destinatario
  * para esa categoría (si el usuario nunca configuró preferencias, el default
  * es notificar). No dispara nada del lado del navegador — eso lo hace el
- * cliente al recibir el INSERT vía Supabase Realtime.
+ * cliente cuando detecta una notificación nueva mediante el transporte activo.
  */
 export async function createNotification({
   userId,

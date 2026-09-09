@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/infrastructure/auth/server";
+import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { prisma } from "@/infrastructure/database/prisma";
 import {
   SocialError,
@@ -12,10 +12,7 @@ import {
 } from "@/modules/social/service";
 
 async function requireUser() {
-  const supabase = await createClient();
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser();
+  const authUser = await getCurrentAuthUser();
   return authUser;
 }
 

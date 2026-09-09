@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/infrastructure/auth/server";
+import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { prisma } from "@/infrastructure/database/prisma";
 import { SocialError, follow, unfollow } from "@/modules/social/service";
 
@@ -10,10 +10,7 @@ async function resolveTarget(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const supabase = await createClient();
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser();
+  const authUser = await getCurrentAuthUser();
   if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
   const target = await resolveTarget(request.clone());
@@ -31,10 +28,7 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  const supabase = await createClient();
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser();
+  const authUser = await getCurrentAuthUser();
   if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
   const target = await resolveTarget(request.clone());

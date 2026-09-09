@@ -1,28 +1,11 @@
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
+import { headers } from "next/headers";
+import { auth } from "@/infrastructure/auth/auth";
 
-export async function createClient() {
-  const cookieStore = await cookies();
+export async function getCurrentSession() {
+  return auth.api.getSession({ headers: await headers() });
+}
 
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            );
-          } catch {
-            // Called from a Server Component — ignored because middleware
-            // refreshes the session on every request.
-          }
-        },
-      },
-    }
-  );
+export async function getCurrentAuthUser() {
+  const session = await getCurrentSession();
+  return session?.user ?? null;
 }
