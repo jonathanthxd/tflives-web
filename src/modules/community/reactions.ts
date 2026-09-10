@@ -1,3 +1,4 @@
+import { isPublicPost } from "@/modules/editorial/publication";
 import { prisma } from "@/infrastructure/database/prisma";
 import { createNotification } from "@/modules/notifications/service";
 
@@ -15,21 +16,40 @@ async function resolveTarget(targetType: ReactionTargetType, targetId: string) {
   if (targetType === "POST") {
     const post = await prisma.post.findUnique({
       where: { id: targetId },
-      select: { authorId: true, slug: true, published: true },
+      select: {
+        authorId: true,
+        slug: true,
+        published: true,
+        archived: true,
+        scheduledFor: true,
+      },
     });
-    if (!post || !post.published) return null;
+    if (!post || !isPublicPost(post)) return null;
     return { ownerId: post.authorId, postSlug: post.slug };
   }
 
   const comment = await prisma.comment.findUnique({
     where: { id: targetId },
-    include: { post: { select: { slug: true } } },
+    include: {
+      post: {
+        select: {
+          slug: true,
+          published: true,
+          archived: true,
+          scheduledFor: true,
+        },
+      },
+    },
   });
-  if (!comment || comment.deletedAt) return null;
+  if (!comment || comment.deletedAt || !isPublicPost(comment.post)) return null;
   return { ownerId: comment.authorId, postSlug: comment.post.slug };
 }
 
-export async function toggleReaction(userId: string, targetType: ReactionTargetType, targetId: string) {
+export async function toggleReaction(
+  userId: string,
+  targetType: ReactionTargetType,
+  targetId: string,
+) {
   if (targetType !== "POST" && targetType !== "COMMENT") {
     throw new ReactionError("Tipo de reacción inválido");
   }
@@ -56,16 +76,26 @@ export async function toggleReaction(userId: string, targetType: ReactionTargetT
     }
   }
 
-  const count = await prisma.reaction.count({ where: { targetType, targetId } });
+  const count = await prisma.reaction.count({
+    where: { targetType, targetId },
+  });
   return { liked: !existing, count };
 }
 
-export async function getReactionState(userId: string | null, targetType: ReactionTargetType, targetId: string) {
+export async function getReactionState(
+  userId: string | null,
+  targetType: ReactionTargetType,
+  targetId: string,
+) {
+  if (!(await resolveTarget(targetType, targetId)))
+    throw new ReactionError("No encontrado", 404);
   const [count, mine] = await Promise.all([
     prisma.reaction.count({ where: { targetType, targetId } }),
     userId
       ? prisma.reaction.findUnique({
-          where: { userId_targetType_targetId: { userId, targetType, targetId } },
+          where: {
+            userId_targetType_targetId: { userId, targetType, targetId },
+          },
         })
       : null,
   ]);

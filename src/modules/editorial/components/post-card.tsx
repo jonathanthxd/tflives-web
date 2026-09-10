@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { PostType } from "@prisma/client";
@@ -16,6 +16,10 @@ interface PostCardProps {
 }
 
 const typeColors: Record<PostType, string> = {
+  CHANGELOG:
+    "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
+  MAINTENANCE:
+    "bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20",
   UPDATE:
     "bg-emerald-600/10 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-600/30 dark:border-emerald-500/20",
   PATCH:
@@ -25,9 +29,20 @@ const typeColors: Record<PostType, string> = {
     "bg-purple-600/10 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-600/30 dark:border-purple-500/20",
 };
 
-export default function PostCard({ title, excerpt, type, modality, date, slug, image }: PostCardProps) {
+export default function PostCard({
+  title,
+  excerpt,
+  type,
+  modality,
+  date,
+  slug,
+  image,
+}: PostCardProps) {
   const t = useTranslations("PostCard");
+  const reducedMotion = useReducedMotion();
   const typeLabels: Record<PostType, string> = {
+    CHANGELOG: t("changelog"),
+    MAINTENANCE: t("maintenance"),
     UPDATE: t("update"),
     PATCH: t("parche"),
     NEWS: t("noticia"),
@@ -36,7 +51,7 @@ export default function PostCard({ title, excerpt, type, modality, date, slug, i
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={reducedMotion ? false : { opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4 }}
@@ -53,12 +68,16 @@ export default function PostCard({ title, excerpt, type, modality, date, slug, i
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-card/50 to-background/50">
-                <span className="font-display text-4xl font-bold text-primary/20">{modality[0]}</span>
+                <span className="font-display text-4xl font-bold text-primary/20">
+                  {modality[0]}
+                </span>
               </div>
             )}
             {/* Type badge */}
             <div className="absolute top-4 left-4">
-              <span className={`px-3 py-1 text-xs font-medium tracking-wider uppercase rounded-full border ${typeColors[type]}`}>
+              <span
+                className={`px-3 py-1 text-xs font-medium tracking-wider uppercase rounded-full border ${typeColors[type]}`}
+              >
                 {typeLabels[type]}
               </span>
             </div>
@@ -67,7 +86,9 @@ export default function PostCard({ title, excerpt, type, modality, date, slug, i
           {/* Content */}
           <div className="p-6">
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-xs text-muted-foreground/70 font-medium">{modality}</span>
+              <span className="text-xs text-muted-foreground/70 font-medium">
+                {modality}
+              </span>
               <span className="text-muted-foreground/30">•</span>
               <span className="text-xs text-muted-foreground/50">{date}</span>
             </div>
@@ -82,8 +103,18 @@ export default function PostCard({ title, excerpt, type, modality, date, slug, i
 
             <div className="mt-4 flex items-center gap-2 text-primary/70 text-sm font-medium group-hover:text-primary transition-colors duration-300">
               <span>{t("leerMas")}</span>
-              <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              <svg
+                className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                />
               </svg>
             </div>
           </div>

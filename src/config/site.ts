@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-
 export const siteMetadata: Metadata = {
-  title: "TFLives — Gaming Network",
+  metadataBase: new URL("https://tflives.com"),
+  title: "TFLives — Time For Lives",
   description:
-    "La red de servidores Minecraft más innovadora. SurvivalRPG, Skyblock, Gens Tycoon y más.",
+    "Time For Lives: comunidad, proyectos y experiencias compartidas.",
 };

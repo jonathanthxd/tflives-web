@@ -1,4 +1,17 @@
+import { publicPosts } from "@/modules/editorial/publication";
 import { prisma } from "@/infrastructure/database/prisma";
+
+export async function listPublicActivity(limit = 12) {
+  return prisma.comment.findMany({
+    where: { deletedAt: null, post: publicPosts() },
+    include: {
+      author: { select: { username: true, displayName: true, name: true } },
+      post: { select: { slug: true, title: true, translations: true } },
+    },
+    orderBy: { createdAt: "desc" },
+    take: limit,
+  });
+}
 
 export interface ActivityItem {
   id: string;
@@ -9,10 +22,13 @@ export interface ActivityItem {
   postTitle: string;
 }
 
-export async function listUserActivity(userId: string, limit = 6): Promise<ActivityItem[]> {
+export async function listUserActivity(
+  userId: string,
+  limit = 6,
+): Promise<ActivityItem[]> {
   const [comments, reactions] = await Promise.all([
     prisma.comment.findMany({
-      where: { authorId: userId, deletedAt: null },
+      where: { authorId: userId, deletedAt: null, post: publicPosts() },
       orderBy: { createdAt: "desc" },
       take: limit,
       include: { post: { select: { slug: true, title: true } } },
@@ -27,7 +43,7 @@ export async function listUserActivity(userId: string, limit = 6): Promise<Activ
   const reactionPostIds = reactions.map((r) => r.targetId);
   const posts = reactionPostIds.length
     ? await prisma.post.findMany({
-        where: { id: { in: reactionPostIds } },
+        where: { id: { in: reactionPostIds }, ...publicPosts() },
         select: { id: true, slug: true, title: true },
       })
     : [];
@@ -38,7 +54,8 @@ export async function listUserActivity(userId: string, limit = 6): Promise<Activ
       id: c.id,
       type: "COMMENT" as const,
       createdAt: c.createdAt,
-      excerpt: c.content.length > 140 ? `${c.content.slice(0, 140)}…` : c.content,
+      excerpt:
+        c.content.length > 140 ? `${c.content.slice(0, 140)}…` : c.content,
       postSlug: c.post.slug,
       postTitle: c.post.title,
     })),
@@ -57,5 +74,7 @@ export async function listUserActivity(userId: string, limit = 6): Promise<Activ
       }),
   ];
 
-  return items.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()).slice(0, limit);
+  return items
+    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+    .slice(0, limit);
 }

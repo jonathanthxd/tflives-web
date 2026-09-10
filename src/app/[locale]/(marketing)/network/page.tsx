@@ -1,105 +1,66 @@
-import { getTranslations, getLocale } from "next-intl/server";
+import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/infrastructure/database/prisma";
-import PostCard from "@/modules/editorial/components/post-card";
-import { Link } from "@/i18n/navigation";
-
+import {
+  PublicShell,
+  AreaLinks,
+  ModalityCards,
+  PostsFeed,
+  StaffLink,
+  Empty,
+} from "@/modules/network/components/public-content";
+import { NetworkStatusPanel } from "@/modules/network/components/status-panel";
+import { publicModalities } from "@/modules/editorial/publication";
+import { contentMetadata } from "@/modules/editorial/metadata";
 export const dynamic = "force-dynamic";
-
-interface NetworkPageProps {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}
-
-export default async function NetworkPage({ searchParams }: NetworkPageProps) {
-  const t = await getTranslations("Network");
-  const locale = await getLocale();
-  const params = await searchParams;
-  const modalityFilter = typeof params.modality === "string" ? params.modality : "all";
-
-  const modalities = await prisma.modality.findMany({
-    orderBy: { name: "asc" },
-  });
-
-  const posts = await prisma.post.findMany({
-    where: modalityFilter !== "all" ? { modalityId: modalityFilter } : undefined,
-    include: { modality: true, author: { select: { name: true } } },
-    orderBy: { createdAt: "desc" },
-    take: 12,
-  });
-
+export const runtime = "nodejs";
+export const generateMetadata = () =>
+  contentMetadata("modalities", "networkDescription", "/network");
+export default async function NetworkPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ modality?: string }>;
+}) {
+  const [t, query, modes] = await Promise.all([
+    getTranslations("Content"),
+    searchParams,
+    prisma.modality.findMany({
+      where: publicModalities,
+      orderBy: { order: "asc" },
+    }),
+  ]);
   return (
-    <main className="relative min-h-screen pt-24 pb-16">
-      {/* Header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
-        <div className="text-center mb-10">
-          <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4">
-            TFL <span className="text-primary">Network</span>
-          </h1>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            {t("subtitulo")}
-          </p>
-        </div>
-
-        {/* Filters — Server-side with Link */}
-        <div className="flex flex-wrap gap-2 justify-center">
-          <Link
-            href="/network"
-            className={`px-4 py-2 text-sm font-medium rounded-xl border transition-all duration-300 ${
-              modalityFilter === "all"
-                ? "bg-primary/20 text-primary border-primary/40"
-                : "bg-transparent text-muted-foreground border-muted-foreground/20 hover:border-primary/30 hover:text-primary"
-            }`}
+    <PublicShell title="TFL Network" description={t("networkDescription")}>
+      <AreaLinks />
+      <Suspense fallback={<Empty>{t("unavailable")}</Empty>}>
+        <NetworkStatusPanel />
+      </Suspense>
+      <h2 className="font-display text-2xl font-semibold">{t("modalities")}</h2>
+      <ModalityCards />
+      <StaffLink section="modalities" href="/admin/modalities" />
+      <h2 className="font-display text-2xl font-semibold">{t("latest")}</h2>
+      <form className="flex flex-wrap gap-3 items-end">
+        <label>
+          {t("modalityId")}
+          <select
+            name="modality"
+            defaultValue={typeof query.modality === "string" ? query.modality : ""}
+            className="ml-3 rounded-xl border border-border bg-background p-3"
           >
-            {t("todas")}
-          </Link>
-          {modalities.map((mod) => (
-            <Link
-              key={mod.id}
-              href={`/network?modality=${mod.id}`}
-              className={`px-4 py-2 text-sm font-medium rounded-xl border transition-all duration-300 ${
-                modalityFilter === mod.id
-                  ? "bg-primary/20 text-primary border-primary/40"
-                  : "bg-transparent text-muted-foreground border-muted-foreground/20 hover:border-primary/30 hover:text-primary"
-              }`}
-            >
-              {mod.name}
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {posts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts.map((post) => (
-              <PostCard
-                key={post.id}
-                title={post.title}
-                excerpt={post.excerpt || ""}
-                type={post.type}
-                modality={post.modality.name}
-                date={new Date(post.createdAt).toLocaleDateString(locale, {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })}
-                slug={post.slug}
-                image={post.image}
-              />
+            <option value="">{t("all")}</option>
+            {modes.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.name}
+              </option>
             ))}
-          </div>
-        ) : (
-          <div className="text-center py-20">
-            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-primary/5 flex items-center justify-center">
-              <svg className="w-10 h-10 text-primary/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-              </svg>
-            </div>
-            <h3 className="font-display text-xl text-foreground mb-2">{t("sinPosts")}</h3>
-            <p className="text-muted-foreground">{t("sinPostsDescripcion")}</p>
-          </div>
-        )}
-      </div>
-    </main>
+          </select>
+        </label>
+        <button className="rounded-xl bg-primary/10 px-5 py-3 text-primary">
+          {t("filter")}
+        </button>
+      </form>
+      <PostsFeed modalityId={typeof query.modality === "string" ? query.modality : undefined} />
+      <StaffLink section="posts" href="/admin/posts" />
+    </PublicShell>
   );
 }

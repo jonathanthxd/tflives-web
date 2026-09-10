@@ -28,7 +28,7 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="relative min-h-screen bg-background">
+    <div className="content-surface relative min-h-screen bg-background">
       <div
         className="pointer-events-none fixed inset-x-0 top-0 z-0 h-96"
         style={{
@@ -37,7 +37,7 @@ export default async function AdminLayout({
         }}
       />
       <AdminSidebar role={profile.role} />
-      <main className="relative z-10 ml-64 min-h-screen px-8 pb-16 pt-28">
+      <main className="relative z-10 min-w-0 lg:ml-64 min-h-screen px-4 sm:px-8 pb-16 pt-8 lg:pt-28">
         <div className="mx-auto max-w-6xl">{children}</div>
       </main>
     </div>

@@ -1,42 +1,54 @@
+import { z } from "zod";
+export const DISCORD_INVITE = "https://discord.com/invite/c3jFPyJ9vd";
 export interface DiscordGuildCounts {
-  presence_count: number;
+  presence_count: number | null;
   member_count: number | null;
 }
-
+const count = z.number().int().nonnegative().optional();
+const guildPayload = z.object({
+  approximate_presence_count: count,
+  approximate_member_count: count,
+});
+const widgetPayload = z.object({ presence_count: count });
 export async function getDiscordGuildCounts(): Promise<DiscordGuildCounts> {
-  const serverId = process.env.DISCORD_SERVER_ID;
-  const botToken = process.env.DISCORD_BOT_TOKEN;
-
-  if (!serverId || !botToken) {
-    return { presence_count: 0, member_count: null };
-  }
-
-  try {
-    const res = await fetch(
-      `https://discord.com/api/v10/guilds/${serverId}?with_counts=true`,
-      {
-        headers: { Authorization: `Bot ${botToken}` },
-        next: { revalidate: 30 },
-      }
-    );
-
-    if (!res.ok) {
-      const widgetRes = await fetch(
-        `https://discord.com/api/guilds/${serverId}/widget.json`
+  const guild = process.env.DISCORD_SERVER_ID || "1246905708541120593";
+  const token = process.env.DISCORD_BOT_TOKEN;
+  if (!/^\d+$/.test(guild)) return { presence_count: null, member_count: null };
+  if (token) {
+    try {
+      const response = await fetch(
+        `https://discord.com/api/v10/guilds/${guild}?with_counts=true`,
+        {
+          headers: { Authorization: `Bot ${token}` },
+          signal: AbortSignal.timeout(2500),
+          next: { revalidate: 300 },
+        },
       );
-      const widgetData = await widgetRes.json();
+      if (response.ok) {
+        const data = guildPayload.parse(await response.json());
+        return {
+          presence_count: data.approximate_presence_count ?? null,
+          member_count: data.approximate_member_count ?? null,
+        };
+      }
+    } catch {
+      /* Public widget remains available without bot credentials. */
+    }
+  }
+  try {
+    const response = await fetch(
+      `https://discord.com/api/guilds/${guild}/widget.json`,
+      { signal: AbortSignal.timeout(2500), next: { revalidate: 300 } },
+    );
+    if (response.ok) {
+      const data = widgetPayload.parse(await response.json());
       return {
-        presence_count: widgetData.presence_count || 0,
+        presence_count: data.presence_count ?? null,
         member_count: null,
       };
     }
-
-    const data = await res.json();
-    return {
-      presence_count: data.approximate_presence_count || 0,
-      member_count: data.approximate_member_count || data.member_count || null,
-    };
   } catch {
-    return { presence_count: 0, member_count: null };
+    /* Missing integration is represented as unknown, never zero. */
   }
+  return { presence_count: null, member_count: null };
 }

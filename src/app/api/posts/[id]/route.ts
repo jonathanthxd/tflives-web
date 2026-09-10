@@ -1,32 +1,43 @@
+import { contentError } from "@/modules/administration/content-error";
+import { isPublicPost } from "@/modules/editorial/publication";
 import { NextResponse } from "next/server";
 import { prisma } from "@/infrastructure/database/prisma";
-import { requireAdminSection, AdminGuardError } from "@/modules/administration/api-guard";
+import {
+  requireAdminSection,
+  AdminGuardError,
+} from "@/modules/administration/api-guard";
 import { logAdminAction } from "@/modules/administration/action-log";
 import { notifyPostPublished } from "@/modules/notifications/service";
 import { postUpdateSchema } from "@/modules/editorial/validation";
 
 export async function GET(
   _request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
   try {
     await requireAdminSection("posts");
     const post = await prisma.post.findUnique({ where: { id } });
-    if (!post) return NextResponse.json({ error: "Post no encontrado" }, { status: 404 });
+    if (!post)
+      return NextResponse.json(
+        { error: "Post no encontrado" },
+        { status: 404 },
+      );
     return NextResponse.json({ post }, { status: 200 });
   } catch (error) {
     if (error instanceof AdminGuardError) {
-      return NextResponse.json({ error: error.message }, { status: error.status });
+      return NextResponse.json(
+        { error: error.message },
+        { status: error.status },
+      );
     }
-    console.error(error);
-    return NextResponse.json({ error: "Error al obtener el post" }, { status: 500 });
+    return contentError(error);
   }
 }
 
 export async function PATCH(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
   try {
@@ -35,20 +46,36 @@ export async function PATCH(
     const parsed = postUpdateSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json(
-        { error: "Datos inválidos", details: parsed.error.errors },
-        { status: 400 }
+        { error: "invalid", details: parsed.error.errors },
+        { status: 400 },
       );
     }
 
     const existing = await prisma.post.findUnique({ where: { id } });
-    if (!existing) return NextResponse.json({ error: "Post no encontrado" }, { status: 404 });
+    if (!existing)
+      return NextResponse.json(
+        { error: "Post no encontrado" },
+        { status: 404 },
+      );
 
     const { scheduledFor, ...rest } = parsed.data;
     const post = await prisma.post.update({
       where: { id },
       data: {
         ...rest,
-        ...(scheduledFor !== undefined ? { scheduledFor: scheduledFor ? new Date(scheduledFor) : null } : {}),
+        publishedAt:
+          rest.published === true
+            ? ((scheduledFor === undefined
+                ? existing.scheduledFor
+                : scheduledFor
+                  ? new Date(scheduledFor)
+                  : null) ??
+              existing.publishedAt ??
+              new Date())
+            : undefined,
+        ...(scheduledFor !== undefined
+          ? { scheduledFor: scheduledFor ? new Date(scheduledFor) : null }
+          : {}),
       },
     });
 
@@ -69,33 +96,61 @@ export async function PATCH(
       metadata: parsed.data,
     });
 
-    if (parsed.data.published === true && !existing.published) {
+    if (isPublicPost(post) && !isPublicPost(existing)) {
       notifyPostPublished(post.slug, post.authorId).catch((err) =>
-        console.error("Error notificando post publicado:", err)
+        console.error("Error notificando post publicado:", err),
       );
     }
 
     return NextResponse.json({ post }, { status: 200 });
   } catch (error) {
     if (error instanceof AdminGuardError) {
-      return NextResponse.json({ error: error.message }, { status: error.status });
+      return NextResponse.json(
+        { error: error.message },
+        { status: error.status },
+      );
     }
-    console.error(error);
-    return NextResponse.json({ error: "Error al actualizar el post" }, { status: 500 });
+    return contentError(error);
   }
 }
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
   try {
     const { userId } = await requireAdminSection("posts");
     const existing = await prisma.post.findUnique({ where: { id } });
-    if (!existing) return NextResponse.json({ error: "Post no encontrado" }, { status: 404 });
+    if (!existing)
+      return NextResponse.json(
+        { error: "Post no encontrado" },
+        { status: 404 },
+      );
 
-    await prisma.post.delete({ where: { id } });
+    await prisma.$transaction(async (tx) => {
+      const comments = await tx.comment.findMany({
+        where: { postId: id },
+        select: { id: true },
+      });
+      await tx.reaction.deleteMany({
+        where: {
+          OR: [
+            { targetType: "POST", targetId: id },
+            {
+              targetType: "COMMENT",
+              targetId: { in: comments.map((c) => c.id) },
+            },
+          ],
+        },
+      });
+      await tx.comment.updateMany({
+        where: { postId: id },
+        data: { parentId: null },
+      });
+      await tx.comment.deleteMany({ where: { postId: id } });
+      await tx.post.delete({ where: { id } });
+    });
 
     await logAdminAction({
       actorId: userId,
@@ -108,9 +163,11 @@ export async function DELETE(
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
     if (error instanceof AdminGuardError) {
-      return NextResponse.json({ error: error.message }, { status: error.status });
+      return NextResponse.json(
+        { error: error.message },
+        { status: error.status },
+      );
     }
-    console.error(error);
-    return NextResponse.json({ error: "Error al eliminar el post" }, { status: 500 });
+    return contentError(error);
   }
 }

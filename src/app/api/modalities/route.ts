@@ -1,53 +1,34 @@
-import { NextResponse } from "next/server";
 import { prisma } from "@/infrastructure/database/prisma";
-import { requireAdminSection, AdminGuardError } from "@/modules/administration/api-guard";
+import { requireAdminSection } from "@/modules/administration/api-guard";
+import { contentError } from "@/modules/administration/content-error";
+import { modalitySchema } from "@/modules/editorial/content-validation";
 import { logAdminAction } from "@/modules/administration/action-log";
-
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const all = new URL(request.url).searchParams.get("admin") === "1";
+    if (all) await requireAdminSection("posts");
     const modalities = await prisma.modality.findMany({
-      orderBy: { name: "asc" },
+      where: all ? {} : { published: true, status: { not: "ARCHIVED" } },
+      orderBy: { order: "asc" },
     });
-    return NextResponse.json({ modalities }, { status: 200 });
-  } catch {
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    return Response.json({ modalities });
+  } catch (error) {
+    return contentError(error);
   }
 }
-
 export async function POST(request: Request) {
   try {
     const { userId } = await requireAdminSection("modalities");
-    const body = await request.json();
-    const name = typeof body.name === "string" ? body.name.trim() : "";
-    if (!name) {
-      return NextResponse.json({ error: "El nombre es obligatorio" }, { status: 400 });
-    }
-
-    const modality = await prisma.modality.create({
-      data: {
-        name,
-        description: typeof body.description === "string" ? body.description.trim() || null : null,
-        icon: typeof body.icon === "string" ? body.icon.trim() || null : null,
-      },
-    });
-
+    const data = modalitySchema.parse(await request.json());
+    const item = await prisma.modality.create({ data: { ...data } });
     await logAdminAction({
       actorId: userId,
-      action: "modality.create",
-      targetType: "Modality",
-      targetId: modality.id,
-      metadata: { name },
+      action: "modalities.create",
+      targetId: item.id,
+      targetType: "modality",
     });
-
-    return NextResponse.json({ modality }, { status: 201 });
+    return Response.json({ item }, { status: 201 });
   } catch (error) {
-    if (error instanceof AdminGuardError) {
-      return NextResponse.json({ error: error.message }, { status: error.status });
-    }
-    if (error instanceof Error && error.message.includes("Unique constraint")) {
-      return NextResponse.json({ error: "Ya existe una modalidad con ese nombre" }, { status: 409 });
-    }
-    console.error(error);
-    return NextResponse.json({ error: "Error al crear la modalidad" }, { status: 500 });
+    return contentError(error);
   }
 }

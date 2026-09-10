@@ -1,47 +1,42 @@
-import { NextResponse } from "next/server";
-import { requireAdminSection, AdminGuardError } from "@/modules/administration/api-guard";
-import { updateTeamMember, deleteTeamMember, TeamMemberError } from "@/modules/administration/team";
-
-export async function PATCH(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id } = await params;
+import { prisma } from "@/infrastructure/database/prisma";
+import { requireAdminSection } from "@/modules/administration/api-guard";
+import { contentError } from "@/modules/administration/content-error";
+import { teamSchema } from "@/modules/editorial/content-validation";
+import { logAdminAction } from "@/modules/administration/action-log";
+type Context = { params: Promise<{ id: string }> };
+export async function PATCH(request: Request, { params }: Context) {
   try {
     const { userId } = await requireAdminSection("team");
-    const body = await request.json();
-
-    const member = await updateTeamMember(userId, id, {
-      name: typeof body.name === "string" ? body.name : undefined,
-      roleTitle: typeof body.roleTitle === "string" ? body.roleTitle : undefined,
-      avatarUrl: body.avatarUrl !== undefined ? body.avatarUrl : undefined,
-      order: typeof body.order === "number" ? body.order : undefined,
-      active: typeof body.active === "boolean" ? body.active : undefined,
+    const { id } = await params;
+    const data = teamSchema.parse(await request.json());
+    const item = await prisma.teamMember.update({
+      where: { id },
+      data: { ...data },
     });
-    return NextResponse.json({ member }, { status: 200 });
+    await logAdminAction({
+      actorId: userId,
+      action: "team.update",
+      targetId: id,
+      targetType: "teamMember",
+    });
+    return Response.json({ item });
   } catch (error) {
-    if (error instanceof AdminGuardError || error instanceof TeamMemberError) {
-      return NextResponse.json({ error: error.message }, { status: error.status });
-    }
-    console.error(error);
-    return NextResponse.json({ error: "Error al actualizar el miembro" }, { status: 500 });
+    return contentError(error);
   }
 }
-
-export async function DELETE(
-  _request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id } = await params;
+export async function DELETE(_request: Request, { params }: Context) {
   try {
     const { userId } = await requireAdminSection("team");
-    await deleteTeamMember(userId, id);
-    return NextResponse.json({ success: true }, { status: 200 });
+    const { id } = await params;
+    await prisma.teamMember.delete({ where: { id } });
+    await logAdminAction({
+      actorId: userId,
+      action: "team.delete",
+      targetId: id,
+      targetType: "teamMember",
+    });
+    return Response.json({ success: true });
   } catch (error) {
-    if (error instanceof AdminGuardError || error instanceof TeamMemberError) {
-      return NextResponse.json({ error: error.message }, { status: error.status });
-    }
-    console.error(error);
-    return NextResponse.json({ error: "Error al eliminar el miembro" }, { status: 500 });
+    return contentError(error);
   }
 }

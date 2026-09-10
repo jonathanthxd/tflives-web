@@ -1,3 +1,4 @@
+import { publicPosts, translated } from "@/modules/editorial/publication";
 import { getTranslations, getLocale } from "next-intl/server";
 import { prisma } from "@/infrastructure/database/prisma";
 import { Link } from "@/i18n/navigation";
@@ -8,6 +9,26 @@ import LikeButton from "@/modules/community/components/like-button";
 import CommentsSection from "@/modules/community/components/comments-section";
 
 export const dynamic = "force-dynamic";
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string; locale: string }>;
+}) {
+  const { slug, locale } = await params;
+  const raw = await prisma.post.findFirst({
+    where: { slug, ...publicPosts() },
+  });
+  if (!raw) return { robots: { index: false } };
+  const post = translated(raw, locale);
+  return {
+    title: post.title + " | TFLives",
+    description: post.excerpt ?? undefined,
+    alternates: {
+      canonical: `/${locale}/network/${slug}`,
+      languages: { es: `/es/network/${slug}`, en: `/en/network/${slug}` },
+    },
+  };
+}
 
 interface PostPageProps {
   params: Promise<{ slug: string }>;
@@ -19,19 +40,22 @@ export default async function PostDetailPage({ params }: PostPageProps) {
   const tPost = await getTranslations("PostCard");
   const locale = await getLocale();
 
-  const post = await prisma.post.findUnique({
-    where: { slug },
+  const rawPost = await prisma.post.findFirst({
+    where: { slug, ...publicPosts() },
     include: {
       modality: true,
       author: { select: { name: true, image: true } },
     },
   });
 
-  if (!post || !post.published) {
+  if (!rawPost) {
     notFound();
   }
 
+  const post = translated(rawPost, locale);
   const typeLabels: Record<string, string> = {
+    CHANGELOG: tPost("changelog"),
+    MAINTENANCE: tPost("maintenance"),
     UPDATE: tPost("update"),
     PATCH: tPost("parche"),
     NEWS: tPost("noticia"),
@@ -39,6 +63,10 @@ export default async function PostDetailPage({ params }: PostPageProps) {
   };
 
   const typeColors: Record<string, string> = {
+    CHANGELOG:
+      "text-amber-600 dark:text-amber-400 bg-amber-500/10 border-amber-500/20",
+    MAINTENANCE:
+      "text-orange-600 dark:text-orange-400 bg-orange-500/10 border-orange-500/20",
     UPDATE:
       "text-emerald-700 dark:text-emerald-400 bg-emerald-600/10 dark:bg-emerald-500/10 border-emerald-600/30 dark:border-emerald-500/20",
     PATCH:
@@ -55,18 +83,34 @@ export default async function PostDetailPage({ params }: PostPageProps) {
           href="/network"
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-8"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
           </svg>
           {t("volver")}
         </Link>
 
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
-            <span className={`px-3 py-1 text-xs font-medium tracking-wider uppercase rounded-full border ${typeColors[post.type]}`}>
+            <span
+              className={`px-3 py-1 text-xs font-medium tracking-wider uppercase rounded-full border ${typeColors[post.type]}`}
+            >
               {typeLabels[post.type]}
             </span>
-            <span className="text-sm text-muted-foreground">{post.modality.name}</span>
+            <span className="text-sm text-muted-foreground">
+              {post.modality
+                ? translated(post.modality, locale).name
+                : "TFLives"}
+            </span>
           </div>
 
           <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
@@ -76,7 +120,11 @@ export default async function PostDetailPage({ params }: PostPageProps) {
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               {post.author.image ? (
-                <img src={post.author.image} alt="" className="w-6 h-6 rounded-full object-cover" />
+                <img
+                  src={post.author.image}
+                  alt=""
+                  className="w-6 h-6 rounded-full object-cover"
+                />
               ) : (
                 <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
                   {(post.author.name?.[0] || "U").toUpperCase()}
@@ -86,23 +134,32 @@ export default async function PostDetailPage({ params }: PostPageProps) {
             </div>
             <span>•</span>
             <span>
-              {new Date(post.createdAt).toLocaleDateString(locale, {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
+              {new Date(post.publishedAt ?? post.createdAt).toLocaleDateString(
+                locale,
+                {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                },
+              )}
             </span>
           </div>
         </div>
 
         {post.image && (
           <div className="mb-8 rounded-2xl overflow-hidden bg-card/30 border border-primary/10">
-            <img src={post.image} alt={post.title} className="w-full h-auto object-cover max-h-[400px]" />
+            <img
+              src={post.image}
+              alt={post.title}
+              className="w-full h-auto object-cover max-h-[400px]"
+            />
           </div>
         )}
 
         <div className="prose prose-tfl max-w-none">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {post.content}
+          </ReactMarkdown>
         </div>
 
         <div className="mt-10 flex items-center justify-between border-y border-primary/10 py-4">

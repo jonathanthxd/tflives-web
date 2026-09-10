@@ -1,0 +1,490 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String    @id
+  email             String    @unique
+  name              String
+  displayName       String?   @map("display_name")
+  username          String?   @unique
+  emailVerified     Boolean   @default(false) @map("email_verified")
+  image             String?
+  bannerUrl         String?   @map("banner_url")
+  bio               String?   @db.Text
+  minecraftUsername String?   @map("minecraft_username")
+  socialLinks       Json?     @map("social_links")
+  role              Role      @default(USER)
+  messages          Message[]
+  posts             Post[]
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  sessions          Session[]
+  accounts          Account[]
+  profileAssets     ProfileAsset[]
+
+  allowFriendRequests   Boolean               @default(true) @map("allow_friend_requests")
+  friendsListVisibility FriendsListVisibility @default(PUBLIC) @map("friends_list_visibility")
+
+  sentFriendRequests      Friendship[]             @relation("FriendshipRequester")
+  receivedFriendRequests  Friendship[]             @relation("FriendshipAddressee")
+  following               Follow[]                 @relation("Follower")
+  followers               Follow[]                 @relation("Following")
+  notifications           Notification[]
+  notificationPreferences NotificationPreference[]
+
+  conversationParticipations ConversationParticipant[]
+  directMessages             DirectMessage[]
+  blocking                   Block[]                   @relation("Blocker")
+  blockedBy                  Block[]                   @relation("Blocked")
+  reportsMade                Report[]                  @relation("Reporter")
+  reportsReviewed            Report[]                  @relation("ReportReviewer")
+
+  sanctionsReceived UserSanction[]   @relation("SanctionTarget")
+  sanctionsIssued   UserSanction[]   @relation("SanctionIssuer")
+  adminActions      AdminActionLog[]
+  appealsMade       SanctionAppeal[] @relation("AppealAuthor")
+  appealsReviewed   SanctionAppeal[] @relation("AppealReviewer")
+  announcementsMade Announcement[]
+  comments          Comment[]
+  reactions         Reaction[]
+  teamMembersAdded  TeamMember[]
+
+  achievementsCreated UserAchievement[] @relation("AchievementAwarder")
+  achievementsEarned  UserAchievement[] @relation("AchievementRecipient")
+  achievementCatalog  Achievement[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId             String
+  providerId            String
+  accessToken           String?   @db.Text
+  refreshToken          String?   @db.Text
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  idToken               String?   @db.Text
+  password              String?   @db.Text
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@unique([providerId, accountId])
+  @@index([userId])
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String   @db.Text
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@index([expiresAt])
+}
+
+model ProfileAsset {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind      ProfileAssetKind
+  mimeType  String
+  bytes     Bytes
+  updatedAt DateTime         @updatedAt
+
+  @@unique([userId, kind])
+  @@index([userId])
+}
+
+enum ProfileAssetKind {
+  AVATAR
+  BANNER
+}
+
+model Friendship {
+  id          String           @id @default(cuid())
+  requesterId String
+  requester   User             @relation("FriendshipRequester", fields: [requesterId], references: [id])
+  addresseeId String
+  addressee   User             @relation("FriendshipAddressee", fields: [addresseeId], references: [id])
+  status      FriendshipStatus @default(PENDING)
+  createdAt   DateTime         @default(now())
+  respondedAt DateTime?
+
+  @@unique([requesterId, addresseeId])
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  follower    User     @relation("Follower", fields: [followerId], references: [id])
+  followingId String
+  following   User     @relation("Following", fields: [followingId], references: [id])
+  createdAt   DateTime @default(now())
+
+  @@unique([followerId, followingId])
+}
+
+model Notification {
+  id         String           @id @default(cuid())
+  userId     String
+  user       User             @relation(fields: [userId], references: [id])
+  type       NotificationType
+  actorId    String?
+  entityType String?
+  entityId   String?
+  read       Boolean          @default(false)
+  createdAt  DateTime         @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model NotificationPreference {
+  id             String           @id @default(cuid())
+  userId         String
+  user           User             @relation(fields: [userId], references: [id])
+  category       NotificationType
+  inAppEnabled   Boolean          @default(true)
+  browserEnabled Boolean          @default(true)
+
+  @@unique([userId, category])
+}
+
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+enum FriendsListVisibility {
+  PUBLIC
+  FRIENDS_ONLY
+  PRIVATE
+}
+
+model Conversation {
+  id           String                    @id @default(cuid())
+  isGroup      Boolean                   @default(false)
+  name         String?
+  createdById  String
+  createdAt    DateTime                  @default(now())
+  updatedAt    DateTime                  @updatedAt
+  participants ConversationParticipant[]
+  messages     DirectMessage[]
+}
+
+model ConversationParticipant {
+  id             String            @id @default(cuid())
+  conversationId String
+  conversation   Conversation      @relation(fields: [conversationId], references: [id])
+  userId         String
+  user           User              @relation(fields: [userId], references: [id])
+  role           ParticipantRole   @default(MEMBER)
+  status         ParticipantStatus @default(ACTIVE)
+  lastReadAt     DateTime?
+  joinedAt       DateTime          @default(now())
+
+  @@unique([conversationId, userId])
+}
+
+model DirectMessage {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  senderId       String
+  sender         User         @relation(fields: [senderId], references: [id])
+  content        String       @db.Text
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId, createdAt])
+}
+
+model Block {
+  id        String   @id @default(cuid())
+  blockerId String
+  blocker   User     @relation("Blocker", fields: [blockerId], references: [id])
+  blockedId String
+  blocked   User     @relation("Blocked", fields: [blockedId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([blockerId, blockedId])
+}
+
+model Report {
+  id           String       @id @default(cuid())
+  reporterId   String
+  reporter     User         @relation("Reporter", fields: [reporterId], references: [id])
+  targetType   String
+  targetId     String
+  reason       String       @db.Text
+  status       ReportStatus @default(OPEN)
+  reviewedById String?
+  reviewedBy   User?        @relation("ReportReviewer", fields: [reviewedById], references: [id])
+  reviewedAt   DateTime?
+  createdAt    DateTime     @default(now())
+
+  @@index([status, createdAt])
+}
+
+model UserSanction {
+  id         String           @id @default(cuid())
+  userId     String
+  user       User             @relation("SanctionTarget", fields: [userId], references: [id])
+  type       SanctionType
+  reason     String           @db.Text
+  issuedById String
+  issuedBy   User             @relation("SanctionIssuer", fields: [issuedById], references: [id])
+  expiresAt  DateTime?
+  revokedAt  DateTime?
+  createdAt  DateTime         @default(now())
+  appeals    SanctionAppeal[]
+
+  @@index([userId, type, revokedAt])
+}
+
+model SanctionAppeal {
+  id           String       @id @default(cuid())
+  sanctionId   String
+  sanction     UserSanction @relation(fields: [sanctionId], references: [id])
+  userId       String
+  user         User         @relation("AppealAuthor", fields: [userId], references: [id])
+  message      String       @db.Text
+  status       AppealStatus @default(PENDING)
+  reviewedById String?
+  reviewedBy   User?        @relation("AppealReviewer", fields: [reviewedById], references: [id])
+  reviewNote   String?      @db.Text
+  reviewedAt   DateTime?
+  createdAt    DateTime     @default(now())
+
+  @@index([status, createdAt])
+}
+
+model AdminActionLog {
+  id         String   @id @default(cuid())
+  actorId    String
+  actor      User     @relation(fields: [actorId], references: [id])
+  action     String
+  targetType String?
+  targetId   String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+enum ReportStatus {
+  OPEN
+  REVIEWED
+  DISMISSED
+}
+
+enum SanctionType {
+  BAN
+  SUSPEND
+  MUTE
+  WARNING
+}
+
+enum AppealStatus {
+  PENDING
+  APPROVED
+  DENIED
+}
+
+model Announcement {
+  id          String              @id @default(cuid())
+  title       String
+  body        String              @db.Text
+  segment     AnnouncementSegment @default(ALL)
+  createdById String
+  createdBy   User                @relation(fields: [createdById], references: [id])
+  createdAt   DateTime            @default(now())
+
+  @@index([createdAt])
+}
+
+model TeamMember {
+  id          String   @id @default(cuid())
+  name        String
+  roleTitle   String
+  avatarUrl   String?
+  order       Int      @default(0)
+  active      Boolean  @default(true)
+  createdById String
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([active, order])
+}
+
+enum AnnouncementSegment {
+  ALL
+  USERS
+  STAFF
+}
+
+model Comment {
+  id        String    @id @default(cuid())
+  postId    String
+  post      Post      @relation(fields: [postId], references: [id])
+  authorId  String
+  author    User      @relation(fields: [authorId], references: [id])
+  parentId  String?
+  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   Comment[] @relation("CommentReplies")
+  content   String    @db.Text
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([postId, createdAt])
+  @@index([parentId])
+}
+
+/// "Like" genérico: targetType "POST" | "COMMENT" + targetId. Un solo tipo
+/// de reacción (no como Discord con varios emojis).
+model Reaction {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  targetType String
+  targetId   String
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, targetType, targetId])
+  @@index([targetType, targetId])
+}
+
+/// Catálogo de logros/insignias otorgables (sección admin "Logros e
+/// insignias"). El icono se elige de un set curado (ACHIEVEMENT_ICONS en
+/// components/ui/icons.tsx), no es texto libre.
+model Achievement {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  iconKey     String
+  order       Int      @default(0)
+  active      Boolean  @default(true)
+  createdById String
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  awards UserAchievement[]
+
+  @@index([active, order])
+}
+
+/// Un logro otorgado a un usuario. Se otorgan a mano desde el admin — no hay
+/// todavía un sistema de juego que dispare esto automáticamente.
+model UserAchievement {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation("AchievementRecipient", fields: [userId], references: [id])
+  achievementId String
+  achievement   Achievement @relation(fields: [achievementId], references: [id])
+  awardedById   String
+  awardedBy     User        @relation("AchievementAwarder", fields: [awardedById], references: [id])
+  awardedAt     DateTime    @default(now())
+
+  @@unique([userId, achievementId])
+  @@index([userId])
+}
+
+enum ParticipantRole {
+  OWNER
+  MEMBER
+}
+
+enum ParticipantStatus {
+  ACTIVE
+  PENDING
+  LEFT
+}
+
+enum NotificationType {
+  FRIEND_REQUEST
+  FRIEND_ACCEPTED
+  REPLY
+  REACTION
+  MENTION
+  MESSAGE
+  ACHIEVEMENT
+  POST_PUBLISHED
+  ANNOUNCEMENT
+}
+
+model Post {
+  id           String    @id @default(cuid())
+  title        String
+  slug         String    @unique
+  content      String    @db.Text
+  excerpt      String?
+  type         PostType  @default(UPDATE)
+  modality     Modality  @relation(fields: [modalityId], references: [id])
+  modalityId   String
+  image        String?
+  published    Boolean   @default(false)
+  archived     Boolean   @default(false)
+  scheduledFor DateTime?
+  author       User      @relation(fields: [authorId], references: [id])
+  authorId     String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  comments     Comment[]
+}
+
+model Modality {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  description String?
+  icon        String?
+  posts       Post[]
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  content   String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+enum Role {
+  USER
+  MOD
+  ADMIN
+}
+
+enum PostType {
+  UPDATE
+  PATCH
+  NEWS
+  EVENT
+}

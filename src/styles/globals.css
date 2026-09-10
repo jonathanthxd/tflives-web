@@ -66,3 +66,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Content surfaces preserve keyboard focus and respect reduced motion. */
+.content-surface :focus-visible { outline: 2px solid hsl(var(--primary)); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) {
+  .content-surface *, .content-surface *::before, .content-surface *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}

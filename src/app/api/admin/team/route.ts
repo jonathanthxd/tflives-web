@@ -1,39 +1,34 @@
-import { NextResponse } from "next/server";
-import { requireAdminSection, AdminGuardError } from "@/modules/administration/api-guard";
-import { listAllTeamMembers, createTeamMember, TeamMemberError } from "@/modules/administration/team";
-
+import { prisma } from "@/infrastructure/database/prisma";
+import { requireAdminSection } from "@/modules/administration/api-guard";
+import { contentError } from "@/modules/administration/content-error";
+import { teamSchema } from "@/modules/editorial/content-validation";
+import { logAdminAction } from "@/modules/administration/action-log";
 export async function GET() {
   try {
     await requireAdminSection("team");
-    const team = await listAllTeamMembers();
-    return NextResponse.json({ team }, { status: 200 });
+    const items = await prisma.teamMember.findMany({
+      orderBy: { order: "asc" },
+    });
+    return Response.json({ items });
   } catch (error) {
-    if (error instanceof AdminGuardError) {
-      return NextResponse.json({ error: error.message }, { status: error.status });
-    }
-    console.error(error);
-    return NextResponse.json({ error: "Error al obtener el equipo" }, { status: 500 });
+    return contentError(error);
   }
 }
-
 export async function POST(request: Request) {
   try {
     const { userId } = await requireAdminSection("team");
-    const body = await request.json();
-
-    const member = await createTeamMember(userId, {
-      name: typeof body.name === "string" ? body.name : "",
-      roleTitle: typeof body.roleTitle === "string" ? body.roleTitle : "",
-      avatarUrl: typeof body.avatarUrl === "string" ? body.avatarUrl : null,
-      order: typeof body.order === "number" ? body.order : 0,
-      active: typeof body.active === "boolean" ? body.active : true,
+    const data = teamSchema.parse(await request.json());
+    const item = await prisma.teamMember.create({
+      data: { ...data, createdById: userId },
     });
-    return NextResponse.json({ member }, { status: 201 });
+    await logAdminAction({
+      actorId: userId,
+      action: "team.create",
+      targetId: item.id,
+      targetType: "teamMember",
+    });
+    return Response.json({ item }, { status: 201 });
   } catch (error) {
-    if (error instanceof AdminGuardError || error instanceof TeamMemberError) {
-      return NextResponse.json({ error: error.message }, { status: error.status });
-    }
-    console.error(error);
-    return NextResponse.json({ error: "Error al crear el miembro" }, { status: 500 });
+    return contentError(error);
   }
 }

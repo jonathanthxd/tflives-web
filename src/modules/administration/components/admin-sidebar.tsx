@@ -1,16 +1,27 @@
 "use client";
 
+import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Role } from "@prisma/client";
 import { ArrowLeft, Circle } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
-import { ADMIN_NAV_GROUPS, canAccessSection } from "@/modules/administration/permissions";
-import { SECTION_ICONS, PLACEHOLDER_ICONS } from "@/modules/administration/components/ui/icons";
+import {
+  ADMIN_NAV_GROUPS,
+  canAccessSection,
+} from "@/modules/administration/permissions";
+import {
+  SECTION_ICONS,
+  PLACEHOLDER_ICONS,
+} from "@/modules/administration/components/ui/icons";
 
 export default function AdminSidebar({ role }: { role: Role }) {
   const pathname = usePathname();
+  const t = useTranslations("Content");
+  const nav = useTranslations("Navbar");
+  const [open, setOpen] = useState(false);
 
   return (
-    <aside className="fixed left-0 top-0 z-40 h-full w-64 overflow-y-auto border-r border-primary/10 bg-background/95 backdrop-blur-xl">
+    <aside className="relative z-40 w-full pt-20 lg:pt-0 lg:fixed lg:left-0 lg:top-0 lg:h-full lg:w-64 overflow-y-auto border-r border-primary/10 bg-background/95 backdrop-blur-xl">
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.03]"
         style={{
@@ -19,7 +30,7 @@ export default function AdminSidebar({ role }: { role: Role }) {
         }}
       />
 
-      <div className="relative p-6 pt-24">
+      <div className="relative p-6 lg:pt-24">
         <Link href="/" className="font-display text-xl font-bold">
           <span className="text-foreground">TFL</span>
           <span className="text-primary">ives</span>
@@ -32,10 +43,22 @@ export default function AdminSidebar({ role }: { role: Role }) {
         </div>
       </div>
 
-      <nav className="relative space-y-7 px-3 pb-6">
+      <button
+        className="relative m-3 rounded-xl border border-border px-4 py-2 lg:hidden"
+        aria-expanded={open}
+        onClick={() => setOpen(!open)}
+      >
+        {nav(open ? "cerrarMenu" : "abrirMenu")}
+      </button>
+      <nav
+        className={`relative space-y-7 px-3 pb-6 ${open ? "" : "hidden lg:block"}`}
+      >
         {ADMIN_NAV_GROUPS.map((group) => {
-          const visibleItems = group.items.filter((item) => canAccessSection(role, item.section));
-          if (visibleItems.length === 0 && !group.placeholders?.length) return null;
+          const visibleItems = group.items.filter((item) =>
+            canAccessSection(role, item.section),
+          );
+          if (visibleItems.length === 0 && !group.placeholders?.length)
+            return null;
 
           return (
             <div key={group.title}>
@@ -45,11 +68,15 @@ export default function AdminSidebar({ role }: { role: Role }) {
               <div className="space-y-0.5">
                 {visibleItems.map((item) => {
                   const Icon = SECTION_ICONS[item.section];
-                  const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+                  const isActive =
+                    pathname === item.href ||
+                    (item.href !== "/admin" &&
+                      pathname.startsWith(`${item.href}/`));
                   return (
                     <Link
                       key={item.href}
                       href={item.href}
+                      onClick={() => setOpen(false)}
                       className={`group relative flex items-start gap-3 rounded-lg py-2.5 pl-3 pr-3 text-sm transition-colors duration-200 ${
                         isActive
                           ? "bg-primary/[0.08] text-foreground"
@@ -66,8 +93,18 @@ export default function AdminSidebar({ role }: { role: Role }) {
                         strokeWidth={1.75}
                       />
                       <span className="min-w-0">
-                        <span className={`block truncate font-medium ${isActive ? "text-foreground" : ""}`}>
-                          {item.label}
+                        <span
+                          className={`block truncate font-medium ${isActive ? "text-foreground" : ""}`}
+                        >
+                          {[
+                            "posts",
+                            "modalities",
+                            "wiki",
+                            "team",
+                            "timeline",
+                          ].includes(item.section)
+                            ? t(item.section)
+                            : item.label}
                         </span>
                         {item.description && (
                           <span className="mt-0.5 block truncate text-[11px] leading-snug text-muted-foreground/50">
@@ -88,7 +125,9 @@ export default function AdminSidebar({ role }: { role: Role }) {
                       className="flex cursor-not-allowed items-center gap-3 rounded-lg py-2.5 pl-3 pr-3 text-sm text-muted-foreground/35"
                     >
                       <Icon className="h-4 w-4 shrink-0" strokeWidth={1.5} />
-                      <span className="min-w-0 flex-1 truncate">{item.label}</span>
+                      <span className="min-w-0 flex-1 truncate">
+                        {item.label}
+                      </span>
                       <span className="shrink-0 rounded border border-current/20 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider">
                         Soon
                       </span>

@@ -59,6 +59,8 @@ model User {
   achievementsCreated UserAchievement[] @relation("AchievementAwarder")
   achievementsEarned  UserAchievement[] @relation("AchievementRecipient")
   achievementCatalog  Achievement[]
+  wikiArticles WikiArticle[]
+  milestones TimelineMilestone[]
 }
 
 model Session {
@@ -332,6 +334,9 @@ model TeamMember {
   id          String   @id @default(cuid())
   name        String
   roleTitle   String
+  bio         String? @db.Text
+  socialLinks String[] @default([])
+  translations Json?
   avatarUrl   String?
   order       Int      @default(0)
   active      Boolean  @default(true)
@@ -447,8 +452,12 @@ model Post {
   content      String    @db.Text
   excerpt      String?
   type         PostType  @default(UPDATE)
-  modality     Modality  @relation(fields: [modalityId], references: [id])
-  modalityId   String
+  modality     Modality? @relation(fields: [modalityId], references: [id])
+  modalityId   String?
+  locale       String @default("es")
+  translations Json?
+  tags         String[] @default([])
+  publishedAt  DateTime?
   image        String?
   published    Boolean   @default(false)
   archived     Boolean   @default(false)
@@ -458,6 +467,10 @@ model Post {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   comments     Comment[]
+
+  @@index([published, archived, scheduledFor])
+  @@index([type, publishedAt])
+  @@index([modalityId])
 }
 
 model Modality {
@@ -466,6 +479,19 @@ model Modality {
   description String?
   icon        String?
   posts       Post[]
+  slug        String @unique @default(cuid())
+  content     String? @db.Text
+  status      ModalityStatus @default(COMING_SOON)
+  order       Int @default(0)
+  published   Boolean @default(false)
+  minecraftVersion String?
+  banner      String?
+  translations Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  wikiArticles WikiArticle[]
+
+  @@index([published, status, order])
 }
 
 model Message {
@@ -487,4 +513,75 @@ enum PostType {
   PATCH
   NEWS
   EVENT
+  CHANGELOG
+  MAINTENANCE
+}
+
+enum ModalityStatus {
+  ONLINE
+  MAINTENANCE
+  COMING_SOON
+  OFFLINE
+  ARCHIVED
+}
+
+enum ContentState {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+  ARCHIVED
+}
+
+model WikiCategory {
+  id String @id @default(cuid())
+  slug String @unique
+  name String
+  translations Json?
+  order Int @default(0)
+  articles WikiArticle[]
+}
+
+model WikiArticle {
+  id String @id @default(cuid())
+  title String
+  slug String @unique
+  excerpt String?
+  content String @db.Text
+  locale String @default("es")
+  translations Json?
+  state ContentState @default(DRAFT)
+  tags String[] @default([])
+  categoryId String?
+  category WikiCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  modalityId String?
+  modality Modality? @relation(fields: [modalityId], references: [id], onDelete: SetNull)
+  editorId String
+  editor User @relation(fields: [editorId], references: [id])
+  publishedAt DateTime?
+  scheduledFor DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([state, scheduledFor, updatedAt])
+  @@index([categoryId])
+  @@index([modalityId])
+}
+
+model TimelineMilestone {
+  id String @id @default(cuid())
+  title String
+  dateLabel String
+  description String @db.Text
+  category String?
+  image String?
+  order Int @default(0)
+  published Boolean @default(false)
+  archived Boolean @default(false)
+  translations Json?
+  createdById String
+  createdBy User @relation(fields: [createdById], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([published, archived, order])
 }

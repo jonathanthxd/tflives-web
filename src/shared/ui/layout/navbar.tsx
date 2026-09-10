@@ -10,9 +10,20 @@ import UserMenu from "@/shared/ui/layout/user-menu";
 import NotificationBell from "@/modules/notifications/components/notification-bell";
 import NotificationToasts from "@/modules/notifications/components/notification-toasts";
 
-const MINIMAL_HEADER_ROUTES = ["/login", "/register", "/forgot-password", "/reset-password"];
+const MINIMAL_HEADER_ROUTES = [
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/reset-password",
+];
 
-function NavPlaceholderLink({ label, className = "" }: { label: string; className?: string }) {
+function NavPlaceholderLink({
+  label,
+  className = "",
+}: {
+  label: string;
+  className?: string;
+}) {
   return (
     <a
       href="#"
@@ -46,7 +57,7 @@ export default function Navbar() {
   } | null>(null);
 
   useEffect(() => {
-    if (!session?.user) {
+    if (!session?.user?.id) {
       setUser(null);
       return;
     }
@@ -100,7 +111,9 @@ export default function Navbar() {
           {/* Left: Theme toggle + locale switch (flex-1 para que ocupe espacio) */}
           <div className="flex-1 flex items-center justify-start gap-1">
             <button
-              onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+              onClick={() =>
+                setTheme(resolvedTheme === "dark" ? "light" : "dark")
+              }
               aria-label={t("cambiarTema")}
               title={t("cambiarTema")}
               className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300"
@@ -130,8 +143,16 @@ export default function Navbar() {
 
           {/* Center: Logo + Links (centrado absoluto) */}
           <div className="flex items-center gap-3 sm:gap-5 md:gap-7 flex-shrink-0">
-            <NavPlaceholderLink label={t("streamers")} className="hidden lg:inline-flex" />
-            <NavPlaceholderLink label={t("comunidad")} className="hidden md:inline-flex" />
+            <NavPlaceholderLink
+              label={t("streamers")}
+              className="hidden lg:inline-flex"
+            />
+            <Link
+              href="/comunidad"
+              className="hidden md:inline-flex text-sm text-muted-foreground hover:text-primary"
+            >
+              {t("comunidad")}
+            </Link>
 
             <Link
               href="/network"
@@ -152,9 +173,24 @@ export default function Navbar() {
               <span className="w-0 group-hover:w-full h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent transition-all duration-500 mt-0.5" />
             </Link>
 
-            <NavPlaceholderLink label={t("trayectoria")} className="hidden md:inline-flex" />
-            <NavPlaceholderLink label={t("tienda")} className="hidden lg:inline-flex" />
-            <NavPlaceholderLink label={t("equipo")} className="hidden lg:inline-flex" />
+            <Link
+              href="/trayectoria"
+              className="hidden md:inline-flex text-sm text-muted-foreground hover:text-primary"
+            >
+              {t("trayectoria")}
+            </Link>
+            <Link
+              href="/tienda"
+              className="hidden lg:inline-flex text-sm text-muted-foreground hover:text-primary"
+            >
+              {t("tienda")}
+            </Link>
+            <Link
+              href="/equipo"
+              className="hidden lg:inline-flex text-sm text-muted-foreground hover:text-primary"
+            >
+              {t("equipo")}
+            </Link>
           </div>
 
           {/* Right: User / Login (flex-1 para que ocupe espacio) */}
@@ -168,8 +204,18 @@ export default function Navbar() {
                   title={t("mensajes")}
                   className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300 hidden sm:inline-flex"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"
+                    />
                   </svg>
                 </Link>
                 <Link
@@ -177,8 +223,18 @@ export default function Navbar() {
                   title={t("amigos")}
                   className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300 hidden md:inline-flex"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-16.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-16.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
+                    />
                   </svg>
                 </Link>
                 <UserMenu
@@ -205,12 +261,32 @@ export default function Navbar() {
               className="ml-1 p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300 md:hidden"
             >
               {mobileOpen ? (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               ) : (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5"
+                  />
                 </svg>
               )}
             </button>
@@ -242,26 +318,50 @@ export default function Navbar() {
             >
               {t("network")}
             </Link>
-            <a href="#" onClick={(e) => e.preventDefault()} className="block py-2 text-muted-foreground hover:text-primary transition-colors">
+            <a
+              href="#"
+              onClick={(e) => e.preventDefault()}
+              className="block py-2 text-muted-foreground hover:text-primary transition-colors"
+            >
               {t("streamers")}
             </a>
-            <a href="#" onClick={(e) => e.preventDefault()} className="block py-2 text-muted-foreground hover:text-primary transition-colors">
+            <Link
+              href="/comunidad"
+              onClick={() => setMobileOpen(false)}
+              className="block py-2 text-muted-foreground hover:text-primary"
+            >
               {t("comunidad")}
-            </a>
-            <a href="#" onClick={(e) => e.preventDefault()} className="block py-2 text-muted-foreground hover:text-primary transition-colors">
+            </Link>
+            <Link
+              href="/trayectoria"
+              onClick={() => setMobileOpen(false)}
+              className="block py-2 text-muted-foreground hover:text-primary"
+            >
               {t("trayectoria")}
-            </a>
-            <a href="#" onClick={(e) => e.preventDefault()} className="block py-2 text-muted-foreground hover:text-primary transition-colors">
+            </Link>
+            <Link
+              href="/tienda"
+              onClick={() => setMobileOpen(false)}
+              className="block py-2 text-muted-foreground hover:text-primary"
+            >
               {t("tienda")}
-            </a>
-            <a href="#" onClick={(e) => e.preventDefault()} className="block py-2 text-muted-foreground hover:text-primary transition-colors">
+            </Link>
+            <Link
+              href="/equipo"
+              onClick={() => setMobileOpen(false)}
+              className="block py-2 text-muted-foreground hover:text-primary"
+            >
               {t("equipo")}
-            </a>
+            </Link>
 
             {user ? (
               <div className="pt-2 border-t border-primary/10 space-y-3">
                 <Link
-                  href={user.username ? `/perfil/${user.username}` : "/onboarding/username"}
+                  href={
+                    user.username
+                      ? `/perfil/${user.username}`
+                      : "/onboarding/username"
+                  }
                   className="block py-2 text-primary font-medium"
                   onClick={() => setMobileOpen(false)}
                 >

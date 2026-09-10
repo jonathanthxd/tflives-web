@@ -1,7 +1,11 @@
+import { publicPosts, isPublicPost } from "@/modules/editorial/publication";
 import { Role } from "@prisma/client";
 import { prisma } from "@/infrastructure/database/prisma";
 import { createNotification } from "@/modules/notifications/service";
-import { getActiveBanOrSuspension, isMuted } from "@/modules/administration/sanctions";
+import {
+  getActiveBanOrSuspension,
+  isMuted,
+} from "@/modules/administration/sanctions";
 import { logAdminAction } from "@/modules/administration/action-log";
 
 export class CommentError extends Error {
@@ -30,15 +34,24 @@ export interface CommentDTO {
   content: string;
   createdAt: Date;
   authorId: string;
-  author: { id: string; username: string | null; displayName: string | null; name: string | null; image: string | null } | null;
+  author: {
+    id: string;
+    username: string | null;
+    displayName: string | null;
+    name: string | null;
+    image: string | null;
+  } | null;
   likeCount: number;
   likedByMe: boolean;
   replies: CommentDTO[];
 }
 
-export async function listComments(postId: string, viewerId?: string): Promise<CommentDTO[]> {
+export async function listComments(
+  postId: string,
+  viewerId?: string,
+): Promise<CommentDTO[]> {
   const comments = await prisma.comment.findMany({
-    where: { postId, deletedAt: null },
+    where: { postId, deletedAt: null, post: publicPosts() },
     orderBy: { createdAt: "asc" },
     include: { author: { select: AUTHOR_SELECT } },
   });
@@ -54,12 +67,18 @@ export async function listComments(postId: string, viewerId?: string): Promise<C
       : [],
     viewerId && ids.length
       ? prisma.reaction.findMany({
-          where: { userId: viewerId, targetType: "COMMENT", targetId: { in: ids } },
+          where: {
+            userId: viewerId,
+            targetType: "COMMENT",
+            targetId: { in: ids },
+          },
           select: { targetId: true },
         })
       : [],
   ]);
-  const likeCountById = new Map(likeCounts.map((l) => [l.targetId, l._count.targetId]));
+  const likeCountById = new Map(
+    likeCounts.map((l) => [l.targetId, l._count.targetId]),
+  );
   const likedSet = new Set(myLikes.map((l) => l.targetId));
 
   const dtoById = new Map<string, CommentDTO>();
@@ -92,11 +111,12 @@ export async function createComment(
   authorId: string,
   postId: string,
   content: string,
-  parentId: string | null
+  parentId: string | null,
 ) {
   const trimmed = content.trim();
   if (!trimmed) throw new CommentError("El comentario no puede estar vacío");
-  if (trimmed.length > 2000) throw new CommentError("El comentario es demasiado largo");
+  if (trimmed.length > 2000)
+    throw new CommentError("El comentario es demasiado largo");
 
   if (await getActiveBanOrSuspension(authorId)) {
     throw new CommentError("Tu cuenta está suspendida", 403);
@@ -107,9 +127,16 @@ export async function createComment(
 
   const post = await prisma.post.findUnique({
     where: { id: postId },
-    select: { id: true, published: true, slug: true },
+    select: {
+      id: true,
+      published: true,
+      archived: true,
+      scheduledFor: true,
+      slug: true,
+    },
   });
-  if (!post || !post.published) throw new CommentError("Post no encontrado", 404);
+  if (!post || !isPublicPost(post))
+    throw new CommentError("Post no encontrado", 404);
 
   let parent = null;
   if (parentId) {
@@ -118,7 +145,9 @@ export async function createComment(
       throw new CommentError("No se puede responder a este comentario", 404);
     }
     if (parent.parentId) {
-      throw new CommentError("Solo se puede responder hasta un nivel de profundidad");
+      throw new CommentError(
+        "Solo se puede responder hasta un nivel de profundidad",
+      );
     }
   }
 
@@ -153,8 +182,8 @@ export async function createComment(
             actorId: authorId,
             entityType: "Post",
             entityId: post.slug,
-          })
-        )
+          }),
+        ),
     );
   }
 
@@ -171,13 +200,19 @@ export async function createComment(
   return dto;
 }
 
-export async function deleteComment(actingUserId: string, actingRole: Role, commentId: string) {
+export async function deleteComment(
+  actingUserId: string,
+  actingRole: Role,
+  commentId: string,
+) {
   const comment = await prisma.comment.findUnique({ where: { id: commentId } });
-  if (!comment || comment.deletedAt) throw new CommentError("Comentario no encontrado", 404);
+  if (!comment || comment.deletedAt)
+    throw new CommentError("Comentario no encontrado", 404);
 
   const isOwner = comment.authorId === actingUserId;
   const isStaff = actingRole === "MOD" || actingRole === "ADMIN";
-  if (!isOwner && !isStaff) throw new CommentError("No podés borrar este comentario", 403);
+  if (!isOwner && !isStaff)
+    throw new CommentError("No podés borrar este comentario", 403);
 
   const updated = await prisma.comment.update({
     where: { id: commentId },

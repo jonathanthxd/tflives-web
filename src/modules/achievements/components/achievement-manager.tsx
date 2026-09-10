@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Pencil, Trash2, Trophy, Award, ChevronDown, ChevronUp, X } from "lucide-react";
+import { Plus, Pencil, Trash2, Trophy, Award, ChevronUp, X } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import ConfirmDialog from "@/shared/ui/confirm-dialog";
 import { EmptyState } from "@/modules/administration/components/ui/empty-state";

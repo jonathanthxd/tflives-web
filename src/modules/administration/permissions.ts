@@ -9,6 +9,8 @@ import { Role } from "@prisma/client";
 export const ADMIN_SECTIONS = [
   "dashboard",
   "posts",
+  "wiki",
+  "timeline",
   "modalities",
   "users",
   "reports",
@@ -30,6 +32,8 @@ export type AdminSection = (typeof ADMIN_SECTIONS)[number];
 export const SECTION_ACCESS: Record<AdminSection, Role[]> = {
   dashboard: ["MOD", "ADMIN"],
   posts: ["MOD", "ADMIN"],
+  wiki: ["MOD", "ADMIN"],
+  timeline: ["ADMIN"],
   modalities: ["ADMIN"],
   users: ["ADMIN"],
   reports: ["MOD", "ADMIN"],
@@ -90,7 +94,11 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
     items: [
       { section: "dashboard", href: "/admin", label: "Dashboard" },
       { section: "analytics", href: "/admin/analytics", label: "Analítica" },
-      { section: "staffLog", href: "/admin/staff-log", label: "Registro de staff" },
+      {
+        section: "staffLog",
+        href: "/admin/staff-log",
+        label: "Registro de staff",
+      },
     ],
   },
   {
@@ -102,10 +110,15 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
         label: "Noticias y TFL Network",
         description: "Noticias, actualizaciones, parches y eventos",
       },
-      { section: "modalities", href: "/admin/modalities", label: "Modalidades" },
+      {
+        section: "modalities",
+        href: "/admin/modalities",
+        label: "Modalidades",
+      },
       { section: "team", href: "/admin/team", label: "Equipo público" },
+      { section: "wiki", href: "/admin/wiki", label: "Wiki" },
+      { section: "timeline", href: "/admin/timeline", label: "Trayectoria" },
     ],
-    placeholders: [{ label: "Artículos de wiki", iconKey: "wiki" }],
   },
   {
     title: "Comunidad",

@@ -32,6 +32,8 @@ import type { AdminSection } from "@/modules/administration/permissions";
 export const SECTION_ICONS: Record<AdminSection, LucideIcon> = {
   dashboard: LayoutDashboard,
   posts: Newspaper,
+  wiki: BookOpen,
+  timeline: ScrollText,
   modalities: Gamepad2,
   users: Users,
   reports: Flag,

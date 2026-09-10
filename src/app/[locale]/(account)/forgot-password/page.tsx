@@ -41,7 +41,7 @@ export default function ForgotPasswordPage() {
       });
 
       if (error) {
-        setFormError(error.message);
+        setFormError(error.message ?? tAuth("conexionError"));
         return;
       }
 
