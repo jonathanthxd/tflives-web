@@ -109,6 +109,7 @@ export default function MessagesPage() {
   const [reportTarget, setReportTarget] = useState<{ targetType: "CONVERSATION" | "DIRECT_MESSAGE"; targetId: string } | null>(null);
   const [memberUsername, setMemberUsername] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messageComposerRef = useRef<HTMLTextAreaElement>(null);
   const messageViewportRef = useRef<HTMLDivElement>(null);
   const nearConversationBottomRef = useRef(true);
 
@@ -164,6 +165,11 @@ export default function MessagesPage() {
   useEffect(() => {
     if (nearConversationBottomRef.current) messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [conversation?.messages.length]);
+
+  useEffect(() => {
+    if (!replyToMessage) return;
+    requestAnimationFrame(() => messageComposerRef.current?.focus());
+  }, [replyToMessage]);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -310,6 +316,10 @@ export default function MessagesPage() {
       });
       setReplyToMessage(null);
       loadInbox();
+      requestAnimationFrame(() => {
+        if (messageComposerRef.current) messageComposerRef.current.style.height = "";
+        messageComposerRef.current?.focus();
+      });
     } else {
       setDraft(content);
     }
@@ -329,6 +339,10 @@ export default function MessagesPage() {
     setReplyToMessage(null);
     setShowStickers(false);
     loadInbox();
+    requestAnimationFrame(() => {
+      if (messageComposerRef.current) messageComposerRef.current.style.height = "";
+      messageComposerRef.current?.focus();
+    });
   }
 
   async function reactToMessage(messageId: string, emoji: string) {
@@ -682,19 +696,26 @@ export default function MessagesPage() {
                     e.preventDefault();
                     sendMessage();
                   }}
-                  className="flex items-center gap-2 border-t border-border p-3"
+                  className="flex items-end gap-2 border-t border-border p-3"
                 >
                   <button type="button" onClick={() => setShowStickers((value) => !value)} aria-label={t("stickers")} className="rounded-lg p-2 text-muted-foreground hover:bg-primary/5">☺</button>
-                  <Input
+                  <textarea
+                    ref={messageComposerRef}
                     value={draft}
-                    onChange={(e) => setDraft(e.target.value)}
-                    placeholder={t("escribiMensaje")}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        sendMessage();
-                      }
+                    onChange={(e) => {
+                      setDraft(e.target.value);
+                      e.currentTarget.style.height = "auto";
+                      e.currentTarget.style.height = `${Math.min(e.currentTarget.scrollHeight, 96)}px`;
                     }}
+                    placeholder={t("escribiMensaje")}
+                    rows={1}
+                    maxLength={2000}
+                    onKeyDown={(e) => {
+                      if (e.key !== "Enter" || e.shiftKey || e.nativeEvent.isComposing) return;
+                      e.preventDefault();
+                      e.currentTarget.form?.requestSubmit();
+                    }}
+                    className="max-h-24 min-h-11 flex-1 resize-none overflow-y-auto rounded-xl border border-input bg-input/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-all duration-200 focus-visible:border-ring focus-visible:ring-4 focus-visible:ring-ring/15"
                   />
                   <Button type="submit" size="sm" disabled={!draft.trim()}>
                     {t("enviar")}

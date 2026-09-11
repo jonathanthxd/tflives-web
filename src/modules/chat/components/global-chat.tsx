@@ -1,7 +1,7 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
 
-import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { FormEvent, PointerEvent as ReactPointerEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { MessageCircle, Minus, Send, SmilePlus, Flag, Reply, X, Loader2 } from "lucide-react";
 import { CHAT_REACTION_EMOJIS } from "@/modules/chat/shared";
@@ -52,6 +52,11 @@ function mergeMessages(current: ChatMessage[], incoming: ChatMessage[]) {
   return [...map.values()].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
 }
 
+const CHAT_BUBBLE_SIZE = 48;
+const CHAT_EDGE_GAP = 12;
+const DISCORD_COLLISION_GAP = 12;
+const CHAT_POSITION_STORAGE_KEY = "tflives:global-chat-x";
+
 export default function GlobalChat({ userId }: { userId: string }) {
   const t = useTranslations("GlobalChat");
   const [open, setOpen] = useState(false);
@@ -72,9 +77,34 @@ export default function GlobalChat({ userId }: { userId: string }) {
   const [reportReason, setReportReason] = useState("");
   const [reportDetails, setReportDetails] = useState("");
   const [notice, setNotice] = useState("");
+  const [bubbleX, setBubbleX] = useState<number | null>(null);
+  const [draggingBubble, setDraggingBubble] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const composerRef = useRef<HTMLTextAreaElement>(null);
   const closeReportButtonRef = useRef<HTMLButtonElement>(null);
   const nearBottomRef = useRef(true);
+  const suppressBubbleClickRef = useRef(false);
+  const bubbleDragRef = useRef<{ pointerId: number; pointerX: number; bubbleX: number; moved: boolean } | null>(null);
+
+  const constrainBubbleX = useCallback((candidate: number) => {
+    if (typeof window === "undefined") return candidate;
+    const maxX = Math.max(CHAT_EDGE_GAP, window.innerWidth - CHAT_EDGE_GAP - CHAT_BUBBLE_SIZE);
+    let minX = CHAT_EDGE_GAP;
+    const discordButton = document.querySelector<HTMLElement>("[data-discord-fab]");
+    if (discordButton) {
+      const discordRect = discordButton.getBoundingClientRect();
+      minX = Math.max(minX, discordRect.right + DISCORD_COLLISION_GAP);
+    }
+    minX = Math.min(minX, maxX);
+    return Math.min(maxX, Math.max(minX, candidate));
+  }, []);
+
+  const panelLeft = useMemo(() => {
+    if (bubbleX == null || typeof window === "undefined") return null;
+    const panelWidth = Math.min(400, window.innerWidth - CHAT_EDGE_GAP * 2);
+    const preferred = bubbleX + CHAT_BUBBLE_SIZE - panelWidth;
+    return Math.max(CHAT_EDGE_GAP, Math.min(preferred, window.innerWidth - panelWidth - CHAT_EDGE_GAP));
+  }, [bubbleX]);
 
   const refreshUnread = useCallback(async () => {
     try {
@@ -171,9 +201,67 @@ export default function GlobalChat({ userId }: { userId: string }) {
 
   useEffect(() => { if (reporting) closeReportButtonRef.current?.focus(); }, [reporting]);
 
+  useEffect(() => {
+    const restorePosition = () => {
+      const storedValue = window.localStorage.getItem(CHAT_POSITION_STORAGE_KEY);
+      const stored = storedValue == null ? Number.NaN : Number(storedValue);
+      const defaultX = window.innerWidth - CHAT_EDGE_GAP - CHAT_BUBBLE_SIZE;
+      setBubbleX(constrainBubbleX(Number.isFinite(stored) ? stored : defaultX));
+    };
+    restorePosition();
+    const onResize = () => setBubbleX((current) => constrainBubbleX(current ?? window.innerWidth - CHAT_EDGE_GAP - CHAT_BUBBLE_SIZE));
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [constrainBubbleX]);
+
+  useEffect(() => {
+    if (!replyTo) return;
+    requestAnimationFrame(() => composerRef.current?.focus());
+  }, [replyTo]);
+
   function toggleOpen() {
     setOpen((current) => !current);
     setNotice("");
+  }
+
+  function handleBubblePointerDown(event: ReactPointerEvent<HTMLButtonElement>) {
+    if (event.button !== 0) return;
+    const startX = bubbleX ?? window.innerWidth - CHAT_EDGE_GAP - CHAT_BUBBLE_SIZE;
+    bubbleDragRef.current = { pointerId: event.pointerId, pointerX: event.clientX, bubbleX: startX, moved: false };
+    setDraggingBubble(false);
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }
+
+  function handleBubblePointerMove(event: ReactPointerEvent<HTMLButtonElement>) {
+    const drag = bubbleDragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    const deltaX = event.clientX - drag.pointerX;
+    if (!drag.moved && Math.abs(deltaX) < 5) return;
+    drag.moved = true;
+    setDraggingBubble(true);
+    setBubbleX(constrainBubbleX(drag.bubbleX + deltaX));
+  }
+
+  function finishBubbleDrag(event: ReactPointerEvent<HTMLButtonElement>) {
+    const drag = bubbleDragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+    if (drag.moved) {
+      suppressBubbleClickRef.current = true;
+      const finalX = constrainBubbleX(drag.bubbleX + event.clientX - drag.pointerX);
+      setBubbleX(finalX);
+      window.localStorage.setItem(CHAT_POSITION_STORAGE_KEY, String(Math.round(finalX)));
+    }
+    bubbleDragRef.current = null;
+    setDraggingBubble(false);
+  }
+
+  function handleBubbleClick() {
+    if (suppressBubbleClickRef.current) {
+      suppressBubbleClickRef.current = false;
+      return;
+    }
+    toggleOpen();
   }
 
   function handleScroll() {
@@ -207,7 +295,11 @@ export default function GlobalChat({ userId }: { userId: string }) {
       if (!response.ok) throw new Error(data.error || "send");
       setMessages((current) => mergeMessages(current, [data.message]));
       setDraft(""); setReplyTo(null); setShowStickers(false); setConnection("live");
-      requestAnimationFrame(() => scrollToBottom(true));
+      requestAnimationFrame(() => {
+        scrollToBottom(true);
+        if (composerRef.current) composerRef.current.style.height = "";
+        composerRef.current?.focus();
+      });
     } catch (caught) {
       const message = caught instanceof Error && caught.message !== "send" ? caught.message : t("errorEnvio");
       setError(message); setRetryPayload(payload); setConnection("limited");
@@ -255,9 +347,16 @@ export default function GlobalChat({ userId }: { userId: string }) {
   const sortedStickers = useMemo(() => stickers.filter((sticker) => !!sticker.assetUrl), [stickers]);
 
   return (
-    <div className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-3 sm:right-5 z-[55]" id="chat-global">
+    <div id="chat-global">
       {open && (
-        <section aria-label={t("titulo")} className="mb-3 flex h-[min(38rem,calc(100dvh-7rem))] w-[calc(100vw-1.5rem)] max-w-[25rem] flex-col overflow-hidden rounded-2xl border border-primary/20 bg-card/95 shadow-2xl shadow-black/30 backdrop-blur-xl sm:w-[25rem]">
+        <section
+          aria-label={t("titulo")}
+          className="fixed z-[55] flex h-[min(38rem,calc(100dvh-7rem))] w-[calc(100vw-1.5rem)] max-w-[25rem] flex-col overflow-hidden rounded-2xl border border-primary/20 bg-card/95 shadow-2xl shadow-black/30 backdrop-blur-xl sm:w-[25rem]"
+          style={{
+            bottom: "calc(max(1rem, env(safe-area-inset-bottom)) + 3.75rem)",
+            ...(panelLeft == null ? { right: CHAT_EDGE_GAP } : { left: panelLeft }),
+          }}
+        >
           <header className="flex items-center justify-between border-b border-border px-3 py-2.5">
             <div className="min-w-0"><h2 className="font-display text-sm font-semibold text-foreground">{t("titulo")}</h2><p role="status" className={`text-[11px] ${connection === "live" ? "text-emerald-500" : "text-amber-500"}`}>{connectionLabel}</p></div>
             <button type="button" onClick={toggleOpen} aria-label={t("minimizar")} className="rounded-lg p-2 text-muted-foreground hover:bg-primary/10 hover:text-primary"><Minus className="h-4 w-4" /></button>
@@ -277,10 +376,50 @@ export default function GlobalChat({ userId }: { userId: string }) {
           </div>
           {replyTo && <div className="flex items-center gap-2 border-t border-border bg-primary/5 px-3 py-1.5 text-xs"><span className="min-w-0 flex-1 truncate">{t("respondiendoA", { name: personName(replyTo.author) })}</span><button type="button" onClick={() => setReplyTo(null)} className="text-muted-foreground hover:text-primary">{t("cancelarRespuesta")}</button></div>}
           {showStickers && <div role="dialog" aria-label={t("stickers")} className="flex max-h-28 flex-wrap gap-1 overflow-y-auto border-t border-border p-2">{sortedStickers.map((sticker) => <button type="button" key={sticker.id} onClick={() => sendSticker(sticker.id)} title={sticker.name} className="rounded-lg p-1 hover:bg-primary/10"><img src={sticker.assetUrl} alt={sticker.name} className="h-10 w-10 object-contain" /></button>)}</div>}
-          <form onSubmit={submit} className="flex items-end gap-1 border-t border-border p-2"><button type="button" onClick={() => setShowStickers((value) => !value)} aria-label={t("stickers")} aria-expanded={showStickers} className="rounded-lg p-2 text-muted-foreground hover:bg-primary/10 hover:text-primary"><SmilePlus className="h-4 w-4" /></button><textarea value={draft} onChange={(event) => setDraft(event.target.value)} maxLength={2000} rows={1} placeholder={t("escribir")} className="max-h-24 min-h-9 flex-1 resize-y rounded-lg border border-input bg-input/20 px-2.5 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20" /><button disabled={sending || !draft.trim()} aria-label={sending ? t("enviando") : t("enviar")} className="rounded-lg bg-primary p-2 text-primary-foreground disabled:opacity-50"><Send className="h-4 w-4" /></button></form>
+          <form onSubmit={submit} className="flex items-end gap-1 border-t border-border p-2">
+            <button type="button" onClick={() => setShowStickers((value) => !value)} aria-label={t("stickers")} aria-expanded={showStickers} className="rounded-lg p-2 text-muted-foreground hover:bg-primary/10 hover:text-primary"><SmilePlus className="h-4 w-4" /></button>
+            <textarea
+              ref={composerRef}
+              value={draft}
+              onChange={(event) => {
+                setDraft(event.target.value);
+                event.currentTarget.style.height = "auto";
+                event.currentTarget.style.height = `${Math.min(event.currentTarget.scrollHeight, 96)}px`;
+              }}
+              onKeyDown={(event) => {
+                if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) return;
+                event.preventDefault();
+                event.currentTarget.form?.requestSubmit();
+              }}
+              maxLength={2000}
+              rows={1}
+              placeholder={t("escribir")}
+              className="max-h-24 min-h-9 flex-1 resize-none overflow-y-auto rounded-lg border border-input bg-input/20 px-2.5 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20"
+            />
+            <button disabled={sending || !draft.trim()} aria-label={sending ? t("enviando") : t("enviar")} className="rounded-lg bg-primary p-2 text-primary-foreground disabled:opacity-50"><Send className="h-4 w-4" /></button>
+          </form>
         </section>
       )}
-      <button type="button" onClick={toggleOpen} aria-label={open ? t("cerrar") : t("abrir")} aria-expanded={open} className="relative ml-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/40"><MessageCircle className="h-5 w-5" />{!open && unread > 0 && <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground">{unread > 9 ? "9+" : unread}</span>}</button>
+      <button
+        type="button"
+        onClick={handleBubbleClick}
+        onPointerDown={handleBubblePointerDown}
+        onPointerMove={handleBubblePointerMove}
+        onPointerUp={finishBubbleDrag}
+        onPointerCancel={finishBubbleDrag}
+        aria-label={open ? t("cerrar") : t("abrir")}
+        aria-expanded={open}
+        title={t("titulo")}
+        className={`fixed z-[55] flex h-12 w-12 select-none items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 transition-[transform,box-shadow] hover:scale-105 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/40 ${draggingBubble ? "cursor-grabbing scale-105 shadow-xl" : "cursor-grab"}`}
+        style={{
+          bottom: "max(1rem, env(safe-area-inset-bottom))",
+          touchAction: "none",
+          ...(bubbleX == null ? { right: CHAT_EDGE_GAP } : { left: bubbleX }),
+        }}
+      >
+        <MessageCircle className="h-5 w-5" />
+        {!open && unread > 0 && <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground">{unread > 9 ? "9+" : unread}</span>}
+      </button>
       {reporting && <div role="dialog" aria-modal="true" aria-label={t("reportar")} className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 p-4"><form onSubmit={submitReport} className="w-full max-w-sm rounded-2xl border border-border bg-card p-5 shadow-xl"><div className="mb-3 flex items-center justify-between"><h3 className="font-display font-semibold">{t("reportar")}</h3><button ref={closeReportButtonRef} type="button" onClick={() => setReporting(null)} aria-label={t("cerrarReporte")} className="rounded p-1 text-muted-foreground hover:text-primary"><X className="h-4 w-4" /></button></div><input autoFocus value={reportReason} onChange={(event) => setReportReason(event.target.value)} maxLength={500} required placeholder={t("motivo")} className="mb-2 w-full rounded-lg border border-input bg-input/20 px-3 py-2 text-sm" /><textarea value={reportDetails} onChange={(event) => setReportDetails(event.target.value)} maxLength={2000} placeholder={t("detalles")} className="mb-3 min-h-20 w-full rounded-lg border border-input bg-input/20 px-3 py-2 text-sm" /><button className="w-full rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground">{t("enviarReporte")}</button></form></div>}
     </div>
   );
