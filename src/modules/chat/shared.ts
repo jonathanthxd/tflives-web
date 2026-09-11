@@ -1,7 +1,5 @@
 import { prisma } from "@/infrastructure/database/prisma";
-
-export const CHAT_REACTION_EMOJIS = ["👍", "❤️", "😂", "🎉", "🔥"] as const;
-export type ChatReactionEmoji = (typeof CHAT_REACTION_EMOJIS)[number];
+import { isUnicodeEmojiReaction } from "@/modules/chat/emojis";
 
 export class ChatValidationError extends Error {
   status: number;
@@ -58,8 +56,8 @@ export function parseMentions(content: string, maximum = 5): string[] {
   return [...mentions];
 }
 
-export function assertReactionEmoji(value: unknown): asserts value is ChatReactionEmoji {
-  if (!CHAT_REACTION_EMOJIS.includes(value as ChatReactionEmoji)) {
+export function assertReactionEmoji(value: unknown): asserts value is string {
+  if (!isUnicodeEmojiReaction(value)) {
     throw new ChatValidationError("Reacción inválida");
   }
 }

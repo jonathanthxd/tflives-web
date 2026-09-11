@@ -8,6 +8,8 @@ import { Card } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import ConfirmDialog from "@/shared/ui/confirm-dialog";
+import EmojiStickerPicker from "@/modules/chat/components/emoji-sticker-picker";
+import { getQuickReactions, recordReactionUse } from "@/modules/chat/reaction-preferences";
 
 interface PersonSummary {
   id: string;
@@ -105,7 +107,9 @@ export default function MessagesPage() {
   const [draft, setDraft] = useState("");
   const [replyToMessage, setReplyToMessage] = useState<ConversationMessage | null>(null);
   const [stickers, setStickers] = useState<{ id: string; name: string; assetUrl: string; category: string | null }[]>([]);
-  const [showStickers, setShowStickers] = useState(false);
+  const [showExpressions, setShowExpressions] = useState(false);
+  const [reactionPickerFor, setReactionPickerFor] = useState<string | null>(null);
+  const [quickReactions, setQuickReactions] = useState<string[]>(() => getQuickReactions());
   const [reportTarget, setReportTarget] = useState<{ targetType: "CONVERSATION" | "DIRECT_MESSAGE"; targetId: string } | null>(null);
   const [memberUsername, setMemberUsername] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -137,6 +141,8 @@ export default function MessagesPage() {
     setActiveId(nextSearchParams.get("c"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => { setQuickReactions(getQuickReactions()); }, []);
 
   async function loadConversation(id: string, after?: string) {
     const res = await fetch(`/api/messaging/conversations/${id}${after ? `?after=${encodeURIComponent(after)}` : ""}`);
@@ -337,7 +343,7 @@ export default function MessagesPage() {
     setConversation((prev) => !prev || prev.messages.some((message) => message.id === data.message.id) ? prev : { ...prev, messages: [...prev.messages, data.message] });
     setDraft("");
     setReplyToMessage(null);
-    setShowStickers(false);
+    setShowExpressions(false);
     loadInbox();
     requestAnimationFrame(() => {
       if (messageComposerRef.current) messageComposerRef.current.style.height = "";
@@ -345,13 +351,30 @@ export default function MessagesPage() {
     });
   }
 
-  async function reactToMessage(messageId: string, emoji: string) {
-    const res = await fetch(`/api/messaging/messages/${messageId}/reactions`, {
+  function insertEmoji(emoji: string) {
+    const composer = messageComposerRef.current;
+    const start = composer?.selectionStart ?? draft.length;
+    const end = composer?.selectionEnd ?? start;
+    const next = `${draft.slice(0, start)}${emoji}${draft.slice(end)}`.slice(0, 2000);
+    setDraft(next);
+    setShowExpressions(false);
+    requestAnimationFrame(() => {
+      const cursor = Math.min(start + emoji.length, next.length);
+      messageComposerRef.current?.focus();
+      messageComposerRef.current?.setSelectionRange(cursor, cursor);
+    });
+  }
+
+  async function reactToMessage(message: ConversationMessage, emoji: string) {
+    const adding = !message.reactions.some((reaction) => reaction.emoji === emoji && reaction.mine);
+    const res = await fetch(`/api/messaging/messages/${message.id}/reactions`, {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ emoji }),
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) { setError(data.error || t("errorGenerico")); return; }
-    setConversation((prev) => prev ? { ...prev, messages: prev.messages.map((message) => message.id === messageId ? { ...message, reactions: data.reactions } : message) } : prev);
+    setConversation((prev) => prev ? { ...prev, messages: prev.messages.map((item) => item.id === message.id ? { ...item, reactions: data.reactions } : item) } : prev);
+    if (adding) setQuickReactions(recordReactionUse(emoji));
+    setReactionPickerFor(null);
   }
 
   async function loadOlderMessages() {
@@ -675,9 +698,13 @@ export default function MessagesPage() {
                             <p className={`mt-0.5 text-[10px] ${mine ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
                               {new Date(m.createdAt).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" })}
                             </p>
-                            {!m.deletedAt && <div className="mt-1 flex flex-wrap gap-1">
-                              {m.reactions.map((reaction) => <button key={reaction.emoji} type="button" onClick={() => reactToMessage(m.id, reaction.emoji)} className={`rounded-full border px-1.5 py-0.5 text-[10px] ${mine ? "border-primary-foreground/30" : "border-border"} ${reaction.mine ? "bg-primary/15" : ""}`}>{reaction.emoji} {reaction.count}</button>)}
-                              {['👍', '❤️', '😂'].filter((emoji) => !m.reactions.some((reaction) => reaction.emoji === emoji)).map((emoji) => <button key={emoji} type="button" onClick={() => reactToMessage(m.id, emoji)} aria-label={`${t("reaccionar")} ${emoji}`} className="rounded px-1 text-xs opacity-0 group-hover:opacity-100 focus-visible:opacity-100">{emoji}</button>)}
+                            {!m.deletedAt && <div className="mt-1 flex flex-wrap items-center gap-1">
+                              {m.reactions.map((reaction) => <button key={reaction.emoji} type="button" onClick={() => void reactToMessage(m, reaction.emoji)} className={`rounded-full border px-1.5 py-0.5 text-[10px] ${mine ? "border-primary-foreground/30" : "border-border"} ${reaction.mine ? "bg-primary/15" : ""}`}>{reaction.emoji} {reaction.count}</button>)}
+                              {quickReactions.filter((emoji) => !m.reactions.some((reaction) => reaction.emoji === emoji)).map((emoji) => <button key={emoji} type="button" onClick={() => void reactToMessage(m, emoji)} aria-label={`${t("reaccionar")} ${emoji}`} className="rounded px-1 text-xs opacity-0 group-hover:opacity-100 focus-visible:opacity-100">{emoji}</button>)}
+                              <span className="relative">
+                                <button type="button" onClick={() => setReactionPickerFor((current) => current === m.id ? null : m.id)} aria-label={t("masReacciones")} aria-expanded={reactionPickerFor === m.id} className="grid h-5 w-5 place-items-center rounded-full text-xs opacity-0 hover:bg-primary/10 group-hover:opacity-100 focus-visible:opacity-100">+</button>
+                                {reactionPickerFor === m.id && <EmojiStickerPicker reactionOnly onEmojiSelect={(emoji) => void reactToMessage(m, emoji)} labels={{ emojis: t("emojis"), stickers: t("stickers"), emptyStickers: t("sinStickers") }} className="absolute bottom-7 right-0 z-40" />}
+                              </span>
                               <button type="button" onClick={() => setReplyToMessage(m)} className="rounded px-1 text-[10px] opacity-0 group-hover:opacity-100 focus-visible:opacity-100">↩ {t("responder")}</button>
                               <button type="button" aria-label={t("reportar")} onClick={() => { setReportTarget({ targetType: "DIRECT_MESSAGE", targetId: m.id }); setShowReport(true); }} className="rounded px-1 text-[10px] opacity-0 group-hover:opacity-100 focus-visible:opacity-100">⚑</button>
                             </div>}
@@ -690,7 +717,7 @@ export default function MessagesPage() {
                 </div>
 
                 {replyToMessage && <div className="flex items-center justify-between border-t border-border bg-primary/5 px-3 py-1.5 text-xs"><span className="truncate">{t("respondiendoA", { name: displayNameOf(replyToMessage.sender) })}</span><button type="button" onClick={() => setReplyToMessage(null)} className="text-primary hover:underline">{t("cancelarRespuesta")}</button></div>}
-                {showStickers && <div role="dialog" aria-label={t("stickers")} className="flex max-h-24 flex-wrap gap-1 overflow-y-auto border-t border-border p-2">{stickers.map((sticker) => <button type="button" key={sticker.id} onClick={() => sendSticker(sticker.id)} title={sticker.name} className="rounded p-1 hover:bg-primary/10"><img src={sticker.assetUrl} alt={sticker.name} className="h-10 w-10 object-contain" /></button>)}</div>}
+                {showExpressions && <div className="border-t border-border p-2"><EmojiStickerPicker onEmojiSelect={insertEmoji} stickers={stickers} onStickerSelect={sendSticker} labels={{ emojis: t("emojis"), stickers: t("stickers"), emptyStickers: t("sinStickers"), customEmojis: t("emojisCustom") }} className="mx-auto" /></div>}
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
@@ -698,7 +725,7 @@ export default function MessagesPage() {
                   }}
                   className="flex items-end gap-2 border-t border-border p-3"
                 >
-                  <button type="button" onClick={() => setShowStickers((value) => !value)} aria-label={t("stickers")} className="rounded-lg p-2 text-muted-foreground hover:bg-primary/5">☺</button>
+                  <button type="button" onClick={() => setShowExpressions((value) => !value)} aria-label={t("emojisYStickers")} aria-expanded={showExpressions} className="rounded-lg p-2 text-muted-foreground hover:bg-primary/5">☺</button>
                   <textarea
                     ref={messageComposerRef}
                     value={draft}

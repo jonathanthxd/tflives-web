@@ -28,8 +28,12 @@ test("mentions only resolve valid usernames and never create everyone pings", ()
   assert.deepEqual(parseMentions("@a1 @user-one @valid_user"), ["valid_user"]);
 });
 
-test("chat reactions use the curated set", () => {
+test("chat reactions accept Unicode emoji graphemes and reject arbitrary text", () => {
   assert.doesNotThrow(() => assertReactionEmoji("🔥"));
+  assert.doesNotThrow(() => assertReactionEmoji("🫡"));
+  assert.doesNotThrow(() => assertReactionEmoji("🇨🇴"));
+  assert.doesNotThrow(() => assertReactionEmoji("👩‍💻"));
+  assert.throws(() => assertReactionEmoji("hello"), ChatValidationError);
   assert.throws(() => assertReactionEmoji("<img src=x>"), ChatValidationError);
 });
 

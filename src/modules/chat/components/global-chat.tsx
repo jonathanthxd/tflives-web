@@ -3,8 +3,9 @@
 
 import { FormEvent, PointerEvent as ReactPointerEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { MessageCircle, Minus, Send, SmilePlus, Flag, Reply, X, Loader2 } from "lucide-react";
-import { CHAT_REACTION_EMOJIS } from "@/modules/chat/shared";
+import { MessageCircle, Minus, Send, SmilePlus, Flag, Reply, X, Loader2, Plus } from "lucide-react";
+import EmojiStickerPicker from "@/modules/chat/components/emoji-sticker-picker";
+import { getQuickReactions, recordReactionUse } from "@/modules/chat/reaction-preferences";
 
 interface Person {
   id: string;
@@ -66,7 +67,9 @@ export default function GlobalChat({ userId }: { userId: string }) {
   const [unread, setUnread] = useState(0);
   const [draft, setDraft] = useState("");
   const [replyTo, setReplyTo] = useState<ChatMessage | null>(null);
-  const [showStickers, setShowStickers] = useState(false);
+  const [showExpressions, setShowExpressions] = useState(false);
+  const [reactionPickerFor, setReactionPickerFor] = useState<string | null>(null);
+  const [quickReactions, setQuickReactions] = useState<string[]>(() => getQuickReactions());
   const [loading, setLoading] = useState(false);
   const [loadingOlder, setLoadingOlder] = useState(false);
   const [sending, setSending] = useState(false);
@@ -201,6 +204,8 @@ export default function GlobalChat({ userId }: { userId: string }) {
 
   useEffect(() => { if (reporting) closeReportButtonRef.current?.focus(); }, [reporting]);
 
+  useEffect(() => { setQuickReactions(getQuickReactions()); }, []);
+
   useEffect(() => {
     const restorePosition = () => {
       const storedValue = window.localStorage.getItem(CHAT_POSITION_STORAGE_KEY);
@@ -294,7 +299,7 @@ export default function GlobalChat({ userId }: { userId: string }) {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "send");
       setMessages((current) => mergeMessages(current, [data.message]));
-      setDraft(""); setReplyTo(null); setShowStickers(false); setConnection("live");
+      setDraft(""); setReplyTo(null); setShowExpressions(false); setConnection("live");
       requestAnimationFrame(() => {
         scrollToBottom(true);
         if (composerRef.current) composerRef.current.style.height = "";
@@ -317,12 +322,29 @@ export default function GlobalChat({ userId }: { userId: string }) {
     if (!sending) void send({ content: draft.trim(), replyToId: replyTo?.id || null, stickerId });
   }
 
+  function insertEmoji(emoji: string) {
+    const composer = composerRef.current;
+    const start = composer?.selectionStart ?? draft.length;
+    const end = composer?.selectionEnd ?? start;
+    const next = `${draft.slice(0, start)}${emoji}${draft.slice(end)}`.slice(0, 2000);
+    setDraft(next);
+    setShowExpressions(false);
+    requestAnimationFrame(() => {
+      const cursor = Math.min(start + emoji.length, next.length);
+      composerRef.current?.focus();
+      composerRef.current?.setSelectionRange(cursor, cursor);
+    });
+  }
+
   async function react(message: ChatMessage, emoji: string) {
+    const adding = !message.reactions.some((reaction) => reaction.emoji === emoji && reaction.mine);
     try {
       const response = await fetch("/api/chat/global/reactions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messageId: message.id, emoji }) });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "reaction");
       setMessages((current) => current.map((item) => item.id === message.id ? { ...item, reactions: data.reactions } : item));
+      if (adding) setQuickReactions(recordReactionUse(emoji));
+      setReactionPickerFor(null);
     } catch (caught) { setError(caught instanceof Error ? caught.message : t("error")); }
   }
 
@@ -371,13 +393,23 @@ export default function GlobalChat({ userId }: { userId: string }) {
                 <div className="min-w-0 flex-1"><div className="flex items-baseline gap-1.5"><span className="truncate text-xs font-semibold text-foreground">{personName(message.author)}</span>{message.author.username && <span className="truncate text-[10px] text-muted-foreground">@{message.author.username}</span>}<time className="ml-auto shrink-0 text-[10px] text-muted-foreground">{new Date(message.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</time></div>
                   {message.replyTo && <button type="button" onClick={() => document.getElementById(`global-message-${message.replyTo?.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" })} className="mt-1 block max-w-full truncate border-l-2 border-primary/50 pl-2 text-left text-[11px] text-muted-foreground hover:text-primary">{personName(message.replyTo.author)}: {textPreview(message.replyTo)}</button>}
                   {message.deletedAt ? <p className="mt-1 text-xs italic text-muted-foreground">{t("mensajeEliminado")}</p> : <><p className="whitespace-pre-wrap break-words text-sm text-foreground"><MessageText content={message.content} /></p>{message.sticker && <img src={message.sticker.assetUrl} alt={message.sticker.name} className="mt-1 h-16 w-16 object-contain" />}</>}
-                  {!message.deletedAt && <div className="mt-1.5 flex flex-wrap items-center gap-1">{message.reactions.map((reaction) => <button key={reaction.emoji} type="button" onClick={() => void react(message, reaction.emoji)} aria-label={`${t("reaccionar")}: ${reaction.emoji}`} className={`rounded-full border px-1.5 py-0.5 text-[11px] ${reaction.mine ? "border-primary/40 bg-primary/10" : "border-border hover:bg-primary/5"}`}>{reaction.emoji} {reaction.count}</button>)}{CHAT_REACTION_EMOJIS.slice(0, 3).filter((emoji) => !message.reactions.some((reaction) => reaction.emoji === emoji)).map((emoji) => <button key={emoji} type="button" onClick={() => void react(message, emoji)} aria-label={`${t("reaccionar")}: ${emoji}`} className="rounded-full px-1 py-0.5 text-xs opacity-0 transition-opacity hover:bg-primary/10 group-hover:opacity-100 focus-visible:opacity-100">{emoji}</button>)}<button type="button" onClick={() => setReplyTo(message)} className="rounded px-1 py-0.5 text-[11px] text-muted-foreground opacity-0 hover:bg-primary/10 hover:text-primary group-hover:opacity-100 focus-visible:opacity-100"><Reply className="inline h-3 w-3" /> {t("responder")}</button><button type="button" onClick={() => setReporting(message)} className="rounded p-1 text-muted-foreground opacity-0 hover:bg-primary/10 hover:text-primary group-hover:opacity-100 focus-visible:opacity-100" aria-label={t("reportar")}><Flag className="h-3 w-3" /></button>{message.authorId !== userId && message.author.username && <button type="button" onClick={() => void blockAuthor(message)} className="rounded p-1 text-muted-foreground opacity-0 hover:bg-primary/10 hover:text-primary group-hover:opacity-100 focus-visible:opacity-100" aria-label={t("bloquear", { name: personName(message.author) })}><X className="h-3 w-3" /></button>}</div>}</div>
+                  {!message.deletedAt && <div className="mt-1.5 flex flex-wrap items-center gap-1">
+                    {message.reactions.map((reaction) => <button key={reaction.emoji} type="button" onClick={() => void react(message, reaction.emoji)} aria-label={`${t("reaccionar")}: ${reaction.emoji}`} className={`rounded-full border px-1.5 py-0.5 text-[11px] ${reaction.mine ? "border-primary/40 bg-primary/10" : "border-border hover:bg-primary/5"}`}>{reaction.emoji} {reaction.count}</button>)}
+                    {quickReactions.filter((emoji) => !message.reactions.some((reaction) => reaction.emoji === emoji)).map((emoji) => <button key={emoji} type="button" onClick={() => void react(message, emoji)} aria-label={`${t("reaccionar")}: ${emoji}`} className="rounded-full px-1 py-0.5 text-xs opacity-0 transition-opacity hover:bg-primary/10 group-hover:opacity-100 focus-visible:opacity-100">{emoji}</button>)}
+                    <span className="relative">
+                      <button type="button" onClick={() => setReactionPickerFor((current) => current === message.id ? null : message.id)} aria-label={t("masReacciones")} aria-expanded={reactionPickerFor === message.id} className="grid h-5 w-5 place-items-center rounded-full text-muted-foreground opacity-0 transition-opacity hover:bg-primary/10 hover:text-primary group-hover:opacity-100 focus-visible:opacity-100"><Plus className="h-3 w-3" /></button>
+                      {reactionPickerFor === message.id && <EmojiStickerPicker reactionOnly onEmojiSelect={(emoji) => void react(message, emoji)} labels={{ emojis: t("emojis"), stickers: t("stickers"), emptyStickers: t("sinStickers") }} className="absolute bottom-7 right-0 z-30" />}
+                    </span>
+                    <button type="button" onClick={() => setReplyTo(message)} className="rounded px-1 py-0.5 text-[11px] text-muted-foreground opacity-0 hover:bg-primary/10 hover:text-primary group-hover:opacity-100 focus-visible:opacity-100"><Reply className="inline h-3 w-3" /> {t("responder")}</button>
+                    <button type="button" onClick={() => setReporting(message)} className="rounded p-1 text-muted-foreground opacity-0 hover:bg-primary/10 hover:text-primary group-hover:opacity-100 focus-visible:opacity-100" aria-label={t("reportar")}><Flag className="h-3 w-3" /></button>
+                    {message.authorId !== userId && message.author.username && <button type="button" onClick={() => void blockAuthor(message)} className="rounded p-1 text-muted-foreground opacity-0 hover:bg-primary/10 hover:text-primary group-hover:opacity-100 focus-visible:opacity-100" aria-label={t("bloquear", { name: personName(message.author) })}><X className="h-3 w-3" /></button>}
+                  </div>}</div>
               </article>)}</div>}
           </div>
           {replyTo && <div className="flex items-center gap-2 border-t border-border bg-primary/5 px-3 py-1.5 text-xs"><span className="min-w-0 flex-1 truncate">{t("respondiendoA", { name: personName(replyTo.author) })}</span><button type="button" onClick={() => setReplyTo(null)} className="text-muted-foreground hover:text-primary">{t("cancelarRespuesta")}</button></div>}
-          {showStickers && <div role="dialog" aria-label={t("stickers")} className="flex max-h-28 flex-wrap gap-1 overflow-y-auto border-t border-border p-2">{sortedStickers.map((sticker) => <button type="button" key={sticker.id} onClick={() => sendSticker(sticker.id)} title={sticker.name} className="rounded-lg p-1 hover:bg-primary/10"><img src={sticker.assetUrl} alt={sticker.name} className="h-10 w-10 object-contain" /></button>)}</div>}
+          {showExpressions && <div className="border-t border-border p-2"><EmojiStickerPicker onEmojiSelect={insertEmoji} stickers={sortedStickers} onStickerSelect={sendSticker} labels={{ emojis: t("emojis"), stickers: t("stickers"), emptyStickers: t("sinStickers"), customEmojis: t("emojisCustom") }} className="mx-auto" /></div>}
           <form onSubmit={submit} className="flex items-end gap-1 border-t border-border p-2">
-            <button type="button" onClick={() => setShowStickers((value) => !value)} aria-label={t("stickers")} aria-expanded={showStickers} className="rounded-lg p-2 text-muted-foreground hover:bg-primary/10 hover:text-primary"><SmilePlus className="h-4 w-4" /></button>
+            <button type="button" onClick={() => setShowExpressions((value) => !value)} aria-label={t("emojisYStickers")} aria-expanded={showExpressions} className="rounded-lg p-2 text-muted-foreground hover:bg-primary/10 hover:text-primary"><SmilePlus className="h-4 w-4" /></button>
             <textarea
               ref={composerRef}
               value={draft}
