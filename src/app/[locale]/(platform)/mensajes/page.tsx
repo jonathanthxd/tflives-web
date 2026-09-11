@@ -8,7 +8,7 @@ import { Card } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import ConfirmDialog from "@/shared/ui/confirm-dialog";
-import EmojiStickerPicker from "@/modules/chat/components/emoji-sticker-picker";
+import { AnchoredEmojiStickerPicker } from "@/modules/chat/components/emoji-sticker-picker";
 import { getQuickReactions, recordReactionUse } from "@/modules/chat/reaction-preferences";
 
 interface PersonSummary {
@@ -108,12 +108,13 @@ export default function MessagesPage() {
   const [replyToMessage, setReplyToMessage] = useState<ConversationMessage | null>(null);
   const [stickers, setStickers] = useState<{ id: string; name: string; assetUrl: string; category: string | null }[]>([]);
   const [showExpressions, setShowExpressions] = useState(false);
-  const [reactionPickerFor, setReactionPickerFor] = useState<string | null>(null);
+  const [reactionPicker, setReactionPicker] = useState<{ messageId: string; anchorEl: HTMLElement } | null>(null);
   const [quickReactions, setQuickReactions] = useState<string[]>(() => getQuickReactions());
   const [reportTarget, setReportTarget] = useState<{ targetType: "CONVERSATION" | "DIRECT_MESSAGE"; targetId: string } | null>(null);
   const [memberUsername, setMemberUsername] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messageComposerRef = useRef<HTMLTextAreaElement>(null);
+  const expressionButtonRef = useRef<HTMLButtonElement>(null);
   const messageViewportRef = useRef<HTMLDivElement>(null);
   const nearConversationBottomRef = useRef(true);
 
@@ -701,9 +702,14 @@ export default function MessagesPage() {
                             {!m.deletedAt && <div className="mt-1 flex flex-wrap items-center gap-1">
                               {m.reactions.map((reaction) => <button key={reaction.emoji} type="button" onClick={() => void reactToMessage(m, reaction.emoji)} className={`rounded-full border px-1.5 py-0.5 text-[10px] ${mine ? "border-primary-foreground/30" : "border-border"} ${reaction.mine ? "bg-primary/15" : ""}`}>{reaction.emoji} {reaction.count}</button>)}
                               {quickReactions.filter((emoji) => !m.reactions.some((reaction) => reaction.emoji === emoji)).map((emoji) => <button key={emoji} type="button" onClick={() => void reactToMessage(m, emoji)} aria-label={`${t("reaccionar")} ${emoji}`} className="rounded px-1 text-xs opacity-0 group-hover:opacity-100 focus-visible:opacity-100">{emoji}</button>)}
-                              <span className="relative">
-                                <button type="button" onClick={() => setReactionPickerFor((current) => current === m.id ? null : m.id)} aria-label={t("masReacciones")} aria-expanded={reactionPickerFor === m.id} className="grid h-5 w-5 place-items-center rounded-full text-xs opacity-0 hover:bg-primary/10 group-hover:opacity-100 focus-visible:opacity-100">+</button>
-                                {reactionPickerFor === m.id && <EmojiStickerPicker reactionOnly onEmojiSelect={(emoji) => void reactToMessage(m, emoji)} labels={{ emojis: t("emojis"), stickers: t("stickers"), emptyStickers: t("sinStickers") }} className="absolute bottom-7 right-0 z-40" />}
+                              <span>
+                                <button
+                                  type="button"
+                                  onClick={(event) => setReactionPicker((current) => current?.messageId === m.id ? null : { messageId: m.id, anchorEl: event.currentTarget })}
+                                  aria-label={t("masReacciones")}
+                                  aria-expanded={reactionPicker?.messageId === m.id}
+                                  className="grid h-5 w-5 place-items-center rounded-full text-xs opacity-0 hover:bg-primary/10 group-hover:opacity-100 focus-visible:opacity-100"
+                                >+</button>
                               </span>
                               <button type="button" onClick={() => setReplyToMessage(m)} className="rounded px-1 text-[10px] opacity-0 group-hover:opacity-100 focus-visible:opacity-100">↩ {t("responder")}</button>
                               <button type="button" aria-label={t("reportar")} onClick={() => { setReportTarget({ targetType: "DIRECT_MESSAGE", targetId: m.id }); setShowReport(true); }} className="rounded px-1 text-[10px] opacity-0 group-hover:opacity-100 focus-visible:opacity-100">⚑</button>
@@ -717,7 +723,6 @@ export default function MessagesPage() {
                 </div>
 
                 {replyToMessage && <div className="flex items-center justify-between border-t border-border bg-primary/5 px-3 py-1.5 text-xs"><span className="truncate">{t("respondiendoA", { name: displayNameOf(replyToMessage.sender) })}</span><button type="button" onClick={() => setReplyToMessage(null)} className="text-primary hover:underline">{t("cancelarRespuesta")}</button></div>}
-                {showExpressions && <div className="border-t border-border p-2"><EmojiStickerPicker onEmojiSelect={insertEmoji} stickers={stickers} onStickerSelect={sendSticker} labels={{ emojis: t("emojis"), stickers: t("stickers"), emptyStickers: t("sinStickers"), customEmojis: t("emojisCustom") }} className="mx-auto" /></div>}
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
@@ -725,7 +730,7 @@ export default function MessagesPage() {
                   }}
                   className="flex items-end gap-2 border-t border-border p-3"
                 >
-                  <button type="button" onClick={() => setShowExpressions((value) => !value)} aria-label={t("emojisYStickers")} aria-expanded={showExpressions} className="rounded-lg p-2 text-muted-foreground hover:bg-primary/5">☺</button>
+                  <button ref={expressionButtonRef} type="button" onClick={() => setShowExpressions((value) => !value)} aria-label={t("emojisYStickers")} aria-expanded={showExpressions} className="rounded-lg p-2 text-muted-foreground hover:bg-primary/5">☺</button>
                   <textarea
                     ref={messageComposerRef}
                     value={draft}
@@ -748,6 +753,31 @@ export default function MessagesPage() {
                     {t("enviar")}
                   </Button>
                 </form>
+                {reactionPicker && (() => {
+                  const message = conversation.messages.find((item) => item.id === reactionPicker.messageId);
+                  return message ? (
+                    <AnchoredEmojiStickerPicker
+                      open
+                      anchorEl={reactionPicker.anchorEl}
+                      onClose={() => setReactionPicker(null)}
+                      reactionOnly
+                      onEmojiSelect={(emoji) => {
+                        void reactToMessage(message, emoji);
+                        setReactionPicker(null);
+                      }}
+                      labels={{ emojis: t("emojis"), stickers: t("stickers"), emptyStickers: t("sinStickers") }}
+                    />
+                  ) : null;
+                })()}
+                <AnchoredEmojiStickerPicker
+                  open={showExpressions}
+                  anchorEl={expressionButtonRef.current}
+                  onClose={() => setShowExpressions(false)}
+                  onEmojiSelect={insertEmoji}
+                  stickers={stickers}
+                  onStickerSelect={sendSticker}
+                  labels={{ emojis: t("emojis"), stickers: t("stickers"), emptyStickers: t("sinStickers"), customEmojis: t("emojisCustom") }}
+                />
               </>
             ) : (
               <div className="flex-1 flex items-center justify-center p-8 text-center">

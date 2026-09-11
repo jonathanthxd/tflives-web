@@ -1,7 +1,8 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
 
-import { useMemo, useState } from "react";
+import { createPortal } from "react-dom";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { EMOJI_CATEGORIES, type EmojiCategory } from "@/modules/chat/emojis";
 
 export interface PickerSticker {
@@ -35,6 +36,13 @@ interface EmojiStickerPickerProps {
   className?: string;
 }
 
+interface AnchoredEmojiStickerPickerProps extends EmojiStickerPickerProps {
+  anchorEl: HTMLElement | null;
+  open: boolean;
+  onClose: () => void;
+  gap?: number;
+}
+
 /**
  * TFLives-owned emoji/sticker manager. It never opens the operating-system
  * picker. Only one Unicode category is rendered at a time to keep the DOM and
@@ -63,7 +71,7 @@ export default function EmojiStickerPicker({
   );
 
   return (
-    <div className={`w-[17rem] max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border border-border bg-card/98 shadow-2xl shadow-black/25 backdrop-blur-xl ${className}`}>
+    <div className={`w-[17rem] max-w-[calc(100vw-1rem)] overflow-hidden rounded-xl border border-border bg-card/98 shadow-2xl shadow-black/25 backdrop-blur-xl ${className}`}>
       {!reactionOnly && (
         <div className="grid grid-cols-2 border-b border-border p-1">
           <button
@@ -163,5 +171,99 @@ export default function EmojiStickerPicker({
         </div>
       )}
     </div>
+  );
+}
+
+/**
+ * Viewport-aware popover for reaction and composer pickers. Rendering through
+ * a portal prevents chat scroll containers and rounded overflow boundaries
+ * from clipping the emoji catalogue. Positioning flips above/below the anchor
+ * and clamps to the visible viewport on resize or scroll.
+ */
+export function AnchoredEmojiStickerPicker({
+  anchorEl,
+  open,
+  onClose,
+  gap = 8,
+  ...pickerProps
+}: AnchoredEmojiStickerPickerProps) {
+  const popoverRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ left: 8, top: 8, ready: false });
+
+  const updatePosition = useCallback(() => {
+    if (!open || !anchorEl || !popoverRef.current || typeof window === "undefined") return;
+
+    const margin = 8;
+    const anchor = anchorEl.getBoundingClientRect();
+    const popover = popoverRef.current.getBoundingClientRect();
+    const width = popover.width || 272;
+    const height = popover.height || 260;
+
+    const maxLeft = Math.max(margin, window.innerWidth - width - margin);
+    const left = Math.min(maxLeft, Math.max(margin, anchor.right - width));
+
+    const above = anchor.top - gap - height;
+    const below = anchor.bottom + gap;
+    const canFitAbove = above >= margin;
+    const canFitBelow = below + height <= window.innerHeight - margin;
+
+    let top = canFitAbove ? above : canFitBelow ? below : Math.max(margin, Math.min(above, window.innerHeight - height - margin));
+    if (height >= window.innerHeight - margin * 2) top = margin;
+
+    setPosition({ left, top, ready: true });
+  }, [anchorEl, gap, open]);
+
+  useLayoutEffect(() => {
+    if (!open) return;
+    setPosition((current) => ({ ...current, ready: false }));
+    const frame = window.requestAnimationFrame(updatePosition);
+    return () => window.cancelAnimationFrame(frame);
+  }, [open, updatePosition]);
+
+  useEffect(() => {
+    if (!open || !anchorEl) return;
+
+    const reposition = () => updatePosition();
+    const handlePointerDown = (event: globalThis.PointerEvent) => {
+      const target = event.target as Node | null;
+      if (!target || popoverRef.current?.contains(target) || anchorEl.contains(target)) return;
+      onClose();
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+
+    const resizeObserver = typeof ResizeObserver !== "undefined" ? new ResizeObserver(reposition) : null;
+    if (popoverRef.current) resizeObserver?.observe(popoverRef.current);
+
+    window.addEventListener("resize", reposition);
+    window.addEventListener("scroll", reposition, true);
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      resizeObserver?.disconnect();
+      window.removeEventListener("resize", reposition);
+      window.removeEventListener("scroll", reposition, true);
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [anchorEl, onClose, open, updatePosition]);
+
+  if (!open || !anchorEl || typeof document === "undefined") return null;
+
+  return createPortal(
+    <div
+      ref={popoverRef}
+      className="fixed z-[100]"
+      style={{
+        left: position.left,
+        top: position.top,
+        opacity: position.ready ? 1 : 0,
+        pointerEvents: position.ready ? "auto" : "none",
+      }}
+    >
+      <EmojiStickerPicker {...pickerProps} />
+    </div>,
+    document.body,
   );
 }

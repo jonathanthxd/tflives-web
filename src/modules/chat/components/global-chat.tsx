@@ -4,7 +4,7 @@
 import { FormEvent, PointerEvent as ReactPointerEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { MessageCircle, Minus, Send, SmilePlus, Flag, Reply, X, Loader2, Plus } from "lucide-react";
-import EmojiStickerPicker from "@/modules/chat/components/emoji-sticker-picker";
+import { AnchoredEmojiStickerPicker } from "@/modules/chat/components/emoji-sticker-picker";
 import { getQuickReactions, recordReactionUse } from "@/modules/chat/reaction-preferences";
 
 interface Person {
@@ -68,7 +68,7 @@ export default function GlobalChat({ userId }: { userId: string }) {
   const [draft, setDraft] = useState("");
   const [replyTo, setReplyTo] = useState<ChatMessage | null>(null);
   const [showExpressions, setShowExpressions] = useState(false);
-  const [reactionPickerFor, setReactionPickerFor] = useState<string | null>(null);
+  const [reactionPicker, setReactionPicker] = useState<{ messageId: string; anchorEl: HTMLElement } | null>(null);
   const [quickReactions, setQuickReactions] = useState<string[]>(() => getQuickReactions());
   const [loading, setLoading] = useState(false);
   const [loadingOlder, setLoadingOlder] = useState(false);
@@ -84,6 +84,7 @@ export default function GlobalChat({ userId }: { userId: string }) {
   const [draggingBubble, setDraggingBubble] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const composerRef = useRef<HTMLTextAreaElement>(null);
+  const expressionButtonRef = useRef<HTMLButtonElement>(null);
   const closeReportButtonRef = useRef<HTMLButtonElement>(null);
   const nearBottomRef = useRef(true);
   const suppressBubbleClickRef = useRef(false);
@@ -396,9 +397,14 @@ export default function GlobalChat({ userId }: { userId: string }) {
                   {!message.deletedAt && <div className="mt-1.5 flex flex-wrap items-center gap-1">
                     {message.reactions.map((reaction) => <button key={reaction.emoji} type="button" onClick={() => void react(message, reaction.emoji)} aria-label={`${t("reaccionar")}: ${reaction.emoji}`} className={`rounded-full border px-1.5 py-0.5 text-[11px] ${reaction.mine ? "border-primary/40 bg-primary/10" : "border-border hover:bg-primary/5"}`}>{reaction.emoji} {reaction.count}</button>)}
                     {quickReactions.filter((emoji) => !message.reactions.some((reaction) => reaction.emoji === emoji)).map((emoji) => <button key={emoji} type="button" onClick={() => void react(message, emoji)} aria-label={`${t("reaccionar")}: ${emoji}`} className="rounded-full px-1 py-0.5 text-xs opacity-0 transition-opacity hover:bg-primary/10 group-hover:opacity-100 focus-visible:opacity-100">{emoji}</button>)}
-                    <span className="relative">
-                      <button type="button" onClick={() => setReactionPickerFor((current) => current === message.id ? null : message.id)} aria-label={t("masReacciones")} aria-expanded={reactionPickerFor === message.id} className="grid h-5 w-5 place-items-center rounded-full text-muted-foreground opacity-0 transition-opacity hover:bg-primary/10 hover:text-primary group-hover:opacity-100 focus-visible:opacity-100"><Plus className="h-3 w-3" /></button>
-                      {reactionPickerFor === message.id && <EmojiStickerPicker reactionOnly onEmojiSelect={(emoji) => void react(message, emoji)} labels={{ emojis: t("emojis"), stickers: t("stickers"), emptyStickers: t("sinStickers") }} className="absolute bottom-7 right-0 z-30" />}
+                    <span>
+                      <button
+                        type="button"
+                        onClick={(event) => setReactionPicker((current) => current?.messageId === message.id ? null : { messageId: message.id, anchorEl: event.currentTarget })}
+                        aria-label={t("masReacciones")}
+                        aria-expanded={reactionPicker?.messageId === message.id}
+                        className="grid h-5 w-5 place-items-center rounded-full text-muted-foreground opacity-0 transition-opacity hover:bg-primary/10 hover:text-primary group-hover:opacity-100 focus-visible:opacity-100"
+                      ><Plus className="h-3 w-3" /></button>
                     </span>
                     <button type="button" onClick={() => setReplyTo(message)} className="rounded px-1 py-0.5 text-[11px] text-muted-foreground opacity-0 hover:bg-primary/10 hover:text-primary group-hover:opacity-100 focus-visible:opacity-100"><Reply className="inline h-3 w-3" /> {t("responder")}</button>
                     <button type="button" onClick={() => setReporting(message)} className="rounded p-1 text-muted-foreground opacity-0 hover:bg-primary/10 hover:text-primary group-hover:opacity-100 focus-visible:opacity-100" aria-label={t("reportar")}><Flag className="h-3 w-3" /></button>
@@ -407,9 +413,8 @@ export default function GlobalChat({ userId }: { userId: string }) {
               </article>)}</div>}
           </div>
           {replyTo && <div className="flex items-center gap-2 border-t border-border bg-primary/5 px-3 py-1.5 text-xs"><span className="min-w-0 flex-1 truncate">{t("respondiendoA", { name: personName(replyTo.author) })}</span><button type="button" onClick={() => setReplyTo(null)} className="text-muted-foreground hover:text-primary">{t("cancelarRespuesta")}</button></div>}
-          {showExpressions && <div className="border-t border-border p-2"><EmojiStickerPicker onEmojiSelect={insertEmoji} stickers={sortedStickers} onStickerSelect={sendSticker} labels={{ emojis: t("emojis"), stickers: t("stickers"), emptyStickers: t("sinStickers"), customEmojis: t("emojisCustom") }} className="mx-auto" /></div>}
           <form onSubmit={submit} className="flex items-end gap-1 border-t border-border p-2">
-            <button type="button" onClick={() => setShowExpressions((value) => !value)} aria-label={t("emojisYStickers")} aria-expanded={showExpressions} className="rounded-lg p-2 text-muted-foreground hover:bg-primary/10 hover:text-primary"><SmilePlus className="h-4 w-4" /></button>
+            <button ref={expressionButtonRef} type="button" onClick={() => setShowExpressions((value) => !value)} aria-label={t("emojisYStickers")} aria-expanded={showExpressions} className="rounded-lg p-2 text-muted-foreground hover:bg-primary/10 hover:text-primary"><SmilePlus className="h-4 w-4" /></button>
             <textarea
               ref={composerRef}
               value={draft}
@@ -432,6 +437,31 @@ export default function GlobalChat({ userId }: { userId: string }) {
           </form>
         </section>
       )}
+      {reactionPicker && (() => {
+        const message = messages.find((item) => item.id === reactionPicker.messageId);
+        return message ? (
+          <AnchoredEmojiStickerPicker
+            open={open}
+            anchorEl={reactionPicker.anchorEl}
+            onClose={() => setReactionPicker(null)}
+            reactionOnly
+            onEmojiSelect={(emoji) => {
+              void react(message, emoji);
+              setReactionPicker(null);
+            }}
+            labels={{ emojis: t("emojis"), stickers: t("stickers"), emptyStickers: t("sinStickers") }}
+          />
+        ) : null;
+      })()}
+      <AnchoredEmojiStickerPicker
+        open={open && showExpressions}
+        anchorEl={expressionButtonRef.current}
+        onClose={() => setShowExpressions(false)}
+        onEmojiSelect={insertEmoji}
+        stickers={sortedStickers}
+        onStickerSelect={sendSticker}
+        labels={{ emojis: t("emojis"), stickers: t("stickers"), emptyStickers: t("sinStickers"), customEmojis: t("emojisCustom") }}
+      />
       <button
         type="button"
         onClick={handleBubbleClick}

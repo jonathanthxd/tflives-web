@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { PostType } from "@prisma/client";
@@ -39,7 +39,6 @@ export default function PostCard({
   image,
 }: PostCardProps) {
   const t = useTranslations("PostCard");
-  const reducedMotion = useReducedMotion();
   const typeLabels: Record<PostType, string> = {
     CHANGELOG: t("changelog"),
     MAINTENANCE: t("maintenance"),
@@ -51,7 +50,7 @@ export default function PostCard({
 
   return (
     <motion.div
-      initial={reducedMotion ? false : { opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4 }}
