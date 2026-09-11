@@ -375,7 +375,7 @@ export default function MessagesPage() {
     if (!res.ok) { setError(data.error || t("errorGenerico")); return; }
     setConversation((prev) => prev ? { ...prev, messages: prev.messages.map((item) => item.id === message.id ? { ...item, reactions: data.reactions } : item) } : prev);
     if (adding) setQuickReactions(recordReactionUse(emoji));
-    setReactionPickerFor(null);
+    setReactionPicker(null);
   }
 
   async function loadOlderMessages() {

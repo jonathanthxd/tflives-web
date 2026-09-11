@@ -345,7 +345,7 @@ export default function GlobalChat({ userId }: { userId: string }) {
       if (!response.ok) throw new Error(data.error || "reaction");
       setMessages((current) => current.map((item) => item.id === message.id ? { ...item, reactions: data.reactions } : item));
       if (adding) setQuickReactions(recordReactionUse(emoji));
-      setReactionPickerFor(null);
+      setReactionPicker(null);
     } catch (caught) { setError(caught instanceof Error ? caught.message : t("error")); }
   }
 
