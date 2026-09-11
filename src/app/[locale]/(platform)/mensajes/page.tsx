@@ -8,7 +8,7 @@ import { Card } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import ConfirmDialog from "@/shared/ui/confirm-dialog";
-import { AnchoredEmojiStickerPicker } from "@/modules/chat/components/emoji-sticker-picker";
+import { AnchoredEmojiStickerPicker, type PickerAnchorRect } from "@/modules/chat/components/emoji-sticker-picker";
 import { getQuickReactions, recordReactionUse } from "@/modules/chat/reaction-preferences";
 
 interface PersonSummary {
@@ -108,7 +108,7 @@ export default function MessagesPage() {
   const [replyToMessage, setReplyToMessage] = useState<ConversationMessage | null>(null);
   const [stickers, setStickers] = useState<{ id: string; name: string; assetUrl: string; category: string | null }[]>([]);
   const [showExpressions, setShowExpressions] = useState(false);
-  const [reactionPicker, setReactionPicker] = useState<{ messageId: string; anchorEl: HTMLElement } | null>(null);
+  const [reactionPicker, setReactionPicker] = useState<{ messageId: string; anchorRect: PickerAnchorRect } | null>(null);
   const [quickReactions, setQuickReactions] = useState<string[]>(() => getQuickReactions());
   const [reportTarget, setReportTarget] = useState<{ targetType: "CONVERSATION" | "DIRECT_MESSAGE"; targetId: string } | null>(null);
   const [memberUsername, setMemberUsername] = useState("");
@@ -705,7 +705,15 @@ export default function MessagesPage() {
                               <span>
                                 <button
                                   type="button"
-                                  onClick={(event) => setReactionPicker((current) => current?.messageId === m.id ? null : { messageId: m.id, anchorEl: event.currentTarget })}
+                                  onPointerDown={(event) => {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                    const rect = event.currentTarget.getBoundingClientRect();
+                                    setReactionPicker((current) => current?.messageId === m.id ? null : {
+                                      messageId: m.id,
+                                      anchorRect: { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, width: rect.width, height: rect.height },
+                                    });
+                                  }}
                                   aria-label={t("masReacciones")}
                                   aria-expanded={reactionPicker?.messageId === m.id}
                                   className="grid h-5 w-5 place-items-center rounded-full text-xs opacity-0 hover:bg-primary/10 group-hover:opacity-100 focus-visible:opacity-100"
@@ -758,7 +766,7 @@ export default function MessagesPage() {
                   return message ? (
                     <AnchoredEmojiStickerPicker
                       open
-                      anchorEl={reactionPicker.anchorEl}
+                      anchorRect={reactionPicker.anchorRect}
                       onClose={() => setReactionPicker(null)}
                       reactionOnly
                       onEmojiSelect={(emoji) => {

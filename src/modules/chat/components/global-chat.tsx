@@ -4,7 +4,7 @@
 import { FormEvent, PointerEvent as ReactPointerEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { MessageCircle, Minus, Send, SmilePlus, Flag, Reply, X, Loader2, Plus } from "lucide-react";
-import { AnchoredEmojiStickerPicker } from "@/modules/chat/components/emoji-sticker-picker";
+import { AnchoredEmojiStickerPicker, type PickerAnchorRect } from "@/modules/chat/components/emoji-sticker-picker";
 import { getQuickReactions, recordReactionUse } from "@/modules/chat/reaction-preferences";
 
 interface Person {
@@ -68,7 +68,7 @@ export default function GlobalChat({ userId }: { userId: string }) {
   const [draft, setDraft] = useState("");
   const [replyTo, setReplyTo] = useState<ChatMessage | null>(null);
   const [showExpressions, setShowExpressions] = useState(false);
-  const [reactionPicker, setReactionPicker] = useState<{ messageId: string; anchorEl: HTMLElement } | null>(null);
+  const [reactionPicker, setReactionPicker] = useState<{ messageId: string; anchorRect: PickerAnchorRect } | null>(null);
   const [quickReactions, setQuickReactions] = useState<string[]>(() => getQuickReactions());
   const [loading, setLoading] = useState(false);
   const [loadingOlder, setLoadingOlder] = useState(false);
@@ -400,10 +400,18 @@ export default function GlobalChat({ userId }: { userId: string }) {
                     <span>
                       <button
                         type="button"
-                        onClick={(event) => setReactionPicker((current) => current?.messageId === message.id ? null : { messageId: message.id, anchorEl: event.currentTarget })}
+                        onPointerDown={(event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          const rect = event.currentTarget.getBoundingClientRect();
+                          setReactionPicker((current) => current?.messageId === message.id ? null : {
+                            messageId: message.id,
+                            anchorRect: { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, width: rect.width, height: rect.height },
+                          });
+                        }}
                         aria-label={t("masReacciones")}
                         aria-expanded={reactionPicker?.messageId === message.id}
-                        className="grid h-5 w-5 place-items-center rounded-full text-muted-foreground opacity-0 transition-opacity hover:bg-primary/10 hover:text-primary group-hover:opacity-100 focus-visible:opacity-100"
+                        className="grid h-7 w-7 place-items-center rounded-full border border-transparent text-muted-foreground opacity-0 transition-[opacity,background-color,border-color,color] hover:border-primary/20 hover:bg-primary/10 hover:text-primary group-hover:opacity-100 focus-visible:opacity-100"
                       ><Plus className="h-3 w-3" /></button>
                     </span>
                     <button type="button" onClick={() => setReplyTo(message)} className="rounded px-1 py-0.5 text-[11px] text-muted-foreground opacity-0 hover:bg-primary/10 hover:text-primary group-hover:opacity-100 focus-visible:opacity-100"><Reply className="inline h-3 w-3" /> {t("responder")}</button>
@@ -442,7 +450,7 @@ export default function GlobalChat({ userId }: { userId: string }) {
         return message ? (
           <AnchoredEmojiStickerPicker
             open={open}
-            anchorEl={reactionPicker.anchorEl}
+            anchorRect={reactionPicker.anchorRect}
             onClose={() => setReactionPicker(null)}
             reactionOnly
             onEmojiSelect={(emoji) => {

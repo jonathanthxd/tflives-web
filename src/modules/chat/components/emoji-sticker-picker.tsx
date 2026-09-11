@@ -36,8 +36,18 @@ interface EmojiStickerPickerProps {
   className?: string;
 }
 
+export interface PickerAnchorRect {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+  width: number;
+  height: number;
+}
+
 interface AnchoredEmojiStickerPickerProps extends EmojiStickerPickerProps {
-  anchorEl: HTMLElement | null;
+  anchorEl?: HTMLElement | null;
+  anchorRect?: PickerAnchorRect | null;
   open: boolean;
   onClose: () => void;
   gap?: number;
@@ -181,7 +191,8 @@ export default function EmojiStickerPicker({
  * and clamps to the visible viewport on resize or scroll.
  */
 export function AnchoredEmojiStickerPicker({
-  anchorEl,
+  anchorEl = null,
+  anchorRect = null,
   open,
   onClose,
   gap = 8,
@@ -191,10 +202,10 @@ export function AnchoredEmojiStickerPicker({
   const [position, setPosition] = useState({ left: 8, top: 8, ready: false });
 
   const updatePosition = useCallback(() => {
-    if (!open || !anchorEl || !popoverRef.current || typeof window === "undefined") return;
+    if (!open || (!anchorEl && !anchorRect) || !popoverRef.current || typeof window === "undefined") return;
 
     const margin = 8;
-    const anchor = anchorEl.getBoundingClientRect();
+    const anchor = anchorRect ?? anchorEl!.getBoundingClientRect();
     const popover = popoverRef.current.getBoundingClientRect();
     const width = popover.width || 272;
     const height = popover.height || 260;
@@ -211,7 +222,7 @@ export function AnchoredEmojiStickerPicker({
     if (height >= window.innerHeight - margin * 2) top = margin;
 
     setPosition({ left, top, ready: true });
-  }, [anchorEl, gap, open]);
+  }, [anchorEl, anchorRect, gap, open]);
 
   useLayoutEffect(() => {
     if (!open) return;
@@ -221,12 +232,12 @@ export function AnchoredEmojiStickerPicker({
   }, [open, updatePosition]);
 
   useEffect(() => {
-    if (!open || !anchorEl) return;
+    if (!open || (!anchorEl && !anchorRect)) return;
 
     const reposition = () => updatePosition();
     const handlePointerDown = (event: globalThis.PointerEvent) => {
       const target = event.target as Node | null;
-      if (!target || popoverRef.current?.contains(target) || anchorEl.contains(target)) return;
+      if (!target || popoverRef.current?.contains(target) || anchorEl?.contains(target)) return;
       onClose();
     };
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -237,19 +248,20 @@ export function AnchoredEmojiStickerPicker({
     if (popoverRef.current) resizeObserver?.observe(popoverRef.current);
 
     window.addEventListener("resize", reposition);
-    window.addEventListener("scroll", reposition, true);
+    const handleScroll = anchorEl ? reposition : onClose;
+    window.addEventListener("scroll", handleScroll, true);
     document.addEventListener("pointerdown", handlePointerDown);
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       resizeObserver?.disconnect();
       window.removeEventListener("resize", reposition);
-      window.removeEventListener("scroll", reposition, true);
+      window.removeEventListener("scroll", handleScroll, true);
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [anchorEl, onClose, open, updatePosition]);
+  }, [anchorEl, anchorRect, onClose, open, updatePosition]);
 
-  if (!open || !anchorEl || typeof document === "undefined") return null;
+  if (!open || (!anchorEl && !anchorRect) || typeof document === "undefined") return null;
 
   return createPortal(
     <div
