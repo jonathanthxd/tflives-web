@@ -6,13 +6,13 @@ export async function POST(request: Request) {
   const authUser = await getCurrentAuthUser();
   if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
-  const { targetType, targetId, reason } = await request.json().catch(() => ({}));
+  const { targetType, targetId, reason, details } = await request.json().catch(() => ({}));
   if (!targetType || !targetId || !reason) {
     return NextResponse.json({ error: "Faltan datos del reporte" }, { status: 400 });
   }
 
   try {
-    await report(authUser.id, targetType, targetId, reason);
+    await report(authUser.id, targetType, targetId, reason, typeof details === "string" ? details : undefined);
     return NextResponse.json({ ok: true }, { status: 201 });
   } catch (error) {
     if (error instanceof MessagingError) {

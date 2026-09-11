@@ -41,10 +41,15 @@ model User {
 
   conversationParticipations ConversationParticipant[]
   directMessages             DirectMessage[]
+  directMessageReactions     DirectMessageReaction[]
+  globalChatMessages         GlobalChatMessage[]
+  globalChatReactions        GlobalChatReaction[]
+  globalChatReadState        GlobalChatReadState?
   blocking                   Block[]                   @relation("Blocker")
   blockedBy                  Block[]                   @relation("Blocked")
   reportsMade                Report[]                  @relation("Reporter")
   reportsReviewed            Report[]                  @relation("ReportReviewer")
+  reportsTargeting           Report[]                  @relation("ReportTargetUser")
 
   sanctionsReceived UserSanction[]   @relation("SanctionTarget")
   sanctionsIssued   UserSanction[]   @relation("SanctionIssuer")
@@ -220,10 +225,90 @@ model DirectMessage {
   conversation   Conversation @relation(fields: [conversationId], references: [id])
   senderId       String
   sender         User         @relation(fields: [senderId], references: [id])
-  content        String       @db.Text
+  content        String       @default("") @db.Text
+  replyToId      String?
+  replyTo        DirectMessage? @relation("DirectMessageReplies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies        DirectMessage[] @relation("DirectMessageReplies")
+  stickerId      String?
+  sticker        ChatSticker? @relation(fields: [stickerId], references: [id], onDelete: SetNull)
+  reactions      DirectMessageReaction[]
+  editedAt       DateTime?
+  deletedAt      DateTime?
   createdAt      DateTime     @default(now())
 
   @@index([conversationId, createdAt])
+  @@index([replyToId])
+}
+
+/// Curated first-party assets only. Users cannot upload arbitrary chat media.
+model ChatSticker {
+  id           String                 @id @default(cuid())
+  name         String                 @unique
+  assetUrl     String                 @map("asset_url")
+  enabled      Boolean                @default(true)
+  displayOrder Int                    @default(0) @map("display_order")
+  category     String?
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime               @updatedAt
+  directMessages DirectMessage[]
+  globalMessages GlobalChatMessage[]
+
+  @@index([enabled, displayOrder])
+}
+
+model DirectMessageReaction {
+  id        String        @id @default(cuid())
+  messageId String        @map("message_id")
+  message   DirectMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  userId    String        @map("user_id")
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  emoji     String
+  createdAt DateTime      @default(now()) @map("created_at")
+
+  @@unique([messageId, userId, emoji])
+  @@index([messageId])
+}
+
+/// The product has exactly one global channel. Keeping it as a dedicated
+/// relation makes that invariant explicit without a user-selectable channel.
+model GlobalChatMessage {
+  id        String             @id @default(cuid())
+  authorId  String             @map("author_id")
+  author    User               @relation(fields: [authorId], references: [id], onDelete: Restrict)
+  content   String             @default("") @db.Text
+  replyToId String?            @map("reply_to_id")
+  replyTo   GlobalChatMessage? @relation("GlobalChatReplies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies   GlobalChatMessage[] @relation("GlobalChatReplies")
+  stickerId String?            @map("sticker_id")
+  sticker   ChatSticker?       @relation(fields: [stickerId], references: [id], onDelete: SetNull)
+  reactions GlobalChatReaction[]
+  editedAt  DateTime?          @map("edited_at")
+  deletedAt DateTime?          @map("deleted_at")
+  createdAt DateTime           @default(now()) @map("created_at")
+
+  @@index([createdAt, id])
+  @@index([replyToId])
+  @@index([authorId, createdAt])
+}
+
+model GlobalChatReaction {
+  id        String            @id @default(cuid())
+  messageId String            @map("message_id")
+  message   GlobalChatMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  userId    String            @map("user_id")
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  emoji     String
+  createdAt DateTime          @default(now()) @map("created_at")
+
+  @@unique([messageId, userId, emoji])
+  @@index([messageId])
+}
+
+model GlobalChatReadState {
+  userId      String   @id @map("user_id")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lastReadAt  DateTime? @map("last_read_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 }
 
 model Block {
@@ -243,7 +328,10 @@ model Report {
   reporter     User         @relation("Reporter", fields: [reporterId], references: [id])
   targetType   String
   targetId     String
+  targetUserId String?
+  targetUser   User?        @relation("ReportTargetUser", fields: [targetUserId], references: [id], onDelete: SetNull)
   reason       String       @db.Text
+  details      String?      @db.Text
   status       ReportStatus @default(OPEN)
   reviewedById String?
   reviewedBy   User?        @relation("ReportReviewer", fields: [reviewedById], references: [id])
@@ -251,6 +339,8 @@ model Report {
   createdAt    DateTime     @default(now())
 
   @@index([status, createdAt])
+  @@index([targetType, targetId])
+  @@index([targetUserId])
 }
 
 model UserSanction {

@@ -9,6 +9,8 @@ import AuthHeader from "@/shared/ui/layout/auth-header";
 import UserMenu from "@/shared/ui/layout/user-menu";
 import NotificationBell from "@/modules/notifications/components/notification-bell";
 import NotificationToasts from "@/modules/notifications/components/notification-toasts";
+import GlobalChat from "@/modules/chat/components/global-chat";
+import MessagingUnreadLink from "@/modules/messaging/components/messaging-unread-link";
 
 const MINIMAL_HEADER_ROUTES = [
   "/login",
@@ -199,10 +201,11 @@ export default function Navbar() {
               <div className="flex items-center gap-1 md:gap-2 ml-4 md:ml-8 lg:ml-12">
                 <NotificationBell userId={user.id} />
                 <NotificationToasts />
+                <MessagingUnreadLink />
                 <Link
                   href="/mensajes"
                   title={t("mensajes")}
-                  className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300 hidden sm:inline-flex"
+                  className="hidden"
                 >
                   <svg
                     className="w-5 h-5"
@@ -253,6 +256,8 @@ export default function Navbar() {
                 {t("login")}
               </Link>
             )}
+
+            {user && <GlobalChat userId={user.id} />}
 
             <button
               onClick={() => setMobileOpen((v) => !v)}

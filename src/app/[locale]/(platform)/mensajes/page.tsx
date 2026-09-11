@@ -33,6 +33,11 @@ interface ConversationMessage {
   conversationId: string;
   senderId: string;
   content: string;
+  sender: PersonSummary;
+  sticker: { id: string; name: string; assetUrl: string; category: string | null } | null;
+  replyTo: { id: string; sender: PersonSummary; content: string; deletedAt: string | null } | null;
+  reactions: { emoji: string; count: number; mine: boolean }[];
+  deletedAt: string | null;
   createdAt: string;
 }
 
@@ -76,6 +81,7 @@ export default function MessagesPage() {
   const [active, setActive] = useState<InboxEntry[]>([]);
   const [requests, setRequests] = useState<InboxEntry[]>([]);
   const [conversation, setConversation] = useState<ConversationDetail | null>(null);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [myUserId, setMyUserId] = useState<string | null>(null);
   const [error, setError] = useState("");
 
@@ -83,6 +89,7 @@ export default function MessagesPage() {
   const [showNewGroup, setShowNewGroup] = useState(false);
   const [showBlockConfirm, setShowBlockConfirm] = useState(false);
   const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
+  const [showCloseGroupConfirm, setShowCloseGroupConfirm] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -96,7 +103,14 @@ export default function MessagesPage() {
   const [busy, setBusy] = useState(false);
 
   const [draft, setDraft] = useState("");
+  const [replyToMessage, setReplyToMessage] = useState<ConversationMessage | null>(null);
+  const [stickers, setStickers] = useState<{ id: string; name: string; assetUrl: string; category: string | null }[]>([]);
+  const [showStickers, setShowStickers] = useState(false);
+  const [reportTarget, setReportTarget] = useState<{ targetType: "CONVERSATION" | "DIRECT_MESSAGE"; targetId: string } | null>(null);
+  const [memberUsername, setMemberUsername] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messageViewportRef = useRef<HTMLDivElement>(null);
+  const nearConversationBottomRef = useRef(true);
 
   async function loadInbox() {
     const res = await fetch("/api/messaging/conversations");
@@ -115,27 +129,40 @@ export default function MessagesPage() {
       .then((res) => res.json())
       .then((data) => setMyUserId(data.user?.id ?? null));
     loadInbox();
+    fetch("/api/chat/stickers")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => setStickers(data?.stickers ?? []))
+      .catch(() => {});
     setActiveId(nextSearchParams.get("c"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function loadConversation(id: string) {
-    const res = await fetch(`/api/messaging/conversations/${id}`);
+  async function loadConversation(id: string, after?: string) {
+    const res = await fetch(`/api/messaging/conversations/${id}${after ? `?after=${encodeURIComponent(after)}` : ""}`);
     if (res.ok) {
       const data = await res.json();
-      setConversation(data.conversation);
+      setNextCursor(data.nextCursor ?? null);
+      setConversation((previous) => {
+        if (!after || !previous || previous.id !== data.conversation.id) return data.conversation;
+        const all = [...previous.messages, ...data.conversation.messages];
+        return {
+          ...data.conversation,
+          messages: all.filter((message, index) => all.findIndex((candidate) => candidate.id === message.id) === index),
+        };
+      });
     } else {
       setConversation(null);
     }
   }
 
   useEffect(() => {
+    nearConversationBottomRef.current = true;
     if (activeId) loadConversation(activeId);
     else setConversation(null);
   }, [activeId]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (nearConversationBottomRef.current) messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [conversation?.messages.length]);
 
   useEffect(() => {
@@ -152,10 +179,11 @@ export default function MessagesPage() {
 
     async function refreshConversation() {
       if (cancelled || !activeId) return;
-      await Promise.all([loadConversation(activeId), loadInbox()]);
+      const after = conversation?.messages[conversation.messages.length - 1]?.id;
+      await Promise.all([loadConversation(activeId, after), loadInbox()]);
     }
 
-    const interval = window.setInterval(refreshConversation, 2_500);
+    const interval = window.setInterval(refreshConversation, 5_000);
     const onVisibility = () => {
       if (document.visibilityState === "visible") refreshConversation();
     };
@@ -167,7 +195,7 @@ export default function MessagesPage() {
       document.removeEventListener("visibilitychange", onVisibility);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeId]);
+  }, [activeId, conversation?.messages]);
 
   function selectConversation(id: string) {
     setActiveId(id);
@@ -271,7 +299,7 @@ export default function MessagesPage() {
     const res = await fetch(`/api/messaging/conversations/${activeId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content }),
+      body: JSON.stringify({ content, replyToId: replyToMessage?.id ?? null }),
     });
     if (res.ok) {
       const data = await res.json();
@@ -280,8 +308,75 @@ export default function MessagesPage() {
         if (prev.messages.some((m) => m.id === data.message.id)) return prev;
         return { ...prev, messages: [...prev.messages, data.message] };
       });
+      setReplyToMessage(null);
       loadInbox();
+    } else {
+      setDraft(content);
     }
+  }
+
+  async function sendSticker(stickerId: string) {
+    if (!activeId) return;
+    const res = await fetch(`/api/messaging/conversations/${activeId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content: draft.trim(), replyToId: replyToMessage?.id ?? null, stickerId }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) { setError(data.error || t("errorGenerico")); return; }
+    setConversation((prev) => !prev || prev.messages.some((message) => message.id === data.message.id) ? prev : { ...prev, messages: [...prev.messages, data.message] });
+    setDraft("");
+    setReplyToMessage(null);
+    setShowStickers(false);
+    loadInbox();
+  }
+
+  async function reactToMessage(messageId: string, emoji: string) {
+    const res = await fetch(`/api/messaging/messages/${messageId}/reactions`, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ emoji }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) { setError(data.error || t("errorGenerico")); return; }
+    setConversation((prev) => prev ? { ...prev, messages: prev.messages.map((message) => message.id === messageId ? { ...message, reactions: data.reactions } : message) } : prev);
+  }
+
+  async function loadOlderMessages() {
+    if (!activeId || !nextCursor) return;
+    const viewport = messageViewportRef.current;
+    const previousHeight = viewport?.scrollHeight ?? 0;
+    const res = await fetch(`/api/messaging/conversations/${activeId}?cursor=${encodeURIComponent(nextCursor)}`);
+    if (!res.ok) return;
+    const data = await res.json();
+    setNextCursor(data.nextCursor ?? null);
+    setConversation((prev) => !prev ? prev : { ...data.conversation, messages: [...data.conversation.messages, ...prev.messages].filter((message: ConversationMessage, index: number, all: ConversationMessage[]) => all.findIndex((candidate) => candidate.id === message.id) === index) });
+    requestAnimationFrame(() => { if (viewport) viewport.scrollTop += viewport.scrollHeight - previousHeight; });
+  }
+
+  function trackConversationScroll() {
+    const viewport = messageViewportRef.current;
+    if (!viewport) return;
+    nearConversationBottomRef.current = viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight < 80;
+  }
+
+  async function addMember() {
+    if (!activeId || !memberUsername.trim()) return;
+    setBusy(true);
+    const res = await fetch(`/api/messaging/conversations/${activeId}/members`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: memberUsername }) });
+    const data = await res.json().catch(() => ({}));
+    setBusy(false);
+    if (!res.ok) { setError(data.error || t("errorGenerico")); return; }
+    setMemberUsername("");
+    loadConversation(activeId);
+  }
+
+  async function removeMember(targetUserId: string) {
+    if (!activeId) return;
+    setBusy(true);
+    const res = await fetch(`/api/messaging/conversations/${activeId}/members`, { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ targetUserId }) });
+    const data = await res.json().catch(() => ({}));
+    setBusy(false);
+    if (!res.ok) { setError(data.error || t("errorGenerico")); return; }
+    loadConversation(activeId);
   }
 
   async function confirmBlock() {
@@ -316,16 +411,32 @@ export default function MessagesPage() {
     await loadInbox();
   }
 
+  async function confirmCloseGroup() {
+    if (!activeId) return;
+    setBusy(true);
+    const res = await fetch(`/api/messaging/conversations/${activeId}/members`, {
+      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "close" }),
+    });
+    const data = await res.json().catch(() => ({}));
+    setBusy(false);
+    if (!res.ok) { setError(data.error || t("errorGenerico")); return; }
+    setShowCloseGroupConfirm(false);
+    setActiveId(null);
+    router.push("/mensajes");
+    await loadInbox();
+  }
+
   async function submitReport() {
-    if (!activeId || !reportReason.trim()) return;
+    if (!reportTarget || !reportReason.trim()) return;
     setBusy(true);
     await fetch("/api/messaging/report", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ targetType: "CONVERSATION", targetId: activeId, reason: reportReason }),
+      body: JSON.stringify({ targetType: reportTarget.targetType, targetId: reportTarget.targetId, reason: reportReason }),
     });
     setBusy(false);
     setReportReason("");
+    setReportTarget(null);
     setShowReport(false);
   }
 
@@ -439,6 +550,19 @@ export default function MessagesPage() {
                         ? conversation.name || t("grupoSinNombre")
                         : displayNameOf(otherParticipant ?? { id: "", username: null, displayName: null, name: null, image: null })}
                     </p>
+                    {conversation.isGroup && (
+                      <details className="relative">
+                        <summary className="cursor-pointer text-xs text-primary">{t("miembros")}</summary>
+                        <div className="absolute left-0 top-6 z-40 w-64 rounded-xl border border-border bg-card p-3 shadow-xl">
+                          <div className="max-h-36 space-y-1 overflow-y-auto">
+                            {conversation.participants.filter((participant) => participant.status === "ACTIVE").map((participant) => (
+                              <div key={participant.userId} className="flex items-center gap-2 text-xs"><span className="min-w-0 flex-1 truncate">{displayNameOf(participant.user)}</span>{conversation.participants.find((item) => item.userId === myUserId)?.role === "OWNER" && participant.userId !== myUserId && <button type="button" disabled={busy} onClick={() => removeMember(participant.userId)} className="text-destructive hover:underline">{t("quitarMiembro")}</button>}</div>
+                            ))}
+                          </div>
+                          {conversation.participants.find((participant) => participant.userId === myUserId)?.role === "OWNER" && <div className="mt-2 flex gap-1"><Input value={memberUsername} onChange={(event) => setMemberUsername(event.target.value)} placeholder={t("usernameMiembro")} className="h-8 text-xs" /><Button type="button" size="xs" disabled={busy || !memberUsername.trim()} onClick={addMember}>{t("agregarMiembro")}</Button></div>}
+                        </div>
+                      </details>
+                    )}
                   </div>
 
                   <div className="relative" ref={menuRef}>
@@ -484,9 +608,18 @@ export default function MessagesPage() {
                             {t("salirDelGrupo")}
                           </button>
                         )}
+                        {conversation.isGroup && conversation.participants.find((participant) => participant.userId === myUserId)?.role === "OWNER" && (
+                          <button
+                            onClick={() => { setMenuOpen(false); setShowCloseGroupConfirm(true); }}
+                            className="flex w-full items-center gap-2 px-3 py-2 rounded-xl text-sm text-destructive hover:bg-destructive/5 transition-colors"
+                          >
+                            {t("cerrarGrupo")}
+                          </button>
+                        )}
                         <button
                           onClick={() => {
                             setMenuOpen(false);
+                            if (activeId) setReportTarget({ targetType: "CONVERSATION", targetId: activeId });
                             setShowReport(true);
                           }}
                           className="flex w-full items-center gap-2 px-3 py-2 rounded-xl text-sm text-destructive hover:bg-destructive/5 transition-colors"
@@ -498,23 +631,42 @@ export default function MessagesPage() {
                   </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-4 space-y-2">
+                <div ref={messageViewportRef} onScroll={trackConversationScroll} className="flex-1 overflow-y-auto p-4 space-y-2">
+                  {nextCursor && (
+                    <button type="button" onClick={loadOlderMessages} className="mb-2 w-full rounded-lg border border-border px-3 py-1.5 text-xs text-muted-foreground hover:bg-primary/5">
+                      {t("cargarAnteriores")}
+                    </button>
+                  )}
                   {conversation.messages.length === 0 ? (
                     <p className="text-sm text-muted-foreground text-center mt-8">{t("sinMensajes")}</p>
                   ) : (
                     conversation.messages.map((m) => {
                       const mine = m.senderId === myUserId;
                       return (
-                        <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
+                        <div id={`message-${m.id}`} key={m.id} className={`group flex ${mine ? "justify-end" : "justify-start"}`}>
                           <div
                             className={`max-w-[75%] rounded-2xl px-3.5 py-2 text-sm ${
                               mine ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"
                             }`}
                           >
-                            <p className="whitespace-pre-line break-words">{m.content}</p>
+                            {m.replyTo && (
+                              <button type="button" onClick={() => document.getElementById(`message-${m.replyTo?.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" })} className={`mb-1 block max-w-full truncate border-l-2 pl-2 text-left text-[11px] ${mine ? "border-primary-foreground/50 text-primary-foreground/80" : "border-primary/60 text-muted-foreground"}`}>
+                                {displayNameOf(m.replyTo.sender)}: {m.replyTo.content}
+                              </button>
+                            )}
+                            {m.deletedAt ? <p className="italic opacity-70">{t("mensajeEliminado")}</p> : <>
+                              <p className="whitespace-pre-line break-words">{m.content}</p>
+                              {m.sticker && <img src={m.sticker.assetUrl} alt={m.sticker.name} className="mt-1 h-16 w-16 object-contain" />}
+                            </>}
                             <p className={`mt-0.5 text-[10px] ${mine ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
                               {new Date(m.createdAt).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" })}
                             </p>
+                            {!m.deletedAt && <div className="mt-1 flex flex-wrap gap-1">
+                              {m.reactions.map((reaction) => <button key={reaction.emoji} type="button" onClick={() => reactToMessage(m.id, reaction.emoji)} className={`rounded-full border px-1.5 py-0.5 text-[10px] ${mine ? "border-primary-foreground/30" : "border-border"} ${reaction.mine ? "bg-primary/15" : ""}`}>{reaction.emoji} {reaction.count}</button>)}
+                              {['👍', '❤️', '😂'].filter((emoji) => !m.reactions.some((reaction) => reaction.emoji === emoji)).map((emoji) => <button key={emoji} type="button" onClick={() => reactToMessage(m.id, emoji)} aria-label={`${t("reaccionar")} ${emoji}`} className="rounded px-1 text-xs opacity-0 group-hover:opacity-100 focus-visible:opacity-100">{emoji}</button>)}
+                              <button type="button" onClick={() => setReplyToMessage(m)} className="rounded px-1 text-[10px] opacity-0 group-hover:opacity-100 focus-visible:opacity-100">↩ {t("responder")}</button>
+                              <button type="button" aria-label={t("reportar")} onClick={() => { setReportTarget({ targetType: "DIRECT_MESSAGE", targetId: m.id }); setShowReport(true); }} className="rounded px-1 text-[10px] opacity-0 group-hover:opacity-100 focus-visible:opacity-100">⚑</button>
+                            </div>}
                           </div>
                         </div>
                       );
@@ -523,6 +675,8 @@ export default function MessagesPage() {
                   <div ref={messagesEndRef} />
                 </div>
 
+                {replyToMessage && <div className="flex items-center justify-between border-t border-border bg-primary/5 px-3 py-1.5 text-xs"><span className="truncate">{t("respondiendoA", { name: displayNameOf(replyToMessage.sender) })}</span><button type="button" onClick={() => setReplyToMessage(null)} className="text-primary hover:underline">{t("cancelarRespuesta")}</button></div>}
+                {showStickers && <div role="dialog" aria-label={t("stickers")} className="flex max-h-24 flex-wrap gap-1 overflow-y-auto border-t border-border p-2">{stickers.map((sticker) => <button type="button" key={sticker.id} onClick={() => sendSticker(sticker.id)} title={sticker.name} className="rounded p-1 hover:bg-primary/10"><img src={sticker.assetUrl} alt={sticker.name} className="h-10 w-10 object-contain" /></button>)}</div>}
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
@@ -530,6 +684,7 @@ export default function MessagesPage() {
                   }}
                   className="flex items-center gap-2 border-t border-border p-3"
                 >
+                  <button type="button" onClick={() => setShowStickers((value) => !value)} aria-label={t("stickers")} className="rounded-lg p-2 text-muted-foreground hover:bg-primary/5">☺</button>
                   <Input
                     value={draft}
                     onChange={(e) => setDraft(e.target.value)}
@@ -683,6 +838,17 @@ export default function MessagesPage() {
         cancelLabel={t("cancelar")}
         onConfirm={confirmLeave}
         onCancel={() => setShowLeaveConfirm(false)}
+        busy={busy}
+      />
+
+      <ConfirmDialog
+        open={showCloseGroupConfirm}
+        title={t("confirmarCerrarGrupoTitulo")}
+        description={t("confirmarCerrarGrupoDescripcion")}
+        confirmLabel={t("cerrarGrupo")}
+        cancelLabel={t("cancelar")}
+        onConfirm={confirmCloseGroup}
+        onCancel={() => setShowCloseGroupConfirm(false)}
         busy={busy}
       />
     </main>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Check, X, Flag } from "lucide-react";
 import { StatusBadge } from "@/modules/administration/components/ui/status-badge";
 import { EmptyState } from "@/modules/administration/components/ui/empty-state";
@@ -19,10 +20,12 @@ interface ReportRow {
   targetType: string;
   targetId: string;
   reason: string;
+  details: string | null;
   status: ReportStatus;
   createdAt: string;
   reporter: PersonRef;
   reviewedBy: PersonRef | null;
+  targetContext: { content: string; deletedAt: string | null; author: PersonRef } | null;
 }
 
 const STATUS_LABELS: Record<ReportStatus, string> = {
@@ -42,6 +45,7 @@ function personLabel(p: PersonRef) {
 }
 
 export default function ReportsManager({ initialReports }: { initialReports: ReportRow[] }) {
+  const t = useTranslations("AdminChat");
   const [reports, setReports] = useState(initialReports);
   const [filter, setFilter] = useState<ReportStatus | "ALL">("OPEN");
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -70,6 +74,27 @@ export default function ReportsManager({ initialReports }: { initialReports: Rep
     } finally {
       setBusyId(null);
     }
+  }
+
+  async function hideGlobalMessage(report: ReportRow) {
+    setBusyId(report.id);
+    setError("");
+    try {
+      const endpoint = report.targetType === "GLOBAL_CHAT_MESSAGE"
+        ? `/api/admin/chat/messages/${report.targetId}`
+        : `/api/admin/messaging/messages/${report.targetId}`;
+      const res = await fetch(endpoint, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "hide" }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error || t("hideError")); return; }
+      setReports((prev) => prev.map((item) => item.id === report.id ? {
+        ...item,
+        targetContext: item.targetContext ? { ...item.targetContext, deletedAt: data.message.deletedAt } : null,
+      } : item));
+    } finally { setBusyId(null); }
   }
 
   return (
@@ -110,6 +135,13 @@ export default function ReportsManager({ initialReports }: { initialReports: Rep
                     <span className="font-medium">{r.targetType.toLowerCase()}</span>
                   </div>
                   <p className="mt-1 text-sm text-muted-foreground">{r.reason}</p>
+                  {r.details && <p className="mt-1 text-xs text-muted-foreground">{r.details}</p>}
+                  {r.targetContext && (
+                    <div className="mt-3 rounded-xl border border-border bg-background/40 px-3 py-2 text-xs">
+                      <p className="font-medium text-foreground">{t("context")}: {personLabel(r.targetContext.author)}</p>
+                      <p className="mt-1 whitespace-pre-wrap text-muted-foreground">{r.targetContext.content || t("messageDeleted")}</p>
+                    </div>
+                  )}
                   <p className="mt-2 font-mono text-[11px] text-muted-foreground/50">
                     {new Date(r.createdAt).toLocaleString("es-ES")}
                     {r.reviewedBy && ` · resuelto por ${personLabel(r.reviewedBy)}`}
@@ -117,6 +149,15 @@ export default function ReportsManager({ initialReports }: { initialReports: Rep
                 </div>
                 {r.status === "OPEN" && (
                   <div className="flex shrink-0 gap-1">
+                    {(r.targetType === "GLOBAL_CHAT_MESSAGE" || r.targetType === "DIRECT_MESSAGE") && !r.targetContext?.deletedAt && (
+                      <button
+                        className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-amber-600 transition-colors hover:bg-amber-500/10 disabled:opacity-50 dark:text-amber-400"
+                        disabled={busyId === r.id}
+                        onClick={() => hideGlobalMessage(r)}
+                      >
+                        {t("hideMessage")}
+                      </button>
+                    )}
                     <button
                       className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-emerald-600 transition-colors hover:bg-emerald-500/10 disabled:opacity-50 dark:text-emerald-400"
                       disabled={busyId === r.id}

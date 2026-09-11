@@ -11,6 +11,9 @@ interface NotificationLike {
  * asociada (sus módulos fuente no existen aún).
  */
 export function getNotificationHref(n: NotificationLike): string | null {
+  if (n.entityType === "GlobalChatMessage") return "/comunidad#chat-global";
+  if (n.entityType === "Conversation") return n.entityId ? `/mensajes?c=${n.entityId}` : "/mensajes";
+  if (n.entityType === "DirectMessage") return "/mensajes";
   switch (n.type) {
     case "FRIEND_REQUEST":
       return "/amigos";
