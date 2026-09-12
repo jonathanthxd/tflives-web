@@ -91,8 +91,8 @@ export function canManageSanctions(role: Role): boolean {
 export interface AdminNavItem {
   section: AdminSection;
   href: string;
+  /** Translation key in the AdminPlatform namespace. */
   label: string;
-  description?: string;
 }
 
 export interface AdminPlaceholderItem {
@@ -102,105 +102,54 @@ export interface AdminPlaceholderItem {
 }
 
 export interface AdminNavGroup {
+  /** Translation key in the AdminPlatform namespace. */
   title: string;
   items: AdminNavItem[];
-  placeholders?: AdminPlaceholderItem[];
 }
 
-/** Estructura de la sidebar admin: agrupa las 8 secciones reales y los 8
- * placeholders "Próximamente" siguiendo el orden de la spec §20. */
+/**
+ * Navigation stays declarative so the shell can hide unavailable specialist
+ * tools without treating client-side visibility as authorization.
+ */
 export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   {
-    title: "General",
+    title: "navOverview",
     items: [
-      { section: "dashboard", href: "/admin", label: "Dashboard" },
-      { section: "analytics", href: "/admin/analytics", label: "Analítica" },
-      {
-        section: "staffLog",
-        href: "/admin/staff-log",
-        label: "Registro de staff",
-      },
+      { section: "dashboard", href: "/admin", label: "navDashboard" },
     ],
   },
   {
-    title: "Contenido",
+    title: "navCommunity",
     items: [
-      {
-        section: "posts",
-        href: "/admin/posts",
-        label: "Noticias y TFL Network",
-        description: "Noticias, actualizaciones, parches y eventos",
-      },
-      {
-        section: "modalities",
-        href: "/admin/modalities",
-        label: "Modalidades",
-      },
-      { section: "team", href: "/admin/team", label: "Equipo público" },
-      { section: "wiki", href: "/admin/wiki", label: "Wiki" },
-      { section: "timeline", href: "/admin/timeline", label: "Trayectoria" },
+      { section: "users", href: "/admin/users", label: "navUsers" },
+      { section: "reports", href: "/admin/reports", label: "navReports" },
+      { section: "moderation", href: "/admin/moderation", label: "navModeration" },
+      { section: "creators", href: "/admin/creators", label: "navCreators" },
+      { section: "team", href: "/admin/team", label: "navTeam" },
     ],
   },
   {
-    title: "Comunidad",
+    title: "navContent",
     items: [
-      { section: "users", href: "/admin/users", label: "Usuarios y roles" },
-      {
-        section: "moderation",
-        href: "/admin/moderation",
-        label: "Sanciones",
-        description: "Banear, suspender, silenciar, advertir",
-      },
-      {
-        section: "reports",
-        href: "/admin/reports",
-        label: "Reportes",
-        description: "Apelaciones y moderación de mensajes",
-      },
-      {
-        section: "achievements",
-        href: "/admin/achievements",
-        label: "Logros e insignias",
-        description: "Catálogo de logros y otorgamiento a usuarios",
-      },
+      { section: "posts", href: "/admin/posts", label: "navPosts" },
+      { section: "wiki", href: "/admin/wiki", label: "navWiki" },
+      { section: "timeline", href: "/admin/timeline", label: "navTimeline" },
+      { section: "announcements", href: "/admin/announcements", label: "navAnnouncements" },
+      { section: "modalities", href: "/admin/modalities", label: "navModalities" },
     ],
   },
   {
-    title: "Economía",
+    title: "navProgression",
     items: [
-      {
-        section: "wallet",
-        href: "/admin/economia",
-        label: "TFL Coins",
-        description: "Wallets y ajustes auditables",
-      },
-      {
-        section: "cosmetics",
-        href: "/admin/cosmeticos",
-        label: "Cosméticos y Premium",
-        description: "Catálogo visual y entitlements sin pagos",
-      },
-    ],
-    placeholders: [
-      { label: "Suscripciones", iconKey: "subscriptions" },
+      { section: "achievements", href: "/admin/achievements", label: "navAchievements" },
+      { section: "wallet", href: "/admin/economia", label: "navWallet" },
+      { section: "cosmetics", href: "/admin/cosmeticos", label: "navCosmetics" },
     ],
   },
   {
-    title: "Otros",
+    title: "navSystem",
     items: [
-      {
-        section: "creators",
-        href: "/admin/creators",
-        label: "Creadores",
-        description: "Solicitudes y perfiles de creadores",
-      },
-      {
-        section: "announcements",
-        href: "/admin/announcements",
-        label: "Anuncios globales",
-        description: "Notificaciones segmentadas a toda la comunidad",
-      },
+      { section: "staffLog", href: "/admin/staff-log", label: "navAudit" },
     ],
-    placeholders: [{ label: "Clientes", iconKey: "streamers" }],
   },
 ];

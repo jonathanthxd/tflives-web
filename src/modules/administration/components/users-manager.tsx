@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, ExternalLink, ShieldAlert, Users } from "lucide-react";
+import { Search, ExternalLink, Eye, ShieldAlert, Users } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import ConfirmDialog from "@/shared/ui/confirm-dialog";
 import { EmptyState } from "@/modules/administration/components/ui/empty-state";
@@ -34,6 +35,7 @@ export default function UsersManager({
   initialUsers: UserRow[];
   currentUserId: string;
 }) {
+  const t = useTranslations("AdminPlatform");
   const [users, setUsers] = useState(initialUsers);
   const [query, setQuery] = useState("");
   const [error, setError] = useState("");
@@ -137,6 +139,14 @@ export default function UsersManager({
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="inline-flex items-center gap-1">
+                        <Link
+                          href={`/admin/users/${u.id}`}
+                          className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+                          title={t("viewOverview")}
+                          aria-label={t("viewOverview")}
+                        >
+                          <Eye className="h-4 w-4" strokeWidth={1.75} />
+                        </Link>
                         {u.username && (
                           <Link
                             href={`/perfil/${u.username}`}

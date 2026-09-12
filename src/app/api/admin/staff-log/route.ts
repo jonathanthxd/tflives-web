@@ -9,7 +9,12 @@ export async function GET(request: Request) {
     const limitParam = Number(searchParams.get("limit"));
     const limit = Number.isFinite(limitParam) && limitParam > 0 ? Math.min(limitParam, 300) : 100;
 
-    const entries = await listAdminActionLog(limit);
+    const entries = await listAdminActionLog({
+      limit,
+      actor: searchParams.get("actor") ?? undefined,
+      action: searchParams.get("action") ?? undefined,
+      targetId: searchParams.get("target") ?? undefined,
+    });
     return NextResponse.json({ entries }, { status: 200 });
   } catch (error) {
     if (error instanceof AdminGuardError) {

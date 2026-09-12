@@ -273,13 +273,12 @@ export async function listCreatorAdminData() {
     }),
     prisma.creatorProfile.findMany({ include: publicCreatorInclude, orderBy: [{ status: "asc" }, { acceptedAt: "desc" }], take: 100 }),
   ]);
-  return {
-    applications,
-    creators: creators.map((creator) => {
+  const adminCreators: Array<PublicCreator & { userId: string; status: CreatorStatus }> = [];
+  for (const creator of creators) {
       const publicCreator = toPublicCreator(creator);
-      return publicCreator ? { ...publicCreator, status: creator.status } : null;
-    }).filter((creator): creator is PublicCreator & { status: CreatorStatus } => creator !== null),
-  };
+      if (publicCreator) adminCreators.push({ ...publicCreator, userId: creator.userId, status: creator.status });
+  }
+  return { applications, creators: adminCreators };
 }
 
 export function canManageCreators(role: Role) {

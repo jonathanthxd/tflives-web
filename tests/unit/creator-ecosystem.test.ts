@@ -52,7 +52,7 @@ test("v0.9 migration is additive, ties creators to users, and permits one pendin
     await assert.rejects(db.exec(`INSERT INTO "CreatorApplication" (id,"userId","primaryPlatform","channelUrl",category,description,motivation,"updatedAt") VALUES ('pending-two','creator-user','TWITCH','https://twitch.tv/creator2','MINECRAFT','Description','Motivation',now());`));
     await db.exec(`UPDATE "CreatorApplication" SET status = 'REJECTED' WHERE id = 'pending-one';
       INSERT INTO "CreatorApplication" (id,"userId","primaryPlatform","channelUrl",category,description,motivation,"updatedAt") VALUES ('pending-three','creator-user','TWITCH','https://twitch.tv/creator3','MINECRAFT','Description','Motivation',now());`);
-    assert.equal((await db.query(`SELECT "userId" FROM "CreatorProfile" WHERE id = 'creator-profile'`)).rows[0]?.userId, "creator-user");
+    assert.equal((await db.query<{ userId: string }>(`SELECT "userId" FROM "CreatorProfile" WHERE id = 'creator-profile'`)).rows[0]?.userId, "creator-user");
   } finally { await db.close(); }
 });
 

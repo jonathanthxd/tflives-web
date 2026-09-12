@@ -354,7 +354,7 @@ test(
     const rejectedOwnApplication = await response.json();
     assert.equal("adminNote" in rejectedOwnApplication.application, false);
     assert.equal((await (await request("/en/streamers")).text()).includes("rejected_creator"), false);
-    assert.ok((await db.query(`SELECT count(*)::int AS count FROM "AdminActionLog" WHERE action LIKE 'creator.%'`)).rows[0]?.count);
+    assert.ok((await db.query<{ count: number }>(`SELECT count(*)::int AS count FROM "AdminActionLog" WHERE action LIKE 'creator.%'`)).rows[0]?.count);
     response = await request("/api/admin/wallet?query=profile_member", "GET", undefined, cookie);
     assert.equal(response.status, 200, await response.clone().text());
     assert.ok((await response.json()).users.some((entry: { id: string }) => entry.id === user.user.id));
