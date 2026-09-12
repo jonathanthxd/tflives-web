@@ -58,7 +58,7 @@ function normalizedResponse(response: Partial<AchievementsResponse>): Achievemen
   };
 }
 
-export default function AchievementsCard({ username }: { username: string }) {
+export default function AchievementsCard({ username, embedded = false }: { username: string; embedded?: boolean }) {
   const t = useTranslations("Progression");
   const locale = useLocale();
   const [data, setData] = useState<AchievementsResponse | null>(null);
@@ -79,8 +79,8 @@ export default function AchievementsCard({ username }: { username: string }) {
     };
   }, [username]);
 
-  return (
-    <Card className="p-5 sm:p-6">
+  const content = (
+    <section aria-label={t("achievementsTitle")}>
       <div className="mb-4 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Trophy className="h-4 w-4 text-primary" strokeWidth={1.75} />
@@ -105,7 +105,8 @@ export default function AchievementsCard({ username }: { username: string }) {
       )}
 
       {data !== null && (
-        <div className="space-y-2">
+        <div className="max-h-[30rem] overflow-y-auto pr-2 [scrollbar-width:thin]">
+          <div className="space-y-2">
           {data.progression.achievements.map((item) => {
             const Icon = ACHIEVEMENT_ICONS[item.iconKey] ?? Trophy;
             const unlocked = Boolean(item.unlockedAt);
@@ -198,8 +199,11 @@ export default function AchievementsCard({ username }: { username: string }) {
               </div>
             </div>
           )}
+          </div>
         </div>
       )}
-    </Card>
+    </section>
   );
+
+  return embedded ? content : <Card className="p-5 sm:p-6">{content}</Card>;
 }

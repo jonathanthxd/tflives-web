@@ -24,6 +24,7 @@ export const publicProfileSelect = {
   socialLinks: true,
   createdAt: true,
   progress: { select: { xp: true, level: true } },
+  wallet: { select: { balance: true } },
   _count: { select: { progressionAchievements: true } },
 } satisfies Prisma.UserSelect;
 
@@ -51,5 +52,6 @@ export function toPublicProfile(user: ProfileRecord): PublicProfile {
     socialLinks: parseSocialLinks(user.socialLinks),
     createdAt: user.createdAt.toISOString(),
     progress: getProgressSummary(user.progress, user._count.progressionAchievements),
+    coinBalance: user.wallet?.balance ?? 0,
   };
 }

@@ -19,9 +19,9 @@ export default function Footer() {
   const t = useTranslations("Footer");
 
   return (
-    <footer className="relative border-t border-border mt-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+    <footer className="relative mt-14 border-t border-border">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
           <Link
             href="/"
             className="font-display text-lg font-bold tracking-tight"
@@ -61,7 +61,7 @@ export default function Footer() {
           </nav>
         </div>
 
-        <p className="mt-8 text-center md:text-left text-xs text-muted-foreground/70">
+        <p className="mt-5 text-center text-xs text-muted-foreground/70 md:text-left">
           {t("copyright", { year: new Date().getFullYear() })}
         </p>
       </div>

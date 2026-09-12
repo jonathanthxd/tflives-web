@@ -447,9 +447,16 @@
     "leGusto": "liked",
     "verPost": "View post",
     "explorarNetwork": "Explore TFL Network",
-    "sinActividadCta": "No activity yet — comment or react to a post on TFL Network for it to show up here.",
+    "sinActividadCta": "It is quiet around here. When this profile has new activity, it will show up here.",
     "mas": "Badges, cosmetics and more progression features are coming soon.",
-    "sinLogros": "No achievements yet."
+    "sinLogros": "No achievements yet.",
+    "likesPerfil": "Likes",
+    "tflCoins": "TFL Coins",
+    "darLikePerfil": "Like profile",
+    "teGusta": "Liked",
+    "sinAmigos": "There are no friends to show yet.",
+    "sinSeguidores": "Nobody follows this profile yet.",
+    "sinLikesPerfil": "Nobody has liked this profile yet."
   },
   "Progression": {
     "achievementsTitle": "Achievements",

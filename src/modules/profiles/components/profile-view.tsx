@@ -52,12 +52,12 @@ export default function ProfileView({
   const role = roleLabel(profile.role, t);
 
   return (
-    <main className="relative min-h-screen overflow-hidden px-4 pb-16 pt-24">
+    <main className="relative min-h-screen overflow-hidden px-4 pb-12 pt-24">
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[560px] overflow-hidden">
         <div className="absolute left-1/2 top-[-180px] size-[520px] -translate-x-1/2 rounded-full bg-primary/10 blur-[140px]" />
       </div>
 
-      <Reveal className="mx-auto max-w-5xl">
+      <Reveal className="mx-auto max-w-6xl">
         <section className="overflow-hidden rounded-3xl border border-primary/10 bg-card/40 shadow-[0_20px_60px_-30px_hsl(var(--primary)/0.35)]">
           <div className="relative h-44 sm:h-60">
             {profile.bannerUrl ? (
@@ -101,12 +101,14 @@ export default function ProfileView({
                 </Link>
               )}
             </div>
+
+            {profile.username && <SocialCard username={profile.username} coinBalance={profile.coinBalance} />}
           </div>
         </section>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_19rem]">
-          <div className="space-y-6">
-            <Card className="p-5 sm:p-6">
+        <div className="mt-6 grid items-start gap-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(20rem,0.9fr)]">
+          <Card className="overflow-hidden">
+            <section className="p-5 sm:p-6">
               <h2 className="font-display text-sm font-semibold uppercase tracking-wide text-foreground">{t("sobreMi")}</h2>
               {profile.bio ? (
                 <p className="mt-3 whitespace-pre-line break-words text-sm leading-6 text-muted-foreground">{profile.bio}</p>
@@ -117,38 +119,47 @@ export default function ProfileView({
                 <span className="inline-flex items-center gap-2"><CalendarDays className="size-4 text-primary" aria-hidden="true" />{t("miembroDesde", { date: joinedDate })}</span>
                 {profile.minecraftUsername && <span className="inline-flex items-center gap-2"><Gamepad2 className="size-4 text-primary" aria-hidden="true" />{profile.minecraftUsername}</span>}
               </div>
-            </Card>
 
-            {profile.socialLinks.length > 0 && (
-              <Card className="p-5 sm:p-6">
-                <h2 className="font-display text-sm font-semibold uppercase tracking-wide text-foreground">{t("enlacesSociales")}</h2>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {profile.socialLinks.map((link) => (
-                    <a
-                      key={link.platform}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex max-w-full items-center gap-1.5 rounded-xl border border-border bg-muted/40 px-3 py-2 text-sm font-medium capitalize text-foreground transition hover:border-primary/35 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
-                    >
-                      <span className="truncate">{t(`platform.${link.platform}`)}</span>
-                      <ExternalLink className="size-3.5 shrink-0" aria-hidden="true" />
-                    </a>
-                  ))}
+              {profile.socialLinks.length > 0 && (
+                <div className="mt-5 border-t border-border pt-4">
+                  <p className="mb-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">{t("enlacesSociales")}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {profile.socialLinks.map((link) => (
+                      <a
+                        key={link.platform}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex max-w-full items-center gap-1.5 rounded-xl border border-border bg-muted/35 px-3 py-2 text-sm font-medium capitalize text-foreground transition hover:border-primary/35 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+                      >
+                        <span className="truncate">{t(`platform.${link.platform}`)}</span>
+                        <ExternalLink className="size-3.5 shrink-0" aria-hidden="true" />
+                      </a>
+                    ))}
+                  </div>
                 </div>
-              </Card>
-            )}
+              )}
+            </section>
 
-            {profile.username && <RecentActivity username={profile.username} />}
-          </div>
-
-          <aside className="space-y-6">
             {profile.username && (
-              <LiveProgressCard username={profile.username} initialProgress={profile.progress} />
+              <div className="border-t border-border p-5 sm:p-6">
+                <RecentActivity username={profile.username} embedded />
+              </div>
             )}
-            {!isOwner && profile.username && <SocialCard username={profile.username} />}
-            {profile.username && <AchievementsCard username={profile.username} />}
-          </aside>
+          </Card>
+
+          <Card className="overflow-hidden">
+            {profile.username && (
+              <>
+                <div className="p-5 sm:p-6">
+                  <LiveProgressCard username={profile.username} initialProgress={profile.progress} embedded />
+                </div>
+                <div className="border-t border-border p-5 sm:p-6">
+                  <AchievementsCard username={profile.username} embedded />
+                </div>
+              </>
+            )}
+          </Card>
         </div>
       </Reveal>
     </main>

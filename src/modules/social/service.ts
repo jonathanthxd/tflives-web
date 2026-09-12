@@ -263,6 +263,14 @@ export async function listFriends(targetUserId: string) {
   });
 }
 
+export async function listFollowers(targetUserId: string) {
+  return prisma.follow.findMany({
+    where: { followingId: targetUserId },
+    orderBy: { createdAt: "desc" },
+    select: { follower: { select: publicIdentitySelect } },
+  }).then((rows) => rows.map((row) => row.follower));
+}
+
 export function canViewFriendsList(
   visibility: "PUBLIC" | "FRIENDS_ONLY" | "PRIVATE",
   isOwner: boolean,

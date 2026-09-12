@@ -33,6 +33,7 @@ export interface PublicProfile extends PublicIdentity {
   socialLinks: SocialLink[];
   createdAt: string;
   progress: PublicProgress;
+  coinBalance: number;
 }
 
 export function identityName(identity: Pick<PublicIdentity, "displayName" | "name" | "username">) {

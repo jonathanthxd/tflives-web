@@ -11,9 +11,11 @@ const REFRESH_MS = 10_000;
 export default function LiveProgressCard({
   username,
   initialProgress,
+  embedded = false,
 }: {
   username: string;
   initialProgress: PublicProgress;
+  embedded?: boolean;
 }) {
   const t = useTranslations("Profile");
   const [progress, setProgress] = useState(initialProgress);
@@ -27,7 +29,7 @@ export default function LiveProgressCard({
       const data = await response.json();
       if (data?.progress) setProgress(data.progress as PublicProgress);
     } catch {
-      // A temporary network failure should not replace the last known progress.
+      // Keep the last known progress on temporary network failures.
     }
   }, [username]);
 
@@ -37,17 +39,14 @@ export default function LiveProgressCard({
 
   useEffect(() => {
     let cancelled = false;
-
     const run = async () => {
       if (!cancelled) await refresh();
     };
-
     const interval = window.setInterval(run, REFRESH_MS);
     const onVisibility = () => {
       if (document.visibilityState === "visible") void run();
     };
     document.addEventListener("visibilitychange", onVisibility);
-
     return () => {
       cancelled = true;
       window.clearInterval(interval);
@@ -55,8 +54,8 @@ export default function LiveProgressCard({
     };
   }, [refresh]);
 
-  return (
-    <Card className="p-5 sm:p-6">
+  const content = (
+    <section aria-label={t("progression")}>
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Gauge className="size-4 text-primary" aria-hidden="true" />
@@ -85,6 +84,8 @@ export default function LiveProgressCard({
           <span className="shrink-0 font-mono text-[11px] text-primary/75">{Math.round(progress.progressPercent)}%</span>
         </div>
       </div>
-    </Card>
+    </section>
   );
+
+  return embedded ? content : <Card className="p-5 sm:p-6">{content}</Card>;
 }

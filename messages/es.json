@@ -447,9 +447,16 @@
     "leGusto": "le gustó",
     "verPost": "Ver post",
     "explorarNetwork": "Explorar TFL Network",
-    "sinActividadCta": "Todavía no hay actividad — comentá o reaccioná a un post en TFL Network para que aparezca acá.",
+    "sinActividadCta": "Por aquí todo está tranquilo. Cuando haya algo nuevo en la actividad de este perfil, aparecerá aquí.",
     "mas": "Insignias, cosméticos y más funciones de progresión llegan pronto.",
-    "sinLogros": "Todavía no tiene logros."
+    "sinLogros": "Todavía no tiene logros.",
+    "likesPerfil": "Me gusta",
+    "tflCoins": "TFL Coins",
+    "darLikePerfil": "Me gusta",
+    "teGusta": "Te gusta",
+    "sinAmigos": "Todavía no hay amigos para mostrar.",
+    "sinSeguidores": "Todavía nadie sigue este perfil.",
+    "sinLikesPerfil": "Todavía nadie ha dado Me gusta a este perfil."
   },
   "Progression": {
     "achievementsTitle": "Logros",

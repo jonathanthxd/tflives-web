@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { prisma } from "@/infrastructure/database/prisma";
-import { canViewFriendsList, getSocialStatus, listFriends } from "@/modules/social/service";
+import { canViewFriendsList, getSocialStatus, listFollowers, listFriends } from "@/modules/social/service";
 import { normalizeUsername } from "@/modules/authentication/validation";
 
 export async function GET(request: Request) {
@@ -36,7 +36,10 @@ export async function GET(request: Request) {
     status.friendship.status === "FRIENDS"
   );
 
-  const friends = canViewList ? await listFriends(target.id) : [];
+  const [friends, followers] = await Promise.all([
+    canViewList ? listFriends(target.id) : Promise.resolve([]),
+    isOwner ? listFollowers(target.id) : Promise.resolve([]),
+  ]);
 
   return NextResponse.json({
     ...status,
@@ -46,5 +49,6 @@ export async function GET(request: Request) {
     friendsListVisibility: target.friendsListVisibility,
     canViewFriendsList: canViewList,
     friends,
+    followers,
   });
 }
