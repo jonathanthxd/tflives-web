@@ -7,11 +7,13 @@ import {
   markGlobalChatRead,
   sendGlobalMessage,
 } from "@/modules/chat/service";
+import { captureApplicationError } from "@/modules/analytics/service";
 
-function errorResponse(error: unknown) {
+async function errorResponse(error: unknown) {
   if (error instanceof ChatValidationError) {
     return NextResponse.json({ error: error.message }, { status: error.status });
   }
+  await captureApplicationError({ area: "chat:global", error, status: 500 });
   console.error(error);
   return NextResponse.json({ error: "Error de chat" }, { status: 500 });
 }
@@ -36,7 +38,7 @@ export async function GET(request: Request) {
     ]);
     return NextResponse.json({ ...page, unreadCount });
   } catch (error) {
-    return errorResponse(error);
+    return await errorResponse(error);
   }
 }
 
@@ -47,7 +49,7 @@ export async function POST(request: Request) {
     const message = await sendGlobalMessage(user.id, await request.json());
     return NextResponse.json({ message }, { status: 201 });
   } catch (error) {
-    return errorResponse(error);
+    return await errorResponse(error);
   }
 }
 

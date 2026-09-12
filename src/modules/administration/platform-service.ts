@@ -3,6 +3,7 @@ import { prisma } from "@/infrastructure/database/prisma";
 import { listAdminActionLog } from "@/modules/administration/action-log";
 import { activePremiumWhere } from "@/modules/cosmetics/service";
 import { canAccessSection } from "@/modules/administration/permissions";
+import { getAdminAnalyticsQuickSummary } from "@/modules/analytics/service";
 
 const SEARCH_LIMIT = 6;
 
@@ -52,6 +53,7 @@ export async function getAdminDashboardSummary(role: Role) {
     activeCosmetics,
     activePremium,
     recentActions,
+    analytics,
   ] = await Promise.all([
     prisma.user.count(),
     prisma.report.count({ where: { status: "OPEN" } }),
@@ -63,6 +65,7 @@ export async function getAdminDashboardSummary(role: Role) {
     canSeeProgression ? prisma.cosmetic.count({ where: { active: true } }) : Promise.resolve(null),
     canSeeProgression ? prisma.premiumEntitlement.count({ where: activePremiumWhere(now) }) : Promise.resolve(null),
     canSeeAudit ? listAdminActionLog(8) : Promise.resolve([]),
+    role === "ADMIN" ? getAdminAnalyticsQuickSummary(now) : Promise.resolve(null),
   ]);
 
   const pending = [
@@ -74,7 +77,7 @@ export async function getAdminDashboardSummary(role: Role) {
   ].filter((item): item is { id: string; count: number; href: string } => item !== null);
 
   return {
-    counts: { users, openReports, pendingAppeals, scheduledPosts, scheduledWiki, pendingCreators, activeCreators, activeCosmetics, activePremium },
+    counts: { users, openReports, pendingAppeals, scheduledPosts, scheduledWiki, pendingCreators, activeCreators, activeCosmetics, activePremium, analytics },
     pending,
     recentActions,
   };

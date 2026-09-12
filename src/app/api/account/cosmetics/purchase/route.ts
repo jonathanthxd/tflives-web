@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { CosmeticError, purchaseCosmetic } from "@/modules/cosmetics/service";
+import { captureApplicationError } from "@/modules/analytics/service";
 
 export async function POST(request: Request) {
   const authUser = await getCurrentAuthUser();
@@ -13,6 +14,7 @@ export async function POST(request: Request) {
     return NextResponse.json(purchase, { status: 200 });
   } catch (error) {
     if (error instanceof CosmeticError) return NextResponse.json({ error: error.message }, { status: error.status });
+    await captureApplicationError({ area: "cosmetics:purchase", error, status: 500 });
     console.error(error);
     return NextResponse.json({ error: "No se pudo comprar el cosmético" }, { status: 500 });
   }

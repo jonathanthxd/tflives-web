@@ -80,8 +80,11 @@ model User {
   progress            UserProgress?
   progressionAchievements UserProgressAchievement[]
   progressEvents      ProgressEvent[]
+  analyticsEvents     AnalyticsEvent[]
   wikiArticles WikiArticle[]
   milestones TimelineMilestone[]
+
+  @@index([createdAt])
 }
 
 model Session {
@@ -171,6 +174,7 @@ model Follow {
   createdAt   DateTime @default(now())
 
   @@unique([followerId, followingId])
+  @@index([createdAt])
 }
 
 model Notification {
@@ -242,6 +246,8 @@ model CreatorApplication {
 
   @@index([userId, status])
   @@index([status, createdAt])
+  @@index([createdAt])
+  @@index([reviewedAt])
   @@index([reviewedById])
 }
 
@@ -342,6 +348,7 @@ model DirectMessage {
   createdAt      DateTime     @default(now())
 
   @@index([conversationId, createdAt])
+  @@index([createdAt])
   @@index([replyToId])
 }
 
@@ -544,6 +551,54 @@ model AdminActionLog {
   @@index([createdAt])
 }
 
+/// Minimal, first-party product signals for actions that cannot be reliably
+/// reconstructed from an existing application record. Metadata is deliberately
+/// allowlisted by the analytics service and never includes user content.
+model AnalyticsEvent {
+  id        String             @id @default(cuid())
+  type      AnalyticsEventType
+  userId    String?
+  user      User?              @relation(fields: [userId], references: [id], onDelete: SetNull)
+  source    String             @default("server")
+  sourceKey String?            @unique
+  metadata  Json?
+  createdAt DateTime           @default(now())
+
+  @@index([type, createdAt])
+  @@index([userId, createdAt])
+  @@index([createdAt])
+}
+
+/// Aggregated operational errors. This stores no stack traces, request bodies,
+/// URLs, account identifiers, or other personal content.
+model ApplicationError {
+  id          String                 @id @default(cuid())
+  fingerprint String                 @unique
+  area        String
+  message     String
+  count       Int                    @default(1)
+  status      ApplicationErrorStatus @default(OPEN)
+  firstSeenAt DateTime               @default(now())
+  lastSeenAt  DateTime               @default(now())
+  lastStatus  Int?
+  metadata    Json?
+  resolvedAt  DateTime?
+
+  @@index([status, lastSeenAt])
+  @@index([lastSeenAt])
+}
+
+enum AnalyticsEventType {
+  PROFILE_COMPLETED
+  COSMETIC_EQUIPPED
+}
+
+enum ApplicationErrorStatus {
+  OPEN
+  RESOLVED
+  IGNORED
+}
+
 enum ReportStatus {
   OPEN
   REVIEWED
@@ -631,6 +686,7 @@ model Reaction {
 
   @@unique([userId, targetType, targetId])
   @@index([targetType, targetId])
+  @@index([createdAt])
 }
 
 /// Catálogo de logros/insignias otorgables (sección admin "Logros e
@@ -694,6 +750,7 @@ model UserAchievement {
 
   @@unique([userId, achievementId])
   @@index([userId])
+  @@index([awardedAt])
 }
 
 /// A member's private TFL Coins balance. The ledger below is authoritative;
@@ -725,6 +782,7 @@ model WalletTransaction {
   @@unique([walletId, sourceKey])
   @@index([walletId, createdAt])
   @@index([source, createdAt])
+  @@index([createdAt])
 }
 
 enum WalletTransactionType {
@@ -775,6 +833,7 @@ model UserCosmetic {
 
   @@id([userId, cosmeticId])
   @@index([userId, acquiredAt])
+  @@index([acquiredAt])
 }
 
 /// The composite primary key makes one equipped cosmetic per visual type a
@@ -871,6 +930,7 @@ model UserProgressAchievement {
 
   @@unique([userId, code])
   @@index([userId, unlockedAt])
+  @@index([unlockedAt])
 }
 
 /// Small, auditable server-side XP ledger. `sourceKey` makes every award

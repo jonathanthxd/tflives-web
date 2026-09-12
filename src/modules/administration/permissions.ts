@@ -149,6 +149,7 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   {
     title: "navSystem",
     items: [
+      { section: "analytics", href: "/admin/analytics", label: "navAnalytics" },
       { section: "staffLog", href: "/admin/staff-log", label: "navAudit" },
     ],
   },

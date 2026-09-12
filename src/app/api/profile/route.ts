@@ -7,6 +7,7 @@ import { publicProfileSelect, toPublicProfile } from "@/modules/profiles/service
 import { profileUpdateSchema } from "@/modules/profiles/validation";
 import { awardProfileCompletion } from "@/modules/progression/service";
 import { isProfileComplete } from "@/modules/profiles/completion";
+import { captureApplicationError, recordAnalyticsEvent } from "@/modules/analytics/service";
 
 const USERNAME_COOLDOWN_MS = 30 * 24 * 60 * 60 * 1000;
 
@@ -107,7 +108,10 @@ export async function PATCH(request: Request) {
         });
         return tx.user.update({ where: { id: authUser.id }, data, select: publicProfileSelect });
       });
-      if (!wasProfileComplete) await awardProfileCompletion(authUser.id);
+      if (!wasProfileComplete && isProfileComplete(updated)) {
+        await awardProfileCompletion(authUser.id);
+        await recordAnalyticsEvent({ type: "PROFILE_COMPLETED", userId: authUser.id, sourceKey: `profile-completed:${authUser.id}` });
+      }
       return NextResponse.json({ user: toPublicProfile(updated) });
     }
 
@@ -116,12 +120,16 @@ export async function PATCH(request: Request) {
       data,
       select: publicProfileSelect,
     });
-    if (!wasProfileComplete) await awardProfileCompletion(authUser.id);
+    if (!wasProfileComplete && isProfileComplete(updated)) {
+      await awardProfileCompletion(authUser.id);
+      await recordAnalyticsEvent({ type: "PROFILE_COMPLETED", userId: authUser.id, sourceKey: `profile-completed:${authUser.id}` });
+    }
     return NextResponse.json({ user: toPublicProfile(updated) });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
       return NextResponse.json({ error: "Este username ya está en uso" }, { status: 409 });
     }
+    await captureApplicationError({ area: "profile:update", error, status: 500 });
     throw error;
   }
 }

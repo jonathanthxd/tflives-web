@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { MessagingError, getConversation, markConversationRead, sendMessage } from "@/modules/messaging/service";
+import { captureApplicationError } from "@/modules/analytics/service";
 
 async function requireUser() {
   const authUser = await getCurrentAuthUser();
@@ -29,6 +30,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     if (error instanceof MessagingError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
+    await captureApplicationError({ area: "messaging:conversation", error, status: 500 });
     throw error;
   }
 }
@@ -48,6 +50,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     if (error instanceof MessagingError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
+    await captureApplicationError({ area: "messaging:send", error, status: 500 });
     throw error;
   }
 }

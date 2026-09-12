@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { applyForCreator, getOwnCreatorApplication, CreatorError } from "@/modules/creators/service";
 import { creatorApplicationSchema } from "@/modules/creators/validation";
+import { captureApplicationError } from "@/modules/analytics/service";
 
 export async function GET() {
   const authUser = await getCurrentAuthUser();
@@ -19,6 +20,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ application: { id: application.id, status: application.status } }, { status: 201 });
   } catch (error) {
     if (error instanceof CreatorError) return NextResponse.json({ error: error.message }, { status: error.status });
+    await captureApplicationError({ area: "creators:application", error, status: 500 });
     throw error;
   }
 }

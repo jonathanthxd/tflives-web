@@ -6,7 +6,7 @@ import { normalizeAdminSearchQuery } from "../../src/modules/administration/plat
 
 test("v0.10 navigation only exposes backed sections and still respects the server capability map", () => {
   const sections = ADMIN_NAV_GROUPS.flatMap((group) => group.items.map((item) => item.section));
-  assert.equal(sections.includes("analytics"), false);
+  assert.equal(sections.includes("analytics"), true);
   assert.equal(sections.includes("dashboard"), true);
   assert.equal(sections.includes("staffLog"), true);
   assert.equal(canAccessSection("MOD", "dashboard"), true);

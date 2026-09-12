@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "@/infrastructure/database/prisma";
 import { applyWalletTransaction, WalletError } from "@/modules/economy/service";
 import { createNotification } from "@/modules/notifications/service";
+import { recordAnalyticsEvent } from "@/modules/analytics/service";
 import {
   COSMETIC_PRESETS,
   isCosmeticRarity,
@@ -232,7 +233,7 @@ export async function purchaseCosmetic(userId: string, cosmeticId: string) {
 
 export async function equipCosmetic(userId: string, cosmeticId: string) {
   if (!cosmeticId.trim()) throw new CosmeticError("Cosmético inválido");
-  return serializable(async (tx) => {
+  const result = await serializable(async (tx) => {
     const ownership = await tx.userCosmetic.findUnique({
       where: { userId_cosmeticId: { userId, cosmeticId } },
       include: { cosmetic: true },
@@ -248,6 +249,13 @@ export async function equipCosmetic(userId: string, cosmeticId: string) {
     });
     return { equipped, cosmetic: publicCosmetic(ownership.cosmetic) };
   });
+  await recordAnalyticsEvent({
+    type: "COSMETIC_EQUIPPED",
+    userId,
+    sourceKey: `cosmetic-equip:${userId}:${result.equipped.type}:${result.equipped.cosmeticId}:${result.equipped.updatedAt.toISOString()}`,
+    metadata: { cosmeticType: result.equipped.type },
+  });
+  return result;
 }
 
 export async function unequipCosmetic(userId: string, type: unknown) {

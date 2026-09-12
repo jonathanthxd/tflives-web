@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { Flag, LayoutDashboard, Plus, Search, ShieldAlert, Users } from "lucide-react";
+import { Activity, Flag, LayoutDashboard, Plus, Search, ShieldAlert, TriangleAlert, Users } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { requireSectionPage } from "@/modules/administration/page-guard";
 import { getAdminDashboardSummary } from "@/modules/administration/platform-service";
@@ -30,6 +30,11 @@ export default async function AdminDashboard({ params }: { params: Promise<{ loc
     ...(counts.activeCreators !== null ? [{ label: t("activeCreators"), value: counts.activeCreators, icon: SECTION_ICONS.creators, tone: "default" as const }] : []),
     ...(counts.activeCosmetics !== null ? [{ label: t("activeCosmetics"), value: counts.activeCosmetics, icon: SECTION_ICONS.cosmetics, tone: "default" as const }] : []),
     ...(counts.activePremium !== null ? [{ label: t("activePremium"), value: counts.activePremium, icon: SECTION_ICONS.cosmetics, tone: "default" as const }] : []),
+    ...(counts.analytics ? [
+      { label: t("activeUsers7d"), value: counts.analytics.activeUsers7d, icon: Activity, tone: "default" as const },
+      { label: t("errorsLast24h"), value: counts.analytics.errorsLast24h, icon: TriangleAlert, tone: counts.analytics.errorsLast24h ? "danger" as const : "default" as const },
+      { label: t("significantEventsLast24h"), value: counts.analytics.significantEventsLast24h, icon: Activity, tone: "default" as const },
+    ] : []),
   ];
   const quickActions = [
     { id: "search", href: "/admin/users", icon: Search, visible: canAccessSection(guard.role, "users") },
