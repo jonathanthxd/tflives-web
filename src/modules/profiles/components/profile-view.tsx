@@ -107,46 +107,48 @@ export default function ProfileView({
         </section>
 
         <div className="mt-6 grid items-start gap-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(20rem,0.9fr)]">
-          <Card className="overflow-hidden">
-            <section className="p-5 sm:p-6">
-              <h2 className="font-display text-sm font-semibold uppercase tracking-wide text-foreground">{t("sobreMi")}</h2>
-              {profile.bio ? (
-                <p className="mt-3 whitespace-pre-line break-words text-sm leading-6 text-muted-foreground">{profile.bio}</p>
-              ) : (
-                <p className="mt-3 text-sm text-muted-foreground">{t("bioVacia")}</p>
-              )}
-              <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 border-t border-border pt-4 text-sm text-muted-foreground">
-                <span className="inline-flex items-center gap-2"><CalendarDays className="size-4 text-primary" aria-hidden="true" />{t("miembroDesde", { date: joinedDate })}</span>
-                {profile.minecraftUsername && <span className="inline-flex items-center gap-2"><Gamepad2 className="size-4 text-primary" aria-hidden="true" />{profile.minecraftUsername}</span>}
-              </div>
-
-              {profile.socialLinks.length > 0 && (
-                <div className="mt-5 border-t border-border pt-4">
-                  <p className="mb-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">{t("enlacesSociales")}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {profile.socialLinks.map((link) => (
-                      <a
-                        key={link.platform}
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex max-w-full items-center gap-1.5 rounded-xl border border-border bg-muted/35 px-3 py-2 text-sm font-medium capitalize text-foreground transition hover:border-primary/35 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
-                      >
-                        <span className="truncate">{t(`platform.${link.platform}`)}</span>
-                        <ExternalLink className="size-3.5 shrink-0" aria-hidden="true" />
-                      </a>
-                    ))}
-                  </div>
+          <div className="space-y-6">
+            <Card>
+              <section className="p-5 sm:p-6">
+                <h2 className="font-display text-sm font-semibold uppercase tracking-wide text-foreground">{t("sobreMi")}</h2>
+                {profile.bio ? (
+                  <p className="mt-3 whitespace-pre-line break-words text-sm leading-6 text-muted-foreground">{profile.bio}</p>
+                ) : (
+                  <p className="mt-3 text-sm text-muted-foreground">{t("bioVacia")}</p>
+                )}
+                <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 border-t border-border pt-4 text-sm text-muted-foreground">
+                  <span className="inline-flex items-center gap-2"><CalendarDays className="size-4 text-primary" aria-hidden="true" />{t("miembroDesde", { date: joinedDate })}</span>
+                  {profile.minecraftUsername && <span className="inline-flex items-center gap-2"><Gamepad2 className="size-4 text-primary" aria-hidden="true" />{profile.minecraftUsername}</span>}
                 </div>
-              )}
-            </section>
+
+                {profile.socialLinks.length > 0 && (
+                  <div className="mt-5 border-t border-border pt-4">
+                    <p className="mb-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">{t("enlacesSociales")}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {profile.socialLinks.map((link) => (
+                        <a
+                          key={link.platform}
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex max-w-full items-center gap-1.5 rounded-xl border border-border bg-muted/35 px-3 py-2 text-sm font-medium capitalize text-foreground transition hover:border-primary/35 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+                        >
+                          <span className="truncate">{t(`platform.${link.platform}`)}</span>
+                          <ExternalLink className="size-3.5 shrink-0" aria-hidden="true" />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </section>
+            </Card>
 
             {profile.username && (
-              <div className="border-t border-border p-5 sm:p-6">
+              <Card className="p-5 sm:p-6">
                 <RecentActivity username={profile.username} embedded />
-              </div>
+              </Card>
             )}
-          </Card>
+          </div>
 
           <Card className="overflow-hidden">
             {profile.username && (
