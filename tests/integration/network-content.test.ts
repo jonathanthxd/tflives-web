@@ -41,6 +41,12 @@ test(
         "utf8",
       ),
     );
+    await db.exec(
+      readFileSync(
+        "prisma/migrations/20260912000000_profiles_identity/migration.sql",
+        "utf8",
+      ),
+    );
     assert.equal((await db.query(`SELECT id FROM "Comment"`)).rows.length, 1);
     assert.equal((await db.query(`SELECT id FROM "Reaction"`)).rows.length, 1);
     const preserved = await db.query<{ slug: string; published: boolean }>(
@@ -125,6 +131,7 @@ test(
       "/api/admin/team",
       "/api/admin/timeline",
     ];
+    assert.equal((await request("/api/profile", "PATCH", { bio: "No session" })).status, 401);
     for (const path of paths)
       assert.equal((await request(path, "POST", {})).status, 401, path);
     for (const path of paths)
@@ -146,7 +153,51 @@ test(
       .join("; ");
     assert.ok(cookie);
 
-    let response = await request("/api/account/security", "GET", undefined, cookie);
+    let response = await request(
+      "/api/profile",
+      "PATCH",
+      {
+        displayName: "Profile member",
+        username: "profile_member",
+        bio: "A safely stored community bio.",
+        socialLinks: [{ platform: "github", url: "https://github.com/profile-member" }],
+      },
+      cookie,
+    );
+    assert.equal(response.status, 200, await response.clone().text());
+    const savedProfile = await response.json();
+    assert.equal(savedProfile.user.username, "profile_member");
+    assert.equal(savedProfile.user.email, undefined);
+
+    response = await request("/api/profile", "PATCH", { role: "ADMIN" }, cookie);
+    assert.equal(response.status, 400, await response.clone().text());
+    response = await request(
+      "/api/profile",
+      "PATCH",
+      { socialLinks: [{ platform: "website", url: "javascript:alert(1)" }] },
+      cookie,
+    );
+    assert.equal(response.status, 400, await response.clone().text());
+    response = await request("/api/profile", "PATCH", { username: "admin" }, cookie);
+    assert.equal(response.status, 400, await response.clone().text());
+    await db.exec(`INSERT INTO "User" (id,email,name,username,"updatedAt") VALUES ('profile-collision','profile-collision@example.test','Collision','taken_profile',now())`);
+    response = await request("/api/profile", "PATCH", { username: "TAKEN_PROFILE" }, cookie);
+    assert.equal(response.status, 409, await response.clone().text());
+    response = await request("/api/profile", "PATCH", { userId: "profile-collision", bio: "Unauthorized target" }, cookie);
+    assert.equal(response.status, 400, await response.clone().text());
+    assert.equal((await request("/en/perfil/profile_member")).status, 200);
+    assert.equal((await request("/en/perfil/no_such_profile")).status, 404);
+    response = await request("/api/profile", "PATCH", { username: "profile_member_v2" }, cookie);
+    assert.equal(response.status, 200, await response.clone().text());
+    response = await request("/api/profile", "PATCH", { username: "profile_member_v3" }, cookie);
+    assert.equal(response.status, 429, await response.clone().text());
+    response = await request("/en/perfil/profile_member");
+    assert.equal(response.status, 307);
+    assert.equal(response.headers.get("location"), "/en/perfil/profile_member_v2");
+    assert.equal((await request("/en/perfil/profile_member_v2")).status, 200);
+    assert.equal((await request("/en/configuracion", "GET", undefined, cookie)).status, 200);
+
+    response = await request("/api/account/security", "GET", undefined, cookie);
     assert.equal(response.status, 200, await response.clone().text());
     const initialSecurity = await response.json();
     assert.equal(initialSecurity.sessions.length, 1);
@@ -186,6 +237,9 @@ test(
     await db.query(`UPDATE "User" SET role='ADMIN' WHERE id=$1`, [
       user.user.id,
     ]);
+    response = await request("/en/perfil/profile_member_v2");
+    assert.equal(response.status, 200, await response.clone().text());
+    assert.ok((await response.text()).includes("Administration"));
     for (const path of [
       "/es/network",
       "/en/network/estado",

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { prisma } from "@/infrastructure/database/prisma";
 import { getActiveBanOrSuspension } from "@/modules/administration/sanctions";
+import { isSafeProfileMediaUrl } from "@/modules/profiles/types";
 
 export async function GET() {
   const authUser = await getCurrentAuthUser();
@@ -25,6 +26,7 @@ export async function GET() {
         bannerUrl: true,
         minecraftUsername: true,
         socialLinks: true,
+        usernameChangedAt: true,
       },
     }),
     getActiveBanOrSuspension(authUser.id),
@@ -32,7 +34,13 @@ export async function GET() {
 
   return NextResponse.json(
     {
-      user: profile,
+      user: profile
+        ? {
+            ...profile,
+            image: isSafeProfileMediaUrl(profile.image) ? profile.image : null,
+            bannerUrl: isSafeProfileMediaUrl(profile.bannerUrl) ? profile.bannerUrl : null,
+          }
+        : null,
       banned: activeSanction
         ? { type: activeSanction.type, reason: activeSanction.reason, expiresAt: activeSanction.expiresAt }
         : null,

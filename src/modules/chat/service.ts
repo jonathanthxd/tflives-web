@@ -3,6 +3,7 @@ import { prisma } from "@/infrastructure/database/prisma";
 import { getActiveBanOrSuspension, isMuted } from "@/modules/administration/sanctions";
 import { logAdminAction } from "@/modules/administration/action-log";
 import { createNotification } from "@/modules/notifications/service";
+import { publicIdentitySelect } from "@/modules/profiles/service";
 import {
   assertReactionEmoji,
   assertRecentActionLimit,
@@ -14,13 +15,7 @@ import {
 
 export { ChatValidationError } from "@/modules/chat/shared";
 
-const AUTHOR_SELECT = {
-  id: true,
-  username: true,
-  displayName: true,
-  name: true,
-  image: true,
-} as const;
+const AUTHOR_SELECT = publicIdentitySelect;
 
 const MESSAGE_INCLUDE = {
   author: { select: AUTHOR_SELECT },

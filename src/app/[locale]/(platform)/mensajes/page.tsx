@@ -10,6 +10,7 @@ import { Input } from "@/shared/ui/input";
 import ConfirmDialog from "@/shared/ui/confirm-dialog";
 import { AnchoredEmojiStickerPicker, type PickerAnchorRect } from "@/modules/chat/components/emoji-sticker-picker";
 import { getQuickReactions, recordReactionUse } from "@/modules/chat/reaction-preferences";
+import { UserAvatar } from "@/modules/profiles/components/user-identity";
 
 interface PersonSummary {
   id: string;
@@ -56,15 +57,7 @@ function displayNameOf(person: PersonSummary) {
 }
 
 function Avatar({ person }: { person: PersonSummary }) {
-  const name = displayNameOf(person);
-  return person.image ? (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img src={person.image} alt={name} className="w-10 h-10 rounded-full object-cover shrink-0" />
-  ) : (
-    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary shrink-0">
-      {(name[0] || "U").toUpperCase()}
-    </div>
-  );
+  return <UserAvatar identity={person} className="size-10 shrink-0 text-sm" />;
 }
 
 function conversationTitle(entry: { isGroup: boolean; name: string | null; otherParticipants: PersonSummary[] }) {

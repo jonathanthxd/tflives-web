@@ -1,6 +1,7 @@
 import { prisma } from "@/infrastructure/database/prisma";
 import { createNotification } from "@/modules/notifications/service";
 import { getActiveBanOrSuspension } from "@/modules/administration/sanctions";
+import { publicIdentitySelect } from "@/modules/profiles/service";
 
 export class SocialError extends Error {
   status: number;
@@ -21,6 +22,29 @@ async function findFriendship(userAId: string, userBId: string) {
   });
 }
 
+export async function getBlockStatus(viewerId: string, targetUserId: string) {
+  const block = await prisma.block.findFirst({
+    where: {
+      OR: [
+        { blockerId: viewerId, blockedId: targetUserId },
+        { blockerId: targetUserId, blockedId: viewerId },
+      ],
+    },
+    select: { blockerId: true },
+  });
+  return {
+    blockedByViewer: block?.blockerId === viewerId,
+    blockedByTarget: block?.blockerId === targetUserId,
+  };
+}
+
+async function requireNoBlock(userAId: string, userBId: string) {
+  const { blockedByViewer, blockedByTarget } = await getBlockStatus(userAId, userBId);
+  if (blockedByViewer || blockedByTarget) {
+    throw new SocialError("No podés interactuar con un usuario bloqueado", 403);
+  }
+}
+
 export async function areFriends(userAId: string, userBId: string) {
   const friendship = await findFriendship(userAId, userBId);
   return friendship?.status === "ACCEPTED";
@@ -34,6 +58,8 @@ export async function sendFriendRequest(requesterId: string, addresseeId: string
   if (await getActiveBanOrSuspension(requesterId)) {
     throw new SocialError("Tu cuenta está suspendida", 403);
   }
+
+  await requireNoBlock(requesterId, addresseeId);
 
   const addressee = await prisma.user.findUnique({
     where: { id: addresseeId },
@@ -77,6 +103,7 @@ export async function respondToFriendRequest(
   if (friendship.status !== "PENDING") {
     throw new SocialError("Esta solicitud ya fue respondida");
   }
+  await requireNoBlock(friendship.requesterId, friendship.addresseeId);
 
   const updated = await prisma.friendship.update({
     where: { id: friendshipId },
@@ -130,7 +157,7 @@ export async function getFriendRequests(userId: string) {
   const users = otherIds.length
     ? await prisma.user.findMany({
         where: { id: { in: otherIds } },
-        select: { id: true, username: true, displayName: true, name: true, image: true },
+        select: publicIdentitySelect,
       })
     : [];
   const usersById = new Map(users.map((u) => [u.id, u]));
@@ -153,7 +180,7 @@ export async function searchUsers(query: string, excludeUserId: string) {
       ],
       username: { not: null },
     },
-    select: { id: true, username: true, displayName: true, name: true, image: true },
+    select: publicIdentitySelect,
     take: 20,
   });
 }
@@ -162,6 +189,7 @@ export async function follow(followerId: string, followingId: string) {
   if (followerId === followingId) {
     throw new SocialError("No podés seguirte a vos mismo");
   }
+  await requireNoBlock(followerId, followingId);
   await prisma.follow.upsert({
     where: { followerId_followingId: { followerId, followingId } },
     create: { followerId, followingId },
@@ -180,7 +208,7 @@ export type FriendshipRelation =
   | { status: "FRIENDS"; friendshipId: string };
 
 export async function getSocialStatus(viewerId: string, targetUserId: string) {
-  const [friendship, isFollowing, friendCount, followerCount] = await Promise.all([
+  const [friendship, isFollowing, friendCount, followerCount, blocks] = await Promise.all([
     viewerId !== targetUserId ? findFriendship(viewerId, targetUserId) : null,
     viewerId !== targetUserId
       ? prisma.follow.findUnique({
@@ -194,6 +222,7 @@ export async function getSocialStatus(viewerId: string, targetUserId: string) {
       },
     }),
     prisma.follow.count({ where: { followingId: targetUserId } }),
+    getBlockStatus(viewerId, targetUserId),
   ]);
 
   let relation: FriendshipRelation = { status: "NONE" };
@@ -213,6 +242,7 @@ export async function getSocialStatus(viewerId: string, targetUserId: string) {
     isFollowing: !!isFollowing,
     friendCount,
     followerCount,
+    ...blocks,
   };
 }
 
@@ -224,7 +254,7 @@ export async function listFriends(targetUserId: string) {
   if (friendIds.length === 0) return [];
   return prisma.user.findMany({
     where: { id: { in: friendIds } },
-    select: { id: true, username: true, displayName: true, name: true, image: true },
+    select: publicIdentitySelect,
   });
 }
 

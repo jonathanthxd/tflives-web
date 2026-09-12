@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { MessageCircle, Minus, Send, SmilePlus, Flag, Reply, X, Loader2, Plus } from "lucide-react";
 import { AnchoredEmojiStickerPicker, type PickerAnchorRect } from "@/modules/chat/components/emoji-sticker-picker";
 import { getQuickReactions, recordReactionUse } from "@/modules/chat/reaction-preferences";
+import { UserAvatar } from "@/modules/profiles/components/user-identity";
 
 interface Person {
   id: string;
@@ -390,7 +391,7 @@ export default function GlobalChat({ userId }: { userId: string }) {
             {nextCursor && <button type="button" onClick={loadOlder} disabled={loadingOlder} className="mb-3 w-full rounded-lg border border-border px-2 py-1.5 text-xs text-muted-foreground hover:bg-primary/5 disabled:opacity-50">{loadingOlder ? <Loader2 className="mx-auto h-3.5 w-3.5 animate-spin" /> : t("cargarAnteriores")}</button>}
             {loading && !messages.length ? <div className="flex h-full items-center justify-center text-sm text-muted-foreground"><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t("cargando")}</div> : messages.length === 0 ? <p className="py-10 text-center text-sm text-muted-foreground">{t("sinMensajes")}</p> : <div className="space-y-3">
               {messages.map((message) => <article id={`global-message-${message.id}`} key={message.id} className="group flex gap-2">
-                <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/10 text-xs font-bold text-primary">{message.author.image ? <img src={message.author.image} alt="" className="h-full w-full object-cover" /> : personName(message.author).slice(0, 1).toUpperCase()}</div>
+                <UserAvatar identity={message.author} className="mt-0.5 size-7 text-xs" />
                 <div className="min-w-0 flex-1"><div className="flex items-baseline gap-1.5"><span className="truncate text-xs font-semibold text-foreground">{personName(message.author)}</span>{message.author.username && <span className="truncate text-[10px] text-muted-foreground">@{message.author.username}</span>}<time className="ml-auto shrink-0 text-[10px] text-muted-foreground">{new Date(message.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</time></div>
                   {message.replyTo && <button type="button" onClick={() => document.getElementById(`global-message-${message.replyTo?.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" })} className="mt-1 block max-w-full truncate border-l-2 border-primary/50 pl-2 text-left text-[11px] text-muted-foreground hover:text-primary">{personName(message.replyTo.author)}: {textPreview(message.replyTo)}</button>}
                   {message.deletedAt ? <p className="mt-1 text-xs italic text-muted-foreground">{t("mensajeEliminado")}</p> : <><p className="whitespace-pre-wrap break-words text-sm text-foreground"><MessageText content={message.content} /></p>{message.sticker && <img src={message.sticker.assetUrl} alt={message.sticker.name} className="mt-1 h-16 w-16 object-contain" />}</>}

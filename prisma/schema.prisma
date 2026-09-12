@@ -19,6 +19,7 @@ model User {
   bio               String?   @db.Text
   minecraftUsername String?   @map("minecraft_username")
   socialLinks       Json?     @map("social_links")
+  usernameChangedAt DateTime? @map("username_changed_at")
   role              Role      @default(USER)
   twoFactorEnabled  Boolean   @default(false)
   messages          Message[]
@@ -31,6 +32,7 @@ model User {
   twoFactor         TwoFactor?
   securityEvents    SecurityEvent[]
   profileAssets     ProfileAsset[]
+  usernameAliases   UsernameAlias[]
 
   allowFriendRequests   Boolean               @default(true) @map("allow_friend_requests")
   friendsListVisibility FriendsListVisibility @default(PUBLIC) @map("friends_list_visibility")
@@ -241,6 +243,17 @@ model DirectMessage {
 
   @@index([conversationId, createdAt])
   @@index([replyToId])
+}
+
+/// Preserves existing public profile links after a member changes their
+/// canonical username. Aliases are identity routing data only, never auth data.
+model UsernameAlias {
+  username  String   @id
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 /// Better Auth's durable, cross-instance rate-limit store. This is an auth

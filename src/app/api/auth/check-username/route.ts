@@ -11,12 +11,18 @@ export async function GET(request: Request) {
     return NextResponse.json({ available: false, error: parsed.error.issues[0].message });
   }
 
-  const existing = await prisma.user.findUnique({
-    where: { username: parsed.data },
-    select: { id: true },
-  });
+  const [existing, alias] = await Promise.all([
+    prisma.user.findFirst({
+      where: { username: { equals: parsed.data, mode: "insensitive" } },
+      select: { id: true },
+    }),
+    prisma.usernameAlias.findFirst({
+      where: { username: { equals: parsed.data, mode: "insensitive" } },
+      select: { username: true },
+    }),
+  ]);
 
-  if (existing) {
+  if (existing || alias) {
     return NextResponse.json({ available: false, error: "Este username ya está en uso" });
   }
 

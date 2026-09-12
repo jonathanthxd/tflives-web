@@ -1,15 +1,38 @@
 import { z } from "zod";
 
 const USERNAME_REGEX = /^[a-z][a-z0-9_]{2,19}$/;
+export const USERNAME_RESERVED_WORDS = new Set([
+  "admin",
+  "administrator",
+  "api",
+  "auth",
+  "configuracion",
+  "login",
+  "perfil",
+  "profile",
+  "register",
+  "settings",
+  "support",
+  "staff",
+  "system",
+  "tflives",
+]);
+
+export function normalizeUsername(value: string) {
+  return value.trim().toLowerCase();
+}
 
 export const usernameSchema = z
   .string()
+  .trim()
+  .toLowerCase()
   .min(3, "El username debe tener al menos 3 caracteres")
   .max(20, "El username no puede superar los 20 caracteres")
   .regex(
     USERNAME_REGEX,
     "Solo minúsculas, números y guion bajo. Debe empezar con una letra."
-  );
+  )
+  .refine((value) => !USERNAME_RESERVED_WORDS.has(value), "Este username está reservado");
 
 export const emailSchema = z.string().email("Ingresá un email válido");
 

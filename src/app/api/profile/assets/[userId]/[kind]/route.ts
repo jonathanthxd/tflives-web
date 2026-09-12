@@ -33,6 +33,7 @@ export async function GET(
       "Content-Type": asset.mimeType,
       "Cache-Control": "public, max-age=31536000, immutable",
       "Last-Modified": asset.updatedAt.toUTCString(),
+      "X-Content-Type-Options": "nosniff",
     },
   });
 }

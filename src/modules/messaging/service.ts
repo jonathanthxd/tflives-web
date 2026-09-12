@@ -1,6 +1,7 @@
 import { prisma } from "@/infrastructure/database/prisma";
 import { createNotification } from "@/modules/notifications/service";
 import { areFriends } from "@/modules/social/service";
+import { publicIdentitySelect } from "@/modules/profiles/service";
 import { getActiveBanOrSuspension, isMuted } from "@/modules/administration/sanctions";
 import {
   assertReactionEmoji,
@@ -19,13 +20,7 @@ export class MessagingError extends Error {
   }
 }
 
-const PARTICIPANT_SELECT = {
-  id: true,
-  username: true,
-  displayName: true,
-  name: true,
-  image: true,
-} as const;
+const PARTICIPANT_SELECT = publicIdentitySelect;
 
 const DIRECT_MESSAGE_INCLUDE = {
   sender: { select: PARTICIPANT_SELECT },

@@ -6,6 +6,7 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { Card } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
+import { UserAvatar } from "@/modules/profiles/components/user-identity";
 
 interface PersonSummary {
   id: string;
@@ -24,18 +25,6 @@ function displayNameOf(person: PersonSummary) {
   return person.displayName || person.name || person.username || "Usuario";
 }
 
-function Avatar({ person }: { person: PersonSummary }) {
-  const name = displayNameOf(person);
-  return person.image ? (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img src={person.image} alt={name} className="w-10 h-10 rounded-full object-cover" />
-  ) : (
-    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">
-      {(name[0] || "U").toUpperCase()}
-    </div>
-  );
-}
-
 function PersonRow({ person, children }: { person: PersonSummary; children: React.ReactNode }) {
   return (
     <div className="flex items-center justify-between gap-3 py-2.5">
@@ -43,7 +32,7 @@ function PersonRow({ person, children }: { person: PersonSummary; children: Reac
         href={person.username ? `/perfil/${person.username}` : "#"}
         className="flex items-center gap-3 min-w-0 hover:opacity-80 transition-opacity"
       >
-        <Avatar person={person} />
+        <UserAvatar identity={person} className="size-10 text-sm" />
         <div className="min-w-0">
           <p className="text-sm font-medium text-foreground truncate">{displayNameOf(person)}</p>
           {person.username && <p className="text-xs text-muted-foreground truncate">@{person.username}</p>}

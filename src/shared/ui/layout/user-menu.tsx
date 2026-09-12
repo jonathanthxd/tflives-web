@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { UserAvatar } from "@/modules/profiles/components/user-identity";
 
 interface UserMenuProps {
   displayName: string;
@@ -36,14 +37,11 @@ export default function UserMenu({ displayName, username, role, image, onLogout 
         aria-haspopup="menu"
         className="flex items-center gap-1.5 md:gap-2 px-2.5 md:px-3 py-1.5 md:py-2 rounded-xl bg-primary/10 border border-primary/20 text-primary text-xs md:text-sm font-medium hover:bg-primary/20 transition-all"
       >
-        {image ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={image} alt={displayName || "User"} className="w-5 h-5 md:w-6 md:h-6 rounded-full object-cover" />
-        ) : (
-          <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] md:text-xs font-bold">
-            {(displayName[0] || "U").toUpperCase()}
-          </div>
-        )}
+        <UserAvatar
+          identity={{ displayName, name: displayName, username, image }}
+          className="size-5 text-[10px] md:size-6 md:text-xs"
+          alt={displayName || "User"}
+        />
         <span className="max-w-[80px] md:max-w-[140px] truncate" title={displayName}>
           {displayName}
         </span>

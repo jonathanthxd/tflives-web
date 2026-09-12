@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { ProfileAssetKind } from "@prisma/client";
 import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { prisma } from "@/infrastructure/database/prisma";
+import { ProfileMediaError, validateProfileImage } from "@/modules/profiles/media";
+import { publicProfileSelect, toPublicProfile } from "@/modules/profiles/service";
 
 export const runtime = "nodejs";
 
@@ -35,6 +37,14 @@ export async function POST(request: Request) {
   }
 
   const bytes = Buffer.from(await file.arrayBuffer());
+  try {
+    validateProfileImage(bytes, file.type, kind);
+  } catch (error) {
+    if (error instanceof ProfileMediaError) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+    throw error;
+  }
 
   await prisma.profileAsset.upsert({
     where: { userId_kind: { userId: authUser.id, kind } },
@@ -47,17 +57,8 @@ export async function POST(request: Request) {
   const user = await prisma.user.update({
     where: { id: authUser.id },
     data: kind === ProfileAssetKind.AVATAR ? { image: url } : { bannerUrl: url },
-    select: {
-      id: true,
-      image: true,
-      bannerUrl: true,
-      username: true,
-      displayName: true,
-      bio: true,
-      minecraftUsername: true,
-      socialLinks: true,
-    },
+    select: publicProfileSelect,
   });
 
-  return NextResponse.json({ url, user }, { status: 200 });
+  return NextResponse.json({ url, user: toPublicProfile(user) }, { status: 200 });
 }
