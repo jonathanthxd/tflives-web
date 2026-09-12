@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { authClient } from "@/infrastructure/auth/client";
 import { Button } from "@/shared/ui/button";
 
 type Provider = "google" | "discord";
 
 export function OAuthButtons({ redirectTo = "/onboarding/username" }: { redirectTo?: string }) {
+  const t = useTranslations("OAuth");
+  const locale = useLocale();
   const [loadingProvider, setLoadingProvider] = useState<Provider | null>(null);
   const [error, setError] = useState("");
 
@@ -15,11 +18,12 @@ export function OAuthButtons({ redirectTo = "/onboarding/username" }: { redirect
     setLoadingProvider(provider);
     const { error } = await authClient.signIn.social({
       provider,
-      callbackURL: redirectTo,
+      callbackURL: `/${locale}${redirectTo}`,
+      errorCallbackURL: `/${locale}/login?oauthError=1`,
     });
 
     if (error) {
-      setError(`No se pudo iniciar con ${provider === "google" ? "Google" : "Discord"}. Probá de nuevo.`);
+      setError(t("startFailed", { provider: provider === "google" ? "Google" : "Discord" }));
       setLoadingProvider(null);
     }
   }

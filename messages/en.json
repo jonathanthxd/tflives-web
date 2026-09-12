@@ -19,8 +19,117 @@
       "MESSAGE": "Messages",
       "ACHIEVEMENT": "Achievements",
       "POST_PUBLISHED": "Official announcements",
-      "ANNOUNCEMENT": "Global announcements"
-    }
+      "ANNOUNCEMENT": "Global announcements",
+      "SECURITY_ALERT": "Security alerts"
+    },
+    "subtitulo": "Manage your security, privacy, and notifications in one place.",
+    "secciones": "Settings sections",
+    "seguridad": "Security",
+    "seguridadDescripcion": "Access, sessions, and 2FA",
+    "privacidadDescripcion": "Control who can interact with you",
+    "notificacionesDescripcion": "Choose which alerts you want to receive"
+  },
+  "Security": {
+    "title": "Account security",
+    "subtitle": "Manage how you access TFLives and review recent activity.",
+    "loading": "Loading your account security…",
+    "sessionRefreshRequired": "For security, sign in again to view or manage your sessions.",
+    "securityActionFailed": "We couldn't complete that security action. Please try again.",
+    "emailVerification": "Email verification",
+    "verified": "Email verified",
+    "notVerified": "Email not verified",
+    "resendVerification": "Resend verification",
+    "verificationSent": "We sent a new verification link.",
+    "resendFailed": "We couldn't resend verification. Please try again later.",
+    "accessMethods": "Sign-in methods",
+    "emailPassword": "Email and password",
+    "connected": "Connected",
+    "notConnected": "Not connected",
+    "notAvailable": "Not set up",
+    "link": "Link",
+    "unlink": "Unlink",
+    "providerActionFailed": "We couldn't complete the action with this provider.",
+    "providerUnlinked": "The provider was unlinked from your account.",
+    "linkingHint": "Providers are only linked from an authenticated session and are never automatically merged by email.",
+    "password": "Password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "passwordPolicy": "Use a password between 8 and 128 characters.",
+    "revokeAfterPassword": "Sign out of other sessions after the change",
+    "changePassword": "Change password",
+    "passwordChanged": "Your password was updated.",
+    "passwordChangeFailed": "We couldn't change your password. Check your current password.",
+    "currentPasswordRequired": "Enter your current password to continue.",
+    "twoFactor": "Two-factor authentication",
+    "twoFactorActive": "Your account is protected with an authenticator app.",
+    "twoFactorInactive": "Add an extra layer of security with an authenticator app.",
+    "setupTwoFactor": "Set up 2FA",
+    "twoFactorSetupFailed": "We couldn't update two-factor authentication.",
+    "scanQr": "Scan this code with your authenticator app.",
+    "qrAlt": "Two-factor authentication setup QR code",
+    "manualKey": "I can't scan the code",
+    "verificationCode": "Six-digit code",
+    "verifyAndEnable": "Verify and enable",
+    "twoFactorVerifyFailed": "That code isn't valid. Try a new one.",
+    "twoFactorEnabled": "Two-factor authentication is enabled.",
+    "disableTwoFactor": "Disable 2FA",
+    "twoFactorDisabled": "Two-factor authentication was disabled.",
+    "regenerateCodes": "Regenerate recovery codes",
+    "codesRegenerated": "We generated new recovery codes.",
+    "saveCodes": "Save these codes somewhere safe.",
+    "codesShownOnce": "Each code works once. We can't show them again.",
+    "sessions": "Sessions and devices",
+    "sessionsHint": "Sign out of any session you don't recognize.",
+    "unknownDevice": "Unknown device",
+    "currentSession": "Current session",
+    "createdAt": "Created {date}",
+    "signOut": "Sign out",
+    "revoke": "Revoke",
+    "revokeOtherSessions": "Sign out of other sessions",
+    "sessionRevoked": "The session was signed out.",
+    "otherSessionsRevoked": "Other sessions were signed out.",
+    "revokeSessionTitle": "Sign out of this session?",
+    "revokeSessionDescription": "This will remove access from this device.",
+    "revokeOthersTitle": "Sign out of other sessions?",
+    "revokeOthersDescription": "Your other devices will have to sign in again.",
+    "unlinkTitle": "Unlink this provider?",
+    "unlinkDescription": "You'll need another sign-in method to access your account.",
+    "cancel": "Cancel",
+    "activity": "Security activity",
+    "noActivity": "There is no security activity to show yet.",
+    "event": {
+      "LOGIN_SUCCESS": "Successful sign-in",
+      "PASSWORD_CHANGED": "Password changed",
+      "PASSWORD_RESET": "Password reset",
+      "EMAIL_VERIFIED": "Email verified",
+      "EMAIL_VERIFICATION_RESENT": "Email verification resent",
+      "OAUTH_LINKED": "Provider linked",
+      "OAUTH_UNLINKED": "Provider unlinked",
+      "SESSION_REVOKED": "Session revoked",
+      "OTHER_SESSIONS_REVOKED": "Other sessions signed out",
+      "TWO_FACTOR_ENABLED": "Two-factor authentication enabled",
+      "TWO_FACTOR_DISABLED": "Two-factor authentication disabled",
+      "RECOVERY_CODES_REGENERATED": "Recovery codes regenerated",
+      "AUTH_RATE_LIMITED": "Sign-in attempts limited"
+    },
+    "providerLinked": "{provider} was linked to your account."
+  },
+  "TwoFactorChallenge": {
+    "title": "Verify your identity",
+    "description": "Enter the code from your authenticator app to continue.",
+    "recoveryDescription": "Enter one of your recovery codes.",
+    "code": "Verification code",
+    "verify": "Verify",
+    "verifying": "Verifying…",
+    "invalidCode": "The code isn't valid or has expired.",
+    "useRecovery": "Use a recovery code",
+    "useAuthenticator": "Use authenticator app"
+  },
+  "VerifyEmail": {
+    "title": "Verifying your email",
+    "checking": "We're confirming your email address…",
+    "errorTitle": "We couldn't verify your email",
+    "errorDescription": "The link is invalid or expired. Request a new one from your account settings."
   },
   "Notifications": {
     "titulo": "Notifications",
@@ -36,7 +145,8 @@
       "MESSAGE": "sent you a message",
       "ACHIEVEMENT": "unlocked an achievement",
       "POST_PUBLISHED": "posted something new on TFL Network",
-      "ANNOUNCEMENT": "there's a new announcement"
+      "ANNOUNCEMENT": "there's a new announcement",
+      "SECURITY_ALERT": "there's a security update for your account"
     }
   },
   "Navbar": {
@@ -100,7 +210,12 @@
     "noTenesCuenta": "Don't have an account?",
     "crearCuenta": "Create account",
     "credencialesInvalidas": "Incorrect email or password",
-    "emailNoConfirmado": "Confirm your email before logging in — check your inbox."
+    "emailNoConfirmado": "Confirm your email before logging in — check your inbox.",
+    "oauthError": "We couldn't complete sign-in with that provider. Sign in with your existing method and link it from Settings.",
+    "accountNotLinked": "That email already belongs to a TFLives account created with another sign-in method. Sign in with your existing method and link Google or Discord from Settings → Security."
+  },
+  "OAuth": {
+    "startFailed": "We couldn't start with {provider}. Please try again."
   },
   "Register": {
     "titulo": "Create Account",
@@ -487,5 +602,11 @@
     "context": "Context",
     "messageDeleted": "Message removed",
     "hideMessage": "Hide message"
+  },
+  "OAuthError": {
+    "accountNotLinkedTitle": "Your TFLives account already exists",
+    "accountNotLinkedBody": "That email is already associated with an account created through another sign-in method. For security, providers are never linked automatically. Sign in with your existing method, then link Google or Discord from Settings → Security.",
+    "signInAndLink": "Sign in and link",
+    "dismiss": "Dismiss"
   }
 }

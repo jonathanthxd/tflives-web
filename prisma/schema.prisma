@@ -20,6 +20,7 @@ model User {
   minecraftUsername String?   @map("minecraft_username")
   socialLinks       Json?     @map("social_links")
   role              Role      @default(USER)
+  twoFactorEnabled  Boolean   @default(false)
   messages          Message[]
   posts             Post[]
   createdAt         DateTime  @default(now())
@@ -27,6 +28,8 @@ model User {
 
   sessions          Session[]
   accounts          Account[]
+  twoFactor         TwoFactor?
+  securityEvents    SecurityEvent[]
   profileAssets     ProfileAsset[]
 
   allowFriendRequests   Boolean               @default(true) @map("allow_friend_requests")
@@ -238,6 +241,45 @@ model DirectMessage {
 
   @@index([conversationId, createdAt])
   @@index([replyToId])
+}
+
+/// Better Auth's durable, cross-instance rate-limit store. This is an auth
+/// primitive, not an application session or account model.
+model RateLimit {
+  id          String @id @default(cuid())
+  key         String @unique
+  count       Int
+  lastRequest BigInt
+}
+
+/// Better Auth's official two-factor plugin table. Secrets and recovery-code
+/// hashes are encrypted/managed by Better Auth and are never returned by Prisma
+/// queries in the application.
+model TwoFactor {
+  id                      String   @id @default(cuid())
+  secret                  String   @db.Text
+  backupCodes             String   @db.Text
+  userId                  String   @unique
+  user                    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  verified                Boolean  @default(true)
+  failedVerificationCount Int      @default(0)
+  lockedUntil             DateTime?
+
+  @@index([secret])
+}
+
+model SecurityEvent {
+  id        String            @id @default(cuid())
+  userId    String?
+  user      User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
+  event     SecurityEventType
+  ipHash    String?
+  userAgent String?
+  metadata  Json?
+  createdAt DateTime          @default(now())
+
+  @@index([userId, createdAt])
+  @@index([event, createdAt])
 }
 
 /// Curated first-party assets only. Users cannot upload arbitrary chat media.
@@ -533,6 +575,23 @@ enum NotificationType {
   ACHIEVEMENT
   POST_PUBLISHED
   ANNOUNCEMENT
+  SECURITY_ALERT
+}
+
+enum SecurityEventType {
+  LOGIN_SUCCESS
+  PASSWORD_CHANGED
+  PASSWORD_RESET
+  EMAIL_VERIFIED
+  EMAIL_VERIFICATION_RESENT
+  OAUTH_LINKED
+  OAUTH_UNLINKED
+  SESSION_REVOKED
+  OTHER_SESSIONS_REVOKED
+  TWO_FACTOR_ENABLED
+  TWO_FACTOR_DISABLED
+  RECOVERY_CODES_REGENERATED
+  AUTH_RATE_LIMITED
 }
 
 model Post {

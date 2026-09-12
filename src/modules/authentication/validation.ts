@@ -15,7 +15,8 @@ export const emailSchema = z.string().email("Ingresá un email válido");
 
 export const passwordSchema = z
   .string()
-  .min(8, "La contraseña debe tener al menos 8 caracteres");
+  .min(8, "La contraseña debe tener al menos 8 caracteres")
+  .max(128, "La contraseña no puede superar los 128 caracteres");
 
 export const registerSchema = z
   .object({

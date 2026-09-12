@@ -9,6 +9,7 @@ import Navbar from "@/shared/ui/layout/navbar";
 import Footer from "@/shared/ui/layout/footer";
 import AmbientBackground from "@/shared/ui/effects/ambient-background";
 import DiscordWidget from "@/shared/ui/effects/discord-widget";
+import OAuthErrorNotice from "@/shared/ui/oauth-error-notice";
 import { siteMetadata } from "@/config/site";
 import "@/styles/globals.css";
 
@@ -52,6 +53,7 @@ export default async function RootLayout({
             <AmbientBackground />
 
             <Navbar />
+            <OAuthErrorNotice />
             {children}
             <Footer />
 

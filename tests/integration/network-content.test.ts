@@ -35,6 +35,12 @@ test(
         "utf8",
       ),
     );
+    await db.exec(
+      readFileSync(
+        "prisma/migrations/20260911000000_accounts_security_permissions/migration.sql",
+        "utf8",
+      ),
+    );
     assert.equal((await db.query(`SELECT id FROM "Comment"`)).rows.length, 1);
     assert.equal((await db.query(`SELECT id FROM "Reaction"`)).rows.length, 1);
     const preserved = await db.query<{ slug: string; published: boolean }>(
@@ -139,6 +145,41 @@ test(
       .map((value) => value.split(";")[0])
       .join("; ");
     assert.ok(cookie);
+
+    let response = await request("/api/account/security", "GET", undefined, cookie);
+    assert.equal(response.status, 200, await response.clone().text());
+    const initialSecurity = await response.json();
+    assert.equal(initialSecurity.sessions.length, 1);
+    assert.equal(initialSecurity.sessions[0].current, true);
+    assert.equal("token" in initialSecurity.sessions[0], false);
+
+    const secondSignIn = await request("/api/auth/sign-in/email", "POST", {
+      email: "staff@example.test",
+      password: "test-password-12345",
+    });
+    assert.equal(secondSignIn.status, 200, await secondSignIn.clone().text());
+    const secondCookie = secondSignIn.headers
+      .getSetCookie()
+      .map((value) => value.split(";")[0])
+      .join("; ");
+    assert.ok(secondCookie);
+
+    response = await request("/api/account/security", "GET", undefined, cookie);
+    assert.equal(response.status, 200, await response.clone().text());
+    const sessionsBeforeRevoke = await response.json();
+    const secondarySession = sessionsBeforeRevoke.sessions.find((session: { id: string; current: boolean }) => !session.current);
+    assert.ok(secondarySession);
+    response = await request(
+      "/api/account/security",
+      "POST",
+      { action: "revoke-session", sessionId: secondarySession.id },
+      cookie,
+    );
+    assert.equal(response.status, 200, await response.clone().text());
+    const revokedSession = await request("/api/auth/get-session", "GET", undefined, secondCookie);
+    assert.equal(revokedSession.status, 200);
+    assert.equal(await revokedSession.json(), null);
+
     for (const path of paths)
       assert.equal((await request(path, "POST", {}, cookie)).status, 403, path);
     const user = await signup.json();
@@ -197,7 +238,7 @@ test(
       modalityId: mode.id,
     });
     assert.equal((await request("/es/network/wiki/private-guide")).status, 404);
-    let response = await request(
+    response = await request(
       `/api/admin/wiki/${draft.id}`,
       "PATCH",
       {

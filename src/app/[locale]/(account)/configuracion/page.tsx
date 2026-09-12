@@ -1,13 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Bell, ShieldCheck, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Card } from "@/shared/ui/card";
 import { NOTIFICATION_CATEGORIES } from "@/modules/notifications/service";
 import MySanctionsCard from "@/modules/administration/components/my-sanctions-card";
+import { SecuritySettings } from "@/modules/authentication/components/security-settings";
 
 type Visibility = "PUBLIC" | "FRIENDS_ONLY" | "PRIVATE";
+type Section = "security" | "privacy" | "notifications";
 
 interface Preference {
   category: string;
@@ -15,20 +18,32 @@ interface Preference {
   browserEnabled: boolean;
 }
 
-function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
+function Toggle({
+  checked,
+  onChange,
+  label,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  label: string;
+}) {
   return (
     <button
       type="button"
       role="switch"
       aria-checked={checked}
+      aria-label={label}
       onClick={() => onChange(!checked)}
-      className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 ${
-        checked ? "bg-primary" : "bg-muted border border-muted-foreground/30"
+      className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border p-0.5 outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+        checked
+          ? "border-primary/70 bg-primary"
+          : "border-border bg-muted/80 hover:bg-muted"
       }`}
     >
       <span
-        className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-md transition-transform duration-200 ${
-          checked ? "translate-x-5" : "translate-x-0.5"
+        aria-hidden="true"
+        className={`block size-5 shrink-0 rounded-full bg-white shadow-sm ring-1 ring-black/5 transition-transform duration-200 ${
+          checked ? "translate-x-5" : "translate-x-0"
         }`}
       />
     </button>
@@ -40,9 +55,27 @@ export default function SettingsPage() {
   const tCategory = useTranslations("Settings.categoria");
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [section, setSection] = useState<Section>("security");
   const [allowFriendRequests, setAllowFriendRequests] = useState(true);
   const [visibility, setVisibility] = useState<Visibility>("PUBLIC");
   const [preferences, setPreferences] = useState<Preference[]>([]);
+
+  useEffect(() => {
+    const hash = window.location.hash.slice(1);
+    if (hash === "privacy" || hash === "notifications" || hash === "security") {
+      setSection(hash);
+    }
+
+    const onHashChange = () => {
+      const next = window.location.hash.slice(1);
+      if (next === "privacy" || next === "notifications" || next === "security") {
+        setSection(next);
+      }
+    };
+
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
 
   useEffect(() => {
     async function load() {
@@ -65,9 +98,16 @@ export default function SettingsPage() {
       setPreferences(prefs.preferences ?? []);
       setLoading(false);
     }
-    load();
+    void load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  function selectSection(next: Section) {
+    setSection(next);
+    const url = new URL(window.location.href);
+    url.hash = next;
+    window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}${url.hash}`);
+  }
 
   async function updatePrivacy(partial: { allowFriendRequests?: boolean; friendsListVisibility?: Visibility }) {
     if (partial.allowFriendRequests !== undefined) setAllowFriendRequests(partial.allowFriendRequests);
@@ -90,78 +130,136 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="size-8 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
       </div>
     );
   }
 
+  const tabs = [
+    { id: "security" as const, label: t("seguridad"), description: t("seguridadDescripcion"), icon: ShieldCheck },
+    { id: "privacy" as const, label: t("privacidad"), description: t("privacidadDescripcion"), icon: Users },
+    { id: "notifications" as const, label: t("preferenciasNotificaciones"), description: t("notificacionesDescripcion"), icon: Bell },
+  ];
+
   return (
-    <main className="min-h-screen pt-24 pb-16 px-4">
-      <div className="max-w-2xl mx-auto space-y-6">
-        <h1 className="font-display text-2xl font-bold text-foreground">{t("titulo")}</h1>
+    <main className="min-h-screen px-4 pb-16 pt-24">
+      <div className="mx-auto max-w-3xl space-y-6">
+        <div>
+          <h1 className="font-display text-2xl font-bold text-foreground">{t("titulo")}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{t("subtitulo")}</p>
+        </div>
 
-        <MySanctionsCard />
+        <nav
+          aria-label={t("secciones")}
+          className="grid gap-2 rounded-2xl border border-border bg-card/50 p-2 backdrop-blur-sm sm:grid-cols-3"
+        >
+          {tabs.map(({ id, label, description, icon: Icon }) => {
+            const active = section === id;
+            return (
+              <button
+                key={id}
+                type="button"
+                aria-current={active ? "page" : undefined}
+                onClick={() => selectSection(id)}
+                className={`flex min-w-0 items-center gap-3 rounded-xl px-3 py-3 text-left outline-none transition focus-visible:ring-2 focus-visible:ring-ring/40 ${
+                  active
+                    ? "bg-primary/10 text-foreground ring-1 ring-primary/25"
+                    : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
+                }`}
+              >
+                <span className={`grid size-9 shrink-0 place-items-center rounded-lg ${active ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}>
+                  <Icon className="size-4" aria-hidden="true" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block truncate text-sm font-semibold">{label}</span>
+                  <span className="mt-0.5 block text-xs leading-4 text-muted-foreground sm:hidden lg:block">{description}</span>
+                </span>
+              </button>
+            );
+          })}
+        </nav>
 
-        <Card className="p-6">
-          <h2 className="font-display text-sm font-semibold text-foreground uppercase tracking-wide mb-4">
-            {t("privacidad")}
-          </h2>
+        <div id={section} className="scroll-mt-28">
+          {section === "security" && (
+            <div className="space-y-6">
+              <MySanctionsCard />
+              <SecuritySettings />
+            </div>
+          )}
 
-          <div className="flex items-center justify-between py-2">
-            <span className="text-sm text-foreground">{t("permitirSolicitudes")}</span>
-            <Toggle
-              checked={allowFriendRequests}
-              onChange={(v) => updatePrivacy({ allowFriendRequests: v })}
-            />
-          </div>
+          {section === "privacy" && (
+            <Card className="p-5 sm:p-6">
+              <div className="mb-5">
+                <h2 className="font-display text-sm font-semibold uppercase tracking-wide text-foreground">{t("privacidad")}</h2>
+                <p className="mt-1 text-sm text-muted-foreground">{t("privacidadDescripcion")}</p>
+              </div>
 
-          <div className="py-2">
-            <label className="block text-sm text-foreground mb-1.5">{t("visibilidadAmigos")}</label>
-            <select
-              value={visibility}
-              onChange={(e) => updatePrivacy({ friendsListVisibility: e.target.value as Visibility })}
-              className="w-full rounded-xl border border-input bg-input/30 px-4 py-2 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-4 focus-visible:ring-ring/15"
-            >
-              <option value="PUBLIC">{t("visibilidadTodos")}</option>
-              <option value="FRIENDS_ONLY">{t("visibilidadSoloAmigos")}</option>
-              <option value="PRIVATE">{t("visibilidadNadie")}</option>
-            </select>
-          </div>
-        </Card>
+              <div className="flex items-center justify-between gap-4 py-3">
+                <span className="min-w-0 text-sm text-foreground">{t("permitirSolicitudes")}</span>
+                <Toggle
+                  label={t("permitirSolicitudes")}
+                  checked={allowFriendRequests}
+                  onChange={(v) => updatePrivacy({ allowFriendRequests: v })}
+                />
+              </div>
 
-        <Card className="p-6">
-          <h2 className="font-display text-sm font-semibold text-foreground uppercase tracking-wide mb-4">
-            {t("preferenciasNotificaciones")}
-          </h2>
+              <div className="py-3">
+                <label className="mb-1.5 block text-sm text-foreground" htmlFor="friends-visibility">
+                  {t("visibilidadAmigos")}
+                </label>
+                <select
+                  id="friends-visibility"
+                  value={visibility}
+                  onChange={(e) => updatePrivacy({ friendsListVisibility: e.target.value as Visibility })}
+                  className="w-full rounded-xl border border-input bg-input/30 px-4 py-2 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-4 focus-visible:ring-ring/15"
+                >
+                  <option value="PUBLIC">{t("visibilidadTodos")}</option>
+                  <option value="FRIENDS_ONLY">{t("visibilidadSoloAmigos")}</option>
+                  <option value="PRIVATE">{t("visibilidadNadie")}</option>
+                </select>
+              </div>
+            </Card>
+          )}
 
-          <div className="space-y-4">
-            {NOTIFICATION_CATEGORIES.map((category) => {
-              const pref = preferences.find((p) => p.category === category);
-              return (
-                <div key={category} className="flex items-center justify-between py-2 border-b border-border last:border-0">
-                  <span className="text-sm text-foreground">{tCategory(category)}</span>
-                  <div className="flex items-center gap-4">
-                    <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                      {t("enApp")}
-                      <Toggle
-                        checked={pref?.inAppEnabled ?? true}
-                        onChange={(v) => updatePreference(category, { inAppEnabled: v })}
-                      />
-                    </label>
-                    <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                      {t("enNavegador")}
-                      <Toggle
-                        checked={pref?.browserEnabled ?? true}
-                        onChange={(v) => updatePreference(category, { browserEnabled: v })}
-                      />
-                    </label>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </Card>
+          {section === "notifications" && (
+            <Card className="p-5 sm:p-6">
+              <div className="mb-5">
+                <h2 className="font-display text-sm font-semibold uppercase tracking-wide text-foreground">{t("preferenciasNotificaciones")}</h2>
+                <p className="mt-1 text-sm text-muted-foreground">{t("notificacionesDescripcion")}</p>
+              </div>
+
+              <div className="divide-y divide-border">
+                {NOTIFICATION_CATEGORIES.map((category) => {
+                  const pref = preferences.find((p) => p.category === category);
+                  return (
+                    <div key={category} className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
+                      <span className="text-sm font-medium text-foreground">{tCategory(category)}</span>
+                      <div className="grid grid-cols-2 gap-3 sm:flex sm:items-center sm:gap-5">
+                        <div className="flex items-center justify-between gap-2 sm:justify-start">
+                          <span className="text-xs text-muted-foreground">{t("enApp")}</span>
+                          <Toggle
+                            label={`${tCategory(category)} · ${t("enApp")}`}
+                            checked={pref?.inAppEnabled ?? true}
+                            onChange={(v) => updatePreference(category, { inAppEnabled: v })}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between gap-2 sm:justify-start">
+                          <span className="text-xs text-muted-foreground">{t("enNavegador")}</span>
+                          <Toggle
+                            label={`${tCategory(category)} · ${t("enNavegador")}`}
+                            checked={pref?.browserEnabled ?? true}
+                            onChange={(v) => updatePreference(category, { browserEnabled: v })}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </Card>
+          )}
+        </div>
       </div>
     </main>
   );

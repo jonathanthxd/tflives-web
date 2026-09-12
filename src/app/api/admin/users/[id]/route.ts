@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { Role } from "@prisma/client";
 import { prisma } from "@/infrastructure/database/prisma";
 import { requireAdminSection, AdminGuardError } from "@/modules/administration/api-guard";
+import { canManageUsers } from "@/modules/administration/permissions";
 import { logAdminAction } from "@/modules/administration/action-log";
 import { getActiveSanctions } from "@/modules/administration/sanctions";
 
@@ -45,7 +46,10 @@ export async function PATCH(
 ) {
   const { id } = await params;
   try {
-    const { userId } = await requireAdminSection("users");
+    const { userId, role: actorRole } = await requireAdminSection("users");
+    if (!canManageUsers(actorRole)) {
+      throw new AdminGuardError("No autorizado", 403);
+    }
     const body = await request.json();
     const role = body.role as Role | undefined;
     if (!role || !(["USER", "MOD", "ADMIN"] as const).includes(role)) {

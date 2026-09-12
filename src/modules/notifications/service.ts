@@ -11,6 +11,7 @@ export const NOTIFICATION_CATEGORIES: NotificationType[] = [
   "ACHIEVEMENT",
   "POST_PUBLISHED",
   "ANNOUNCEMENT",
+  "SECURITY_ALERT",
 ];
 
 interface CreateNotificationInput {

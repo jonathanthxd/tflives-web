@@ -17,6 +17,8 @@ const MINIMAL_HEADER_ROUTES = [
   "/register",
   "/forgot-password",
   "/reset-password",
+  "/two-factor",
+  "/verify-email",
 ];
 
 function NavPlaceholderLink({
@@ -386,7 +388,7 @@ export default function Navbar() {
                 >
                   {t("mensajes")}
                 </Link>
-                {user.role === "ADMIN" && (
+                {(user.role === "ADMIN" || user.role === "MOD") && (
                   <Link
                     href="/admin"
                     className="block py-2 text-foreground hover:text-primary transition-colors"

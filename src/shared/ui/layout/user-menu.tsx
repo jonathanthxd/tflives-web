@@ -101,7 +101,7 @@ export default function UserMenu({ displayName, username, role, image, onLogout 
             {t("suscripcion")}
           </button>
 
-          {role === "ADMIN" && (
+          {(role === "ADMIN" || role === "MOD") && (
             <Link
               href="/admin"
               role="menuitem"

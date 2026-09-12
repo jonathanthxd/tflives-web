@@ -54,17 +54,34 @@ export function canAccessAdminPanel(role: Role): boolean {
   return role === "MOD" || role === "ADMIN";
 }
 
+/** Reusable server-side capability helpers for the roles that exist today. */
+export function canModerate(role: Role): boolean {
+  return role === "MOD" || role === "ADMIN";
+}
+
+export function canManageContent(role: Role): boolean {
+  return canModerate(role);
+}
+
+export function canManageUsers(role: Role): boolean {
+  return role === "ADMIN";
+}
+
+export function canManageSecurity(role: Role): boolean {
+  return role === "ADMIN";
+}
+
 /**
  * Acciones de moderación puntuales (además del gate de sección). Cambiar el
  * rol de otro usuario y desbanear son siempre ADMIN-only, sin importar la
  * sección desde la que se dispare la acción.
  */
 export function canChangeRoles(role: Role): boolean {
-  return role === "ADMIN";
+  return canManageUsers(role);
 }
 
 export function canManageSanctions(role: Role): boolean {
-  return role === "MOD" || role === "ADMIN";
+  return canModerate(role);
 }
 
 export interface AdminNavItem {

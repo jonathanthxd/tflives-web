@@ -19,8 +19,117 @@
       "MESSAGE": "Mensajes",
       "ACHIEVEMENT": "Logros",
       "POST_PUBLISHED": "Novedades oficiales",
-      "ANNOUNCEMENT": "Anuncios globales"
-    }
+      "ANNOUNCEMENT": "Anuncios globales",
+      "SECURITY_ALERT": "Alertas de seguridad"
+    },
+    "subtitulo": "Administrá tu seguridad, privacidad y notificaciones desde un solo lugar.",
+    "secciones": "Secciones de configuración",
+    "seguridad": "Seguridad",
+    "seguridadDescripcion": "Acceso, sesiones y 2FA",
+    "privacidadDescripcion": "Controlá quién puede interactuar contigo",
+    "notificacionesDescripcion": "Elegí qué avisos querés recibir"
+  },
+  "Security": {
+    "title": "Seguridad de la cuenta",
+    "subtitle": "Administrá cómo accedés a TFLives y revisá la actividad reciente.",
+    "loading": "Cargando la seguridad de tu cuenta…",
+    "sessionRefreshRequired": "Por seguridad, iniciá sesión nuevamente para ver o administrar tus sesiones.",
+    "securityActionFailed": "No se pudo completar esta acción de seguridad. Intentá de nuevo.",
+    "emailVerification": "Verificación de email",
+    "verified": "Email verificado",
+    "notVerified": "Email sin verificar",
+    "resendVerification": "Reenviar verificación",
+    "verificationSent": "Enviamos un nuevo enlace de verificación.",
+    "resendFailed": "No se pudo reenviar la verificación. Probá más tarde.",
+    "accessMethods": "Métodos de acceso",
+    "emailPassword": "Email y contraseña",
+    "connected": "Conectado",
+    "notConnected": "No conectado",
+    "notAvailable": "No configurado",
+    "link": "Vincular",
+    "unlink": "Desvincular",
+    "providerActionFailed": "No se pudo completar la acción con este proveedor.",
+    "providerUnlinked": "El proveedor se desvinculó de tu cuenta.",
+    "linkingHint": "Los proveedores solo se vinculan desde una sesión autenticada y nunca se fusionan automáticamente por email.",
+    "password": "Contraseña",
+    "currentPassword": "Contraseña actual",
+    "newPassword": "Nueva contraseña",
+    "passwordPolicy": "Usá una contraseña de entre 8 y 128 caracteres.",
+    "revokeAfterPassword": "Cerrar las demás sesiones después del cambio",
+    "changePassword": "Cambiar contraseña",
+    "passwordChanged": "Tu contraseña se actualizó correctamente.",
+    "passwordChangeFailed": "No se pudo cambiar la contraseña. Revisá la contraseña actual.",
+    "currentPasswordRequired": "Ingresá tu contraseña actual para continuar.",
+    "twoFactor": "Autenticación en dos pasos",
+    "twoFactorActive": "Tu cuenta está protegida con una app autenticadora.",
+    "twoFactorInactive": "Agregá una capa extra de seguridad con una app autenticadora.",
+    "setupTwoFactor": "Configurar 2FA",
+    "twoFactorSetupFailed": "No se pudo actualizar la autenticación en dos pasos.",
+    "scanQr": "Escaneá este código con tu app autenticadora.",
+    "qrAlt": "Código QR de configuración de autenticación en dos pasos",
+    "manualKey": "No puedo escanear el código",
+    "verificationCode": "Código de seis dígitos",
+    "verifyAndEnable": "Verificar y activar",
+    "twoFactorVerifyFailed": "El código no es válido. Probá con uno nuevo.",
+    "twoFactorEnabled": "La autenticación en dos pasos está activada.",
+    "disableTwoFactor": "Desactivar 2FA",
+    "twoFactorDisabled": "La autenticación en dos pasos se desactivó.",
+    "regenerateCodes": "Regenerar códigos de recuperación",
+    "codesRegenerated": "Generamos nuevos códigos de recuperación.",
+    "saveCodes": "Guardá estos códigos en un lugar seguro.",
+    "codesShownOnce": "Cada código funciona una sola vez. No podremos mostrarlos otra vez.",
+    "sessions": "Sesiones y dispositivos",
+    "sessionsHint": "Cerrá cualquier sesión que no reconozcas.",
+    "unknownDevice": "Dispositivo desconocido",
+    "currentSession": "Sesión actual",
+    "createdAt": "Creada el {date}",
+    "signOut": "Cerrar sesión",
+    "revoke": "Revocar",
+    "revokeOtherSessions": "Cerrar las demás sesiones",
+    "sessionRevoked": "La sesión se cerró.",
+    "otherSessionsRevoked": "Las demás sesiones se cerraron.",
+    "revokeSessionTitle": "¿Cerrar esta sesión?",
+    "revokeSessionDescription": "Vas a cerrar el acceso de este dispositivo.",
+    "revokeOthersTitle": "¿Cerrar las demás sesiones?",
+    "revokeOthersDescription": "Los demás dispositivos tendrán que iniciar sesión otra vez.",
+    "unlinkTitle": "¿Desvincular este proveedor?",
+    "unlinkDescription": "Vas a necesitar otro método de acceso para volver a entrar.",
+    "cancel": "Cancelar",
+    "activity": "Actividad de seguridad",
+    "noActivity": "Todavía no hay actividad de seguridad para mostrar.",
+    "event": {
+      "LOGIN_SUCCESS": "Inicio de sesión exitoso",
+      "PASSWORD_CHANGED": "Contraseña cambiada",
+      "PASSWORD_RESET": "Contraseña restablecida",
+      "EMAIL_VERIFIED": "Email verificado",
+      "EMAIL_VERIFICATION_RESENT": "Verificación de email reenviada",
+      "OAUTH_LINKED": "Proveedor vinculado",
+      "OAUTH_UNLINKED": "Proveedor desvinculado",
+      "SESSION_REVOKED": "Sesión revocada",
+      "OTHER_SESSIONS_REVOKED": "Las demás sesiones se cerraron",
+      "TWO_FACTOR_ENABLED": "Autenticación en dos pasos activada",
+      "TWO_FACTOR_DISABLED": "Autenticación en dos pasos desactivada",
+      "RECOVERY_CODES_REGENERATED": "Códigos de recuperación regenerados",
+      "AUTH_RATE_LIMITED": "Intentos de acceso limitados"
+    },
+    "providerLinked": "{provider} se vinculó correctamente a tu cuenta."
+  },
+  "TwoFactorChallenge": {
+    "title": "Verificá tu identidad",
+    "description": "Ingresá el código de tu app autenticadora para continuar.",
+    "recoveryDescription": "Ingresá uno de tus códigos de recuperación.",
+    "code": "Código de verificación",
+    "verify": "Verificar",
+    "verifying": "Verificando…",
+    "invalidCode": "El código no es válido o ya expiró.",
+    "useRecovery": "Usar un código de recuperación",
+    "useAuthenticator": "Usar la app autenticadora"
+  },
+  "VerifyEmail": {
+    "title": "Verificando tu email",
+    "checking": "Estamos confirmando tu dirección de email…",
+    "errorTitle": "No pudimos verificar tu email",
+    "errorDescription": "El enlace no es válido o ya expiró. Pedí uno nuevo desde la configuración de tu cuenta."
   },
   "Notifications": {
     "titulo": "Notificaciones",
@@ -36,7 +145,8 @@
       "MESSAGE": "te envió un mensaje",
       "ACHIEVEMENT": "desbloqueaste un logro",
       "POST_PUBLISHED": "publicó algo nuevo en TFL Network",
-      "ANNOUNCEMENT": "hay un anuncio nuevo"
+      "ANNOUNCEMENT": "hay un anuncio nuevo",
+      "SECURITY_ALERT": "hay una actualización de seguridad en tu cuenta"
     }
   },
   "Navbar": {
@@ -100,7 +210,12 @@
     "noTenesCuenta": "¿No tienes cuenta?",
     "crearCuenta": "Crear cuenta",
     "credencialesInvalidas": "Email o contraseña incorrectos",
-    "emailNoConfirmado": "Confirmá tu email antes de iniciar sesión — revisá tu bandeja de entrada."
+    "emailNoConfirmado": "Confirmá tu email antes de iniciar sesión — revisá tu bandeja de entrada.",
+    "oauthError": "No se pudo completar el inicio de sesión con el proveedor. Iniciá sesión con tu método existente y vinculalo desde Configuración.",
+    "accountNotLinked": "Ese email ya pertenece a una cuenta de TFLives creada con otro método. Iniciá sesión con tu método actual y vinculá Google o Discord desde Configuración → Seguridad."
+  },
+  "OAuth": {
+    "startFailed": "No se pudo iniciar con {provider}. Probá de nuevo."
   },
   "Register": {
     "titulo": "Crear Cuenta",
@@ -487,5 +602,11 @@
     "context": "Contexto",
     "messageDeleted": "Mensaje eliminado",
     "hideMessage": "Ocultar mensaje"
+  },
+  "OAuthError": {
+    "accountNotLinkedTitle": "Tu cuenta ya existe en TFLives",
+    "accountNotLinkedBody": "Ese email ya está asociado a una cuenta creada con otro método de acceso. Por seguridad no vinculamos proveedores automáticamente. Iniciá sesión con tu método actual y luego vinculá Google o Discord desde Configuración → Seguridad.",
+    "signInAndLink": "Iniciar sesión y vincular",
+    "dismiss": "Cerrar"
   }
 }
