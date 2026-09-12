@@ -47,6 +47,9 @@ model User {
   cosmetics               UserCosmetic[]
   equippedCosmetics       EquippedCosmetic[]
   premiumEntitlements     PremiumEntitlement[]
+  creatorProfile          CreatorProfile?
+  creatorApplications     CreatorApplication[] @relation("CreatorApplicationApplicant")
+  creatorApplicationsReviewed CreatorApplication[] @relation("CreatorApplicationReviewer")
 
   conversationParticipations ConversationParticipant[]
   directMessages             DirectMessage[]
@@ -193,6 +196,95 @@ model NotificationPreference {
   browserEnabled Boolean          @default(true)
 
   @@unique([userId, category])
+}
+
+/// A creator is always an existing TFLives user. Public identity deliberately
+/// stays on User so avatar, display name and username cannot drift here.
+model CreatorProfile {
+  id            String            @id @default(cuid())
+  userId        String            @unique
+  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status        CreatorStatus     @default(ACTIVE)
+  category      CreatorCategory
+  headline      String?
+  description   String            @db.Text
+  featured      Boolean           @default(false)
+  featuredOrder Int?
+  acceptedAt    DateTime          @default(now())
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  platforms     CreatorPlatform[]
+
+  @@index([status, featured, featuredOrder])
+  @@index([status, category])
+}
+
+/// Applications are private program records. Only a pending application is
+/// active; the compound uniqueness also protects that invariant at the DB.
+model CreatorApplication {
+  id                String                   @id @default(cuid())
+  userId            String
+  user              User                     @relation("CreatorApplicationApplicant", fields: [userId], references: [id], onDelete: Cascade)
+  primaryPlatform   CreatorPlatformType
+  channelUrl        String                   @db.Text
+  category          CreatorCategory
+  description       String                   @db.Text
+  motivation        String                   @db.Text
+  activityFrequency String?
+  status            CreatorApplicationStatus @default(PENDING)
+  adminNote         String?                  @db.Text
+  rejectionMessage  String?                  @db.Text
+  reviewedById      String?
+  reviewedBy        User?                    @relation("CreatorApplicationReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt        DateTime?
+  createdAt         DateTime                 @default(now())
+  updatedAt         DateTime                 @updatedAt
+
+  @@index([userId, status])
+  @@index([status, createdAt])
+  @@index([reviewedById])
+}
+
+model CreatorPlatform {
+  id        String              @id @default(cuid())
+  creatorId String
+  creator   CreatorProfile      @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  type      CreatorPlatformType
+  url       String              @db.Text
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+
+  @@unique([creatorId, type])
+  @@index([creatorId])
+}
+
+enum CreatorStatus {
+  ACTIVE
+  PAUSED
+}
+
+enum CreatorCategory {
+  MINECRAFT
+  FORTNITE
+  ROBLOX
+  VARIETY
+  JUST_CHATTING
+  OTHER
+}
+
+enum CreatorPlatformType {
+  TWITCH
+  YOUTUBE
+  KICK
+  TIKTOK
+  FACEBOOK_GAMING
+  EXTERNAL
+}
+
+enum CreatorApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 enum FriendshipStatus {
@@ -822,6 +914,11 @@ enum NotificationType {
   TFL_COINS
   COSMETIC
   PREMIUM
+  CREATOR_APPLICATION
+  CREATOR_APPROVED
+  CREATOR_REJECTED
+  CREATOR_STATUS
+  CREATOR_FEATURED
 }
 
 enum SecurityEventType {

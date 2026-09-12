@@ -104,7 +104,7 @@ export default function SocialCard({
   coinBalance,
 }: {
   username: string;
-  coinBalance: number;
+  coinBalance?: number;
 }) {
   const t = useTranslations("ProfilePlaceholders");
   const locale = useLocale();
@@ -308,11 +308,11 @@ export default function SocialCard({
             icon={<Heart className="size-4 text-rose-500" aria-hidden="true" />}
             onClick={status?.isOwner ? () => setPeopleList("likes") : undefined}
           />
-          <Metric
+          {coinBalance !== undefined && <Metric
             label={t("tflCoins")}
             value={formatter.format(coinBalance)}
             icon={<Coins className="size-4 text-amber-500" aria-hidden="true" />}
-          />
+          />}
         </div>
 
         {error && <p role="alert" className="text-xs text-destructive">{error}</p>}

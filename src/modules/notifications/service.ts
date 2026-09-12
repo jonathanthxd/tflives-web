@@ -16,6 +16,11 @@ export const NOTIFICATION_CATEGORIES: NotificationType[] = [
   "TFL_COINS",
   "COSMETIC",
   "PREMIUM",
+  "CREATOR_APPLICATION",
+  "CREATOR_APPROVED",
+  "CREATOR_REJECTED",
+  "CREATOR_STATUS",
+  "CREATOR_FEATURED",
 ];
 
 interface CreateNotificationInput {

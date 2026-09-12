@@ -1,0 +1,37 @@
+"use client";
+
+import { useState } from "react";
+import { BadgeCheck, ExternalLink, Pause, Play, Star } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Link, useRouter } from "@/i18n/navigation";
+import { identityName } from "@/modules/profiles/types";
+import type { PublicCreator } from "@/modules/creators/service";
+
+interface Identity { id: string; username: string | null; displayName: string | null; name: string | null }
+interface Application { id: string; primaryPlatform: string; channelUrl: string; category: string; description: string; motivation: string; activityFrequency: string | null; status: "PENDING" | "APPROVED" | "REJECTED"; adminNote: string | null; rejectionMessage: string | null; createdAt: string; user: Identity }
+
+function Person({ user }: { user: Identity }) { return <>{identityName(user)} {user.username && <span className="font-mono text-xs text-primary">@{user.username}</span>}</>; }
+
+export default function CreatorAdminManager({ initialApplications, initialCreators }: { initialApplications: Application[]; initialCreators: (PublicCreator & { status?: "ACTIVE" | "PAUSED" })[] }) {
+  const t = useTranslations("Creators");
+  const router = useRouter();
+  const [busy, setBusy] = useState<string | null>(null);
+  const [notes, setNotes] = useState<Record<string, { adminNote: string; rejectionMessage: string }>>({});
+  const [error, setError] = useState("");
+  const pending = initialApplications.filter((application) => application.status === "PENDING");
+
+  async function request(key: string, path: string, body: unknown) {
+    setBusy(key); setError("");
+    try {
+      const response = await fetch(path, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      if (!response.ok) throw new Error();
+      router.refresh();
+    } catch { setError(t("error")); } finally { setBusy(null); }
+  }
+
+  return <div className="space-y-10">
+    {error && <p role="alert" className="rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">{error}</p>}
+    <section><h2 className="font-display text-xl font-bold text-foreground">{t("applications")}</h2><p className="mt-1 text-sm text-muted-foreground">{pending.length}</p>{pending.length === 0 ? <p className="mt-4 rounded-2xl border border-dashed border-border p-6 text-sm text-muted-foreground">{t("noApplications")}</p> : <div className="mt-4 grid gap-4">{pending.map((application) => { const note = notes[application.id] ?? { adminNote: "", rejectionMessage: "" }; return <article key={application.id} className="rounded-2xl border border-border bg-card p-5"><div className="flex flex-col justify-between gap-3 sm:flex-row"><div><h3 className="font-semibold text-foreground"><Person user={application.user} /></h3><p className="mt-1 text-xs text-muted-foreground">{t(`categoryLabels.${application.category}`)} · {t(`platformLabels.${application.primaryPlatform}`)}</p></div>{application.user.username && <Link href={`/perfil/${application.user.username}`} className="text-sm font-medium text-primary hover:underline">{t("viewProfile")}</Link>}</div><p className="mt-4 whitespace-pre-line text-sm text-muted-foreground">{application.description}</p><p className="mt-3 rounded-xl bg-muted/50 p-3 text-sm text-foreground"><span className="font-medium">{t("motivation")}: </span>{application.motivation}</p><a href={application.channelUrl} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"><ExternalLink className="size-3.5" aria-hidden="true" />{application.channelUrl}</a><div className="mt-4 grid gap-3 sm:grid-cols-2"><label className="text-xs font-medium text-muted-foreground">{t("adminNote")}<textarea value={note.adminNote} onChange={(event) => setNotes((current) => ({ ...current, [application.id]: { ...note, adminNote: event.target.value } }))} rows={2} className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground" /></label><label className="text-xs font-medium text-muted-foreground">{t("rejectionMessage")}<textarea value={note.rejectionMessage} onChange={(event) => setNotes((current) => ({ ...current, [application.id]: { ...note, rejectionMessage: event.target.value } }))} rows={2} className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground" /></label></div><div className="mt-4 flex flex-wrap gap-2"><button disabled={busy === application.id} onClick={() => request(application.id, `/api/admin/creators/applications/${application.id}`, { action: "approve", adminNote: note.adminNote })} className="inline-flex min-h-10 items-center gap-1 rounded-xl bg-primary px-3 text-sm font-semibold text-primary-foreground disabled:opacity-50"><BadgeCheck className="size-4" aria-hidden="true" />{t("approve")}</button><button disabled={busy === application.id || !note.rejectionMessage.trim()} onClick={() => request(application.id, `/api/admin/creators/applications/${application.id}`, { action: "reject", adminNote: note.adminNote, rejectionMessage: note.rejectionMessage })} className="min-h-10 rounded-xl border border-destructive/30 px-3 text-sm font-semibold text-destructive disabled:opacity-50">{t("reject")}</button></div></article>; })}</div>}</section>
+    <section><h2 className="font-display text-xl font-bold text-foreground">{t("activeCreators")}</h2>{initialCreators.length === 0 ? <p className="mt-4 rounded-2xl border border-dashed border-border p-6 text-sm text-muted-foreground">{t("noCreators")}</p> : <div className="mt-4 grid gap-4 md:grid-cols-2">{initialCreators.map((creator) => <article key={creator.id} className="rounded-2xl border border-border bg-card p-5"><div className="flex items-start justify-between gap-3"><div><h3 className="font-semibold text-foreground">{identityName(creator)}</h3><p className="mt-1 font-mono text-xs text-primary">@{creator.username}</p></div><span className="rounded-full border border-border px-2 py-1 text-xs text-muted-foreground">{t(`status.${creator.status ?? "ACTIVE"}`)}</span></div><p className="mt-3 text-sm text-muted-foreground">{t(`categoryLabels.${creator.category}`)}</p><div className="mt-4 flex flex-wrap gap-2">{creator.status === "PAUSED" ? <button disabled={busy === creator.id} onClick={() => request(creator.id, `/api/admin/creators/${creator.id}`, { action: "reactivate" })} className="inline-flex min-h-10 items-center gap-1 rounded-xl bg-primary px-3 text-sm font-semibold text-primary-foreground disabled:opacity-50"><Play className="size-3.5" aria-hidden="true" />{t("reactivate")}</button> : <button disabled={busy === creator.id} onClick={() => request(creator.id, `/api/admin/creators/${creator.id}`, { action: "pause" })} className="inline-flex min-h-10 items-center gap-1 rounded-xl border border-border px-3 text-sm font-semibold text-foreground disabled:opacity-50"><Pause className="size-3.5" aria-hidden="true" />{t("pause")}</button>}<button disabled={busy === creator.id} onClick={() => request(creator.id, `/api/admin/creators/${creator.id}`, { action: "update", featured: !creator.featured })} className="inline-flex min-h-10 items-center gap-1 rounded-xl border border-amber-500/25 px-3 text-sm font-semibold text-amber-700 dark:text-amber-300 disabled:opacity-50"><Star className={`size-3.5 ${creator.featured ? "fill-current" : ""}`} aria-hidden="true" />{creator.featured ? t("unfeature") : t("feature")}</button></div></article>)}</div>}</section>
+  </div>;
+}

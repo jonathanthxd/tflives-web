@@ -45,6 +45,7 @@ export const SECTION_ICONS: Record<AdminSection, LucideIcon> = {
   achievements: Trophy,
   wallet: Coins,
   cosmetics: Palette,
+  creators: Radio,
 };
 
 export const PLACEHOLDER_ICONS: Record<string, LucideIcon> = {

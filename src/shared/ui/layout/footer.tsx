@@ -3,18 +3,6 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
-function PlaceholderLink({ label }: { label: string }) {
-  return (
-    <a
-      href="#"
-      onClick={(e) => e.preventDefault()}
-      className="hover:text-primary transition-colors"
-    >
-      {label}
-    </a>
-  );
-}
-
 export default function Footer() {
   const t = useTranslations("Footer");
 
@@ -37,7 +25,9 @@ export default function Footer() {
             >
               {t("network")}
             </Link>
-            <PlaceholderLink label={t("streamers")} />
+            <Link href="/streamers" className="hover:text-primary transition-colors">
+              {t("streamers")}
+            </Link>
             <Link href="/comunidad" className="hover:text-primary">
               {t("comunidad")}
             </Link>

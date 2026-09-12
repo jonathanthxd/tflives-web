@@ -36,6 +36,7 @@ export interface PublicProfile extends PublicIdentity {
   progress: PublicProgress;
   coinBalance: number;
   cosmetics: SafeCosmeticVisual[];
+  creator: { category: string } | null;
 }
 
 export function identityName(identity: Pick<PublicIdentity, "displayName" | "name" | "username">) {

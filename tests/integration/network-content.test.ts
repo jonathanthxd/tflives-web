@@ -77,6 +77,12 @@ test(
         "utf8",
       ),
     );
+    await db.exec(
+      readFileSync(
+        "prisma/migrations/20260917000000_creator_ecosystem/migration.sql",
+        "utf8",
+      ),
+    );
     assert.equal((await db.query(`SELECT id FROM "Comment"`)).rows.length, 1);
     assert.equal((await db.query(`SELECT id FROM "Reaction"`)).rows.length, 1);
     const preserved = await db.query<{ slug: string; published: boolean }>(
@@ -273,6 +279,82 @@ test(
     await db.query(`UPDATE "User" SET role='ADMIN' WHERE id=$1`, [
       user.user.id,
     ]);
+    const creatorSignup = await request("/api/auth/sign-up/email", "POST", {
+      name: "Creator member",
+      email: "creator@example.test",
+      password: "test-password-12345",
+    });
+    assert.equal(creatorSignup.status, 200, await creatorSignup.clone().text());
+    const creatorCookie = creatorSignup.headers.getSetCookie().map((value) => value.split(";")[0]).join("; ");
+    assert.ok(creatorCookie);
+    response = await request("/api/profile", "PATCH", { username: "creator_member" }, creatorCookie);
+    assert.equal(response.status, 200, await response.clone().text());
+    response = await request("/api/creators/application", "POST", {
+      primaryPlatform: "TWITCH", channelUrl: "javascript:alert(1)", category: "MINECRAFT", description: "Creator description", motivation: "Private creator motivation",
+    }, creatorCookie);
+    assert.equal(response.status, 400, await response.clone().text());
+    response = await request("/api/creators/application", "POST", {
+      primaryPlatform: "TWITCH", channelUrl: "https://twitch.tv/creator_member", category: "MINECRAFT", description: "Creator description", motivation: "Private creator motivation", activityFrequency: "Three streams a week",
+    }, creatorCookie);
+    assert.equal(response.status, 201, await response.clone().text());
+    const creatorApplication = await response.json();
+    response = await request("/api/creators/application", "POST", {
+      primaryPlatform: "TWITCH", channelUrl: "https://twitch.tv/creator_member", category: "MINECRAFT", description: "Creator description", motivation: "Duplicate",
+    }, creatorCookie);
+    assert.equal(response.status, 409, await response.clone().text());
+    assert.equal((await (await request("/en/streamers")).text()).includes("creator_member"), false);
+    const moderatorSignup = await request("/api/auth/sign-up/email", "POST", {
+      name: "Creator moderator", email: "creator-mod@example.test", password: "test-password-12345",
+    });
+    assert.equal(moderatorSignup.status, 200, await moderatorSignup.clone().text());
+    const moderatorCookie = moderatorSignup.headers.getSetCookie().map((value) => value.split(";")[0]).join("; ");
+    const moderator = await moderatorSignup.json();
+    await db.query(`UPDATE "User" SET role='MOD' WHERE id=$1`, [moderator.user.id]);
+    response = await request(`/api/admin/creators/applications/${creatorApplication.application.id}`, "PATCH", { action: "approve" }, moderatorCookie);
+    assert.equal(response.status, 403, await response.clone().text());
+    response = await request(`/api/admin/creators/applications/${creatorApplication.application.id}`, "PATCH", { action: "approve", adminNote: "Internal review note" }, cookie);
+    assert.equal(response.status, 200, await response.clone().text());
+    const approval = await response.json();
+    assert.ok(approval.creatorId);
+    const creatorsHtml = await (await request("/en/streamers")).text();
+    assert.ok(creatorsHtml.includes("creator_member"));
+    assert.equal(creatorsHtml.includes("Private creator motivation"), false);
+    const creatorDetail = await (await request("/en/streamers/creator_member")).text();
+    assert.ok(creatorDetail.includes("Creator member"));
+    assert.equal(creatorDetail.includes("Internal review note"), false);
+    response = await request("/api/creators/profile", "PATCH", { headline: "Live with TFLives", description: "Creator description", platforms: [{ type: "TWITCH", url: "https://twitch.tv/creator_member" }] }, creatorCookie);
+    assert.equal(response.status, 200, await response.clone().text());
+    response = await request("/api/creators/profile", "PATCH", { userId: user.user.id, headline: "Unauthorized" }, moderatorCookie);
+    assert.equal(response.status, 400, await response.clone().text());
+    response = await request("/api/social/follow", "POST", { username: "creator_member" }, cookie);
+    assert.equal(response.status, 201, await response.clone().text());
+    response = await request("/api/profile/like", "POST", { username: "creator_member" }, cookie);
+    assert.equal(response.status, 200, await response.clone().text());
+    response = await request(`/api/admin/creators/${approval.creatorId}`, "PATCH", { action: "pause" }, cookie);
+    assert.equal(response.status, 200, await response.clone().text());
+    assert.equal((await (await request("/en/streamers")).text()).includes("creator_member"), false);
+    response = await request(`/api/admin/creators/${approval.creatorId}`, "PATCH", { action: "reactivate" }, cookie);
+    assert.equal(response.status, 200, await response.clone().text());
+    response = await request(`/api/admin/creators/${approval.creatorId}`, "PATCH", { action: "update", featured: true }, cookie);
+    assert.equal(response.status, 200, await response.clone().text());
+    const rejectedSignup = await request("/api/auth/sign-up/email", "POST", {
+      name: "Rejected creator", email: "rejected@example.test", password: "test-password-12345",
+    });
+    assert.equal(rejectedSignup.status, 200, await rejectedSignup.clone().text());
+    const rejectedCookie = rejectedSignup.headers.getSetCookie().map((value) => value.split(";")[0]).join("; ");
+    response = await request("/api/profile", "PATCH", { username: "rejected_creator" }, rejectedCookie);
+    assert.equal(response.status, 200, await response.clone().text());
+    response = await request("/api/creators/application", "POST", { primaryPlatform: "YOUTUBE", channelUrl: "https://youtube.com/@rejected_creator", category: "OTHER", description: "Rejected description", motivation: "Private rejected motivation" }, rejectedCookie);
+    assert.equal(response.status, 201, await response.clone().text());
+    const rejectedApplication = await response.json();
+    response = await request(`/api/admin/creators/applications/${rejectedApplication.application.id}`, "PATCH", { action: "reject", adminNote: "Private administrative note", rejectionMessage: "Please apply again when your channel is ready." }, cookie);
+    assert.equal(response.status, 200, await response.clone().text());
+    response = await request("/api/creators/application", "GET", undefined, rejectedCookie);
+    assert.equal(response.status, 200, await response.clone().text());
+    const rejectedOwnApplication = await response.json();
+    assert.equal("adminNote" in rejectedOwnApplication.application, false);
+    assert.equal((await (await request("/en/streamers")).text()).includes("rejected_creator"), false);
+    assert.ok((await db.query(`SELECT count(*)::int AS count FROM "AdminActionLog" WHERE action LIKE 'creator.%'`)).rows[0]?.count);
     response = await request("/api/admin/wallet?query=profile_member", "GET", undefined, cookie);
     assert.equal(response.status, 200, await response.clone().text());
     assert.ok((await response.json()).users.some((entry: { id: string }) => entry.id === user.user.id));

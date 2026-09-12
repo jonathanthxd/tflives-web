@@ -32,6 +32,14 @@ export function getNotificationHref(n: NotificationLike): string | null {
       return "/cosmeticos";
     case "PREMIUM":
       return "/cosmeticos";
+    case "CREATOR_APPLICATION":
+      return "/streamers/apply";
+    case "CREATOR_APPROVED":
+    case "CREATOR_STATUS":
+    case "CREATOR_FEATURED":
+      return n.entityId ? "/streamers/apply" : "/streamers";
+    case "CREATOR_REJECTED":
+      return "/streamers/apply";
     default:
       return null;
   }

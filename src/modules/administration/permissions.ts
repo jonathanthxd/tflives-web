@@ -20,6 +20,7 @@ export const ADMIN_SECTIONS = [
   "achievements",
   "wallet",
   "cosmetics",
+  "creators",
 ] as const;
 
 export type AdminSection = (typeof ADMIN_SECTIONS)[number];
@@ -45,6 +46,7 @@ export const SECTION_ACCESS: Record<AdminSection, Role[]> = {
   achievements: ["ADMIN"],
   wallet: ["ADMIN"],
   cosmetics: ["ADMIN"],
+  creators: ["ADMIN"],
 };
 
 export function canAccessSection(role: Role, section: AdminSection): boolean {
@@ -187,12 +189,18 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
     title: "Otros",
     items: [
       {
+        section: "creators",
+        href: "/admin/creators",
+        label: "Creadores",
+        description: "Solicitudes y perfiles de creadores",
+      },
+      {
         section: "announcements",
         href: "/admin/announcements",
         label: "Anuncios globales",
         description: "Notificaciones segmentadas a toda la comunidad",
       },
     ],
-    placeholders: [{ label: "Streamers y clientes", iconKey: "streamers" }],
+    placeholders: [{ label: "Clientes", iconKey: "streamers" }],
   },
 ];

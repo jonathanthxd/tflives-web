@@ -21,24 +21,6 @@ const MINIMAL_HEADER_ROUTES = [
   "/verify-email",
 ];
 
-function NavPlaceholderLink({
-  label,
-  className = "",
-}: {
-  label: string;
-  className?: string;
-}) {
-  return (
-    <a
-      href="#"
-      onClick={(e) => e.preventDefault()}
-      className={`relative text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-300 tracking-wide py-1 after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-primary/70 after:transition-all after:duration-300 hover:after:w-full whitespace-nowrap ${className}`}
-    >
-      {label}
-    </a>
-  );
-}
-
 export default function Navbar() {
   const t = useTranslations("Navbar");
   const tUser = useTranslations("UserMenu");
@@ -147,10 +129,12 @@ export default function Navbar() {
 
           {/* Center: Logo + Links (centrado absoluto) */}
           <div className="flex items-center gap-3 sm:gap-5 md:gap-7 flex-shrink-0">
-            <NavPlaceholderLink
-              label={t("streamers")}
-              className="hidden lg:inline-flex"
-            />
+            <Link
+              href="/streamers"
+              className="hidden lg:inline-flex text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-300 tracking-wide py-1"
+            >
+              {t("streamers")}
+            </Link>
             <Link
               href="/comunidad"
               className="hidden md:inline-flex text-sm text-muted-foreground hover:text-primary"
@@ -331,13 +315,13 @@ export default function Navbar() {
             >
               {t("network")}
             </Link>
-            <a
-              href="#"
-              onClick={(e) => e.preventDefault()}
+            <Link
+              href="/streamers"
+              onClick={() => setMobileOpen(false)}
               className="block py-2 text-muted-foreground hover:text-primary transition-colors"
             >
               {t("streamers")}
-            </a>
+            </Link>
             <Link
               href="/comunidad"
               onClick={() => setMobileOpen(false)}

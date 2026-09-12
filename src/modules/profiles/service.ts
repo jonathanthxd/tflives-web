@@ -29,6 +29,7 @@ export const publicProfileSelect = {
   wallet: { select: { balance: true } },
   equippedCosmetics: { select: { type: true, cosmetic: { select: { visualPreset: true, premiumOnly: true } } } },
   premiumEntitlements: { select: { startsAt: true, expiresAt: true, revokedAt: true } },
+  creatorProfile: { select: { status: true, category: true } },
   _count: { select: { progressionAchievements: true } },
 } satisfies Prisma.UserSelect;
 
@@ -61,5 +62,8 @@ export function toPublicProfile(user: ProfileRecord): PublicProfile {
       .filter((equipped) => !equipped.cosmetic.premiumOnly || user.premiumEntitlements.some((entitlement) => isEntitlementActive(entitlement)))
       .map((equipped) => toSafeCosmeticVisual({ type: equipped.type, visualPreset: equipped.cosmetic.visualPreset }))
       .filter((cosmetic): cosmetic is NonNullable<typeof cosmetic> => cosmetic !== null),
+    creator: user.creatorProfile?.status === "ACTIVE"
+      ? { category: user.creatorProfile.category }
+      : null,
   };
 }

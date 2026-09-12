@@ -1,7 +1,7 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- public profile media may be an OAuth image or local asset route. */
 
-import { CalendarDays, ExternalLink, Gamepad2, Pencil, ShieldAlert, ShieldCheck } from "lucide-react";
+import { BadgeCheck, CalendarDays, ExternalLink, Gamepad2, Pencil, ShieldAlert, ShieldCheck } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import AchievementsCard from "@/modules/achievements/components/achievements-card";
@@ -35,6 +35,7 @@ export default function ProfileView({
   isOwner: boolean;
 }) {
   const t = useTranslations("Profile");
+  const tc = useTranslations("Creators");
   const locale = useLocale();
 
   if (!profile) {
@@ -99,6 +100,12 @@ export default function ProfileView({
                       {role}
                     </span>
                   )}
+                  {profile.creator && (
+                    <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-xs font-semibold text-amber-700 dark:text-amber-300">
+                      <BadgeCheck className="size-3.5" aria-hidden="true" />
+                      {tc("creatorBadge")}
+                    </span>
+                  )}
                 </div>
                 {profile.username && <p className="mt-1 font-mono text-sm text-primary/85">@{profile.username}</p>}
               </div>
@@ -113,7 +120,13 @@ export default function ProfileView({
               )}
             </div>
 
-            {profile.username && <SocialCard username={profile.username} coinBalance={profile.coinBalance} />}
+                {profile.username && <SocialCard username={profile.username} coinBalance={profile.coinBalance} />}
+                {profile.creator && profile.username && (
+                  <Link href={`/streamers/${profile.username}`} className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline">
+                    <BadgeCheck className="size-4" aria-hidden="true" />
+                    {tc("viewCreator")} · {tc(`categoryLabels.${profile.creator.category}`)}
+                  </Link>
+                )}
           </div>
         </section>
 
