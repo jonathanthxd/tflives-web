@@ -112,7 +112,14 @@
       "RECOVERY_CODES_REGENERATED": "Códigos de recuperación regenerados",
       "AUTH_RATE_LIMITED": "Intentos de acceso limitados"
     },
-    "providerLinked": "{provider} se vinculó correctamente a tu cuenta."
+    "providerLinked": "{provider} se vinculó correctamente a tu cuenta.",
+    "twoFactorInvalidPassword": "La contraseña actual no es correcta. Revísala e inténtalo de nuevo.",
+    "twoFactorAlreadyEnabled": "La autenticación en dos pasos ya está configurada. Recarga esta sección para ver su estado actual.",
+    "twoFactorUnavailable": "El autenticador TOTP no está disponible en este momento. Inténtalo nuevamente más tarde.",
+    "twoFactorNotEnabled": "La autenticación en dos pasos todavía no está activa en esta cuenta.",
+    "twoFactorLocked": "Demasiados intentos fallidos. Por seguridad, espera unos minutos antes de volver a intentarlo.",
+    "twoFactorRateLimited": "Has realizado demasiados intentos seguidos. Espera un momento y vuelve a intentarlo.",
+    "twoFactorUnexpectedResponse": "El servidor no devolvió los datos necesarios para configurar el autenticador. Vuelve a intentarlo."
   },
   "TwoFactorChallenge": {
     "title": "Verificá tu identidad",

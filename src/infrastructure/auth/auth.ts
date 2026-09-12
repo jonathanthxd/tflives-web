@@ -149,6 +149,11 @@ export const auth = betterAuth({
   plugins: [
     twoFactor({
       issuer: "TFLives",
+      // OAuth-only accounts have no credential password to re-enter. Better Auth
+      // still requires the current password whenever a credential account exists,
+      // so this only enables the official passwordless-management path for users
+      // whose account is actually Google/Discord-only.
+      allowPasswordless: true,
       accountLockout: { enabled: true, maxFailedAttempts: 10, durationSeconds: 15 * 60 },
     }),
     securityEventPlugin,

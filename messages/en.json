@@ -112,7 +112,14 @@
       "RECOVERY_CODES_REGENERATED": "Recovery codes regenerated",
       "AUTH_RATE_LIMITED": "Sign-in attempts limited"
     },
-    "providerLinked": "{provider} was linked to your account."
+    "providerLinked": "{provider} was linked to your account.",
+    "twoFactorInvalidPassword": "Your current password is incorrect. Check it and try again.",
+    "twoFactorAlreadyEnabled": "Two-factor authentication is already configured. Reload this section to see its current status.",
+    "twoFactorUnavailable": "TOTP authentication is currently unavailable. Please try again later.",
+    "twoFactorNotEnabled": "Two-factor authentication is not active on this account yet.",
+    "twoFactorLocked": "Too many failed attempts. For security, wait a few minutes before trying again.",
+    "twoFactorRateLimited": "You have made too many attempts in a short time. Wait a moment and try again.",
+    "twoFactorUnexpectedResponse": "The server did not return the data required to configure the authenticator. Please try again."
   },
   "TwoFactorChallenge": {
     "title": "Verify your identity",

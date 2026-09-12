@@ -25,6 +25,21 @@ type SecurityData = {
 };
 type ConfirmAction = { kind: "revoke-session"; sessionId: string } | { kind: "revoke-others" } | { kind: "unlink"; accountId: string } | null;
 
+function authErrorCode(error: unknown) {
+  if (!error || typeof error !== "object") return "";
+  const candidate = error as { code?: unknown; message?: unknown; statusText?: unknown };
+  const raw =
+    typeof candidate.code === "string"
+      ? candidate.code
+      : typeof candidate.message === "string"
+        ? candidate.message
+        : typeof candidate.statusText === "string"
+          ? candidate.statusText
+          : "";
+
+  return raw.trim().toUpperCase().replace(/[^A-Z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+}
+
 const PROVIDERS: Provider[] = ["google", "discord"];
 
 export function SecuritySettings() {
@@ -90,6 +105,26 @@ export function SecuritySettings() {
     setNotice(message);
   };
 
+  const twoFactorErrorMessage = (authError: unknown, fallback: string) => {
+    const code = authErrorCode(authError);
+
+    if (code.includes("INVALID_PASSWORD")) return t("twoFactorInvalidPassword");
+    if (code.includes("TOTP_ALREADY_ENABLED")) return t("twoFactorAlreadyEnabled");
+    if (code.includes("TOTP_NOT_CONFIGURED")) return t("twoFactorUnavailable");
+    if (code.includes("TWO_FACTOR_NOT_ENABLED")) return t("twoFactorNotEnabled");
+    if (code.includes("ACCOUNT_TEMPORARILY_LOCKED") || code.includes("TOO_MANY_ATTEMPTS")) {
+      return t("twoFactorLocked");
+    }
+    if (code.includes("TOO_MANY_REQUESTS") || code.includes("RATE_LIMIT")) {
+      return t("twoFactorRateLimited");
+    }
+    if (code.includes("UNAUTHORIZED") || code.includes("SESSION")) return t("sessionRefreshRequired");
+
+    // Better Auth error codes are safe to expose and make support actionable;
+    // credentials, tokens and provider secrets are never included here.
+    return code ? `${fallback} (${code})` : fallback;
+  };
+
   async function linkProvider(provider: Provider) {
     setBusy(`link-${provider}`);
     setError("");
@@ -152,20 +187,36 @@ export function SecuritySettings() {
     }
     setBusy("two-factor-enable");
     setError("");
-    const { data: setup, error: setupError } = await authClient.twoFactor.enable({
-      method: "totp",
-      issuer: "TFLives",
-      ...(data?.hasPassword ? { password: twoFactorPassword } : {}),
-    });
-    setBusy(null);
-    if (setupError || !setup || setup.method !== "totp") {
-      setError(t("twoFactorSetupFailed"));
-      return;
+    try {
+      const { data: setup, error: setupError } = await authClient.twoFactor.enable({
+        method: "totp",
+        issuer: "TFLives",
+        ...(data?.hasPassword ? { password: twoFactorPassword } : {}),
+      });
+
+      if (setupError || !setup) {
+        setError(twoFactorErrorMessage(setupError, t("twoFactorSetupFailed")));
+        return;
+      }
+      if (setup.method !== "totp" || !setup.totpURI || !setup.backupCodes) {
+        setError(t("twoFactorUnexpectedResponse"));
+        return;
+      }
+
+      const generatedQr = await QRCode.toDataURL(setup.totpURI, {
+        width: 192,
+        margin: 1,
+        errorCorrectionLevel: "M",
+      });
+      setTotpUri(setup.totpURI);
+      setBackupCodes(setup.backupCodes);
+      setQrCode(generatedQr);
+      setTwoFactorPassword("");
+    } catch (setupException) {
+      setError(twoFactorErrorMessage(setupException, t("twoFactorSetupFailed")));
+    } finally {
+      setBusy(null);
     }
-    setTotpUri(setup.totpURI);
-    setBackupCodes(setup.backupCodes);
-    setQrCode(await QRCode.toDataURL(setup.totpURI, { width: 192, margin: 1, errorCorrectionLevel: "M" }));
-    setTwoFactorPassword("");
   }
 
   async function verifyTwoFactor(event: FormEvent<HTMLFormElement>) {
@@ -175,7 +226,7 @@ export function SecuritySettings() {
     const { error: verifyError } = await authClient.twoFactor.verifyTotp({ code: twoFactorCode });
     setBusy(null);
     if (verifyError) {
-      setError(t("twoFactorVerifyFailed"));
+      setError(twoFactorErrorMessage(verifyError, t("twoFactorVerifyFailed")));
       return;
     }
     setTwoFactorCode("");
@@ -193,7 +244,9 @@ export function SecuritySettings() {
       data?.hasPassword ? { password: twoFactorPassword } : {}
     );
     setBusy(null);
-    if (generationError || !generated) setError(t("twoFactorSetupFailed"));
+    if (generationError || !generated) {
+      setError(twoFactorErrorMessage(generationError, t("twoFactorSetupFailed")));
+    }
     else {
       setBackupCodes(generated.backupCodes);
       setTwoFactorPassword("");
@@ -247,7 +300,7 @@ export function SecuritySettings() {
       data?.hasPassword ? { password: twoFactorPassword } : {}
     );
     setBusy(null);
-    if (disableError) setError(t("twoFactorSetupFailed"));
+    if (disableError) setError(twoFactorErrorMessage(disableError, t("twoFactorSetupFailed")));
     else {
       setTwoFactorPassword("");
       setTotpUri(null);
