@@ -6,6 +6,8 @@ import {
   type PublicProfile,
 } from "@/modules/profiles/types";
 import { getProgressSummary } from "@/modules/progression/level";
+import { toSafeCosmeticVisual } from "@/modules/cosmetics/visuals";
+import { isEntitlementActive } from "@/modules/cosmetics/service";
 
 export const publicIdentitySelect = {
   id: true,
@@ -25,6 +27,8 @@ export const publicProfileSelect = {
   createdAt: true,
   progress: { select: { xp: true, level: true } },
   wallet: { select: { balance: true } },
+  equippedCosmetics: { select: { type: true, cosmetic: { select: { visualPreset: true, premiumOnly: true } } } },
+  premiumEntitlements: { select: { startsAt: true, expiresAt: true, revokedAt: true } },
   _count: { select: { progressionAchievements: true } },
 } satisfies Prisma.UserSelect;
 
@@ -53,5 +57,9 @@ export function toPublicProfile(user: ProfileRecord): PublicProfile {
     createdAt: user.createdAt.toISOString(),
     progress: getProgressSummary(user.progress, user._count.progressionAchievements),
     coinBalance: user.wallet?.balance ?? 0,
+    cosmetics: user.equippedCosmetics
+      .filter((equipped) => !equipped.cosmetic.premiumOnly || user.premiumEntitlements.some((entitlement) => isEntitlementActive(entitlement)))
+      .map((equipped) => toSafeCosmeticVisual({ type: equipped.type, visualPreset: equipped.cosmetic.visualPreset }))
+      .filter((cosmetic): cosmetic is NonNullable<typeof cosmetic> => cosmetic !== null),
   };
 }

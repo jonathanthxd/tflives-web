@@ -44,6 +44,7 @@ export const SECTION_ICONS: Record<AdminSection, LucideIcon> = {
   team: UsersRound,
   achievements: Trophy,
   wallet: Coins,
+  cosmetics: Palette,
 };
 
 export const PLACEHOLDER_ICONS: Record<string, LucideIcon> = {

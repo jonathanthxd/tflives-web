@@ -1,0 +1,30 @@
+import { NextResponse } from "next/server";
+import { getCurrentAuthUser } from "@/infrastructure/auth/server";
+import { CosmeticError, equipCosmetic, unequipCosmetic } from "@/modules/cosmetics/service";
+
+export async function POST(request: Request) {
+  const authUser = await getCurrentAuthUser();
+  if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+  try {
+    const body = await request.json().catch(() => ({}));
+    const cosmeticId = typeof body.cosmeticId === "string" ? body.cosmeticId : "";
+    return NextResponse.json(await equipCosmetic(authUser.id, cosmeticId));
+  } catch (error) {
+    if (error instanceof CosmeticError) return NextResponse.json({ error: error.message }, { status: error.status });
+    console.error(error);
+    return NextResponse.json({ error: "No se pudo equipar el cosmético" }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  const authUser = await getCurrentAuthUser();
+  if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+  try {
+    const body = await request.json().catch(() => ({}));
+    return NextResponse.json(await unequipCosmetic(authUser.id, body.type));
+  } catch (error) {
+    if (error instanceof CosmeticError) return NextResponse.json({ error: error.message }, { status: error.status });
+    console.error(error);
+    return NextResponse.json({ error: "No se pudo desequipar el cosmético" }, { status: 500 });
+  }
+}

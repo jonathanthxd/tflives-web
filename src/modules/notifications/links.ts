@@ -28,6 +28,10 @@ export function getNotificationHref(n: NotificationLike): string | null {
       return "/mensajes";
     case "TFL_COINS":
       return "/configuracion#wallet";
+    case "COSMETIC":
+      return "/cosmeticos";
+    case "PREMIUM":
+      return "/cosmeticos";
     default:
       return null;
   }

@@ -190,6 +190,12 @@ export default function Navbar() {
               {t("tienda")}
             </Link>
             <Link
+              href="/cosmeticos"
+              className="hidden lg:inline-flex text-sm text-muted-foreground hover:text-primary"
+            >
+              {t("cosmeticos")}
+            </Link>
+            <Link
               href="/equipo"
               className="hidden lg:inline-flex text-sm text-muted-foreground hover:text-primary"
             >
@@ -352,6 +358,13 @@ export default function Navbar() {
               className="block py-2 text-muted-foreground hover:text-primary"
             >
               {t("tienda")}
+            </Link>
+            <Link
+              href="/cosmeticos"
+              onClick={() => setMobileOpen(false)}
+              className="block py-2 text-muted-foreground hover:text-primary"
+            >
+              {t("cosmeticos")}
             </Link>
             <Link
               href="/equipo"

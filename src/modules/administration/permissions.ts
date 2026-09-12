@@ -19,6 +19,7 @@ export const ADMIN_SECTIONS = [
   "team",
   "achievements",
   "wallet",
+  "cosmetics",
 ] as const;
 
 export type AdminSection = (typeof ADMIN_SECTIONS)[number];
@@ -43,6 +44,7 @@ export const SECTION_ACCESS: Record<AdminSection, Role[]> = {
   team: ["ADMIN"],
   achievements: ["ADMIN"],
   wallet: ["ADMIN"],
+  cosmetics: ["ADMIN"],
 };
 
 export function canAccessSection(role: Role, section: AdminSection): boolean {
@@ -170,9 +172,14 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
         label: "TFL Coins",
         description: "Wallets y ajustes auditables",
       },
+      {
+        section: "cosmetics",
+        href: "/admin/cosmeticos",
+        label: "Cosméticos y Premium",
+        description: "Catálogo visual y entitlements sin pagos",
+      },
     ],
     placeholders: [
-      { label: "Cosméticos", iconKey: "cosmetics" },
       { label: "Suscripciones", iconKey: "subscriptions" },
     ],
   },

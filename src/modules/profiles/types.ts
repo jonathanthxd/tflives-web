@@ -1,4 +1,5 @@
 import type { PublicProgress } from "@/modules/progression/level";
+import type { SafeCosmeticVisual } from "@/modules/cosmetics/visuals";
 
 export const SOCIAL_PLATFORMS = [
   "website",
@@ -34,6 +35,7 @@ export interface PublicProfile extends PublicIdentity {
   createdAt: string;
   progress: PublicProgress;
   coinBalance: number;
+  cosmetics: SafeCosmeticVisual[];
 }
 
 export function identityName(identity: Pick<PublicIdentity, "displayName" | "name" | "username">) {

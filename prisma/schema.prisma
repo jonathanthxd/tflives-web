@@ -44,6 +44,9 @@ model User {
   notifications           Notification[]
   notificationPreferences NotificationPreference[]
   wallet                  Wallet?
+  cosmetics               UserCosmetic[]
+  equippedCosmetics       EquippedCosmetic[]
+  premiumEntitlements     PremiumEntitlement[]
 
   conversationParticipations ConversationParticipant[]
   directMessages             DirectMessage[]
@@ -647,6 +650,113 @@ enum WalletTransactionSource {
   FUTURE
 }
 
+/// A small, curated visual catalogue. `visualPreset` is an enum rather than
+/// free-form CSS/HTML so admin-managed cosmetics remain safe to render.
+model Cosmetic {
+  id           String               @id @default(cuid())
+  slug         String               @unique
+  type         CosmeticType
+  rarity       CosmeticRarity
+  name         String
+  description  String               @db.Text
+  nameEn       String               @map("name_en")
+  descriptionEn String               @db.Text @map("description_en")
+  price        Int
+  premiumOnly  Boolean              @default(false)
+  active       Boolean              @default(true)
+  visualPreset CosmeticVisualPreset
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  owners       UserCosmetic[]
+  equippedBy   EquippedCosmetic[]
+
+  @@index([active, type, rarity])
+}
+
+model UserCosmetic {
+  userId     String                  @map("user_id")
+  user       User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cosmeticId String                  @map("cosmetic_id")
+  cosmetic   Cosmetic                @relation(fields: [cosmeticId], references: [id], onDelete: Cascade)
+  source     CosmeticAcquisitionSource @default(PURCHASE)
+  acquiredAt DateTime                @default(now()) @map("acquired_at")
+
+  @@id([userId, cosmeticId])
+  @@index([userId, acquiredAt])
+}
+
+/// The composite primary key makes one equipped cosmetic per visual type a
+/// database invariant. Ownership is always validated by the service.
+model EquippedCosmetic {
+  userId     String       @map("user_id")
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type       CosmeticType
+  cosmeticId String       @map("cosmetic_id")
+  cosmetic   Cosmetic     @relation(fields: [cosmeticId], references: [id], onDelete: Cascade)
+  updatedAt  DateTime     @updatedAt @map("updated_at")
+
+  @@id([userId, type])
+  @@index([cosmeticId])
+}
+
+/// Premium is an entitlement only. It has no relation to User.role and never
+/// confers staff or moderation capabilities.
+model PremiumEntitlement {
+  id        String                   @id @default(cuid())
+  userId    String                   @map("user_id")
+  user      User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tier      PremiumTier              @default(PREMIUM)
+  startsAt  DateTime                 @default(now()) @map("starts_at")
+  expiresAt DateTime?                @map("expires_at")
+  revokedAt DateTime?                @map("revoked_at")
+  source    PremiumEntitlementSource @default(ADMIN)
+  reason    String?                  @db.Text
+  createdAt DateTime                 @default(now()) @map("created_at")
+
+  @@index([userId, tier, startsAt, expiresAt, revokedAt])
+}
+
+enum CosmeticType {
+  AVATAR_FRAME
+  PROFILE_ACCENT
+  PROFILE_BADGE
+  NAMEPLATE
+  BANNER_STYLE
+}
+
+enum CosmeticRarity {
+  COMMON
+  RARE
+  EPIC
+  LEGENDARY
+}
+
+enum CosmeticVisualPreset {
+  BRONZE_FRAME
+  PRISM_FRAME
+  AURORA_ACCENT
+  AMBER_ACCENT
+  STAR_BADGE
+  CROWN_BADGE
+  VIOLET_NAMEPLATE
+  SUNSET_BANNER
+}
+
+enum CosmeticAcquisitionSource {
+  PURCHASE
+  ADMIN_GRANT
+  FUTURE
+}
+
+enum PremiumTier {
+  PREMIUM
+}
+
+enum PremiumEntitlementSource {
+  ADMIN
+  FUTURE
+}
+
 /// Server-managed community progression. `level` is persisted as a read
 /// optimization and is always derived from `xp` by the progression service.
 model UserProgress {
@@ -710,6 +820,8 @@ enum NotificationType {
   SECURITY_ALERT
   LEVEL_UP
   TFL_COINS
+  COSMETIC
+  PREMIUM
 }
 
 enum SecurityEventType {

@@ -71,6 +71,12 @@ test(
         "utf8",
       ),
     );
+    await db.exec(
+      readFileSync(
+        "prisma/migrations/20260916000000_cosmetics_premium/migration.sql",
+        "utf8",
+      ),
+    );
     assert.equal((await db.query(`SELECT id FROM "Comment"`)).rows.length, 1);
     assert.equal((await db.query(`SELECT id FROM "Reaction"`)).rows.length, 1);
     const preserved = await db.query<{ slug: string; published: boolean }>(

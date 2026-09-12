@@ -14,6 +14,8 @@ export const NOTIFICATION_CATEGORIES: NotificationType[] = [
   "SECURITY_ALERT",
   "LEVEL_UP",
   "TFL_COINS",
+  "COSMETIC",
+  "PREMIUM",
 ];
 
 interface CreateNotificationInput {
