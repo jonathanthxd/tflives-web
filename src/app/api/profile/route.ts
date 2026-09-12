@@ -5,7 +5,8 @@ import { prisma } from "@/infrastructure/database/prisma";
 import { usernameSchema } from "@/modules/authentication/validation";
 import { publicProfileSelect, toPublicProfile } from "@/modules/profiles/service";
 import { profileUpdateSchema } from "@/modules/profiles/validation";
-import { awardProfileCompletion, isProfileComplete } from "@/modules/progression/service";
+import { awardProfileCompletion } from "@/modules/progression/service";
+import { isProfileComplete } from "@/modules/profiles/completion";
 
 const USERNAME_COOLDOWN_MS = 30 * 24 * 60 * 60 * 1000;
 

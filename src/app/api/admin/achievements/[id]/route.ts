@@ -17,6 +17,9 @@ export async function PATCH(
       iconKey: typeof body.iconKey === "string" ? body.iconKey : undefined,
       order: typeof body.order === "number" ? body.order : undefined,
       active: typeof body.active === "boolean" ? body.active : undefined,
+      unlockMode: body.unlockMode === "AUTOMATIC" || body.unlockMode === "MANUAL" ? body.unlockMode : undefined,
+      trigger: typeof body.trigger === "string" || body.trigger === null ? body.trigger : undefined,
+      triggerValue: typeof body.triggerValue === "number" || body.triggerValue === null ? body.triggerValue : undefined,
     });
     return NextResponse.json({ achievement }, { status: 200 });
   } catch (error) {

@@ -7,6 +7,7 @@ import {
 import { Link } from "@/i18n/navigation";
 import { panel } from "./public-content";
 import CopyIp from "./copy-ip";
+import { formatUserDateTime } from "@/shared/lib/date-time";
 export async function NetworkStatusPanel() {
   const [status, t, locale] = await Promise.all([
     getMinecraftStatus(),
@@ -47,9 +48,7 @@ export async function NetworkStatusPanel() {
           ["version", status.version ?? t("unavailable")],
           [
             "updated",
-            new Date(status.checkedAt).toLocaleString(locale, {
-              timeZone: "UTC",
-            }) + " UTC",
+            formatUserDateTime(status.checkedAt, locale, "UTC") + " UTC",
           ],
           ["duration", `${status.queryDurationMs} ms`],
         ].map(([key, value]) => (

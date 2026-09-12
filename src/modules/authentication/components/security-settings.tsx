@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { useLocale, useTranslations } from "next-intl";
 import { authClient } from "@/infrastructure/auth/client";
@@ -9,6 +9,7 @@ import { Card } from "@/shared/ui/card";
 import ConfirmDialog from "@/shared/ui/confirm-dialog";
 import { FormField } from "@/shared/ui/form-field";
 import { Input } from "@/shared/ui/input";
+import { formatUserDateTime } from "@/shared/lib/date-time";
 
 type Provider = "google" | "discord";
 type Account = { id: string; providerId: string; createdAt: string };
@@ -59,11 +60,6 @@ export function SecuritySettings() {
   const [totpUri, setTotpUri] = useState<string | null>(null);
   const [qrCode, setQrCode] = useState<string | null>(null);
   const [backupCodes, setBackupCodes] = useState<string[]>([]);
-
-  const formatter = useMemo(
-    () => new Intl.DateTimeFormat(locale === "es" ? "es-CO" : "en-US", { dateStyle: "medium", timeStyle: "short" }),
-    [locale]
-  );
 
   const load = async () => {
     setLoading(true);
@@ -369,9 +365,9 @@ export function SecuritySettings() {
         {backupCodes.length > 0 && <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4"><p className="text-sm font-medium">{t("saveCodes")}</p><p className="mt-1 text-xs text-muted-foreground">{t("codesShownOnce")}</p><div className="mt-3 grid grid-cols-2 gap-2 font-mono text-xs sm:grid-cols-3">{backupCodes.map((code) => <code key={code} className="rounded bg-background px-2 py-1.5">{code}</code>)}</div></div>}
       </Card>
 
-      <Card className="p-6"><div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div><h3 className="font-display text-sm font-semibold uppercase tracking-wide">{t("sessions")}</h3><p className="mt-1 text-sm text-muted-foreground">{t("sessionsHint")}</p></div><Button variant="outline" size="sm" disabled={busy === "revoke-others"} onClick={() => setConfirm({ kind: "revoke-others" })}>{t("revokeOtherSessions")}</Button></div><div className="mt-4 divide-y divide-border">{data.sessions.map((session) => <div key={session.id} className="flex flex-col gap-3 py-4 first:pt-0 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-sm font-medium">{session.device || t("unknownDevice")} {session.current && <span className="ml-2 text-xs text-primary">{t("currentSession")}</span>}</p><p className="text-xs text-muted-foreground">{t("createdAt", { date: formatter.format(new Date(session.createdAt)) })}</p></div><Button variant="outline" size="sm" disabled={busy === "revoke-session"} onClick={() => setConfirm({ kind: "revoke-session", sessionId: session.id })}>{session.current ? t("signOut") : t("revoke")}</Button></div>)}</div></Card>
+      <Card className="p-6"><div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div><h3 className="font-display text-sm font-semibold uppercase tracking-wide">{t("sessions")}</h3><p className="mt-1 text-sm text-muted-foreground">{t("sessionsHint")}</p></div><Button variant="outline" size="sm" disabled={busy === "revoke-others"} onClick={() => setConfirm({ kind: "revoke-others" })}>{t("revokeOtherSessions")}</Button></div><div className="mt-4 divide-y divide-border">{data.sessions.map((session) => <div key={session.id} className="flex flex-col gap-3 py-4 first:pt-0 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-sm font-medium">{session.device || t("unknownDevice")} {session.current && <span className="ml-2 text-xs text-primary">{t("currentSession")}</span>}</p><p className="text-xs text-muted-foreground">{t("createdAt", { date: formatUserDateTime(session.createdAt, locale) })}</p></div><Button variant="outline" size="sm" disabled={busy === "revoke-session"} onClick={() => setConfirm({ kind: "revoke-session", sessionId: session.id })}>{session.current ? t("signOut") : t("revoke")}</Button></div>)}</div></Card>
 
-      <Card className="p-6"><h3 className="font-display text-sm font-semibold uppercase tracking-wide">{t("activity")}</h3><div className="mt-4 divide-y divide-border">{data.events.length === 0 ? <p className="py-3 text-sm text-muted-foreground">{t("noActivity")}</p> : data.events.map((event) => <div key={event.id} className="py-3"><p className="text-sm font-medium">{t(`event.${event.event}`)}</p><p className="text-xs text-muted-foreground">{formatter.format(new Date(event.createdAt))}{event.userAgent ? ` · ${event.userAgent}` : ""}</p></div>)}</div></Card>
+      <Card className="p-6"><h3 className="font-display text-sm font-semibold uppercase tracking-wide">{t("activity")}</h3><div className="mt-4 divide-y divide-border">{data.events.length === 0 ? <p className="py-3 text-sm text-muted-foreground">{t("noActivity")}</p> : data.events.map((event) => <div key={event.id} className="py-3"><p className="text-sm font-medium">{t(`event.${event.event}`)}</p><p className="text-xs text-muted-foreground">{formatUserDateTime(event.createdAt, locale)}{event.userAgent ? ` · ${event.userAgent}` : ""}</p></div>)}</div></Card>
 
       <ConfirmDialog open={confirm !== null} title={confirmationCopy.title} description={confirmationCopy.description} confirmLabel={confirmationCopy.label} cancelLabel={t("cancel")} busy={busy === confirm?.kind} onConfirm={() => void performConfirmedAction()} onCancel={() => setConfirm(null)} />
     </section>

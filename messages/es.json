@@ -416,18 +416,53 @@
       "PROGRESS": "Progreso"
     },
     "achievements": {
-      "PROFILE_COMPLETE": { "title": "Perfil listo", "description": "Agregá una bio y un detalle personal de tu perfil." },
-      "EMAIL_VERIFIED": { "title": "Verificado", "description": "Verificá tu dirección de email." },
-      "OAUTH_CONNECTED": { "title": "Conectado", "description": "Vinculá una cuenta de Google o Discord." },
-      "FIRST_GLOBAL_MESSAGE": { "title": "Primer saludo", "description": "Enviá tu primer mensaje en el chat global." },
-      "GLOBAL_REGULAR": { "title": "Habitual de la comunidad", "description": "Obtené XP por 10 mensajes en el chat global." },
-      "FIRST_DM": { "title": "Conexión directa", "description": "Enviá tu primer mensaje privado." },
-      "DM_REGULAR": { "title": "En contacto", "description": "Obtené XP por 10 mensajes privados." },
-      "FIRST_FRIEND": { "title": "Primer amigo", "description": "Hacete amigo de otro miembro." },
-      "SOCIAL_FIVE": { "title": "Círculo social", "description": "Creá cinco conexiones en la comunidad." },
-      "LEVEL_FIVE": { "title": "Estrella en ascenso", "description": "Alcanzá el nivel 5." },
-      "LEVEL_TEN": { "title": "Leyenda de la comunidad", "description": "Alcanzá el nivel 10." }
-    }
+      "PROFILE_COMPLETE": {
+        "title": "Perfil listo",
+        "description": "Agregá una bio y un detalle personal de tu perfil."
+      },
+      "EMAIL_VERIFIED": {
+        "title": "Verificado",
+        "description": "Verificá tu dirección de email."
+      },
+      "OAUTH_CONNECTED": {
+        "title": "Conectado",
+        "description": "Vinculá una cuenta de Google o Discord."
+      },
+      "FIRST_GLOBAL_MESSAGE": {
+        "title": "Primer saludo",
+        "description": "Enviá tu primer mensaje en el chat global."
+      },
+      "GLOBAL_REGULAR": {
+        "title": "Habitual de la comunidad",
+        "description": "Obtené XP por 10 mensajes en el chat global."
+      },
+      "FIRST_DM": {
+        "title": "Conexión directa",
+        "description": "Enviá tu primer mensaje privado."
+      },
+      "DM_REGULAR": {
+        "title": "En contacto",
+        "description": "Obtené XP por 10 mensajes privados."
+      },
+      "FIRST_FRIEND": {
+        "title": "Primer amigo",
+        "description": "Hacete amigo de otro miembro."
+      },
+      "SOCIAL_FIVE": {
+        "title": "Círculo social",
+        "description": "Creá cinco conexiones en la comunidad."
+      },
+      "LEVEL_FIVE": {
+        "title": "Estrella en ascenso",
+        "description": "Alcanzá el nivel 5."
+      },
+      "LEVEL_TEN": {
+        "title": "Leyenda de la comunidad",
+        "description": "Alcanzá el nivel 10."
+      }
+    },
+    "obtainableAchievements": "Metas de comunidad",
+    "automaticGoal": "Logro automático"
   },
   "FriendsPage": {
     "titulo": "Amigos",

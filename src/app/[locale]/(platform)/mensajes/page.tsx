@@ -11,6 +11,7 @@ import ConfirmDialog from "@/shared/ui/confirm-dialog";
 import { AnchoredEmojiStickerPicker, type PickerAnchorRect } from "@/modules/chat/components/emoji-sticker-picker";
 import { getQuickReactions, recordReactionUse } from "@/modules/chat/reaction-preferences";
 import { UserAvatar } from "@/modules/profiles/components/user-identity";
+import { formatUserTime } from "@/shared/lib/date-time";
 
 interface PersonSummary {
   id: string;
@@ -690,7 +691,7 @@ export default function MessagesPage() {
                               {m.sticker && <img src={m.sticker.assetUrl} alt={m.sticker.name} className="mt-1 h-16 w-16 object-contain" />}
                             </>}
                             <p className={`mt-0.5 text-[10px] ${mine ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
-                              {new Date(m.createdAt).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" })}
+                              {formatUserTime(m.createdAt, locale)}
                             </p>
                             {!m.deletedAt && <div className="mt-1 flex flex-wrap items-center gap-1">
                               {m.reactions.map((reaction) => <button key={reaction.emoji} type="button" onClick={() => void reactToMessage(m, reaction.emoji)} className={`rounded-full border px-1.5 py-0.5 text-[10px] ${mine ? "border-primary-foreground/30" : "border-border"} ${reaction.mine ? "bg-primary/15" : ""}`}>{reaction.emoji} {reaction.count}</button>)}

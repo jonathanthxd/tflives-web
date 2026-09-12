@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { listUserAchievements, AchievementError } from "@/modules/achievements/service";
+import { listUserAchievements, listUserObtainableAchievements, AchievementError } from "@/modules/achievements/service";
 import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { prisma } from "@/infrastructure/database/prisma";
 import { getPublicProgressionProfile } from "@/modules/progression/service";
@@ -27,11 +27,12 @@ export async function GET(request: Request) {
       });
       if (blocked) return NextResponse.json({ error: "Perfil no disponible" }, { status: 403 });
     }
-    const [achievements, progression] = await Promise.all([
+    const [achievements, obtainableAchievements, progression] = await Promise.all([
       listUserAchievements(username),
+      listUserObtainableAchievements(username),
       getPublicProgressionProfile(target.id),
     ]);
-    return NextResponse.json({ achievements, progression }, { status: 200 });
+    return NextResponse.json({ achievements, obtainableAchievements, progression }, { status: 200 });
   } catch (error) {
     if (error instanceof AchievementError) {
       return NextResponse.json({ error: error.message }, { status: error.status });

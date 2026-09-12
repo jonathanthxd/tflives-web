@@ -416,18 +416,53 @@
       "PROGRESS": "Progress"
     },
     "achievements": {
-      "PROFILE_COMPLETE": { "title": "Profile ready", "description": "Add a bio and a personal profile detail." },
-      "EMAIL_VERIFIED": { "title": "Verified", "description": "Verify your email address." },
-      "OAUTH_CONNECTED": { "title": "Connected", "description": "Link a Google or Discord account." },
-      "FIRST_GLOBAL_MESSAGE": { "title": "First hello", "description": "Send your first message in global chat." },
-      "GLOBAL_REGULAR": { "title": "Community regular", "description": "Earn XP from 10 global chat messages." },
-      "FIRST_DM": { "title": "Direct connection", "description": "Send your first direct message." },
-      "DM_REGULAR": { "title": "Keeping in touch", "description": "Earn XP from 10 direct messages." },
-      "FIRST_FRIEND": { "title": "First friend", "description": "Become friends with another member." },
-      "SOCIAL_FIVE": { "title": "Social circle", "description": "Make five community connections." },
-      "LEVEL_FIVE": { "title": "Rising star", "description": "Reach level 5." },
-      "LEVEL_TEN": { "title": "Community legend", "description": "Reach level 10." }
-    }
+      "PROFILE_COMPLETE": {
+        "title": "Profile ready",
+        "description": "Add a bio and a personal profile detail."
+      },
+      "EMAIL_VERIFIED": {
+        "title": "Verified",
+        "description": "Verify your email address."
+      },
+      "OAUTH_CONNECTED": {
+        "title": "Connected",
+        "description": "Link a Google or Discord account."
+      },
+      "FIRST_GLOBAL_MESSAGE": {
+        "title": "First hello",
+        "description": "Send your first message in global chat."
+      },
+      "GLOBAL_REGULAR": {
+        "title": "Community regular",
+        "description": "Earn XP from 10 global chat messages."
+      },
+      "FIRST_DM": {
+        "title": "Direct connection",
+        "description": "Send your first direct message."
+      },
+      "DM_REGULAR": {
+        "title": "Keeping in touch",
+        "description": "Earn XP from 10 direct messages."
+      },
+      "FIRST_FRIEND": {
+        "title": "First friend",
+        "description": "Become friends with another member."
+      },
+      "SOCIAL_FIVE": {
+        "title": "Social circle",
+        "description": "Make five community connections."
+      },
+      "LEVEL_FIVE": {
+        "title": "Rising star",
+        "description": "Reach level 5."
+      },
+      "LEVEL_TEN": {
+        "title": "Community legend",
+        "description": "Reach level 10."
+      }
+    },
+    "obtainableAchievements": "Community goals",
+    "automaticGoal": "Automatic achievement"
   },
   "FriendsPage": {
     "titulo": "Friends",

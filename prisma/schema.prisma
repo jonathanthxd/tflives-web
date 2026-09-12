@@ -537,35 +537,60 @@ model Reaction {
 /// Catálogo de logros/insignias otorgables (sección admin "Logros e
 /// insignias"). El icono se elige de un set curado (ACHIEVEMENT_ICONS en
 /// components/ui/icons.tsx), no es texto libre.
+enum AchievementUnlockMode {
+  MANUAL
+  AUTOMATIC
+}
+
+enum AchievementTrigger {
+  GLOBAL_MESSAGES
+  DIRECT_MESSAGES
+  FRIENDSHIPS
+  LEVEL
+  XP
+  PROFILE_COMPLETE
+  EMAIL_VERIFIED
+  OAUTH_CONNECTIONS
+}
+
+enum AchievementAwardSource {
+  MANUAL
+  AUTOMATIC
+}
+
 model Achievement {
-  id          String   @id @default(cuid())
-  name        String
-  description String
-  iconKey     String
-  order       Int      @default(0)
-  active      Boolean  @default(true)
-  createdById String
-  createdBy   User     @relation(fields: [createdById], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String                @id @default(cuid())
+  name         String
+  description  String
+  iconKey      String
+  order        Int                   @default(0)
+  active       Boolean               @default(true)
+  unlockMode   AchievementUnlockMode @default(MANUAL)
+  trigger      AchievementTrigger?
+  triggerValue Int?
+  createdById  String
+  createdBy    User                  @relation(fields: [createdById], references: [id])
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
 
   awards UserAchievement[]
 
   @@index([active, order])
+  @@index([active, unlockMode, trigger])
 }
 
-/// Staff-managed badge awarded to a user. v0.6 progression unlocks use the
-/// separate UserProgressAchievement table so this existing admin workflow
-/// remains unchanged.
+/// Admin-defined badge awarded manually or by a safe server-side trigger.
+/// Fixed v0.6 progression milestones still use UserProgressAchievement.
 model UserAchievement {
-  id            String      @id @default(cuid())
+  id            String                 @id @default(cuid())
   userId        String
-  user          User        @relation("AchievementRecipient", fields: [userId], references: [id])
+  user          User                   @relation("AchievementRecipient", fields: [userId], references: [id])
   achievementId String
-  achievement   Achievement @relation(fields: [achievementId], references: [id])
-  awardedById   String
-  awardedBy     User        @relation("AchievementAwarder", fields: [awardedById], references: [id])
-  awardedAt     DateTime    @default(now())
+  achievement   Achievement            @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  awardedById   String?
+  awardedBy     User?                  @relation("AchievementAwarder", fields: [awardedById], references: [id])
+  source        AchievementAwardSource @default(MANUAL)
+  awardedAt     DateTime               @default(now())
 
   @@unique([userId, achievementId])
   @@index([userId])

@@ -3,6 +3,11 @@ import { prisma } from "@/infrastructure/database/prisma";
 import { logAdminAction } from "@/modules/administration/action-log";
 import { createNotification } from "@/modules/notifications/service";
 import { ACHIEVEMENT_ICONS } from "@/modules/administration/components/ui/icons";
+import {
+  isAchievementTrigger,
+  normalizedTriggerValue,
+  type AchievementUnlockModeKey,
+} from "@/modules/achievements/triggers";
 
 export class AchievementError extends Error {
   status: number;
@@ -29,6 +34,9 @@ interface AchievementInput {
   iconKey: string;
   order?: number;
   active?: boolean;
+  unlockMode?: AchievementUnlockModeKey;
+  trigger?: string | null;
+  triggerValue?: number | null;
 }
 
 function validateIconKey(iconKey: string) {
@@ -37,12 +45,41 @@ function validateIconKey(iconKey: string) {
   }
 }
 
+function normalizeAutomation(input: {
+  unlockMode: AchievementUnlockModeKey;
+  trigger?: string | null;
+  triggerValue?: number | null;
+}) {
+  if (input.unlockMode === "MANUAL") {
+    return { unlockMode: "MANUAL" as const, trigger: null, triggerValue: null };
+  }
+
+  if (!isAchievementTrigger(input.trigger)) {
+    throw new AchievementError("Elegí cómo se obtiene este logro");
+  }
+  const triggerValue = normalizedTriggerValue(input.trigger, input.triggerValue);
+  if (triggerValue == null) {
+    throw new AchievementError("La meta debe ser un número entero entre 1 y 1.000.000");
+  }
+
+  return {
+    unlockMode: "AUTOMATIC" as const,
+    trigger: input.trigger,
+    triggerValue,
+  };
+}
+
 export async function createAchievement(createdById: string, input: AchievementInput) {
   const name = input.name.trim();
   const description = input.description.trim();
   if (!name) throw new AchievementError("El nombre es obligatorio");
   if (!description) throw new AchievementError("La descripción es obligatoria");
   validateIconKey(input.iconKey);
+  const automation = normalizeAutomation({
+    unlockMode: input.unlockMode ?? "MANUAL",
+    trigger: input.trigger,
+    triggerValue: input.triggerValue,
+  });
 
   const achievement = await prisma.achievement.create({
     data: {
@@ -51,6 +88,7 @@ export async function createAchievement(createdById: string, input: AchievementI
       iconKey: input.iconKey,
       order: input.order ?? 0,
       active: input.active ?? true,
+      ...automation,
       createdById,
     },
   });
@@ -60,7 +98,12 @@ export async function createAchievement(createdById: string, input: AchievementI
     action: "achievement.create",
     targetType: "Achievement",
     targetId: achievement.id,
-    metadata: { name },
+    metadata: {
+      name,
+      unlockMode: automation.unlockMode,
+      trigger: automation.trigger,
+      triggerValue: automation.triggerValue,
+    },
   });
 
   return achievement;
@@ -87,6 +130,17 @@ export async function updateAchievement(actorId: string, id: string, input: Part
   }
   if (input.order !== undefined) data.order = input.order;
   if (input.active !== undefined) data.active = input.active;
+
+  if (input.unlockMode !== undefined || input.trigger !== undefined || input.triggerValue !== undefined) {
+    const automation = normalizeAutomation({
+      unlockMode: input.unlockMode ?? (existing.unlockMode as AchievementUnlockModeKey),
+      trigger: input.trigger !== undefined ? input.trigger : (existing.trigger as string | null),
+      triggerValue: input.triggerValue !== undefined ? input.triggerValue : existing.triggerValue,
+    });
+    data.unlockMode = automation.unlockMode;
+    data.trigger = automation.trigger;
+    data.triggerValue = automation.triggerValue;
+  }
 
   const updated = await prisma.achievement.update({ where: { id }, data });
 
@@ -123,6 +177,9 @@ export async function awardAchievement(awardedById: string, username: string, ac
   ]);
   if (!user) throw new AchievementError("Usuario no encontrado", 404);
   if (!achievement) throw new AchievementError("Logro no encontrado", 404);
+  if (achievement.unlockMode === "AUTOMATIC") {
+    throw new AchievementError("Este logro se obtiene automáticamente al cumplir su meta");
+  }
 
   const existing = await prisma.userAchievement.findUnique({
     where: { userId_achievementId: { userId: user.id, achievementId } },
@@ -130,7 +187,7 @@ export async function awardAchievement(awardedById: string, username: string, ac
   if (existing) throw new AchievementError("El usuario ya tiene este logro");
 
   const award = await prisma.userAchievement.create({
-    data: { userId: user.id, achievementId, awardedById },
+    data: { userId: user.id, achievementId, awardedById, source: "MANUAL" },
   });
 
   await Promise.all([
@@ -154,10 +211,16 @@ export async function awardAchievement(awardedById: string, username: string, ac
 }
 
 export async function revokeAchievement(actorId: string, userId: string, achievementId: string) {
-  const existing = await prisma.userAchievement.findUnique({
-    where: { userId_achievementId: { userId, achievementId } },
-  });
+  const [existing, achievement] = await Promise.all([
+    prisma.userAchievement.findUnique({
+      where: { userId_achievementId: { userId, achievementId } },
+    }),
+    prisma.achievement.findUnique({ where: { id: achievementId }, select: { unlockMode: true } }),
+  ]);
   if (!existing) throw new AchievementError("El usuario no tiene este logro", 404);
+  if (achievement?.unlockMode === "AUTOMATIC") {
+    throw new AchievementError("Los logros automáticos no se revocan manualmente");
+  }
 
   await prisma.userAchievement.delete({ where: { id: existing.id } });
 
@@ -177,32 +240,71 @@ export async function listAchievementHolders(achievementId: string) {
     orderBy: { awardedAt: "desc" },
   });
 
-  return awards.map((a) => ({
-    userId: a.user.id,
-    username: a.user.username,
-    displayName: a.user.displayName || a.user.name || a.user.username,
-    awardedAt: a.awardedAt,
+  return awards.map((award) => ({
+    userId: award.user.id,
+    username: award.user.username,
+    displayName: award.user.displayName || award.user.name || award.user.username,
+    awardedAt: award.awardedAt,
+    source: award.source,
   }));
 }
 
+/** Manual/community badges only. Obtainable automatic achievements are exposed
+ * separately so locked challenges can be shown without duplicating unlocked ones. */
 export async function listUserAchievements(username: string) {
   const user = await prisma.user.findUnique({ where: { username }, select: { id: true } });
   if (!user) throw new AchievementError("Usuario no encontrado", 404);
 
   const awards = await prisma.userAchievement.findMany({
-    where: { userId: user.id, achievement: { active: true } },
+    where: {
+      userId: user.id,
+      achievement: { active: true, unlockMode: "MANUAL" },
+    },
     include: { achievement: true },
     orderBy: { awardedAt: "desc" },
   });
 
-  return awards.map((a) => ({
-    id: a.id,
-    awardedAt: a.awardedAt,
+  return awards.map((award) => ({
+    id: award.id,
+    awardedAt: award.awardedAt,
     achievement: {
-      id: a.achievement.id,
-      name: a.achievement.name,
-      description: a.achievement.description,
-      iconKey: a.achievement.iconKey,
+      id: award.achievement.id,
+      name: award.achievement.name,
+      description: award.achievement.description,
+      iconKey: award.achievement.iconKey,
     },
+  }));
+}
+
+export async function listUserObtainableAchievements(username: string) {
+  const user = await prisma.user.findUnique({ where: { username }, select: { id: true } });
+  if (!user) throw new AchievementError("Usuario no encontrado", 404);
+
+  const achievements = await prisma.achievement.findMany({
+    where: { active: true, unlockMode: "AUTOMATIC" },
+    orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      iconKey: true,
+      trigger: true,
+      triggerValue: true,
+      awards: {
+        where: { userId: user.id },
+        select: { awardedAt: true },
+        take: 1,
+      },
+    },
+  });
+
+  return achievements.map((achievement) => ({
+    id: achievement.id,
+    name: achievement.name,
+    description: achievement.description,
+    iconKey: achievement.iconKey,
+    trigger: achievement.trigger,
+    triggerValue: achievement.triggerValue,
+    unlockedAt: achievement.awards[0]?.awardedAt ?? null,
   }));
 }

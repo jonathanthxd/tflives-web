@@ -21,7 +21,7 @@ export default async function AchievementsPage({
       <PageHeader
         icon={SECTION_ICONS.achievements}
         title="Logros e insignias"
-        description="Catálogo de logros del sitio y quién los tiene. Se otorgan a mano por ahora."
+        description="Creá logros manuales o metas automáticas que los miembros desbloquean con actividad real en TFLives."
       />
       <AchievementManager
         initialAchievements={achievements.map((a) => ({
@@ -31,6 +31,9 @@ export default async function AchievementsPage({
           iconKey: a.iconKey,
           order: a.order,
           active: a.active,
+          unlockMode: a.unlockMode,
+          trigger: a.trigger,
+          triggerValue: a.triggerValue,
           _count: a._count,
         }))}
       />

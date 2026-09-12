@@ -6,7 +6,9 @@ import {
   type ProgressionAchievementCode,
 } from "@/modules/progression/catalog";
 import { getProgressSummary, levelForXp, type PublicProgress } from "@/modules/progression/level";
-import { parseSocialLinks } from "@/modules/profiles/types";
+import { isProfileComplete } from "@/modules/profiles/completion";
+import { evaluateAutomaticAchievements } from "@/modules/achievements/automatic";
+import { ACHIEVEMENT_TRIGGER_KEYS } from "@/modules/achievements/triggers";
 
 type ProgressionSource =
   | "PROFILE_COMPLETE"
@@ -99,18 +101,6 @@ export function achievementCodesForFacts(facts: ProgressionAchievementFacts) {
   if (facts.level >= 5) eligible.add("LEVEL_FIVE");
   if (facts.level >= 10) eligible.add("LEVEL_TEN");
   return PROGRESSION_ACHIEVEMENTS.filter((achievement) => eligible.has(achievement.code)).map((achievement) => achievement.code);
-}
-
-export function isProfileComplete(user: {
-  bio: string | null;
-  displayName: string | null;
-  image: string | null;
-  minecraftUsername: string | null;
-  socialLinks: Prisma.JsonValue | null;
-}) {
-  return Boolean(user.bio?.trim()) && Boolean(
-    user.minecraftUsername?.trim() || user.image || parseSocialLinks(user.socialLinks).length,
-  ) && Boolean(user.displayName?.trim());
 }
 
 async function sourceIsValid(
@@ -245,7 +235,7 @@ async function awardSource(
   const config = XP_SOURCES[source];
   const now = new Date();
 
-  return prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx) => {
     // This upsert takes a row-level lock for a user, so cap checks, idempotency,
     // XP, level changes, event logging, and unlocks stay serialized per member.
     const existingProgress = await tx.userProgress.upsert({
@@ -301,6 +291,11 @@ async function awardSource(
       levelUp: finalLevel > existingProgress.level ? finalLevel : null,
     };
   }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+
+  // Admin-created obtainable achievements use real application counters. This
+  // runs after the XP transaction so LEVEL/XP conditions see the latest state.
+  await evaluateAutomaticAchievements(userId, ACHIEVEMENT_TRIGGER_KEYS);
+  return result;
 }
 
 // Integration-only entry points. No route accepts an XP amount, target user,
@@ -328,6 +323,15 @@ export function awardDirectMessage(userId: string, messageId: string) {
 export function awardFriendship(userId: string, firstUserId: string, secondUserId: string) {
   const pair = [firstUserId, secondUserId].sort().join(":");
   return awardSource(userId, "FRIENDSHIP", `friendship:${pair}`);
+}
+
+
+export async function getPublicProgressSummary(userId: string): Promise<PublicProgress> {
+  const [progress, achievementCount] = await Promise.all([
+    prisma.userProgress.findUnique({ where: { userId }, select: { xp: true, level: true } }),
+    prisma.userProgressAchievement.count({ where: { userId } }),
+  ]);
+  return getProgressSummary(progress, achievementCount);
 }
 
 export async function getPublicProgressionProfile(userId: string): Promise<ProgressionProfileData> {

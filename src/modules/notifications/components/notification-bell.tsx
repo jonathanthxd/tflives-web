@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { getNotificationHref } from "@/modules/notifications/links";
 import { publishNotificationToast } from "@/modules/notifications/toast-store";
+import { formatUserDateTime } from "@/shared/lib/date-time";
 
 interface Actor {
   id: string;
@@ -198,7 +199,7 @@ export default function NotificationBell({ userId }: { userId: string }) {
                     <span className="font-medium">{n.announcement.title}</span>
                     <span className="text-xs text-muted-foreground/80 line-clamp-2">{n.announcement.body}</span>
                     <span className="text-xs text-muted-foreground/60">
-                      {new Date(n.createdAt).toLocaleString(locale)}
+                      {formatUserDateTime(n.createdAt, locale)}
                     </span>
                   </>
                 ) : (
@@ -208,7 +209,7 @@ export default function NotificationBell({ userId }: { userId: string }) {
                       {t(`message.${n.type}`)}
                     </span>
                     <span className="text-xs text-muted-foreground/60">
-                      {new Date(n.createdAt).toLocaleString(locale)}
+                      {formatUserDateTime(n.createdAt, locale)}
                     </span>
                   </>
                 );

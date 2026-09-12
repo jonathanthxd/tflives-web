@@ -2,11 +2,12 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { FormEvent, PointerEvent as ReactPointerEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { MessageCircle, Minus, Send, SmilePlus, Flag, Reply, X, Loader2, Plus } from "lucide-react";
 import { AnchoredEmojiStickerPicker, type PickerAnchorRect } from "@/modules/chat/components/emoji-sticker-picker";
 import { getQuickReactions, recordReactionUse } from "@/modules/chat/reaction-preferences";
 import { UserAvatar } from "@/modules/profiles/components/user-identity";
+import { formatUserTime } from "@/shared/lib/date-time";
 
 interface Person {
   id: string;
@@ -61,6 +62,7 @@ const CHAT_POSITION_STORAGE_KEY = "tflives:global-chat-x";
 
 export default function GlobalChat({ userId }: { userId: string }) {
   const t = useTranslations("GlobalChat");
+  const locale = useLocale();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [stickers, setStickers] = useState<Sticker[]>([]);
@@ -392,7 +394,7 @@ export default function GlobalChat({ userId }: { userId: string }) {
             {loading && !messages.length ? <div className="flex h-full items-center justify-center text-sm text-muted-foreground"><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t("cargando")}</div> : messages.length === 0 ? <p className="py-10 text-center text-sm text-muted-foreground">{t("sinMensajes")}</p> : <div className="space-y-3">
               {messages.map((message) => <article id={`global-message-${message.id}`} key={message.id} className="group flex gap-2">
                 <UserAvatar identity={message.author} className="mt-0.5 size-7 text-xs" />
-                <div className="min-w-0 flex-1"><div className="flex items-baseline gap-1.5"><span className="truncate text-xs font-semibold text-foreground">{personName(message.author)}</span>{message.author.username && <span className="truncate text-[10px] text-muted-foreground">@{message.author.username}</span>}<time className="ml-auto shrink-0 text-[10px] text-muted-foreground">{new Date(message.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</time></div>
+                <div className="min-w-0 flex-1"><div className="flex items-baseline gap-1.5"><span className="truncate text-xs font-semibold text-foreground">{personName(message.author)}</span>{message.author.username && <span className="truncate text-[10px] text-muted-foreground">@{message.author.username}</span>}<time className="ml-auto shrink-0 text-[10px] text-muted-foreground">{formatUserTime(message.createdAt, locale)}</time></div>
                   {message.replyTo && <button type="button" onClick={() => document.getElementById(`global-message-${message.replyTo?.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" })} className="mt-1 block max-w-full truncate border-l-2 border-primary/50 pl-2 text-left text-[11px] text-muted-foreground hover:text-primary">{personName(message.replyTo.author)}: {textPreview(message.replyTo)}</button>}
                   {message.deletedAt ? <p className="mt-1 text-xs italic text-muted-foreground">{t("mensajeEliminado")}</p> : <><p className="whitespace-pre-wrap break-words text-sm text-foreground"><MessageText content={message.content} /></p>{message.sticker && <img src={message.sticker.assetUrl} alt={message.sticker.name} className="mt-1 h-16 w-16 object-contain" />}</>}
                   {!message.deletedAt && <div className="mt-1.5 flex flex-wrap items-center gap-1">

@@ -5,6 +5,7 @@ import { PGlite } from "@electric-sql/pglite";
 import { PROGRESSION_ACHIEVEMENTS } from "../../src/modules/progression/catalog";
 import { getProgressSummary, levelForXp, xpRequiredForLevel } from "../../src/modules/progression/level";
 import { achievementCodesForFacts, activityAwardAllowed } from "../../src/modules/progression/service";
+import { describeAchievementTrigger, normalizedTriggerValue } from "../../src/modules/achievements/triggers";
 
 test("level formula has stable boundaries and a bounded progress summary", () => {
   assert.equal(xpRequiredForLevel(1), 0);
@@ -60,6 +61,7 @@ test("v0.6 migration creates isolated progression data with idempotency keys", a
       "20260911000000_accounts_security_permissions",
       "20260912000000_profiles_identity",
       "20260913000000_progression_achievements",
+      "20260914000000_obtainable_achievements",
     ]) {
       await db.exec(readFileSync(`prisma/migrations/${migration}/migration.sql`, "utf8"));
     }
@@ -75,4 +77,15 @@ test("v0.6 migration creates isolated progression data with idempotency keys", a
   } finally {
     await db.close();
   }
+});
+
+
+test("admin achievement trigger rules stay human-readable and validate goals", () => {
+  assert.equal(normalizedTriggerValue("GLOBAL_MESSAGES", 100), 100);
+  assert.equal(normalizedTriggerValue("GLOBAL_MESSAGES", 0), null);
+  assert.equal(normalizedTriggerValue("PROFILE_COMPLETE", 999), 1);
+  assert.equal(
+    describeAchievementTrigger("GLOBAL_MESSAGES", 100),
+    "Se desbloquea automáticamente al alcanzar 100 mensajes en el chat global.",
+  );
 });

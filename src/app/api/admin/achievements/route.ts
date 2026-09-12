@@ -27,6 +27,9 @@ export async function POST(request: Request) {
       iconKey: typeof body.iconKey === "string" ? body.iconKey : "",
       order: typeof body.order === "number" ? body.order : 0,
       active: typeof body.active === "boolean" ? body.active : true,
+      unlockMode: body.unlockMode === "AUTOMATIC" ? "AUTOMATIC" : "MANUAL",
+      trigger: typeof body.trigger === "string" ? body.trigger : null,
+      triggerValue: typeof body.triggerValue === "number" ? body.triggerValue : null,
     });
     return NextResponse.json({ achievement }, { status: 201 });
   } catch (error) {
