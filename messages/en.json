@@ -20,7 +20,8 @@
       "ACHIEVEMENT": "Achievements",
       "POST_PUBLISHED": "Official announcements",
       "ANNOUNCEMENT": "Global announcements",
-      "SECURITY_ALERT": "Security alerts"
+      "SECURITY_ALERT": "Security alerts",
+      "LEVEL_UP": "Level ups"
     },
     "subtitulo": "Manage your security, privacy, and notifications in one place.",
     "secciones": "Settings sections",
@@ -155,7 +156,8 @@
       "ACHIEVEMENT": "unlocked an achievement",
       "POST_PUBLISHED": "posted something new on TFL Network",
       "ANNOUNCEMENT": "there's a new announcement",
-      "SECURITY_ALERT": "there's a security update for your account"
+      "SECURITY_ALERT": "there's a security update for your account",
+      "LEVEL_UP": "you reached a new level"
     }
   },
   "Navbar": {
@@ -315,6 +317,10 @@
     "metadataDescription": "@{username}'s public TFLives profile.",
     "perfilNoEncontrado": "We couldn't find this profile",
     "perfilNoEncontradoDescripcion": "The username may not exist or this link is no longer valid.",
+    "progression": "Progression",
+    "level": "Level {level}",
+    "progressBar": "Level {level} progress",
+    "xpToNext": "{xp} / {nextXp} XP to the next level",
     "platform": {
       "website": "Website",
       "youtube": "YouTube",
@@ -397,6 +403,31 @@
     "sinActividadCta": "No activity yet — comment or react to a post on TFL Network for it to show up here.",
     "mas": "Badges, cosmetics and more progression features are coming soon.",
     "sinLogros": "No achievements yet."
+  },
+  "Progression": {
+    "achievementsTitle": "Achievements",
+    "locked": "Locked",
+    "unlockedOn": "Unlocked {date}",
+    "communityBadges": "Community badges",
+    "category": {
+      "IDENTITY": "Identity",
+      "COMMUNITY": "Community",
+      "SOCIAL": "Social",
+      "PROGRESS": "Progress"
+    },
+    "achievements": {
+      "PROFILE_COMPLETE": { "title": "Profile ready", "description": "Add a bio and a personal profile detail." },
+      "EMAIL_VERIFIED": { "title": "Verified", "description": "Verify your email address." },
+      "OAUTH_CONNECTED": { "title": "Connected", "description": "Link a Google or Discord account." },
+      "FIRST_GLOBAL_MESSAGE": { "title": "First hello", "description": "Send your first message in global chat." },
+      "GLOBAL_REGULAR": { "title": "Community regular", "description": "Earn XP from 10 global chat messages." },
+      "FIRST_DM": { "title": "Direct connection", "description": "Send your first direct message." },
+      "DM_REGULAR": { "title": "Keeping in touch", "description": "Earn XP from 10 direct messages." },
+      "FIRST_FRIEND": { "title": "First friend", "description": "Become friends with another member." },
+      "SOCIAL_FIVE": { "title": "Social circle", "description": "Make five community connections." },
+      "LEVEL_FIVE": { "title": "Rising star", "description": "Reach level 5." },
+      "LEVEL_TEN": { "title": "Community legend", "description": "Reach level 10." }
+    }
   },
   "FriendsPage": {
     "titulo": "Friends",

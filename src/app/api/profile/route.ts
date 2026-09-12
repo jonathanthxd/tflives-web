@@ -5,6 +5,7 @@ import { prisma } from "@/infrastructure/database/prisma";
 import { usernameSchema } from "@/modules/authentication/validation";
 import { publicProfileSelect, toPublicProfile } from "@/modules/profiles/service";
 import { profileUpdateSchema } from "@/modules/profiles/validation";
+import { awardProfileCompletion, isProfileComplete } from "@/modules/progression/service";
 
 const USERNAME_COOLDOWN_MS = 30 * 24 * 60 * 60 * 1000;
 
@@ -28,11 +29,20 @@ export async function PATCH(request: Request) {
 
   const current = await prisma.user.findUnique({
     where: { id: authUser.id },
-    select: { username: true, usernameChangedAt: true },
+    select: {
+      username: true,
+      usernameChangedAt: true,
+      bio: true,
+      displayName: true,
+      image: true,
+      minecraftUsername: true,
+      socialLinks: true,
+    },
   });
   if (!current) {
     return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 });
   }
+  const wasProfileComplete = isProfileComplete(current);
 
   const data: Prisma.UserUpdateInput = {};
   let nextUsername: string | null = null;
@@ -96,6 +106,7 @@ export async function PATCH(request: Request) {
         });
         return tx.user.update({ where: { id: authUser.id }, data, select: publicProfileSelect });
       });
+      if (!wasProfileComplete) await awardProfileCompletion(authUser.id);
       return NextResponse.json({ user: toPublicProfile(updated) });
     }
 
@@ -104,6 +115,7 @@ export async function PATCH(request: Request) {
       data,
       select: publicProfileSelect,
     });
+    if (!wasProfileComplete) await awardProfileCompletion(authUser.id);
     return NextResponse.json({ user: toPublicProfile(updated) });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {

@@ -2,6 +2,7 @@ import { prisma } from "@/infrastructure/database/prisma";
 import { createNotification } from "@/modules/notifications/service";
 import { areFriends } from "@/modules/social/service";
 import { publicIdentitySelect } from "@/modules/profiles/service";
+import { awardDirectMessage } from "@/modules/progression/service";
 import { getActiveBanOrSuspension, isMuted } from "@/modules/administration/sanctions";
 import {
   assertReactionEmoji,
@@ -215,6 +216,7 @@ export async function sendMessage(conversationId: string, senderId: string, payl
   const others = await prisma.conversationParticipant.findMany({ where: { conversationId, status: { in: ["ACTIVE", "PENDING"] }, userId: { not: senderId } }, select: { userId: true } });
   await Promise.all(others.map((participant) => createNotification({ userId: participant.userId, type: "MESSAGE", actorId: senderId, entityType: "Conversation", entityId: conversationId })));
   await notifyDirectMentions(conversationId, senderId, input.content, message.id);
+  await awardDirectMessage(senderId, message.id);
   return serialiseDirectMessage(message, senderId);
 }
 

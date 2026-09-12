@@ -5,6 +5,7 @@ import { twoFactor } from "better-auth/plugins/two-factor";
 import { prisma } from "@/infrastructure/database/prisma";
 import { sendAuthEmail } from "@/infrastructure/auth/email";
 import { recordSecurityEvent } from "@/modules/security/service";
+import { awardEmailVerification, awardOAuthConnection } from "@/modules/progression/service";
 
 const requireEmailVerification = process.env.AUTH_REQUIRE_EMAIL_VERIFICATION === "true";
 
@@ -115,6 +116,7 @@ export const auth = betterAuth({
     },
     afterEmailVerification: async (user) => {
       await recordSecurityEvent({ userId: user.id, event: "EMAIL_VERIFIED" });
+      await awardEmailVerification(user.id);
     },
   },
   account: {
@@ -194,6 +196,7 @@ export const auth = betterAuth({
             event: "OAUTH_LINKED",
             metadata: { provider: account.providerId },
           });
+          await awardOAuthConnection(account.userId, account.providerId);
         },
       },
       delete: {

@@ -4,6 +4,7 @@ import { getActiveBanOrSuspension, isMuted } from "@/modules/administration/sanc
 import { logAdminAction } from "@/modules/administration/action-log";
 import { createNotification } from "@/modules/notifications/service";
 import { publicIdentitySelect } from "@/modules/profiles/service";
+import { awardGlobalMessage } from "@/modules/progression/service";
 import {
   assertReactionEmoji,
   assertRecentActionLimit,
@@ -234,6 +235,7 @@ export async function sendGlobalMessage(userId: string, payload: unknown) {
     include: MESSAGE_INCLUDE,
   });
   await notifyGlobalMentions(userId, input.content, message.id);
+  await awardGlobalMessage(userId, message.id);
   return publicMessage(message, userId, new Set(), false);
 }
 

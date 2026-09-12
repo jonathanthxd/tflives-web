@@ -2,6 +2,7 @@ import { prisma } from "@/infrastructure/database/prisma";
 import { createNotification } from "@/modules/notifications/service";
 import { getActiveBanOrSuspension } from "@/modules/administration/sanctions";
 import { publicIdentitySelect } from "@/modules/profiles/service";
+import { awardFriendship } from "@/modules/progression/service";
 
 export class SocialError extends Error {
   status: number;
@@ -111,11 +112,15 @@ export async function respondToFriendRequest(
   });
 
   if (action === "accept") {
-    await createNotification({
-      userId: friendship.requesterId,
-      type: "FRIEND_ACCEPTED",
-      actorId: responderId,
-    });
+    await Promise.all([
+      createNotification({
+        userId: friendship.requesterId,
+        type: "FRIEND_ACCEPTED",
+        actorId: responderId,
+      }),
+      awardFriendship(friendship.requesterId, friendship.requesterId, friendship.addresseeId),
+      awardFriendship(friendship.addresseeId, friendship.requesterId, friendship.addresseeId),
+    ]);
   }
 
   return updated;

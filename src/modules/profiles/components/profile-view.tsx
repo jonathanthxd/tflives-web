@@ -1,7 +1,7 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- public profile media may be an OAuth image or local asset route. */
 
-import { CalendarDays, ExternalLink, Gamepad2, Pencil, ShieldAlert, ShieldCheck } from "lucide-react";
+import { CalendarDays, ExternalLink, Gauge, Gamepad2, Pencil, ShieldAlert, ShieldCheck } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import AchievementsCard from "@/modules/achievements/components/achievements-card";
@@ -142,6 +142,32 @@ export default function ProfileView({
           </div>
 
           <aside className="space-y-6">
+            <Card className="p-5 sm:p-6">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <Gauge className="size-4 text-primary" aria-hidden="true" />
+                  <h2 className="font-display text-sm font-semibold uppercase tracking-wide text-foreground">{t("progression")}</h2>
+                </div>
+                <span className="rounded-full bg-primary/10 px-2.5 py-1 font-mono text-xs font-semibold text-primary">
+                  {t("level", { level: profile.progress.level })}
+                </span>
+              </div>
+              <div className="mt-4">
+                <div
+                  role="progressbar"
+                  aria-label={t("progressBar", { level: profile.progress.level })}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={Math.round(profile.progress.progressPercent)}
+                  className="h-2 overflow-hidden rounded-full bg-muted"
+                >
+                  <div className="h-full rounded-full bg-primary transition-[width]" style={{ width: `${profile.progress.progressPercent}%` }} />
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  {t("xpToNext", { xp: profile.progress.xp, nextXp: profile.progress.nextLevelXp })}
+                </p>
+              </div>
+            </Card>
             {!isOwner && profile.username && <SocialCard username={profile.username} />}
             {profile.username && <AchievementsCard username={profile.username} />}
           </aside>

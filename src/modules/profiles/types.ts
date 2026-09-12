@@ -1,3 +1,5 @@
+import type { PublicProgress } from "@/modules/progression/level";
+
 export const SOCIAL_PLATFORMS = [
   "website",
   "youtube",
@@ -30,6 +32,7 @@ export interface PublicProfile extends PublicIdentity {
   minecraftUsername: string | null;
   socialLinks: SocialLink[];
   createdAt: string;
+  progress: PublicProgress;
 }
 
 export function identityName(identity: Pick<PublicIdentity, "displayName" | "name" | "username">) {

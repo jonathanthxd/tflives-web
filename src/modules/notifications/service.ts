@@ -12,6 +12,7 @@ export const NOTIFICATION_CATEGORIES: NotificationType[] = [
   "POST_PUBLISHED",
   "ANNOUNCEMENT",
   "SECURITY_ALERT",
+  "LEVEL_UP",
 ];
 
 interface CreateNotificationInput {
