@@ -67,7 +67,7 @@ function PeopleDialog({
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
-      className="m-auto w-full max-w-md overflow-visible border-0 bg-transparent p-4 backdrop:bg-black/55 backdrop:backdrop-blur-sm"
+      className="m-auto max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto border-0 bg-transparent p-4 backdrop:bg-black/55 backdrop:backdrop-blur-sm"
     >
       <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
         <div className="flex items-center justify-between border-b border-border px-5 py-4">
@@ -75,7 +75,7 @@ function PeopleDialog({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+            className="grid size-10 place-items-center rounded-lg text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
             aria-label={title}
           >
             <X className="size-4" aria-hidden="true" />
@@ -141,8 +141,7 @@ export default function SocialCard({
         body: JSON.stringify(body),
       });
       if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        setError(data.error || t("errorGenerico"));
+        setError(t("errorGenerico"));
         return false;
       }
       return true;
@@ -182,7 +181,7 @@ export default function SocialCard({
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok || !data.conversation?.id) {
-        setError(data.error || t("errorGenerico"));
+        setError(t("errorGenerico"));
         return;
       }
       router.push(`/mensajes?c=${data.conversation.id}`);
@@ -217,7 +216,7 @@ export default function SocialCard({
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
         setLikeStatus(previous);
-        setError(data.error || t("errorGenerico"));
+        setError(t("errorGenerico"));
         return;
       }
       setLikeStatus((current) => current ? { ...current, liked: Boolean(data.liked), count: Number(data.count) || 0 } : current);

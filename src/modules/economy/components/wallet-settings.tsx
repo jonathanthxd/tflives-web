@@ -41,15 +41,15 @@ export function WalletSettings() {
   if (error) {
     return (
       <Card className="p-5 sm:p-6">
-        <p className="text-sm text-destructive">{t("loadError")}</p>
+        <p role="alert" className="text-sm text-destructive">{t("loadError")}</p>
       </Card>
     );
   }
 
   if (!wallet) {
     return (
-      <Card className="flex min-h-44 items-center justify-center p-5 sm:p-6">
-        <div className="size-7 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
+      <Card aria-busy="true" className="flex min-h-44 items-center justify-center p-5 sm:p-6">
+        <div className="size-7 animate-spin rounded-full border-2 border-primary/30 border-t-primary" aria-label={t("loading")} />
       </Card>
     );
   }

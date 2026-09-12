@@ -64,6 +64,7 @@ export default function CosmeticsCatalog({ initialData, authenticated }: { initi
   const [type, setType] = useState<CosmeticTypeKey | "ALL">("ALL");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
 
   const cosmetics = tab === "catalog" ? data.catalog : data.inventory;
   const filtered = useMemo(
@@ -80,6 +81,7 @@ export default function CosmeticsCatalog({ initialData, authenticated }: { initi
   async function mutate(cosmetic: CosmeticView, action: "purchase" | "equip" | "unequip") {
     setBusyId(cosmetic.id);
     setError("");
+    setNotice("");
     try {
       const response = await fetch(
         action === "purchase" ? "/api/account/cosmetics/purchase" : "/api/account/cosmetics/equip",
@@ -89,11 +91,11 @@ export default function CosmeticsCatalog({ initialData, authenticated }: { initi
           body: JSON.stringify(action === "unequip" ? { type: cosmetic.type } : { cosmeticId: cosmetic.id }),
         },
       );
-      const payload = await response.json();
-      if (!response.ok) throw new Error(payload.error || t("actionError"));
+      if (!response.ok) throw new Error("action");
       await refresh();
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : t("actionError"));
+      setNotice(t(action === "purchase" ? "purchaseSuccess" : action === "equip" ? "equipSuccess" : "unequipSuccess"));
+    } catch {
+      setError(t("actionError"));
     } finally {
       setBusyId(null);
     }
@@ -123,15 +125,16 @@ export default function CosmeticsCatalog({ initialData, authenticated }: { initi
 
         {authenticated && (
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex rounded-xl border border-border bg-card/50 p-1">
-              {(["catalog", "inventory"] as const).map((value) => <button key={value} type="button" onClick={() => setTab(value)} className={`rounded-lg px-4 py-2 text-sm font-medium transition ${tab === value ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground"}`}>{t(value)}</button>)}
+            <div role="tablist" aria-label={t("title")} className="flex rounded-xl border border-border bg-card/50 p-1">
+              {(["catalog", "inventory"] as const).map((value) => <button key={value} type="button" role="tab" aria-selected={tab === value} onClick={() => setTab(value)} className={`min-h-10 rounded-lg px-4 py-2 text-sm font-medium transition ${tab === value ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground"}`}>{t(value)}</button>)}
             </div>
             {tab === "inventory" && <p className="text-sm text-muted-foreground">{t("inventoryHint")}</p>}
           </div>
         )}
 
-        <div className="mt-6 flex flex-wrap gap-2" aria-label={t("filter")}>{(["ALL", ...COSMETIC_TYPES] as const).map((value) => <button key={value} type="button" onClick={() => setType(value)} className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 ${type === value ? "border-primary/40 bg-primary/10 text-primary" : "border-border bg-card/50 text-muted-foreground hover:text-foreground"}`}>{value === "ALL" ? t("all") : t(`types.${value}`)}</button>)}</div>
+        <div className="mt-6 flex flex-wrap gap-2" aria-label={t("filter")}>{(["ALL", ...COSMETIC_TYPES] as const).map((value) => <button key={value} type="button" aria-pressed={type === value} onClick={() => setType(value)} className={`min-h-10 rounded-full border px-3 py-1.5 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 ${type === value ? "border-primary/40 bg-primary/10 text-primary" : "border-border bg-card/50 text-muted-foreground hover:text-foreground"}`}>{value === "ALL" ? t("all") : t(`types.${value}`)}</button>)}</div>
         {error && <p role="alert" className="mt-4 rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">{error}</p>}
+        {notice && <p role="status" className="mt-4 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-primary">{notice}</p>}
 
         {filtered.length === 0 ? <Card className="mt-6 p-10 text-center text-sm text-muted-foreground">{t("empty")}</Card> : (
           <section className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -139,7 +142,7 @@ export default function CosmeticsCatalog({ initialData, authenticated }: { initi
               const locked = cosmetic.premiumOnly && !data.premium;
               const label = locale === "en" ? cosmetic.nameEn : cosmetic.name;
               const description = locale === "en" ? cosmetic.descriptionEn : cosmetic.description;
-              return <Card key={cosmetic.id} className="overflow-hidden p-3"><CosmeticPreview cosmetic={cosmetic} /><div className="p-2 pt-4"><div className="flex items-start justify-between gap-2"><div><p className="text-sm font-semibold text-foreground">{label}</p><p className="mt-1 text-xs text-muted-foreground">{t(`types.${cosmetic.type}`)}</p></div><span className={`rounded-full border px-2 py-1 text-[10px] font-bold uppercase tracking-wide ${rarityClass(cosmetic.rarity)}`}>{t(`rarities.${cosmetic.rarity}`)}</span></div><p className="mt-3 min-h-10 text-xs leading-5 text-muted-foreground">{description}</p>{cosmetic.premiumOnly && <p className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-amber-700 dark:text-amber-200"><Crown className="size-3.5" aria-hidden="true" />{t("premiumOnly")}</p>}<div className="mt-4 flex items-center justify-between gap-2"><span className="inline-flex items-center gap-1 text-sm font-semibold text-foreground"><Coins className="size-3.5 text-primary" aria-hidden="true" />{new Intl.NumberFormat(locale).format(cosmetic.price)}</span>{!authenticated ? <Link href="/login?redirect=/cosmeticos" className="text-xs font-semibold text-primary hover:underline">{t("signIn")}</Link> : cosmetic.equipped ? <Button size="sm" variant="outline" disabled={busyId === cosmetic.id} onClick={() => void mutate(cosmetic, "unequip")}>{busyId === cosmetic.id ? t("working") : <><Check className="size-3.5" aria-hidden="true" />{t("equipped")}</>}</Button> : cosmetic.owned ? <Button size="sm" variant="outline" disabled={locked || busyId === cosmetic.id} onClick={() => void mutate(cosmetic, "equip")}>{locked ? <><LockKeyhole className="size-3.5" aria-hidden="true" />{t("locked")}</> : busyId === cosmetic.id ? t("working") : t("equip")}</Button> : <Button size="sm" disabled={locked || busyId === cosmetic.id} onClick={() => void mutate(cosmetic, "purchase")}>{locked ? <><LockKeyhole className="size-3.5" aria-hidden="true" />{t("locked")}</> : busyId === cosmetic.id ? t("working") : <><Sparkles className="size-3.5" aria-hidden="true" />{t("buy")}</>}</Button>}</div></div></Card>;
+              return <Card key={cosmetic.id} className="overflow-hidden p-3"><CosmeticPreview cosmetic={cosmetic} /><div className="p-2 pt-4"><div className="flex items-start justify-between gap-2"><div><p className="text-sm font-semibold text-foreground">{label}</p><p className="mt-1 text-xs text-muted-foreground">{t(`types.${cosmetic.type}`)}</p></div><span className={`rounded-full border px-2 py-1 text-[10px] font-bold uppercase tracking-wide ${rarityClass(cosmetic.rarity)}`}>{t(`rarities.${cosmetic.rarity}`)}</span></div><p className="mt-3 min-h-10 text-xs leading-5 text-muted-foreground">{description}</p>{cosmetic.premiumOnly && <p className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-amber-700 dark:text-amber-200"><Crown className="size-3.5" aria-hidden="true" />{t("premiumOnly")}</p>}<div className="mt-4 flex items-center justify-between gap-2"><span className="inline-flex items-center gap-1 text-sm font-semibold text-foreground"><Coins className="size-3.5 text-primary" aria-hidden="true" />{new Intl.NumberFormat(locale).format(cosmetic.price)}</span>{!authenticated ? <Link href="/login?redirect=/cosmeticos" className="text-xs font-semibold text-primary hover:underline">{t("signIn")}</Link> : cosmetic.equipped ? <Button size="sm" className="min-h-10 sm:min-h-9" variant="outline" disabled={busyId === cosmetic.id} onClick={() => void mutate(cosmetic, "unequip")}>{busyId === cosmetic.id ? t("working") : <><Check className="size-3.5" aria-hidden="true" />{t("equipped")}</>}</Button> : cosmetic.owned ? <Button size="sm" className="min-h-10 sm:min-h-9" variant="outline" disabled={locked || busyId === cosmetic.id} onClick={() => void mutate(cosmetic, "equip")}>{locked ? <><LockKeyhole className="size-3.5" aria-hidden="true" />{t("locked")}</> : busyId === cosmetic.id ? t("working") : t("equip")}</Button> : <Button size="sm" className="min-h-10 sm:min-h-9" disabled={locked || busyId === cosmetic.id} onClick={() => void mutate(cosmetic, "purchase")}>{locked ? <><LockKeyhole className="size-3.5" aria-hidden="true" />{t("locked")}</> : busyId === cosmetic.id ? t("working") : <><Sparkles className="size-3.5" aria-hidden="true" />{t("buy")}</>}</Button>}</div></div></Card>;
             })}
           </section>
         )}

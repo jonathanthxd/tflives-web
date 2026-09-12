@@ -17,6 +17,8 @@ export default function UserMenu({ displayName, username, role, image, onLogout 
   const t = useTranslations("UserMenu");
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const profileHref = username ? `/perfil/${username}` : "/onboarding/username";
 
   useEffect(() => {
@@ -29,13 +31,61 @@ export default function UserMenu({ displayName, username, role, image, onLogout 
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
+  function focusMenuItem(direction: "first" | "last" | "next" | "previous") {
+    const items = Array.from(menuRef.current?.querySelectorAll<HTMLElement>("[role='menuitem']") ?? []);
+    if (!items.length) return;
+    const current = document.activeElement as HTMLElement | null;
+    const currentIndex = items.indexOf(current ?? items[0]);
+    const target = direction === "first" ? items[0]
+      : direction === "last" ? items.at(-1)
+      : direction === "next" ? items[(currentIndex + 1) % items.length]
+      : items[(currentIndex - 1 + items.length) % items.length];
+    target?.focus();
+  }
+
+  function handleTriggerKeyDown(event: React.KeyboardEvent<HTMLButtonElement>) {
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setOpen(true);
+      requestAnimationFrame(() => focusMenuItem("first"));
+    }
+    if (event.key === "ArrowUp") {
+      event.preventDefault();
+      setOpen(true);
+      requestAnimationFrame(() => focusMenuItem("last"));
+    }
+  }
+
+  function handleMenuKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      setOpen(false);
+      triggerRef.current?.focus();
+    } else if (event.key === "ArrowDown") {
+      event.preventDefault();
+      focusMenuItem("next");
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      focusMenuItem("previous");
+    } else if (event.key === "Home") {
+      event.preventDefault();
+      focusMenuItem("first");
+    } else if (event.key === "End") {
+      event.preventDefault();
+      focusMenuItem("last");
+    }
+  }
+
   return (
     <div className="relative" ref={ref}>
       <button
+        ref={triggerRef}
         onClick={() => setOpen((v) => !v)}
+        onKeyDown={handleTriggerKeyDown}
         aria-expanded={open}
         aria-haspopup="menu"
-        className="flex items-center gap-1.5 md:gap-2 px-2.5 md:px-3 py-1.5 md:py-2 rounded-xl bg-primary/10 border border-primary/20 text-primary text-xs md:text-sm font-medium hover:bg-primary/20 transition-all"
+        aria-controls="user-navigation-menu"
+        className="flex min-h-11 items-center gap-1.5 rounded-xl border border-primary/20 bg-primary/10 px-2.5 text-primary text-xs font-medium transition-all hover:bg-primary/20 md:gap-2 md:px-3 md:text-sm"
       >
         <UserAvatar
           identity={{ displayName, name: displayName, username, image }}
@@ -58,7 +108,10 @@ export default function UserMenu({ displayName, username, role, image, onLogout 
 
       {open && (
         <div
+          id="user-navigation-menu"
+          ref={menuRef}
           role="menu"
+          onKeyDown={handleMenuKeyDown}
           className="absolute right-0 mt-2 w-56 rounded-2xl border border-border bg-card/95 backdrop-blur-xl shadow-xl shadow-black/10 p-1.5 z-50 origin-top-right animate-in fade-in-0 zoom-in-95 slide-in-from-top-1 duration-150"
         >
           <Link

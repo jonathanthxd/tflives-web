@@ -28,6 +28,14 @@ export default function AdminSidebar({
     media.addEventListener("change", update);
     return () => media.removeEventListener("change", update);
   }, []);
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [open, onClose]);
   const drawerVisible = desktop || open;
 
   return (
@@ -54,7 +62,7 @@ export default function AdminSidebar({
               {role === "ADMIN" ? t("adminConsole") : t("moderationConsole")}
             </p>
           </div>
-          <button type="button" onClick={onClose} className="rounded-lg p-2 text-muted-foreground hover:bg-primary/10 hover:text-foreground lg:hidden" aria-label={t("closeNavigation")}>
+          <button type="button" onClick={onClose} className="grid size-10 place-items-center rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-foreground lg:hidden" aria-label={t("closeNavigation")}>
             <X className="h-4 w-4" aria-hidden="true" />
           </button>
         </div>
@@ -75,6 +83,7 @@ export default function AdminSidebar({
                         key={item.href}
                         href={item.href}
                         onClick={onClose}
+                        aria-current={isActive ? "page" : undefined}
                         className={`group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${isActive ? "bg-primary/[0.08] text-foreground" : "text-muted-foreground hover:bg-primary/5 hover:text-foreground"}`}
                       >
                         <span className={`absolute left-0 top-1/2 h-4 w-[2px] -translate-y-1/2 rounded-full bg-primary ${isActive ? "opacity-100" : "opacity-0"}`} />

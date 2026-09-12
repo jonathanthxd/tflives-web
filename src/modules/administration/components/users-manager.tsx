@@ -20,8 +20,6 @@ interface UserRow {
   createdAt: string;
 }
 
-const ROLE_LABELS: Record<Role, string> = { USER: "Usuario", MOD: "Moderador", ADMIN: "Administrador" };
-
 const ROLE_RING: Record<Role, string> = {
   USER: "border-border",
   MOD: "border-amber-500/40 text-amber-600 dark:text-amber-400",
@@ -36,6 +34,7 @@ export default function UsersManager({
   currentUserId: string;
 }) {
   const t = useTranslations("AdminPlatform");
+  const roleLabels: Record<Role, string> = { USER: t("roleUser"), MOD: t("roleMod"), ADMIN: t("roleAdmin") };
   const [users, setUsers] = useState(initialUsers);
   const [query, setQuery] = useState("");
   const [error, setError] = useState("");
@@ -60,9 +59,8 @@ export default function UsersManager({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role: pendingChange.role }),
       });
-      const data = await res.json();
       if (!res.ok) {
-        setError(data.error || "Error al cambiar el rol");
+        setError(t("roleChangeError"));
         setPendingChange(null);
         return;
       }
@@ -70,6 +68,8 @@ export default function UsersManager({
         prev.map((u) => (u.id === pendingChange.user.id ? { ...u, role: pendingChange.role } : u))
       );
       setPendingChange(null);
+    } catch {
+      setError(t("roleChangeError"));
     } finally {
       setBusy(false);
     }
@@ -86,24 +86,26 @@ export default function UsersManager({
       <div className="relative mb-6 max-w-sm">
         <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/50" strokeWidth={1.75} />
         <input
-          className="w-full rounded-xl border border-border bg-background py-2.5 pl-10 pr-4 text-sm outline-none transition-colors focus:border-primary/40"
-          placeholder="Buscar por usuario, nombre o email..."
+          type="search"
+          aria-label={t("userSearch")}
+          className="min-h-11 w-full rounded-xl border border-border bg-background py-2.5 pl-10 pr-4 text-sm outline-none transition-colors focus-visible:border-primary/40 focus-visible:ring-4 focus-visible:ring-primary/15"
+          placeholder={t("userSearch")}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
       </div>
 
       {filtered.length === 0 ? (
-        <EmptyState icon={Users} title="No se encontraron usuarios" description="Probá con otro término de búsqueda." />
+        <EmptyState icon={Users} title={t("usersEmptyTitle")} description={t("usersEmptyDescription")} />
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-primary/10 bg-card/20">
-          <table className="w-full">
+        <div className="overflow-x-auto rounded-2xl border border-primary/10 bg-card/20">
+          <table className="min-w-[46rem] w-full">
             <thead>
               <tr className="border-b border-primary/10">
-                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Usuario</th>
-                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Email</th>
-                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Rol</th>
-                <th className="px-6 py-4 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">Acciones</th>
+                <th scope="col" className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">{t("usersTableUser")}</th>
+                <th scope="col" className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">{t("email")}</th>
+                <th scope="col" className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">{t("role")}</th>
+                <th scope="col" className="px-6 py-4 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">{t("usersTableActions")}</th>
               </tr>
             </thead>
             <tbody>
@@ -125,14 +127,15 @@ export default function UsersManager({
                     <td className="px-6 py-4 text-sm text-muted-foreground">{u.email}</td>
                     <td className="px-6 py-4">
                       <select
-                        className={`rounded-lg border bg-background px-3 py-1.5 text-sm font-medium outline-none transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${ROLE_RING[u.role]}`}
+                        className={`min-h-10 rounded-lg border bg-background px-3 py-1.5 text-sm font-medium outline-none transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${ROLE_RING[u.role]}`}
+                        aria-label={t("role")}
                         value={u.role}
                         disabled={u.id === currentUserId}
                         onChange={(e) => setPendingChange({ user: u, role: e.target.value as Role })}
                       >
                         {(["USER", "MOD", "ADMIN"] as Role[]).map((r) => (
                           <option key={r} value={r}>
-                            {ROLE_LABELS[r]}
+                            {roleLabels[r]}
                           </option>
                         ))}
                       </select>
@@ -141,7 +144,7 @@ export default function UsersManager({
                       <div className="inline-flex items-center gap-1">
                         <Link
                           href={`/admin/users/${u.id}`}
-                          className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+                          className="grid size-10 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
                           title={t("viewOverview")}
                           aria-label={t("viewOverview")}
                         >
@@ -150,16 +153,18 @@ export default function UsersManager({
                         {u.username && (
                           <Link
                             href={`/perfil/${u.username}`}
-                            className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
-                            title="Ver perfil"
+                            className="grid size-10 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+                            title={t("viewPublicProfile")}
+                            aria-label={t("viewPublicProfile")}
                           >
                             <ExternalLink className="h-4 w-4" strokeWidth={1.75} />
                           </Link>
                         )}
                         <Link
                           href="/admin/moderation"
-                          className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-amber-500/10 hover:text-amber-600 dark:hover:text-amber-400"
-                          title="Sancionar"
+                          className="grid size-10 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-amber-500/10 hover:text-amber-600 dark:hover:text-amber-400"
+                          title={t("openModeration")}
+                          aria-label={t("openModeration")}
                         >
                           <ShieldAlert className="h-4 w-4" strokeWidth={1.75} />
                         </Link>
@@ -175,14 +180,14 @@ export default function UsersManager({
 
       <ConfirmDialog
         open={!!pendingChange}
-        title="Cambiar rol"
+        title={t("roleChangeTitle")}
         description={
           pendingChange
-            ? `¿Cambiar el rol de ${pendingChange.user.displayName || pendingChange.user.username || pendingChange.user.email} a ${ROLE_LABELS[pendingChange.role]}?`
+            ? t("roleChangeDescription", { name: pendingChange.user.displayName || pendingChange.user.username || pendingChange.user.email, role: roleLabels[pendingChange.role] })
             : undefined
         }
-        confirmLabel="Cambiar"
-        cancelLabel="Cancelar"
+        confirmLabel={t("confirmRoleChange")}
+        cancelLabel={t("cancel")}
         busy={busy}
         onConfirm={confirmRoleChange}
         onCancel={() => setPendingChange(null)}

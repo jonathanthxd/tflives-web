@@ -10,6 +10,7 @@ import Footer from "@/shared/ui/layout/footer";
 import AmbientBackground from "@/shared/ui/effects/ambient-background";
 import DiscordWidget from "@/shared/ui/effects/discord-widget";
 import OAuthErrorNotice from "@/shared/ui/oauth-error-notice";
+import { SkipLink } from "@/shared/ui/skip-link";
 import { siteMetadata } from "@/config/site";
 import "@/styles/globals.css";
 
@@ -52,9 +53,10 @@ export default async function RootLayout({
           <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
             <AmbientBackground />
 
+            <SkipLink />
             <Navbar />
             <OAuthErrorNotice />
-            {children}
+            <div id="page-content" tabIndex={-1}>{children}</div>
             <Footer />
 
             {/* Discord Widget */}

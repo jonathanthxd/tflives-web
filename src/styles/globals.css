@@ -65,7 +65,22 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* A consistent focus treatment keeps keyboard navigation visible across
+     independently built product areas. */
+  :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 3px;
+  }
+
+  textarea,
+  select {
+    @apply disabled:cursor-not-allowed disabled:opacity-50;
+  }
 }
 
 /* Content surfaces preserve keyboard focus. Motion stays visually consistent regardless of OS performance/accessibility heuristics. */
-.content-surface :focus-visible { outline: 2px solid hsl(var(--primary)); outline-offset: 3px; }
+.content-surface :focus-visible { outline-color: hsl(var(--primary)); }
+
+/* Keep anchored and fixed UI from being obscured by mobile browser chrome. */
+.safe-area-bottom { padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }

@@ -88,7 +88,7 @@ export default function GlobalChat({ userId }: { userId: string }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const composerRef = useRef<HTMLTextAreaElement>(null);
   const expressionButtonRef = useRef<HTMLButtonElement>(null);
-  const closeReportButtonRef = useRef<HTMLButtonElement>(null);
+  const reportDialogRef = useRef<HTMLDialogElement>(null);
   const nearBottomRef = useRef(true);
   const suppressBubbleClickRef = useRef(false);
   const bubbleDragRef = useRef<{ pointerId: number; pointerX: number; bubbleX: number; moved: boolean } | null>(null);
@@ -206,7 +206,11 @@ export default function GlobalChat({ userId }: { userId: string }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  useEffect(() => { if (reporting) closeReportButtonRef.current?.focus(); }, [reporting]);
+  useEffect(() => {
+    const dialog = reportDialogRef.current;
+    if (reporting && !dialog?.open) dialog?.showModal();
+    if (!reporting && dialog?.open) dialog.close();
+  }, [reporting]);
 
   useEffect(() => { setQuickReactions(getQuickReactions()); }, []);
 
@@ -309,9 +313,8 @@ export default function GlobalChat({ userId }: { userId: string }) {
         if (composerRef.current) composerRef.current.style.height = "";
         composerRef.current?.focus();
       });
-    } catch (caught) {
-      const message = caught instanceof Error && caught.message !== "send" ? caught.message : t("errorEnvio");
-      setError(message); setRetryPayload(payload); setConnection("limited");
+    } catch {
+      setError(t("errorEnvio")); setRetryPayload(payload); setConnection("limited");
     } finally { setSending(false); }
   }
 
@@ -349,7 +352,7 @@ export default function GlobalChat({ userId }: { userId: string }) {
       setMessages((current) => current.map((item) => item.id === message.id ? { ...item, reactions: data.reactions } : item));
       if (adding) setQuickReactions(recordReactionUse(emoji));
       setReactionPicker(null);
-    } catch (caught) { setError(caught instanceof Error ? caught.message : t("error")); }
+    } catch { setError(t("error")); }
   }
 
   async function blockAuthor(message: ChatMessage) {
@@ -366,7 +369,7 @@ export default function GlobalChat({ userId }: { userId: string }) {
     if (!reporting || !reportReason.trim()) return;
     const response = await fetch("/api/chat/global/report", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messageId: reporting.id, reason: reportReason, details: reportDetails }) });
     if (response.ok) { setReporting(null); setReportReason(""); setReportDetails(""); setNotice(t("reporteEnviado")); }
-    else { const data = await response.json().catch(() => ({})); setError(data.error || t("error")); }
+    else { setError(t("error")); }
   }
 
   const connectionLabel = connection === "live" ? t("conectado") : t("degradado");
@@ -385,7 +388,7 @@ export default function GlobalChat({ userId }: { userId: string }) {
         >
           <header className="flex items-center justify-between border-b border-border px-3 py-2.5">
             <div className="min-w-0"><h2 className="font-display text-sm font-semibold text-foreground">{t("titulo")}</h2><p role="status" className={`text-[11px] ${connection === "live" ? "text-emerald-500" : "text-amber-500"}`}>{connectionLabel}</p></div>
-            <button type="button" onClick={toggleOpen} aria-label={t("minimizar")} className="rounded-lg p-2 text-muted-foreground hover:bg-primary/10 hover:text-primary"><Minus className="h-4 w-4" /></button>
+            <button type="button" onClick={toggleOpen} aria-label={t("minimizar")} className="grid size-10 place-items-center rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary"><Minus className="h-4 w-4" /></button>
           </header>
           {notice && <p role="status" className="mx-3 mt-2 rounded-lg bg-primary/10 px-2.5 py-2 text-xs text-primary">{notice}</p>}
           {error && <div role="alert" className="mx-3 mt-2 flex items-center justify-between gap-2 rounded-lg bg-destructive/10 px-2.5 py-2 text-xs text-destructive"><span>{error}</span>{retryPayload && <button type="button" onClick={() => void send(retryPayload)} className="font-semibold underline">{t("reintentar")}</button>}</div>}
@@ -399,7 +402,7 @@ export default function GlobalChat({ userId }: { userId: string }) {
                   {message.deletedAt ? <p className="mt-1 text-xs italic text-muted-foreground">{t("mensajeEliminado")}</p> : <><p className="whitespace-pre-wrap break-words text-sm text-foreground"><MessageText content={message.content} /></p>{message.sticker && <img src={message.sticker.assetUrl} alt={message.sticker.name} className="mt-1 h-16 w-16 object-contain" />}</>}
                   {!message.deletedAt && <div className="mt-1.5 flex flex-wrap items-center gap-1">
                     {message.reactions.map((reaction) => <button key={reaction.emoji} type="button" onClick={() => void react(message, reaction.emoji)} aria-label={`${t("reaccionar")}: ${reaction.emoji}`} className={`rounded-full border px-1.5 py-0.5 text-[11px] ${reaction.mine ? "border-primary/40 bg-primary/10" : "border-border hover:bg-primary/5"}`}>{reaction.emoji} {reaction.count}</button>)}
-                    {quickReactions.filter((emoji) => !message.reactions.some((reaction) => reaction.emoji === emoji)).map((emoji) => <button key={emoji} type="button" onClick={() => void react(message, emoji)} aria-label={`${t("reaccionar")}: ${emoji}`} className="rounded-full px-1 py-0.5 text-xs opacity-0 transition-opacity hover:bg-primary/10 group-hover:opacity-100 focus-visible:opacity-100">{emoji}</button>)}
+                    {quickReactions.filter((emoji) => !message.reactions.some((reaction) => reaction.emoji === emoji)).map((emoji) => <button key={emoji} type="button" onClick={() => void react(message, emoji)} aria-label={`${t("reaccionar")}: ${emoji}`} className="rounded-full px-1 py-0.5 text-xs transition-opacity hover:bg-primary/10 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100">{emoji}</button>)}
                     <span>
                       <button
                         type="button"
@@ -414,18 +417,18 @@ export default function GlobalChat({ userId }: { userId: string }) {
                         }}
                         aria-label={t("masReacciones")}
                         aria-expanded={reactionPicker?.messageId === message.id}
-                        className="grid h-7 w-7 place-items-center rounded-full border border-transparent text-muted-foreground opacity-0 transition-[opacity,background-color,border-color,color] hover:border-primary/20 hover:bg-primary/10 hover:text-primary group-hover:opacity-100 focus-visible:opacity-100"
+                        className="grid h-8 w-8 place-items-center rounded-full border border-transparent text-muted-foreground transition-[opacity,background-color,border-color,color] hover:border-primary/20 hover:bg-primary/10 hover:text-primary sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100"
                       ><Plus className="h-3 w-3" /></button>
                     </span>
-                    <button type="button" onClick={() => setReplyTo(message)} className="rounded px-1 py-0.5 text-[11px] text-muted-foreground opacity-0 hover:bg-primary/10 hover:text-primary group-hover:opacity-100 focus-visible:opacity-100"><Reply className="inline h-3 w-3" /> {t("responder")}</button>
-                    <button type="button" onClick={() => setReporting(message)} className="rounded p-1 text-muted-foreground opacity-0 hover:bg-primary/10 hover:text-primary group-hover:opacity-100 focus-visible:opacity-100" aria-label={t("reportar")}><Flag className="h-3 w-3" /></button>
-                    {message.authorId !== userId && message.author.username && <button type="button" onClick={() => void blockAuthor(message)} className="rounded p-1 text-muted-foreground opacity-0 hover:bg-primary/10 hover:text-primary group-hover:opacity-100 focus-visible:opacity-100" aria-label={t("bloquear", { name: personName(message.author) })}><X className="h-3 w-3" /></button>}
+                    <button type="button" onClick={() => setReplyTo(message)} className="rounded px-1 py-0.5 text-[11px] text-muted-foreground hover:bg-primary/10 hover:text-primary sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100"><Reply className="inline h-3 w-3" /> {t("responder")}</button>
+                    <button type="button" onClick={() => setReporting(message)} className="rounded p-1 text-muted-foreground hover:bg-primary/10 hover:text-primary sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100" aria-label={t("reportar")}><Flag className="h-3 w-3" /></button>
+                    {message.authorId !== userId && message.author.username && <button type="button" onClick={() => void blockAuthor(message)} className="rounded p-1 text-muted-foreground hover:bg-primary/10 hover:text-primary sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100" aria-label={t("bloquear", { name: personName(message.author) })}><X className="h-3 w-3" /></button>}
                   </div>}</div>
               </article>)}</div>}
           </div>
           {replyTo && <div className="flex items-center gap-2 border-t border-border bg-primary/5 px-3 py-1.5 text-xs"><span className="min-w-0 flex-1 truncate">{t("respondiendoA", { name: personName(replyTo.author) })}</span><button type="button" onClick={() => setReplyTo(null)} className="text-muted-foreground hover:text-primary">{t("cancelarRespuesta")}</button></div>}
-          <form onSubmit={submit} className="flex items-end gap-1 border-t border-border p-2">
-            <button ref={expressionButtonRef} type="button" onClick={() => setShowExpressions((value) => !value)} aria-label={t("emojisYStickers")} aria-expanded={showExpressions} className="rounded-lg p-2 text-muted-foreground hover:bg-primary/10 hover:text-primary"><SmilePlus className="h-4 w-4" /></button>
+          <form onSubmit={submit} className="safe-area-bottom flex items-end gap-1 border-t border-border p-2">
+            <button ref={expressionButtonRef} type="button" onClick={() => setShowExpressions((value) => !value)} aria-label={t("emojisYStickers")} aria-expanded={showExpressions} className="grid size-10 place-items-center rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary"><SmilePlus className="h-4 w-4" /></button>
             <textarea
               ref={composerRef}
               value={draft}
@@ -442,9 +445,9 @@ export default function GlobalChat({ userId }: { userId: string }) {
               maxLength={2000}
               rows={1}
               placeholder={t("escribir")}
-              className="max-h-24 min-h-9 flex-1 resize-none overflow-y-auto rounded-lg border border-input bg-input/20 px-2.5 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20"
+              className="max-h-24 min-h-10 flex-1 resize-none overflow-y-auto rounded-lg border border-input bg-input/20 px-2.5 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20"
             />
-            <button disabled={sending || !draft.trim()} aria-label={sending ? t("enviando") : t("enviar")} className="rounded-lg bg-primary p-2 text-primary-foreground disabled:opacity-50"><Send className="h-4 w-4" /></button>
+            <button disabled={sending || !draft.trim()} aria-label={sending ? t("enviando") : t("enviar")} className="grid size-10 place-items-center rounded-lg bg-primary text-primary-foreground disabled:opacity-50"><Send className="h-4 w-4" /></button>
           </form>
         </section>
       )}
@@ -493,7 +496,7 @@ export default function GlobalChat({ userId }: { userId: string }) {
         <MessageCircle className="h-5 w-5" />
         {!open && unread > 0 && <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground">{unread > 9 ? "9+" : unread}</span>}
       </button>
-      {reporting && <div role="dialog" aria-modal="true" aria-label={t("reportar")} className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 p-4"><form onSubmit={submitReport} className="w-full max-w-sm rounded-2xl border border-border bg-card p-5 shadow-xl"><div className="mb-3 flex items-center justify-between"><h3 className="font-display font-semibold">{t("reportar")}</h3><button ref={closeReportButtonRef} type="button" onClick={() => setReporting(null)} aria-label={t("cerrarReporte")} className="rounded p-1 text-muted-foreground hover:text-primary"><X className="h-4 w-4" /></button></div><input autoFocus value={reportReason} onChange={(event) => setReportReason(event.target.value)} maxLength={500} required placeholder={t("motivo")} className="mb-2 w-full rounded-lg border border-input bg-input/20 px-3 py-2 text-sm" /><textarea value={reportDetails} onChange={(event) => setReportDetails(event.target.value)} maxLength={2000} placeholder={t("detalles")} className="mb-3 min-h-20 w-full rounded-lg border border-input bg-input/20 px-3 py-2 text-sm" /><button className="w-full rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground">{t("enviarReporte")}</button></form></div>}
+      {reporting && <dialog ref={reportDialogRef} aria-labelledby="global-chat-report-title" onCancel={(event) => { event.preventDefault(); setReporting(null); }} onClick={(event) => { if (event.target === event.currentTarget) setReporting(null); }} className="m-auto max-h-[calc(100dvh-2rem)] w-full max-w-sm overflow-y-auto border-0 bg-transparent p-4 backdrop:bg-black/60 backdrop:backdrop-blur-sm"><form onSubmit={submitReport} className="w-full rounded-2xl border border-border bg-card p-5 shadow-xl"><div className="mb-3 flex items-center justify-between"><h3 id="global-chat-report-title" className="font-display font-semibold">{t("reportar")}</h3><button type="button" onClick={() => setReporting(null)} aria-label={t("cerrarReporte")} className="grid size-10 place-items-center rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary"><X className="h-4 w-4" /></button></div><input autoFocus value={reportReason} onChange={(event) => setReportReason(event.target.value)} maxLength={500} required placeholder={t("motivo")} className="mb-2 min-h-11 w-full rounded-lg border border-input bg-input/20 px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20" /><textarea value={reportDetails} onChange={(event) => setReportDetails(event.target.value)} maxLength={2000} placeholder={t("detalles")} className="mb-3 min-h-20 w-full rounded-lg border border-input bg-input/20 px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20" /><button className="min-h-11 w-full rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground">{t("enviarReporte")}</button></form></dialog>}
     </div>
   );
 }

@@ -88,7 +88,7 @@ export function ProfileSettings({ profile, onUpdated }: { profile: EditableProfi
       const response = await fetch("/api/profile/assets", { method: "POST", body: data });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) {
-        setError(payload.error || t("uploadFailed"));
+        setError(t("uploadFailed"));
         return;
       }
       applyProfile(payload.user as PublicProfile);
@@ -123,7 +123,7 @@ export function ProfileSettings({ profile, onUpdated }: { profile: EditableProfi
       });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) {
-        setError(payload.error || t("saveFailed"));
+        setError(t("saveFailed"));
         return;
       }
       const editable = applyProfile(payload.user as PublicProfile);
@@ -153,7 +153,7 @@ export function ProfileSettings({ profile, onUpdated }: { profile: EditableProfi
             type="button"
             onClick={() => bannerInput.current?.click()}
             disabled={uploading !== null}
-            className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-background/80 px-3 py-2 text-xs font-medium text-foreground backdrop-blur transition hover:border-primary/40 disabled:opacity-60"
+            className="absolute right-4 top-4 inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-white/15 bg-background/80 px-3 py-2 text-xs font-medium text-foreground backdrop-blur transition hover:border-primary/40 disabled:opacity-60"
           >
             <ImageIcon className="size-3.5" aria-hidden="true" />
             {uploading === "banner" ? t("uploading") : t("changeBanner")}
@@ -176,7 +176,7 @@ export function ProfileSettings({ profile, onUpdated }: { profile: EditableProfi
               onClick={() => avatarInput.current?.click()}
               disabled={uploading !== null}
               aria-label={t("changeAvatar")}
-              className="absolute -bottom-1 -right-1 grid size-8 place-items-center rounded-full border-2 border-card bg-primary text-primary-foreground shadow-sm transition hover:bg-primary/90 disabled:opacity-60"
+              className="absolute -bottom-1 -right-1 grid size-10 place-items-center rounded-full border-2 border-card bg-primary text-primary-foreground shadow-sm transition hover:bg-primary/90 disabled:opacity-60"
             >
               <Camera className="size-3.5" aria-hidden="true" />
             </button>
@@ -206,9 +206,8 @@ export function ProfileSettings({ profile, onUpdated }: { profile: EditableProfi
           <FormField label={t("displayName")} htmlFor="profile-display-name">
             <Input id="profile-display-name" value={draft.displayName} maxLength={60} onChange={(event) => setDraft((value) => ({ ...value, displayName: event.target.value }))} placeholder={t("displayNamePlaceholder")} />
           </FormField>
-          <FormField label={t("username")} htmlFor="profile-username">
+          <FormField label={t("username")} htmlFor="profile-username" description={t("usernameHint")}>
             <Input id="profile-username" value={draft.username} maxLength={20} autoCapitalize="none" autoCorrect="off" spellCheck={false} onChange={(event) => setDraft((value) => ({ ...value, username: event.target.value }))} placeholder="tflives_member" />
-            <p className="mt-1.5 text-xs text-muted-foreground">{t("usernameHint")}</p>
           </FormField>
         </div>
       </Card>

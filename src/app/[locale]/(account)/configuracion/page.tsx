@@ -36,7 +36,7 @@ function Toggle({
       aria-checked={checked}
       aria-label={label}
       onClick={() => onChange(!checked)}
-      className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border p-0.5 outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+      className={`relative inline-flex h-11 w-12 shrink-0 items-center rounded-full border p-1 outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
         checked
           ? "border-primary/70 bg-primary"
           : "border-border bg-muted/80 hover:bg-muted"
@@ -45,7 +45,7 @@ function Toggle({
       <span
         aria-hidden="true"
         className={`block size-5 shrink-0 rounded-full bg-white shadow-sm ring-1 ring-black/5 transition-transform duration-200 ${
-          checked ? "translate-x-5" : "translate-x-0"
+          checked ? "translate-x-6" : "translate-x-0"
         }`}
       />
     </button>
@@ -62,6 +62,7 @@ export default function SettingsPage() {
   const [visibility, setVisibility] = useState<Visibility>("PUBLIC");
   const [preferences, setPreferences] = useState<Preference[]>([]);
   const [profile, setProfile] = useState<EditableProfile | null>(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const hash = window.location.hash.slice(1);
@@ -115,22 +116,39 @@ export default function SettingsPage() {
   }
 
   async function updatePrivacy(partial: { allowFriendRequests?: boolean; friendsListVisibility?: Visibility }) {
+    const previous = { allowFriendRequests, visibility };
+    setError("");
     if (partial.allowFriendRequests !== undefined) setAllowFriendRequests(partial.allowFriendRequests);
     if (partial.friendsListVisibility !== undefined) setVisibility(partial.friendsListVisibility);
-    await fetch("/api/social/privacy", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(partial),
-    });
+    try {
+      const response = await fetch("/api/social/privacy", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(partial),
+      });
+      if (!response.ok) throw new Error("privacy");
+    } catch {
+      setAllowFriendRequests(previous.allowFriendRequests);
+      setVisibility(previous.visibility);
+      setError(t("saveError"));
+    }
   }
 
   async function updatePreference(category: string, patch: Partial<Preference>) {
+    const previous = preferences;
+    setError("");
     setPreferences((prev) => prev.map((p) => (p.category === category ? { ...p, ...patch } : p)));
-    await fetch("/api/notifications/preferences", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ category, ...patch }),
-    });
+    try {
+      const response = await fetch("/api/notifications/preferences", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ category, ...patch }),
+      });
+      if (!response.ok) throw new Error("preference");
+    } catch {
+      setPreferences(previous);
+      setError(t("saveError"));
+    }
   }
 
   if (loading) {
@@ -158,6 +176,7 @@ export default function SettingsPage() {
         </div>
 
         <nav
+          role="tablist"
           aria-label={t("secciones")}
           className="grid gap-2 rounded-2xl border border-border bg-card/50 p-2 backdrop-blur-sm sm:grid-cols-2 lg:grid-cols-5"
         >
@@ -167,7 +186,9 @@ export default function SettingsPage() {
               <button
                 key={id}
                 type="button"
-                aria-current={active ? "page" : undefined}
+                role="tab"
+                aria-selected={active}
+                aria-controls={`settings-${id}`}
                 onClick={() => selectSection(id)}
                 className={`flex min-w-0 items-center gap-3 rounded-xl px-3 py-3 text-left outline-none transition focus-visible:ring-2 focus-visible:ring-ring/40 ${
                   active
@@ -187,7 +208,9 @@ export default function SettingsPage() {
           })}
         </nav>
 
-        <div id={section} className="scroll-mt-28">
+        {error && <p role="alert" className="rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">{error}</p>}
+
+        <div id={`settings-${section}`} role="tabpanel" className="scroll-mt-28">
           {section === "profile" && profile && <ProfileSettings profile={profile} onUpdated={setProfile} />}
 
           {section === "security" && (
@@ -221,7 +244,7 @@ export default function SettingsPage() {
                   id="friends-visibility"
                   value={visibility}
                   onChange={(e) => updatePrivacy({ friendsListVisibility: e.target.value as Visibility })}
-                  className="w-full rounded-xl border border-input bg-input/30 px-4 py-2 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-4 focus-visible:ring-ring/15"
+                  className="min-h-11 w-full rounded-xl border border-input bg-input/30 px-4 py-2 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-4 focus-visible:ring-ring/15"
                 >
                   <option value="PUBLIC">{t("visibilidadTodos")}</option>
                   <option value="FRIENDS_ONLY">{t("visibilidadSoloAmigos")}</option>

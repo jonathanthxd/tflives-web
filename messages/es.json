@@ -40,7 +40,8 @@
     "privacidadDescripcion": "Controlá quién puede interactuar contigo",
     "notificacionesDescripcion": "Elegí qué avisos querés recibir",
     "wallet": "TFL Coins",
-    "walletDescripcion": "Saldo y movimientos de tu wallet"
+    "walletDescripcion": "Saldo y movimientos de tu wallet",
+    "saveError": "No pudimos guardar el cambio. Intentá de nuevo."
   },
   "Wallet": {
     "title": "TFL Coins",
@@ -50,6 +51,7 @@
     "history": "Movimientos recientes",
     "empty": "Todavía no tenés movimientos de TFL Coins.",
     "loadError": "No pudimos cargar tu wallet. Probá nuevamente.",
+    "loading": "Cargando wallet…",
     "balanceAfter": "Saldo: {balance} TFL",
     "transactionTypes": {
       "LEVEL_REWARD": "Recompensa por nivel",
@@ -235,7 +237,8 @@
     "login": "Login",
     "cambiarTema": "Cambiar tema",
     "abrirMenu": "Abrir menú",
-    "cerrarMenu": "Cerrar menú"
+    "cerrarMenu": "Cerrar menú",
+    "skipToContent": "Saltar al contenido"
   },
   "Footer": {
     "streamers": "Streamers",
@@ -564,6 +567,7 @@
     "sinConversaciones": "Todavía no tenés conversaciones.",
     "sinConversacionesDescripcion": "Elegí \"Nuevo mensaje\" para escribirle a un amigo.",
     "elegiConversacion": "Elegí una conversación de la lista",
+    "volverAConversaciones": "Volver a conversaciones",
     "grupoSinNombre": "Grupo sin nombre",
     "opciones": "Opciones",
     "verPerfil": "Ver perfil",
@@ -838,6 +842,9 @@
     "working": "Guardando…",
     "premiumOnly": "Solo Premium",
     "actionError": "No se pudo completar esta acción.",
+    "purchaseSuccess": "Cosmético añadido a tu inventario.",
+    "equipSuccess": "Cosmético equipado en tu perfil.",
+    "unequipSuccess": "Cosmético quitado de tu perfil.",
     "types": {
       "AVATAR_FRAME": "Marco de avatar",
       "PROFILE_ACCENT": "Acento de perfil",
@@ -914,6 +921,7 @@
     "description": "Descubrí a los creadores activos de TFLives y sus canales oficiales.",
     "featured": "Creadores destacados",
     "allCreators": "Todos los creadores",
+    "results": "{count, plural, =0 {Sin resultados} one {# creador} other {# creadores}}",
     "search": "Buscar por nombre o @username",
     "category": "Categoría",
     "allCategories": "Todas las categorías",
@@ -1064,6 +1072,18 @@
     "quickCosmetic": "Crear cosmético",
     "quickWallet": "Ajustar TFL Coins",
     "viewOverview": "Ver resumen administrativo",
+    "userSearch": "Buscar por usuario, nombre o email…",
+    "usersEmptyTitle": "No se encontraron usuarios",
+    "usersEmptyDescription": "Probá con otro término de búsqueda.",
+    "usersTableUser": "Usuario",
+    "usersTableActions": "Acciones",
+    "viewPublicProfile": "Ver perfil público",
+    "openModeration": "Abrir moderación",
+    "roleChangeTitle": "Cambiar rol",
+    "roleChangeDescription": "¿Cambiar el rol de {name} a {role}?",
+    "confirmRoleChange": "Cambiar",
+    "cancel": "Cancelar",
+    "roleChangeError": "No pudimos cambiar el rol. Intentá de nuevo.",
     "userOverviewDescription": "Contexto operativo de la cuenta",
     "backToUsers": "Volver a usuarios",
     "unknownUser": "Usuario sin nombre",

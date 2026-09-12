@@ -74,6 +74,18 @@ export default function Navbar() {
     };
   }, [session?.user?.id]);
 
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMobileOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
   const handleLogout = async () => {
     await authClient.signOut();
     setUser(null);
@@ -87,8 +99,12 @@ export default function Navbar() {
     return <AuthHeader />;
   }
 
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+    return null;
+  }
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50">
+    <nav className="fixed top-0 left-0 right-0 z-50" aria-label="TFLives">
       {/* Glassmorphism */}
       <div className="absolute inset-0 bg-background/70 backdrop-blur-xl border-b border-primary/10 shadow-lg shadow-black/5" />
 
@@ -102,7 +118,7 @@ export default function Navbar() {
               }
               aria-label={t("cambiarTema")}
               title={t("cambiarTema")}
-              className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300"
+              className="grid min-h-11 min-w-11 place-items-center rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300"
             >
               <svg
                 className="w-5 h-5"
@@ -121,7 +137,7 @@ export default function Navbar() {
             <Link
               href={pathname}
               locale={locale === "es" ? "en" : "es"}
-              className="px-2 py-1.5 rounded-lg text-xs font-semibold text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300 uppercase"
+              className="inline-flex min-h-11 items-center rounded-lg px-2 text-xs font-semibold text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300 uppercase"
             >
               {locale === "es" ? "EN" : "ES"}
             </Link>
@@ -131,25 +147,28 @@ export default function Navbar() {
           <div className="flex items-center gap-3 sm:gap-5 md:gap-7 flex-shrink-0">
             <Link
               href="/streamers"
-              className="hidden lg:inline-flex text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-300 tracking-wide py-1"
+              aria-current={pathname === "/streamers" || pathname.startsWith("/streamers/") ? "page" : undefined}
+              className="hidden lg:inline-flex min-h-11 items-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-300 tracking-wide"
             >
               {t("streamers")}
             </Link>
             <Link
               href="/comunidad"
-              className="hidden md:inline-flex text-sm text-muted-foreground hover:text-primary"
+              aria-current={pathname === "/comunidad" ? "page" : undefined}
+              className="hidden md:inline-flex min-h-11 items-center text-sm text-muted-foreground hover:text-primary"
             >
               {t("comunidad")}
             </Link>
 
             <Link
               href="/network"
-              className="relative text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-300 tracking-wide py-1 after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-primary/70 after:transition-all after:duration-300 hover:after:w-full whitespace-nowrap"
+              aria-current={pathname === "/network" || pathname.startsWith("/network/") ? "page" : undefined}
+              className="relative inline-flex min-h-11 items-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-300 tracking-wide after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-primary/70 after:transition-all after:duration-300 hover:after:w-full whitespace-nowrap"
             >
               {t("network")}
             </Link>
 
-            <Link href="/" className="flex flex-col items-center group">
+            <Link href="/" aria-current={pathname === "/" ? "page" : undefined} className="flex min-h-11 flex-col items-center justify-center group">
               <span className="font-display text-xl md:text-2xl lg:text-3xl font-bold tracking-tight transition-all duration-300 group-hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)] whitespace-nowrap">
                 <span className="text-foreground group-hover:text-primary transition-colors duration-300">
                   TFL
@@ -163,25 +182,29 @@ export default function Navbar() {
 
             <Link
               href="/trayectoria"
-              className="hidden md:inline-flex text-sm text-muted-foreground hover:text-primary"
+              aria-current={pathname === "/trayectoria" ? "page" : undefined}
+              className="hidden md:inline-flex min-h-11 items-center text-sm text-muted-foreground hover:text-primary"
             >
               {t("trayectoria")}
             </Link>
             <Link
               href="/tienda"
-              className="hidden lg:inline-flex text-sm text-muted-foreground hover:text-primary"
+              aria-current={pathname === "/tienda" ? "page" : undefined}
+              className="hidden lg:inline-flex min-h-11 items-center text-sm text-muted-foreground hover:text-primary"
             >
               {t("tienda")}
             </Link>
             <Link
               href="/cosmeticos"
-              className="hidden lg:inline-flex text-sm text-muted-foreground hover:text-primary"
+              aria-current={pathname === "/cosmeticos" ? "page" : undefined}
+              className="hidden lg:inline-flex min-h-11 items-center text-sm text-muted-foreground hover:text-primary"
             >
               {t("cosmeticos")}
             </Link>
             <Link
               href="/equipo"
-              className="hidden lg:inline-flex text-sm text-muted-foreground hover:text-primary"
+              aria-current={pathname === "/equipo" ? "page" : undefined}
+              className="hidden lg:inline-flex min-h-11 items-center text-sm text-muted-foreground hover:text-primary"
             >
               {t("equipo")}
             </Link>
@@ -243,7 +266,7 @@ export default function Navbar() {
             ) : (
               <Link
                 href="/login"
-                className="px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-medium text-muted-foreground border border-muted-foreground/20 rounded-full hover:border-primary/50 hover:text-primary hover:bg-primary/5 transition-all duration-300 backdrop-blur-sm whitespace-nowrap"
+                className="inline-flex min-h-11 items-center px-3 md:px-4 text-xs md:text-sm font-medium text-muted-foreground border border-muted-foreground/20 rounded-full hover:border-primary/50 hover:text-primary hover:bg-primary/5 transition-all duration-300 backdrop-blur-sm whitespace-nowrap"
               >
                 {t("login")}
               </Link>
@@ -254,8 +277,9 @@ export default function Navbar() {
             <button
               onClick={() => setMobileOpen((v) => !v)}
               aria-expanded={mobileOpen}
+              aria-controls="site-mobile-menu"
               aria-label={mobileOpen ? t("cerrarMenu") : t("abrirMenu")}
-              className="ml-1 p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300 md:hidden"
+              className="ml-1 grid min-h-11 min-w-11 place-items-center rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300 md:hidden"
             >
               {mobileOpen ? (
                 <svg
@@ -293,24 +317,26 @@ export default function Navbar() {
 
       {/* Mobile menu (sin cambios) */}
       <div
+        id="site-mobile-menu"
         className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
           mobileOpen
-            ? "max-h-96 opacity-100"
+            ? "max-h-[calc(100dvh-4rem)] opacity-100"
             : "max-h-0 opacity-0 pointer-events-none"
         }`}
       >
         <div className="bg-background/95 backdrop-blur-xl border-b border-primary/10 shadow-inner">
-          <div className="px-4 py-4 space-y-3">
+          <div className="safe-area-bottom max-h-[calc(100dvh-4rem)] overflow-y-auto px-4 py-4 space-y-1">
             <Link
               href="/"
-              className="block py-2 text-primary font-medium"
+              className="flex min-h-11 items-center rounded-lg px-2 text-primary font-medium hover:bg-primary/5"
               onClick={() => setMobileOpen(false)}
             >
               TFLives
             </Link>
             <Link
               href="/network"
-              className="block py-2 text-muted-foreground hover:text-primary transition-colors"
+              aria-current={pathname === "/network" || pathname.startsWith("/network/") ? "page" : undefined}
+              className="flex min-h-11 items-center rounded-lg px-2 text-muted-foreground hover:bg-primary/5 hover:text-primary transition-colors"
               onClick={() => setMobileOpen(false)}
             >
               {t("network")}
@@ -318,42 +344,43 @@ export default function Navbar() {
             <Link
               href="/streamers"
               onClick={() => setMobileOpen(false)}
-              className="block py-2 text-muted-foreground hover:text-primary transition-colors"
+              aria-current={pathname === "/streamers" || pathname.startsWith("/streamers/") ? "page" : undefined}
+              className="flex min-h-11 items-center rounded-lg px-2 text-muted-foreground hover:bg-primary/5 hover:text-primary transition-colors"
             >
               {t("streamers")}
             </Link>
             <Link
               href="/comunidad"
               onClick={() => setMobileOpen(false)}
-              className="block py-2 text-muted-foreground hover:text-primary"
+              className="flex min-h-11 items-center rounded-lg px-2 text-muted-foreground hover:bg-primary/5 hover:text-primary"
             >
               {t("comunidad")}
             </Link>
             <Link
               href="/trayectoria"
               onClick={() => setMobileOpen(false)}
-              className="block py-2 text-muted-foreground hover:text-primary"
+              className="flex min-h-11 items-center rounded-lg px-2 text-muted-foreground hover:bg-primary/5 hover:text-primary"
             >
               {t("trayectoria")}
             </Link>
             <Link
               href="/tienda"
               onClick={() => setMobileOpen(false)}
-              className="block py-2 text-muted-foreground hover:text-primary"
+              className="flex min-h-11 items-center rounded-lg px-2 text-muted-foreground hover:bg-primary/5 hover:text-primary"
             >
               {t("tienda")}
             </Link>
             <Link
               href="/cosmeticos"
               onClick={() => setMobileOpen(false)}
-              className="block py-2 text-muted-foreground hover:text-primary"
+              className="flex min-h-11 items-center rounded-lg px-2 text-muted-foreground hover:bg-primary/5 hover:text-primary"
             >
               {t("cosmeticos")}
             </Link>
             <Link
               href="/equipo"
               onClick={() => setMobileOpen(false)}
-              className="block py-2 text-muted-foreground hover:text-primary"
+              className="flex min-h-11 items-center rounded-lg px-2 text-muted-foreground hover:bg-primary/5 hover:text-primary"
             >
               {t("equipo")}
             </Link>
@@ -366,21 +393,21 @@ export default function Navbar() {
                       ? `/perfil/${user.username}`
                       : "/onboarding/username"
                   }
-                  className="block py-2 text-primary font-medium"
+                  className="flex min-h-11 items-center rounded-lg px-2 text-primary font-medium hover:bg-primary/5"
                   onClick={() => setMobileOpen(false)}
                 >
                   {tUser("miPerfil")}
                 </Link>
                 <Link
                   href="/amigos"
-                  className="block py-2 text-muted-foreground hover:text-primary transition-colors"
+                  className="flex min-h-11 items-center rounded-lg px-2 text-muted-foreground hover:bg-primary/5 hover:text-primary transition-colors"
                   onClick={() => setMobileOpen(false)}
                 >
                   {t("amigos")}
                 </Link>
                 <Link
                   href="/mensajes"
-                  className="block py-2 text-muted-foreground hover:text-primary transition-colors"
+                  className="flex min-h-11 items-center rounded-lg px-2 text-muted-foreground hover:bg-primary/5 hover:text-primary transition-colors"
                   onClick={() => setMobileOpen(false)}
                 >
                   {t("mensajes")}
@@ -388,7 +415,7 @@ export default function Navbar() {
                 {(user.role === "ADMIN" || user.role === "MOD") && (
                   <Link
                     href="/admin"
-                    className="block py-2 text-foreground hover:text-primary transition-colors"
+                    className="flex min-h-11 items-center rounded-lg px-2 text-foreground hover:bg-primary/5 hover:text-primary transition-colors"
                     onClick={() => setMobileOpen(false)}
                   >
                     {tUser("panelAdmin")}
@@ -399,7 +426,7 @@ export default function Navbar() {
                     handleLogout();
                     setMobileOpen(false);
                   }}
-                  className="block w-full text-left py-2 text-red-700 dark:text-red-400"
+                  className="flex min-h-11 w-full items-center rounded-lg px-2 text-left text-red-700 hover:bg-destructive/10 dark:text-red-400"
                 >
                   {tUser("cerrarSesion")}
                 </button>
@@ -408,7 +435,7 @@ export default function Navbar() {
               <div className="pt-2 border-t border-primary/10">
                 <Link
                   href="/login"
-                  className="block py-2 text-muted-foreground hover:text-primary transition-colors"
+                  className="flex min-h-11 items-center rounded-lg px-2 text-muted-foreground hover:bg-primary/5 hover:text-primary transition-colors"
                   onClick={() => setMobileOpen(false)}
                 >
                   {t("login")}

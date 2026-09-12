@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ArrowUpRight, Radio, UsersRound, X } from "lucide-react";
+import { usePathname } from "@/i18n/navigation";
 
 interface Counts {
   member_count: number | null;
@@ -29,6 +30,7 @@ function DiscordLogo({ className = "" }: { className?: string }) {
 
 export default function DiscordWidget() {
   const t = useTranslations("Content");
+  const pathname = usePathname();
   const [data, setData] = useState<Counts | null>(null);
   const [open, setOpen] = useState(false);
 
@@ -54,6 +56,8 @@ export default function DiscordWidget() {
   const members = data?.member_count != null ? data.member_count.toLocaleString() : t("unavailable");
   const online = data?.presence_count != null ? data.presence_count.toLocaleString() : t("unavailable");
   const hasOnline = data?.presence_count != null && data.presence_count > 0;
+
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) return null;
 
   return (
     <div

@@ -40,7 +40,8 @@
     "privacidadDescripcion": "Control who can interact with you",
     "notificacionesDescripcion": "Choose which alerts you want to receive",
     "wallet": "TFL Coins",
-    "walletDescripcion": "Your wallet balance and activity"
+    "walletDescripcion": "Your wallet balance and activity",
+    "saveError": "We couldn't save the change. Try again."
   },
   "Wallet": {
     "title": "TFL Coins",
@@ -50,6 +51,7 @@
     "history": "Recent activity",
     "empty": "You don't have any TFL Coins activity yet.",
     "loadError": "We couldn't load your wallet. Please try again.",
+    "loading": "Loading wallet…",
     "balanceAfter": "Balance: {balance} TFL",
     "transactionTypes": {
       "LEVEL_REWARD": "Level reward",
@@ -235,7 +237,8 @@
     "login": "Login",
     "cambiarTema": "Toggle theme",
     "abrirMenu": "Open menu",
-    "cerrarMenu": "Close menu"
+    "cerrarMenu": "Close menu",
+    "skipToContent": "Skip to content"
   },
   "Footer": {
     "streamers": "Streamers",
@@ -564,6 +567,7 @@
     "sinConversaciones": "You don't have any conversations yet.",
     "sinConversacionesDescripcion": "Pick \"New message\" to write to a friend.",
     "elegiConversacion": "Pick a conversation from the list",
+    "volverAConversaciones": "Back to conversations",
     "grupoSinNombre": "Unnamed group",
     "opciones": "Options",
     "verPerfil": "View profile",
@@ -838,6 +842,9 @@
     "working": "Saving…",
     "premiumOnly": "Premium only",
     "actionError": "This action could not be completed.",
+    "purchaseSuccess": "Cosmetic added to your inventory.",
+    "equipSuccess": "Cosmetic equipped on your profile.",
+    "unequipSuccess": "Cosmetic removed from your profile.",
     "types": {
       "AVATAR_FRAME": "Avatar frame",
       "PROFILE_ACCENT": "Profile accent",
@@ -914,6 +921,7 @@
     "description": "Discover active TFLives creators and their official channels.",
     "featured": "Featured creators",
     "allCreators": "All creators",
+    "results": "{count, plural, =0 {No results} one {# creator} other {# creators}}",
     "search": "Search by name or @username",
     "category": "Category",
     "allCategories": "All categories",
@@ -1064,6 +1072,18 @@
     "quickCosmetic": "Create cosmetic",
     "quickWallet": "Adjust TFL Coins",
     "viewOverview": "View administrative overview",
+    "userSearch": "Search by username, name, or email…",
+    "usersEmptyTitle": "No users found",
+    "usersEmptyDescription": "Try a different search term.",
+    "usersTableUser": "User",
+    "usersTableActions": "Actions",
+    "viewPublicProfile": "View public profile",
+    "openModeration": "Open moderation",
+    "roleChangeTitle": "Change role",
+    "roleChangeDescription": "Change {name}'s role to {role}?",
+    "confirmRoleChange": "Change",
+    "cancel": "Cancel",
+    "roleChangeError": "We couldn't change the role. Try again.",
     "userOverviewDescription": "Operational account context",
     "backToUsers": "Back to users",
     "unknownUser": "Unnamed user",

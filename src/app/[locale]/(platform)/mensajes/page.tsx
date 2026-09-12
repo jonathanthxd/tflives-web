@@ -12,6 +12,7 @@ import { AnchoredEmojiStickerPicker, type PickerAnchorRect } from "@/modules/cha
 import { getQuickReactions, recordReactionUse } from "@/modules/chat/reaction-preferences";
 import { UserAvatar } from "@/modules/profiles/components/user-identity";
 import { formatUserTime } from "@/shared/lib/date-time";
+import { ChevronLeft } from "lucide-react";
 
 interface PersonSummary {
   id: string;
@@ -67,6 +68,38 @@ function conversationTitle(entry: { isGroup: boolean; name: string | null; other
   return displayNameOf(entry.otherParticipants[0] ?? { id: "", username: null, displayName: null, name: null, image: null });
 }
 
+function MessageDialog({
+  open,
+  labelledBy,
+  onClose,
+  children,
+}: {
+  open: boolean;
+  labelledBy: string;
+  onClose: () => void;
+  children: React.ReactNode;
+}) {
+  const ref = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    const dialog = ref.current;
+    if (open && !dialog?.open) dialog?.showModal();
+    if (!open && dialog?.open) dialog.close();
+  }, [open]);
+
+  return (
+    <dialog
+      ref={ref}
+      aria-labelledby={labelledBy}
+      onCancel={(event) => { event.preventDefault(); onClose(); }}
+      onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}
+      className="m-auto max-h-[calc(100dvh-2rem)] w-full max-w-sm overflow-y-auto border-0 bg-transparent p-4 backdrop:bg-black/50 backdrop:backdrop-blur-sm"
+    >
+      {children}
+    </dialog>
+  );
+}
+
 export default function MessagesPage() {
   const t = useTranslations("MessagesPage");
   const locale = useLocale();
@@ -74,6 +107,7 @@ export default function MessagesPage() {
   const nextSearchParams = useNextSearchParams();
 
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [mobileConversationOpen, setMobileConversationOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [active, setActive] = useState<InboxEntry[]>([]);
   const [requests, setRequests] = useState<InboxEntry[]>([]);
@@ -138,7 +172,9 @@ export default function MessagesPage() {
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => setStickers(data?.stickers ?? []))
       .catch(() => {});
-    setActiveId(nextSearchParams.get("c"));
+    const initialConversationId = nextSearchParams.get("c");
+    setActiveId(initialConversationId);
+    setMobileConversationOpen(Boolean(initialConversationId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -202,6 +238,14 @@ export default function MessagesPage() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
+  useEffect(() => {
+    const closeMenu = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", closeMenu);
+    return () => window.removeEventListener("keydown", closeMenu);
+  }, []);
+
   const latestMessageId = conversation?.messages[conversation.messages.length - 1]?.id ?? null;
 
   useEffect(() => {
@@ -232,6 +276,7 @@ export default function MessagesPage() {
 
   function selectConversation(id: string) {
     setActiveId(id);
+    setMobileConversationOpen(true);
     router.push(`/mensajes?c=${id}`);
   }
 
@@ -262,10 +307,9 @@ export default function MessagesPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username }),
     });
-    const data = await res.json().catch(() => ({}));
     setBusy(false);
     if (!res.ok) {
-      setError(data.error || t("errorGenerico"));
+      setError(t("errorGenerico"));
       return;
     }
     setShowNewMessage(false);
@@ -304,10 +348,9 @@ export default function MessagesPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: groupName.trim() || null, usernames }),
     });
-    const data = await res.json().catch(() => ({}));
     setBusy(false);
     if (!res.ok) {
-      setError(data.error || t("errorGenerico"));
+      setError(t("errorGenerico"));
       return;
     }
     setShowNewGroup(false);
@@ -360,7 +403,7 @@ export default function MessagesPage() {
       body: JSON.stringify({ content: draft.trim(), replyToId: replyToMessage?.id ?? null, stickerId }),
     });
     const data = await res.json().catch(() => ({}));
-    if (!res.ok) { setError(data.error || t("errorGenerico")); return; }
+    if (!res.ok) { setError(t("errorGenerico")); return; }
     setConversation((prev) => !prev || prev.messages.some((message) => message.id === data.message.id) ? prev : { ...prev, messages: [...prev.messages, data.message] });
     setDraft("");
     setReplyToMessage(null);
@@ -405,7 +448,7 @@ export default function MessagesPage() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(data.error || t("errorGenerico"));
+        setError(t("errorGenerico"));
         return;
       }
       setConversation((prev) => prev ? {
@@ -429,7 +472,7 @@ export default function MessagesPage() {
       const res = await fetch(`/api/messaging/messages/${deleteTarget.id}`, { method: "DELETE" });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(data.error || t("errorGenerico"));
+        setError(t("errorGenerico"));
         return;
       }
       setConversation((prev) => prev ? {
@@ -454,7 +497,7 @@ export default function MessagesPage() {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ emoji }),
     });
     const data = await res.json().catch(() => ({}));
-    if (!res.ok) { setError(data.error || t("errorGenerico")); return; }
+    if (!res.ok) { setError(t("errorGenerico")); return; }
     setConversation((prev) => prev ? { ...prev, messages: prev.messages.map((item) => item.id === message.id ? { ...item, reactions: data.reactions } : item) } : prev);
     if (adding) setQuickReactions(recordReactionUse(emoji));
     setReactionPicker(null);
@@ -482,9 +525,8 @@ export default function MessagesPage() {
     if (!activeId || !memberUsername.trim()) return;
     setBusy(true);
     const res = await fetch(`/api/messaging/conversations/${activeId}/members`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: memberUsername }) });
-    const data = await res.json().catch(() => ({}));
     setBusy(false);
-    if (!res.ok) { setError(data.error || t("errorGenerico")); return; }
+    if (!res.ok) { setError(t("errorGenerico")); return; }
     setMemberUsername("");
     loadConversation(activeId);
   }
@@ -493,9 +535,8 @@ export default function MessagesPage() {
     if (!activeId) return;
     setBusy(true);
     const res = await fetch(`/api/messaging/conversations/${activeId}/members`, { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ targetUserId }) });
-    const data = await res.json().catch(() => ({}));
     setBusy(false);
-    if (!res.ok) { setError(data.error || t("errorGenerico")); return; }
+    if (!res.ok) { setError(t("errorGenerico")); return; }
     loadConversation(activeId);
   }
 
@@ -537,9 +578,8 @@ export default function MessagesPage() {
     const res = await fetch(`/api/messaging/conversations/${activeId}/members`, {
       method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "close" }),
     });
-    const data = await res.json().catch(() => ({}));
     setBusy(false);
-    if (!res.ok) { setError(data.error || t("errorGenerico")); return; }
+    if (!res.ok) { setError(t("errorGenerico")); return; }
     setShowCloseGroupConfirm(false);
     setActiveId(null);
     router.push("/mensajes");
@@ -591,8 +631,8 @@ export default function MessagesPage() {
           </div>
         )}
 
-        <Card className="grid grid-cols-1 sm:grid-cols-3 overflow-hidden min-h-[480px]">
-          <div className="sm:border-r border-border sm:col-span-1 max-h-[600px] overflow-y-auto">
+        <Card className="grid min-h-[480px] grid-cols-1 overflow-hidden sm:grid-cols-3">
+          <div className={`${mobileConversationOpen ? "hidden sm:block" : "block"} max-h-[calc(100dvh-11rem)] overflow-y-auto border-border sm:col-span-1 sm:max-h-[600px] sm:border-r`}>
             {requests.length > 0 && (
               <div className="border-b border-border">
                 <p className="px-4 pt-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -652,11 +692,14 @@ export default function MessagesPage() {
             )}
           </div>
 
-          <div className="sm:col-span-2 flex flex-col min-h-[480px] max-h-[600px]">
+          <div className={`${mobileConversationOpen ? "flex" : "hidden sm:flex"} min-h-[calc(100dvh-11rem)] flex-col sm:col-span-2 sm:min-h-[480px] sm:max-h-[600px]`}>
             {conversation ? (
               <>
-                <div className="flex items-center justify-between border-b border-border px-4 py-3">
+                <div className="flex items-center justify-between border-b border-border px-3 py-3 sm:px-4">
                   <div className="flex items-center gap-3 min-w-0">
+                    <button type="button" onClick={() => setMobileConversationOpen(false)} className="grid size-10 shrink-0 place-items-center rounded-lg text-muted-foreground hover:bg-primary/5 hover:text-primary sm:hidden" aria-label={t("volverAConversaciones")}>
+                      <ChevronLeft className="size-5" aria-hidden="true" />
+                    </button>
                     {otherParticipant && !conversation.isGroup && <Avatar person={otherParticipant} />}
                     {conversation.isGroup && (
                       <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
@@ -772,7 +815,7 @@ export default function MessagesPage() {
                       return (
                         <div id={`message-${m.id}`} key={m.id} className={`group flex ${mine ? "justify-end" : "justify-start"}`}>
                           <div
-                            className={`max-w-[75%] rounded-2xl px-3.5 py-2 text-sm ${
+                            className={`max-w-[88%] rounded-2xl px-3.5 py-2 text-sm sm:max-w-[75%] ${
                               mine ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"
                             }`}
                           >
@@ -791,7 +834,7 @@ export default function MessagesPage() {
                                   onChange={(event) => setEditingDraft(event.target.value)}
                                   maxLength={2000}
                                   rows={2}
-                                  className="max-h-32 min-h-16 w-full min-w-[220px] resize-y rounded-xl border border-primary-foreground/20 bg-background/15 px-3 py-2 text-sm text-inherit outline-none placeholder:text-current/50 focus-visible:ring-2 focus-visible:ring-primary-foreground/40"
+                                  className="max-h-32 min-h-16 w-full min-w-0 resize-y rounded-xl border border-primary-foreground/20 bg-background/15 px-3 py-2 text-sm text-inherit outline-none placeholder:text-current/50 focus-visible:ring-2 focus-visible:ring-primary-foreground/40"
                                 />
                                 {m.sticker && <img src={m.sticker.assetUrl} alt={m.sticker.name} className="h-16 w-16 object-contain" />}
                                 <div className="flex justify-end gap-2 text-[11px]">
@@ -824,7 +867,7 @@ export default function MessagesPage() {
                             </p>
                             {!m.deletedAt && !isEditing && <div className="mt-1 flex flex-wrap items-center gap-1">
                               {m.reactions.map((reaction) => <button key={reaction.emoji} type="button" onClick={() => void reactToMessage(m, reaction.emoji)} className={`rounded-full border px-1.5 py-0.5 text-[10px] ${mine ? "border-primary-foreground/30" : "border-border"} ${reaction.mine ? "bg-primary/15" : ""}`}>{reaction.emoji} {reaction.count}</button>)}
-                              {quickReactions.filter((emoji) => !m.reactions.some((reaction) => reaction.emoji === emoji)).map((emoji) => <button key={emoji} type="button" onClick={() => void reactToMessage(m, emoji)} aria-label={`${t("reaccionar")} ${emoji}`} className="rounded px-1 text-xs opacity-0 group-hover:opacity-100 focus-visible:opacity-100">{emoji}</button>)}
+                              {quickReactions.filter((emoji) => !m.reactions.some((reaction) => reaction.emoji === emoji)).map((emoji) => <button key={emoji} type="button" onClick={() => void reactToMessage(m, emoji)} aria-label={`${t("reaccionar")} ${emoji}`} className="rounded px-1 text-xs sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100">{emoji}</button>)}
                               <span>
                                 <button
                                   type="button"
@@ -839,17 +882,17 @@ export default function MessagesPage() {
                                   }}
                                   aria-label={t("masReacciones")}
                                   aria-expanded={reactionPicker?.messageId === m.id}
-                                  className="grid h-5 w-5 place-items-center rounded-full text-xs opacity-0 hover:bg-primary/10 group-hover:opacity-100 focus-visible:opacity-100"
+                                  className="grid size-8 place-items-center rounded-full text-xs hover:bg-primary/10 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100"
                                 >+</button>
                               </span>
-                              <button type="button" onClick={() => setReplyToMessage(m)} className="rounded px-1 text-[10px] opacity-0 group-hover:opacity-100 focus-visible:opacity-100">↩ {t("responder")}</button>
+                              <button type="button" onClick={() => setReplyToMessage(m)} className="rounded px-1 text-[10px] sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100">↩ {t("responder")}</button>
                               {mine && canEdit && (
                                 <button type="button" onClick={() => startEditingMessage(m)} className="rounded px-1 text-[10px] opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100">✎ {t("editarMensaje")}</button>
                               )}
                               {mine ? (
                                 <button type="button" onClick={() => setDeleteTarget(m)} className="rounded px-1 text-[10px] opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100">⌫ {t("eliminarMensaje")}</button>
                               ) : (
-                                <button type="button" aria-label={t("reportar")} onClick={() => { setReportTarget({ targetType: "DIRECT_MESSAGE", targetId: m.id }); setShowReport(true); }} className="rounded px-1 text-[10px] opacity-0 group-hover:opacity-100 focus-visible:opacity-100">⚑</button>
+                                <button type="button" aria-label={t("reportar")} onClick={() => { setReportTarget({ targetType: "DIRECT_MESSAGE", targetId: m.id }); setShowReport(true); }} className="rounded px-1 text-[10px] sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100">⚑</button>
                               )}
                             </div>}
                           </div>
@@ -887,7 +930,7 @@ export default function MessagesPage() {
                     }}
                     className="max-h-24 min-h-11 flex-1 resize-none overflow-y-auto rounded-xl border border-input bg-input/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-all duration-200 focus-visible:border-ring focus-visible:ring-4 focus-visible:ring-ring/15"
                   />
-                  <Button type="submit" size="sm" disabled={!draft.trim()}>
+                  <Button type="submit" size="sm" className="min-h-11 sm:min-h-9" disabled={!draft.trim()}>
                     {t("enviar")}
                   </Button>
                 </form>
@@ -929,10 +972,9 @@ export default function MessagesPage() {
       </div>
 
       {showNewMessage && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowNewMessage(false)} />
-          <div className="relative w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-xl">
-            <h2 className="font-display text-lg font-semibold text-foreground mb-4">{t("nuevoMensaje")}</h2>
+        <MessageDialog open={showNewMessage} labelledBy="new-message-title" onClose={() => setShowNewMessage(false)}>
+          <div className="relative w-full rounded-2xl border border-border bg-card p-5 shadow-xl sm:p-6">
+            <h2 id="new-message-title" className="font-display text-lg font-semibold text-foreground mb-4">{t("nuevoMensaje")}</h2>
             <Input
               autoFocus
               value={newMessageQuery}
@@ -945,7 +987,7 @@ export default function MessagesPage() {
                   key={person.id}
                   disabled={busy}
                   onClick={() => person.username && startConversation(person.username)}
-                  className="flex w-full items-center gap-3 px-2 py-2 rounded-xl hover:bg-primary/5 transition-colors text-left"
+                  className="flex min-h-11 w-full items-center gap-3 rounded-xl px-2 py-2 text-left transition-colors hover:bg-primary/5"
                 >
                   <Avatar person={person} />
                   <div className="min-w-0">
@@ -961,14 +1003,13 @@ export default function MessagesPage() {
               </Button>
             </div>
           </div>
-        </div>
+        </MessageDialog>
       )}
 
       {showNewGroup && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowNewGroup(false)} />
-          <div className="relative w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-xl">
-            <h2 className="font-display text-lg font-semibold text-foreground mb-4">{t("nuevoGrupo")}</h2>
+        <MessageDialog open={showNewGroup} labelledBy="new-group-title" onClose={() => setShowNewGroup(false)}>
+          <div className="relative w-full rounded-2xl border border-border bg-card p-5 shadow-xl sm:p-6">
+            <h2 id="new-group-title" className="font-display text-lg font-semibold text-foreground mb-4">{t("nuevoGrupo")}</h2>
             <Input
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
@@ -984,7 +1025,7 @@ export default function MessagesPage() {
                 groupFriends.map((friend) => (
                   <label
                     key={friend.id}
-                    className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-primary/5 transition-colors cursor-pointer"
+                    className="flex min-h-11 cursor-pointer items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-primary/5"
                   >
                     <input
                       type="checkbox"
@@ -1007,16 +1048,16 @@ export default function MessagesPage() {
               </Button>
             </div>
           </div>
-        </div>
+        </MessageDialog>
       )}
 
       {showReport && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowReport(false)} />
-          <div className="relative w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-xl">
-            <h2 className="font-display text-lg font-semibold text-foreground mb-2">{t("reportarTitulo")}</h2>
+        <MessageDialog open={showReport} labelledBy="report-conversation-title" onClose={() => setShowReport(false)}>
+          <div className="relative w-full rounded-2xl border border-border bg-card p-5 shadow-xl sm:p-6">
+            <h2 id="report-conversation-title" className="font-display text-lg font-semibold text-foreground mb-2">{t("reportarTitulo")}</h2>
             <p className="text-sm text-muted-foreground mb-4">{t("reportarDescripcion")}</p>
             <textarea
+              autoFocus
               value={reportReason}
               onChange={(e) => setReportReason(e.target.value)}
               rows={3}
@@ -1032,7 +1073,7 @@ export default function MessagesPage() {
               </Button>
             </div>
           </div>
-        </div>
+        </MessageDialog>
       )}
 
       <ConfirmDialog
