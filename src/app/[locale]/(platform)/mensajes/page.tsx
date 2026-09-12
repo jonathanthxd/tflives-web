@@ -312,6 +312,7 @@ export default function MessagesPage() {
       setError(t("errorGenerico"));
       return;
     }
+    const data = await res.json();
     setShowNewMessage(false);
     await loadInbox();
     selectConversation(data.conversation.id);
@@ -353,6 +354,7 @@ export default function MessagesPage() {
       setError(t("errorGenerico"));
       return;
     }
+    const data = await res.json();
     setShowNewGroup(false);
     await loadInbox();
     selectConversation(data.conversation.id);
