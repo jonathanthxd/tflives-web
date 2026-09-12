@@ -41,6 +41,7 @@ interface ConversationMessage {
   sticker: { id: string; name: string; assetUrl: string; category: string | null } | null;
   replyTo: { id: string; sender: PersonSummary; content: string; deletedAt: string | null } | null;
   reactions: { emoji: string; count: number; mine: boolean }[];
+  editedAt: string | null;
   deletedAt: string | null;
   createdAt: string;
 }
@@ -97,6 +98,10 @@ export default function MessagesPage() {
   const [groupSelected, setGroupSelected] = useState<Set<string>>(new Set());
   const [reportReason, setReportReason] = useState("");
   const [busy, setBusy] = useState(false);
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  const [editingDraft, setEditingDraft] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<ConversationMessage | null>(null);
+  const [messageClock, setMessageClock] = useState(0);
 
   const [draft, setDraft] = useState("");
   const [replyToMessage, setReplyToMessage] = useState<ConversationMessage | null>(null);
@@ -139,13 +144,30 @@ export default function MessagesPage() {
 
   useEffect(() => { setQuickReactions(getQuickReactions()); }, []);
 
+  useEffect(() => {
+    setMessageClock(Date.now());
+    const interval = window.setInterval(() => setMessageClock(Date.now()), 30_000);
+    return () => window.clearInterval(interval);
+  }, []);
+
   async function loadConversation(id: string, after?: string) {
     const res = await fetch(`/api/messaging/conversations/${id}${after ? `?after=${encodeURIComponent(after)}` : ""}`);
     if (res.ok) {
       const data = await res.json();
       setNextCursor(data.nextCursor ?? null);
       setConversation((previous) => {
-        if (!after || !previous || previous.id !== data.conversation.id) return data.conversation;
+        if (!previous || previous.id !== data.conversation.id) return data.conversation;
+        if (!after) {
+          const byId = new Map<string, ConversationMessage>();
+          for (const message of previous.messages) byId.set(message.id, message);
+          for (const message of data.conversation.messages as ConversationMessage[]) byId.set(message.id, message);
+          return {
+            ...data.conversation,
+            messages: [...byId.values()].sort(
+              (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+            ),
+          };
+        }
         const all = [...previous.messages, ...data.conversation.messages];
         return {
           ...data.conversation,
@@ -180,19 +202,23 @@ export default function MessagesPage() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
+  const latestMessageId = conversation?.messages[conversation.messages.length - 1]?.id ?? null;
+
   useEffect(() => {
     if (!activeId) return;
     let cancelled = false;
+    let refreshCount = 0;
 
-    async function refreshConversation() {
+    async function refreshConversation(forceFull = false) {
       if (cancelled || !activeId) return;
-      const after = conversation?.messages[conversation.messages.length - 1]?.id;
-      await Promise.all([loadConversation(activeId, after), loadInbox()]);
+      refreshCount += 1;
+      const fullRefresh = forceFull || refreshCount % 3 === 0;
+      await Promise.all([loadConversation(activeId, fullRefresh ? undefined : latestMessageId ?? undefined), loadInbox()]);
     }
 
-    const interval = window.setInterval(refreshConversation, 5_000);
+    const interval = window.setInterval(() => void refreshConversation(), 5_000);
     const onVisibility = () => {
-      if (document.visibilityState === "visible") refreshConversation();
+      if (document.visibilityState === "visible") void refreshConversation(true);
     };
     document.addEventListener("visibilitychange", onVisibility);
 
@@ -202,7 +228,7 @@ export default function MessagesPage() {
       document.removeEventListener("visibilitychange", onVisibility);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeId, conversation?.messages]);
+  }, [activeId, latestMessageId]);
 
   function selectConversation(id: string) {
     setActiveId(id);
@@ -358,6 +384,68 @@ export default function MessagesPage() {
       messageComposerRef.current?.focus();
       messageComposerRef.current?.setSelectionRange(cursor, cursor);
     });
+  }
+
+  function startEditingMessage(message: ConversationMessage) {
+    setEditingMessageId(message.id);
+    setEditingDraft(message.content);
+    setError("");
+  }
+
+  async function saveEditedMessage(messageId: string) {
+    const content = editingDraft.trim();
+    if (!content) return;
+    setBusy(true);
+    setError("");
+    try {
+      const res = await fetch(`/api/messaging/messages/${messageId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(data.error || t("errorGenerico"));
+        return;
+      }
+      setConversation((prev) => prev ? {
+        ...prev,
+        messages: prev.messages.map((message) => message.id === messageId ? data.message : message),
+      } : prev);
+      setEditingMessageId(null);
+      setEditingDraft("");
+      setMessageClock(Date.now());
+      await loadInbox();
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function confirmDeleteMessage() {
+    if (!deleteTarget) return;
+    setBusy(true);
+    setError("");
+    try {
+      const res = await fetch(`/api/messaging/messages/${deleteTarget.id}`, { method: "DELETE" });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(data.error || t("errorGenerico"));
+        return;
+      }
+      setConversation((prev) => prev ? {
+        ...prev,
+        messages: prev.messages.map((message) => message.id === deleteTarget.id ? data.message : message),
+      } : prev);
+      if (editingMessageId === deleteTarget.id) {
+        setEditingMessageId(null);
+        setEditingDraft("");
+      }
+      if (replyToMessage?.id === deleteTarget.id) setReplyToMessage(null);
+      setDeleteTarget(null);
+      await loadInbox();
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function reactToMessage(message: ConversationMessage, emoji: string) {
@@ -674,6 +762,13 @@ export default function MessagesPage() {
                   ) : (
                     conversation.messages.map((m) => {
                       const mine = m.senderId === myUserId;
+                      const isEditing = editingMessageId === m.id;
+                      const canEdit =
+                        mine &&
+                        !m.deletedAt &&
+                        !!m.content.trim() &&
+                        messageClock > 0 &&
+                        messageClock - new Date(m.createdAt).getTime() <= 15 * 60_000;
                       return (
                         <div id={`message-${m.id}`} key={m.id} className={`group flex ${mine ? "justify-end" : "justify-start"}`}>
                           <div
@@ -683,17 +778,51 @@ export default function MessagesPage() {
                           >
                             {m.replyTo && (
                               <button type="button" onClick={() => document.getElementById(`message-${m.replyTo?.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" })} className={`mb-1 block max-w-full truncate border-l-2 pl-2 text-left text-[11px] ${mine ? "border-primary-foreground/50 text-primary-foreground/80" : "border-primary/60 text-muted-foreground"}`}>
-                                {displayNameOf(m.replyTo.sender)}: {m.replyTo.content}
+                                {displayNameOf(m.replyTo.sender)}: {m.replyTo.deletedAt ? t("mensajeEliminado") : m.replyTo.content}
                               </button>
                             )}
-                            {m.deletedAt ? <p className="italic opacity-70">{t("mensajeEliminado")}</p> : <>
-                              <p className="whitespace-pre-line break-words">{m.content}</p>
-                              {m.sticker && <img src={m.sticker.assetUrl} alt={m.sticker.name} className="mt-1 h-16 w-16 object-contain" />}
-                            </>}
+                            {m.deletedAt ? (
+                              <p className="italic opacity-70">{t("mensajeEliminado")}</p>
+                            ) : isEditing ? (
+                              <div className="space-y-2">
+                                <textarea
+                                  autoFocus
+                                  value={editingDraft}
+                                  onChange={(event) => setEditingDraft(event.target.value)}
+                                  maxLength={2000}
+                                  rows={2}
+                                  className="max-h-32 min-h-16 w-full min-w-[220px] resize-y rounded-xl border border-primary-foreground/20 bg-background/15 px-3 py-2 text-sm text-inherit outline-none placeholder:text-current/50 focus-visible:ring-2 focus-visible:ring-primary-foreground/40"
+                                />
+                                {m.sticker && <img src={m.sticker.assetUrl} alt={m.sticker.name} className="h-16 w-16 object-contain" />}
+                                <div className="flex justify-end gap-2 text-[11px]">
+                                  <button
+                                    type="button"
+                                    disabled={busy}
+                                    onClick={() => { setEditingMessageId(null); setEditingDraft(""); }}
+                                    className="rounded-lg px-2 py-1 opacity-80 hover:bg-black/10 hover:opacity-100"
+                                  >
+                                    {t("cancelar")}
+                                  </button>
+                                  <button
+                                    type="button"
+                                    disabled={busy || !editingDraft.trim()}
+                                    onClick={() => void saveEditedMessage(m.id)}
+                                    className="rounded-lg bg-background/20 px-2 py-1 font-medium hover:bg-background/30 disabled:opacity-50"
+                                  >
+                                    {t("guardarEdicion")}
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                <p className="whitespace-pre-line break-words">{m.content}</p>
+                                {m.sticker && <img src={m.sticker.assetUrl} alt={m.sticker.name} className="mt-1 h-16 w-16 object-contain" />}
+                              </>
+                            )}
                             <p className={`mt-0.5 text-[10px] ${mine ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
-                              {formatUserTime(m.createdAt, locale)}
+                              {formatUserTime(m.createdAt, locale)}{m.editedAt ? ` · ${t("editado")}` : ""}
                             </p>
-                            {!m.deletedAt && <div className="mt-1 flex flex-wrap items-center gap-1">
+                            {!m.deletedAt && !isEditing && <div className="mt-1 flex flex-wrap items-center gap-1">
                               {m.reactions.map((reaction) => <button key={reaction.emoji} type="button" onClick={() => void reactToMessage(m, reaction.emoji)} className={`rounded-full border px-1.5 py-0.5 text-[10px] ${mine ? "border-primary-foreground/30" : "border-border"} ${reaction.mine ? "bg-primary/15" : ""}`}>{reaction.emoji} {reaction.count}</button>)}
                               {quickReactions.filter((emoji) => !m.reactions.some((reaction) => reaction.emoji === emoji)).map((emoji) => <button key={emoji} type="button" onClick={() => void reactToMessage(m, emoji)} aria-label={`${t("reaccionar")} ${emoji}`} className="rounded px-1 text-xs opacity-0 group-hover:opacity-100 focus-visible:opacity-100">{emoji}</button>)}
                               <span>
@@ -714,7 +843,14 @@ export default function MessagesPage() {
                                 >+</button>
                               </span>
                               <button type="button" onClick={() => setReplyToMessage(m)} className="rounded px-1 text-[10px] opacity-0 group-hover:opacity-100 focus-visible:opacity-100">↩ {t("responder")}</button>
-                              <button type="button" aria-label={t("reportar")} onClick={() => { setReportTarget({ targetType: "DIRECT_MESSAGE", targetId: m.id }); setShowReport(true); }} className="rounded px-1 text-[10px] opacity-0 group-hover:opacity-100 focus-visible:opacity-100">⚑</button>
+                              {mine && canEdit && (
+                                <button type="button" onClick={() => startEditingMessage(m)} className="rounded px-1 text-[10px] opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100">✎ {t("editarMensaje")}</button>
+                              )}
+                              {mine ? (
+                                <button type="button" onClick={() => setDeleteTarget(m)} className="rounded px-1 text-[10px] opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100">⌫ {t("eliminarMensaje")}</button>
+                              ) : (
+                                <button type="button" aria-label={t("reportar")} onClick={() => { setReportTarget({ targetType: "DIRECT_MESSAGE", targetId: m.id }); setShowReport(true); }} className="rounded px-1 text-[10px] opacity-0 group-hover:opacity-100 focus-visible:opacity-100">⚑</button>
+                              )}
                             </div>}
                           </div>
                         </div>
@@ -929,6 +1065,17 @@ export default function MessagesPage() {
         cancelLabel={t("cancelar")}
         onConfirm={confirmCloseGroup}
         onCancel={() => setShowCloseGroupConfirm(false)}
+        busy={busy}
+      />
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        title={t("confirmarEliminarMensajeTitulo")}
+        description={t("confirmarEliminarMensajeDescripcion")}
+        confirmLabel={t("eliminarMensaje")}
+        cancelLabel={t("cancelar")}
+        onConfirm={() => void confirmDeleteMessage()}
+        onCancel={() => setDeleteTarget(null)}
         busy={busy}
       />
     </main>

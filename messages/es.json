@@ -528,7 +528,7 @@
     "sinStickers": "Todavía no hay stickers oficiales.",
     "stickers": "Stickers oficiales",
     "cargarAnteriores": "Cargar mensajes anteriores",
-    "mensajeEliminado": "Mensaje eliminado por moderación",
+    "mensajeEliminado": "Mensaje eliminado",
     "miembros": "Miembros",
     "agregarMiembro": "Agregar",
     "quitarMiembro": "Quitar",
@@ -536,7 +536,13 @@
     "cerrarGrupo": "Cerrar grupo",
     "confirmarCerrarGrupoTitulo": "¿Cerrar este grupo?",
     "confirmarCerrarGrupoDescripcion": "Todos los miembros dejarán de ver nuevos mensajes. El historial se conserva para moderación.",
-    "errorGenerico": "No se pudo completar la acción"
+    "errorGenerico": "No se pudo completar la acción",
+    "editarMensaje": "Editar",
+    "eliminarMensaje": "Eliminar",
+    "guardarEdicion": "Guardar",
+    "editado": "Editado",
+    "confirmarEliminarMensajeTitulo": "¿Eliminar este mensaje?",
+    "confirmarEliminarMensajeDescripcion": "El mensaje dejará de mostrarse en la conversación. Esta acción no se puede deshacer."
   },
   "Network": {
     "titulo": "TFL Network",
@@ -684,7 +690,12 @@
     "staffStatus": "El staff mantiene el estado de las modalidades. Los jugadores corresponden a toda la red.",
     "notFound": "Este contenido no está disponible.",
     "originalFallback": "El contenido se muestra en su idioma original cuando no hay traducción.",
-    "archiveConfirm": "¿Archivar esta entrada y ocultarla al público?"
+    "archiveConfirm": "¿Archivar esta entrada y ocultarla al público?",
+    "username": "Miembro de TFLives",
+    "teamUserHelp": "Escribe el @username de una cuenta existente en TFLives. La foto, el nombre visible y el enlace al perfil se obtendrán automáticamente de esa cuenta.",
+    "teamUserMissing": "No existe ningún usuario de TFLives con ese @username.",
+    "teamUserDuplicate": "Ese usuario ya forma parte del equipo.",
+    "viewProfile": "Ver perfil"
   },
   "GlobalChat": {
     "titulo": "Chat global",

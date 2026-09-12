@@ -13,6 +13,8 @@ import {
   translated,
 } from "@/modules/editorial/publication";
 import PostCard from "@/modules/editorial/components/post-card";
+import { UserAvatar } from "@/modules/profiles/components/user-identity";
+import { identityName } from "@/modules/profiles/types";
 
 export const panel = "rounded-2xl border border-primary/15 bg-card/50 p-6";
 export const grid = "grid gap-6 sm:grid-cols-2 lg:grid-cols-3";
@@ -201,36 +203,50 @@ export async function TeamCards({ limit }: { limit?: number }) {
     getTranslations("Content"),
     getLocale(),
     prisma.teamMember.findMany({
-      where: { active: true },
+      where: { active: true, userId: { not: null } },
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            displayName: true,
+            name: true,
+            image: true,
+            role: true,
+          },
+        },
+      },
       orderBy: [{ order: "asc" }, { createdAt: "asc" }],
       take: limit,
     }),
   ]);
-  if (!members.length) return <Empty>{t("teamEmpty")}</Empty>;
+  const linkedMembers = members.filter((member) => !!member.user?.username);
+  if (!linkedMembers.length) return <Empty>{t("teamEmpty")}</Empty>;
   return (
     <div className={grid}>
-      {members.map((raw) => {
+      {linkedMembers.map((raw) => {
         const member = translated(raw, locale);
+        const user = raw.user;
+        if (!user?.username) return null;
         return (
           <article key={member.id} className={`${panel} text-center`}>
-            <div className="mx-auto mb-5 flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border-2 border-primary/20 bg-primary/10 text-3xl font-bold">
-              {member.avatarUrl ? (
-                <img
-                  src={member.avatarUrl}
-                  alt=""
-                  loading="lazy"
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                member.name[0]
-              )}
-            </div>
-            <h3 className="font-display text-xl font-semibold">
-              {member.name}
-            </h3>
-            <p className="mt-2 text-sm text-primary">{member.roleTitle}</p>
+            <Link
+              href={`/perfil/${user.username}`}
+              className="group mx-auto block w-fit rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+              aria-label={`${t("viewProfile")} @${user.username}`}
+            >
+              <UserAvatar
+                identity={user}
+                className="mx-auto mb-4 size-24 border-2 border-primary/20 text-3xl transition-transform duration-200 group-hover:scale-[1.03]"
+              />
+              <h3 className="font-display text-xl font-semibold transition-colors group-hover:text-primary">
+                {identityName(user)}
+              </h3>
+              <p className="mt-1 text-sm text-muted-foreground">@{user.username}</p>
+            </Link>
+            <p className="mt-3 text-sm font-medium text-primary">{member.roleTitle}</p>
             {member.bio && (
-              <p className="mt-4 text-sm text-muted-foreground whitespace-pre-line">
+              <p className="mt-4 whitespace-pre-line text-sm text-muted-foreground">
                 {member.bio}
               </p>
             )}

@@ -81,10 +81,9 @@ export const CONTENT_FIELDS: Record<ContentKind, Field[]> = {
     published,
   ],
   team: [
-    { key: "name", required: true },
+    { key: "username", required: true },
     { key: "roleTitle", required: true, translated: true },
     { key: "bio", type: "textarea", translated: true },
-    { key: "avatarUrl", type: "url" },
     { key: "socialLinks", type: "links" },
     order,
     { key: "active", type: "checkbox" },

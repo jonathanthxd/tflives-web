@@ -220,6 +220,58 @@ export async function sendMessage(conversationId: string, senderId: string, payl
   return serialiseDirectMessage(message, senderId);
 }
 
+const DIRECT_MESSAGE_EDIT_WINDOW_MS = 15 * 60_000;
+
+export async function editDirectMessage(messageId: string, userId: string, payload: unknown) {
+  const existing = await prisma.directMessage.findUnique({
+    where: { id: messageId },
+    select: { id: true, conversationId: true, senderId: true, content: true, createdAt: true, deletedAt: true },
+  });
+  if (!existing) throw new MessagingError("Mensaje no encontrado", 404);
+  if (existing.senderId !== userId) throw new MessagingError("Solo podés editar tus propios mensajes", 403);
+  if (existing.deletedAt) throw new MessagingError("No podés editar un mensaje eliminado", 409);
+  if (Date.now() - existing.createdAt.getTime() > DIRECT_MESSAGE_EDIT_WINDOW_MS) {
+    throw new MessagingError("El tiempo para editar este mensaje ya terminó", 403);
+  }
+
+  let input: ReturnType<typeof normalizeChatPayload>;
+  try { input = normalizeChatPayload(payload, 4_000); } catch (error) { asMessagingError(error); }
+  if (!input.content) throw new MessagingError("El mensaje no puede estar vacío");
+
+  const previousMentions = new Set(parseMentions(existing.content));
+  const addedMentions = parseMentions(input.content).filter((username) => !previousMentions.has(username));
+  const updated = await prisma.directMessage.update({
+    where: { id: messageId },
+    data: { content: input.content, editedAt: new Date() },
+    include: DIRECT_MESSAGE_INCLUDE,
+  });
+  if (addedMentions.length) {
+    await notifyDirectMentions(existing.conversationId, userId, addedMentions.map((username) => `@${username}`).join(" "), messageId);
+  }
+  return serialiseDirectMessage(updated, userId);
+}
+
+export async function deleteDirectMessage(messageId: string, userId: string) {
+  const existing = await prisma.directMessage.findUnique({
+    where: { id: messageId },
+    select: { id: true, conversationId: true, senderId: true, deletedAt: true },
+  });
+  if (!existing) throw new MessagingError("Mensaje no encontrado", 404);
+  if (existing.senderId !== userId) throw new MessagingError("Solo podés eliminar tus propios mensajes", 403);
+  if (!existing.deletedAt) {
+    await prisma.directMessage.update({
+      where: { id: messageId },
+      data: { deletedAt: new Date() },
+    });
+  }
+  const updated = await prisma.directMessage.findUnique({
+    where: { id: messageId },
+    include: DIRECT_MESSAGE_INCLUDE,
+  });
+  if (!updated) throw new MessagingError("Mensaje no encontrado", 404);
+  return serialiseDirectMessage(updated, userId);
+}
+
 export async function toggleDirectMessageReaction(userId: string, messageId: string, emoji: unknown) {
   try { assertReactionEmoji(emoji); } catch (error) { asMessagingError(error); }
   const message = await prisma.directMessage.findFirst({ where: { id: messageId, deletedAt: null }, select: { id: true, conversationId: true, senderId: true } });

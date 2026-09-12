@@ -157,6 +157,8 @@ export default function ContentManager({
           "missing",
           "forbidden",
           "unauthenticated",
+          "teamUserMissing",
+          "teamUserDuplicate",
         ].includes(data.error)
           ? data.error
           : "failed";
@@ -367,6 +369,22 @@ export default function ContentManager({
                         onChange={(e) => change(key, e.target.value, field)}
                         className={inputClass}
                       />
+                    ) : kind === "team" && key === "username" ? (
+                      <div>
+                        <div className="flex min-w-0 items-center rounded-xl border border-border bg-background focus-within:outline focus-within:outline-2 focus-within:outline-primary">
+                          <span className="select-none pl-4 text-sm font-semibold text-muted-foreground">@</span>
+                          <input
+                            id={id}
+                            className="min-w-0 flex-1 bg-transparent px-2 py-2.5 text-sm outline-none"
+                            required
+                            autoComplete="off"
+                            spellCheck={false}
+                            value={value.replace(/^@/, "")}
+                            onChange={(e) => change(key, e.target.value.replace(/^@/, ""), field)}
+                          />
+                        </div>
+                        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{t("teamUserHelp")}</p>
+                      </div>
                     ) : (
                       <input
                         id={id}

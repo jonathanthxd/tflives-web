@@ -528,7 +528,7 @@
     "sinStickers": "There are no official stickers yet.",
     "stickers": "Official stickers",
     "cargarAnteriores": "Load older messages",
-    "mensajeEliminado": "Message removed by moderation",
+    "mensajeEliminado": "Message deleted",
     "miembros": "Members",
     "agregarMiembro": "Add",
     "quitarMiembro": "Remove",
@@ -536,7 +536,13 @@
     "cerrarGrupo": "Close group",
     "confirmarCerrarGrupoTitulo": "Close this group?",
     "confirmarCerrarGrupoDescripcion": "All members will stop seeing new messages. History is retained for moderation.",
-    "errorGenerico": "Couldn't complete the action"
+    "errorGenerico": "Couldn't complete the action",
+    "editarMensaje": "Edit",
+    "eliminarMensaje": "Delete",
+    "guardarEdicion": "Save",
+    "editado": "Edited",
+    "confirmarEliminarMensajeTitulo": "Delete this message?",
+    "confirmarEliminarMensajeDescripcion": "The message will no longer be shown in the conversation. This action cannot be undone."
   },
   "Network": {
     "titulo": "TFL Network",
@@ -684,7 +690,12 @@
     "staffStatus": "Game mode status is maintained by staff. Player counts are global.",
     "notFound": "This content is not available.",
     "originalFallback": "Content is shown in its original language when a translation is unavailable.",
-    "archiveConfirm": "Archive this entry and hide it from the public?"
+    "archiveConfirm": "Archive this entry and hide it from the public?",
+    "username": "TFLives member",
+    "teamUserHelp": "Enter the @username of an existing TFLives account. Their picture, display name, and profile link will be pulled automatically from that account.",
+    "teamUserMissing": "No TFLives user exists with that @username.",
+    "teamUserDuplicate": "That user is already part of the team.",
+    "viewProfile": "View profile"
   },
   "GlobalChat": {
     "titulo": "Global chat",

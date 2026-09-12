@@ -40,10 +40,9 @@ export const modalitySchema = z.object({
   translations,
 });
 export const teamSchema = z.object({
-  name: short.min(1),
+  username: z.string().trim().min(1).max(64).transform((value) => value.replace(/^@/, "").toLowerCase()),
   roleTitle: short.min(1),
   bio: long.nullable().optional(),
-  avatarUrl: mediaUrl,
   socialLinks: z
     .array(
       z
