@@ -1,5 +1,6 @@
 import { prisma } from "@/infrastructure/database/prisma";
 import { createNotification } from "@/modules/notifications/service";
+import { awardAchievementCoins } from "@/modules/economy/service";
 import { isProfileComplete } from "@/modules/profiles/completion";
 import type { AchievementTriggerKey } from "@/modules/achievements/triggers";
 
@@ -63,7 +64,7 @@ export async function evaluateAutomaticAchievements(
       trigger: { in: uniqueTriggers },
       triggerValue: { not: null },
     },
-    select: { id: true, name: true, trigger: true, triggerValue: true },
+    select: { id: true, name: true, trigger: true, triggerValue: true, coinReward: true },
   });
   if (!achievements.length) return [];
 
@@ -94,21 +95,24 @@ export async function evaluateAutomaticAchievements(
     if ((values.get(trigger) ?? 0) < achievement.triggerValue) continue;
 
     try {
-      await prisma.userAchievement.create({
-        data: {
+      await prisma.$transaction(async (tx) => {
+        await tx.userAchievement.create({
+          data: {
+            userId,
+            achievementId: achievement.id,
+            source: "AUTOMATIC",
+            awardedById: null,
+          },
+        });
+        await awardAchievementCoins(tx, userId, achievement.id, achievement.coinReward);
+        await createNotification({
           userId,
-          achievementId: achievement.id,
-          source: "AUTOMATIC",
-          awardedById: null,
-        },
+          type: "ACHIEVEMENT",
+          entityType: "Achievement",
+          entityId: achievement.id,
+        }, tx);
       });
       unlocked.push(achievement.id);
-      await createNotification({
-        userId,
-        type: "ACHIEVEMENT",
-        entityType: "Achievement",
-        entityId: achievement.id,
-      });
     } catch (error) {
       // Concurrent actions can evaluate the same achievement; the compound
       // unique key is the authority and avoids duplicate awards/notifications.

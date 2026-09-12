@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   Award,
   ChevronUp,
@@ -39,6 +40,7 @@ interface Achievement {
   unlockMode: AchievementUnlockModeKey;
   trigger: AchievementTriggerKey | null;
   triggerValue: number | null;
+  coinReward: number;
   _count: { awards: number };
 }
 
@@ -64,6 +66,7 @@ const TRIGGER_ICONS: Record<AchievementTriggerKey, typeof Trophy> = {
 };
 
 export default function AchievementManager({ initialAchievements }: { initialAchievements: Achievement[] }) {
+  const tEconomy = useTranslations("AchievementEconomy");
   const [achievements, setAchievements] = useState(initialAchievements);
   const [editing, setEditing] = useState<Achievement | null>(null);
   const [creating, setCreating] = useState(false);
@@ -75,6 +78,7 @@ export default function AchievementManager({ initialAchievements }: { initialAch
   const [unlockMode, setUnlockMode] = useState<AchievementUnlockModeKey>("AUTOMATIC");
   const [trigger, setTrigger] = useState<AchievementTriggerKey>("GLOBAL_MESSAGES");
   const [triggerValue, setTriggerValue] = useState(10);
+  const [coinReward, setCoinReward] = useState(0);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [deleting, setDeleting] = useState<Achievement | null>(null);
@@ -99,6 +103,7 @@ export default function AchievementManager({ initialAchievements }: { initialAch
     setUnlockMode("AUTOMATIC");
     setTrigger("GLOBAL_MESSAGES");
     setTriggerValue(10);
+    setCoinReward(0);
     setError("");
   }
 
@@ -113,6 +118,7 @@ export default function AchievementManager({ initialAchievements }: { initialAch
     setUnlockMode(achievement.unlockMode);
     setTrigger(achievement.trigger ?? "GLOBAL_MESSAGES");
     setTriggerValue(achievement.triggerValue ?? 10);
+    setCoinReward(achievement.coinReward);
     setError("");
   }
 
@@ -139,6 +145,7 @@ export default function AchievementManager({ initialAchievements }: { initialAch
           unlockMode,
           trigger: unlockMode === "AUTOMATIC" ? trigger : null,
           triggerValue: unlockMode === "AUTOMATIC" ? automaticValue : null,
+          coinReward,
         }),
       });
       const data = await response.json();
@@ -409,6 +416,28 @@ export default function AchievementManager({ initialAchievements }: { initialAch
             </div>
           )}
 
+          <div className="mt-5 rounded-2xl border border-primary/10 bg-background/35 p-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{tEconomy("rewards")}</p>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              <div className="rounded-xl border border-border bg-background px-3 py-2.5">
+                <p className="text-xs text-muted-foreground">XP</p>
+                <p className="mt-1 text-sm font-medium text-foreground">{tEconomy("xpNotAvailable")}</p>
+              </div>
+              <label className="rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-muted-foreground">
+                {tEconomy("coinReward")}
+                <input
+                  type="number"
+                  min={0}
+                  max={100000}
+                  className="mt-1 w-full bg-transparent text-sm text-foreground outline-none"
+                  value={coinReward}
+                  onChange={(event) => setCoinReward(Math.max(0, Math.min(100000, Math.floor(Number(event.target.value) || 0))))}
+                />
+                <span className="mt-1 block text-[11px] leading-4">{tEconomy("coinRewardHelp")}</span>
+              </label>
+            </div>
+          </div>
+
           <p className="mb-2 mt-5 text-xs font-medium uppercase tracking-wide text-muted-foreground">Ícono</p>
           <div className="flex flex-wrap gap-2">
             {ICON_KEYS.map((key) => {
@@ -479,6 +508,7 @@ export default function AchievementManager({ initialAchievements }: { initialAch
                       </div>
                       <p className="truncate text-sm text-muted-foreground">{achievement.description}</p>
                       {automaticSummary && <p className="mt-1 truncate text-xs text-primary/80">{automaticSummary}</p>}
+                      {achievement.coinReward > 0 && <p className="mt-1 text-xs font-medium text-primary">{tEconomy("coinAmount", { amount: achievement.coinReward.toLocaleString("es-CO") })}</p>}
                     </div>
                   </div>
 

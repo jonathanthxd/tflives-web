@@ -2,9 +2,7 @@ import { Role } from "@prisma/client";
 
 /**
  * Secciones reales del panel admin (con sistema de datos detrás). Las
- * secciones sin sistema fuente (wiki, equipo, economía, cosméticos,
- * suscripciones, streamers, logros) no tienen permisos propios: son solo
- * un placeholder visual en la sidebar, no rutas reales.
+ * Each listed section has a corresponding server-side page/API guard.
  */
 export const ADMIN_SECTIONS = [
   "dashboard",
@@ -20,6 +18,7 @@ export const ADMIN_SECTIONS = [
   "announcements",
   "team",
   "achievements",
+  "wallet",
 ] as const;
 
 export type AdminSection = (typeof ADMIN_SECTIONS)[number];
@@ -43,6 +42,7 @@ export const SECTION_ACCESS: Record<AdminSection, Role[]> = {
   announcements: ["ADMIN"],
   team: ["ADMIN"],
   achievements: ["ADMIN"],
+  wallet: ["ADMIN"],
 };
 
 export function canAccessSection(role: Role, section: AdminSection): boolean {
@@ -163,9 +163,15 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   },
   {
     title: "Economía",
-    items: [],
+    items: [
+      {
+        section: "wallet",
+        href: "/admin/economia",
+        label: "TFL Coins",
+        description: "Wallets y ajustes auditables",
+      },
+    ],
     placeholders: [
-      { label: "TFL Coins", iconKey: "coins" },
       { label: "Cosméticos", iconKey: "cosmetics" },
       { label: "Suscripciones", iconKey: "subscriptions" },
     ],

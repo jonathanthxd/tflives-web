@@ -90,7 +90,7 @@ test("content validation covers types, slugs, schedules and unsafe media", () =>
   );
   assert.equal(
     teamSchema.safeParse({
-      name: "Name",
+      username: "member",
       roleTitle: "Role",
       translations: null,
     }).success,

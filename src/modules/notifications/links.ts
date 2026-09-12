@@ -26,6 +26,8 @@ export function getNotificationHref(n: NotificationLike): string | null {
       return n.entityId ? `/network/${n.entityId}` : "/network";
     case "MESSAGE":
       return "/mensajes";
+    case "TFL_COINS":
+      return "/configuracion#wallet";
     default:
       return null;
   }

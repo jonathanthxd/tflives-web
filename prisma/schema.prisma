@@ -43,6 +43,7 @@ model User {
   followers               Follow[]                 @relation("Following")
   notifications           Notification[]
   notificationPreferences NotificationPreference[]
+  wallet                  Wallet?
 
   conversationParticipations ConversationParticipant[]
   directMessages             DirectMessage[]
@@ -571,6 +572,7 @@ model Achievement {
   unlockMode   AchievementUnlockMode @default(MANUAL)
   trigger      AchievementTrigger?
   triggerValue Int?
+  coinReward  Int                   @default(0)
   createdById  String
   createdBy    User                  @relation(fields: [createdById], references: [id])
   createdAt    DateTime              @default(now())
@@ -597,6 +599,52 @@ model UserAchievement {
 
   @@unique([userId, achievementId])
   @@index([userId])
+}
+
+/// A member's private TFL Coins balance. The ledger below is authoritative;
+/// this value is a transactionally maintained read cache for fast UI reads.
+model Wallet {
+  id           String              @id @default(cuid())
+  userId       String              @unique
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  balance      Int                 @default(0)
+  transactions WalletTransaction[]
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+}
+
+/// Immutable application ledger. There is deliberately no update/delete
+/// service or API for these rows; every balance mutation writes one row.
+model WalletTransaction {
+  id           String                  @id @default(cuid())
+  walletId     String
+  wallet       Wallet                  @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  type         WalletTransactionType
+  source       WalletTransactionSource
+  amount       Int
+  balanceAfter Int
+  sourceKey    String
+  description  String?                 @db.Text
+  createdAt    DateTime                @default(now())
+
+  @@unique([walletId, sourceKey])
+  @@index([walletId, createdAt])
+  @@index([source, createdAt])
+}
+
+enum WalletTransactionType {
+  LEVEL_REWARD
+  ACHIEVEMENT_REWARD
+  ADMIN_GRANT
+  ADMIN_DEDUCT
+  SPEND
+}
+
+enum WalletTransactionSource {
+  PROGRESSION
+  ACHIEVEMENT
+  ADMIN
+  FUTURE
 }
 
 /// Server-managed community progression. `level` is persisted as a read
@@ -661,6 +709,7 @@ enum NotificationType {
   ANNOUNCEMENT
   SECURITY_ALERT
   LEVEL_UP
+  TFL_COINS
 }
 
 enum SecurityEventType {

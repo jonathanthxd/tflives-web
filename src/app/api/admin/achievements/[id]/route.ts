@@ -20,6 +20,7 @@ export async function PATCH(
       unlockMode: body.unlockMode === "AUTOMATIC" || body.unlockMode === "MANUAL" ? body.unlockMode : undefined,
       trigger: typeof body.trigger === "string" || body.trigger === null ? body.trigger : undefined,
       triggerValue: typeof body.triggerValue === "number" || body.triggerValue === null ? body.triggerValue : undefined,
+      coinReward: typeof body.coinReward === "number" ? body.coinReward : undefined,
     });
     return NextResponse.json({ achievement }, { status: 200 });
   } catch (error) {

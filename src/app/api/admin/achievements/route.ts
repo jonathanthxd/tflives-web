@@ -30,6 +30,7 @@ export async function POST(request: Request) {
       unlockMode: body.unlockMode === "AUTOMATIC" ? "AUTOMATIC" : "MANUAL",
       trigger: typeof body.trigger === "string" ? body.trigger : null,
       triggerValue: typeof body.triggerValue === "number" ? body.triggerValue : null,
+      coinReward: typeof body.coinReward === "number" ? body.coinReward : undefined,
     });
     return NextResponse.json({ achievement }, { status: 201 });
   } catch (error) {

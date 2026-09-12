@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bell, ShieldCheck, UserRound, Users } from "lucide-react";
+import { Bell, Coins, ShieldCheck, UserRound, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Card } from "@/shared/ui/card";
@@ -9,9 +9,10 @@ import { NOTIFICATION_CATEGORIES } from "@/modules/notifications/service";
 import MySanctionsCard from "@/modules/administration/components/my-sanctions-card";
 import { SecuritySettings } from "@/modules/authentication/components/security-settings";
 import { ProfileSettings, type EditableProfile } from "@/modules/profiles/components/profile-settings";
+import { WalletSettings } from "@/modules/economy/components/wallet-settings";
 
 type Visibility = "PUBLIC" | "FRIENDS_ONLY" | "PRIVATE";
-type Section = "profile" | "security" | "privacy" | "notifications";
+type Section = "profile" | "security" | "privacy" | "notifications" | "wallet";
 
 interface Preference {
   category: string;
@@ -64,13 +65,13 @@ export default function SettingsPage() {
 
   useEffect(() => {
     const hash = window.location.hash.slice(1);
-    if (hash === "profile" || hash === "privacy" || hash === "notifications" || hash === "security") {
+    if (hash === "profile" || hash === "privacy" || hash === "notifications" || hash === "security" || hash === "wallet") {
       setSection(hash);
     }
 
     const onHashChange = () => {
       const next = window.location.hash.slice(1);
-      if (next === "profile" || next === "privacy" || next === "notifications" || next === "security") {
+      if (next === "profile" || next === "privacy" || next === "notifications" || next === "security" || next === "wallet") {
         setSection(next);
       }
     };
@@ -145,6 +146,7 @@ export default function SettingsPage() {
     { id: "security" as const, label: t("seguridad"), description: t("seguridadDescripcion"), icon: ShieldCheck },
     { id: "privacy" as const, label: t("privacidad"), description: t("privacidadDescripcion"), icon: Users },
     { id: "notifications" as const, label: t("preferenciasNotificaciones"), description: t("notificacionesDescripcion"), icon: Bell },
+    { id: "wallet" as const, label: t("wallet"), description: t("walletDescripcion"), icon: Coins },
   ];
 
   return (
@@ -157,7 +159,7 @@ export default function SettingsPage() {
 
         <nav
           aria-label={t("secciones")}
-          className="grid gap-2 rounded-2xl border border-border bg-card/50 p-2 backdrop-blur-sm sm:grid-cols-2 lg:grid-cols-4"
+          className="grid gap-2 rounded-2xl border border-border bg-card/50 p-2 backdrop-blur-sm sm:grid-cols-2 lg:grid-cols-5"
         >
           {tabs.map(({ id, label, description, icon: Icon }) => {
             const active = section === id;
@@ -266,6 +268,8 @@ export default function SettingsPage() {
               </div>
             </Card>
           )}
+
+          {section === "wallet" && <WalletSettings />}
         </div>
       </div>
     </main>

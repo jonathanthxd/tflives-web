@@ -34,6 +34,7 @@ export default async function AchievementsPage({
           unlockMode: a.unlockMode,
           trigger: a.trigger,
           triggerValue: a.triggerValue,
+          coinReward: a.coinReward,
           _count: a._count,
         }))}
       />

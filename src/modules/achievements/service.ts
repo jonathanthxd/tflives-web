@@ -2,6 +2,7 @@ import type { Prisma } from "@prisma/client";
 import { prisma } from "@/infrastructure/database/prisma";
 import { logAdminAction } from "@/modules/administration/action-log";
 import { createNotification } from "@/modules/notifications/service";
+import { awardAchievementCoins, MAX_ACHIEVEMENT_COIN_REWARD } from "@/modules/economy/service";
 import { ACHIEVEMENT_ICONS } from "@/modules/administration/components/ui/icons";
 import {
   isAchievementTrigger,
@@ -37,6 +38,7 @@ interface AchievementInput {
   unlockMode?: AchievementUnlockModeKey;
   trigger?: string | null;
   triggerValue?: number | null;
+  coinReward?: number;
 }
 
 function validateIconKey(iconKey: string) {
@@ -69,6 +71,14 @@ function normalizeAutomation(input: {
   };
 }
 
+function normalizeCoinReward(value: unknown) {
+  const coinReward = value === undefined ? 0 : Number(value);
+  if (!Number.isInteger(coinReward) || coinReward < 0 || coinReward > MAX_ACHIEVEMENT_COIN_REWARD) {
+    throw new AchievementError(`La recompensa de TFL Coins debe ser un entero entre 0 y ${MAX_ACHIEVEMENT_COIN_REWARD.toLocaleString("es-CO")}`);
+  }
+  return coinReward;
+}
+
 export async function createAchievement(createdById: string, input: AchievementInput) {
   const name = input.name.trim();
   const description = input.description.trim();
@@ -80,6 +90,7 @@ export async function createAchievement(createdById: string, input: AchievementI
     trigger: input.trigger,
     triggerValue: input.triggerValue,
   });
+  const coinReward = normalizeCoinReward(input.coinReward);
 
   const achievement = await prisma.achievement.create({
     data: {
@@ -89,6 +100,7 @@ export async function createAchievement(createdById: string, input: AchievementI
       order: input.order ?? 0,
       active: input.active ?? true,
       ...automation,
+      coinReward,
       createdById,
     },
   });
@@ -103,6 +115,7 @@ export async function createAchievement(createdById: string, input: AchievementI
       unlockMode: automation.unlockMode,
       trigger: automation.trigger,
       triggerValue: automation.triggerValue,
+      coinReward,
     },
   });
 
@@ -130,6 +143,7 @@ export async function updateAchievement(actorId: string, id: string, input: Part
   }
   if (input.order !== undefined) data.order = input.order;
   if (input.active !== undefined) data.active = input.active;
+  if (input.coinReward !== undefined) data.coinReward = normalizeCoinReward(input.coinReward);
 
   if (input.unlockMode !== undefined || input.trigger !== undefined || input.triggerValue !== undefined) {
     const automation = normalizeAutomation({
@@ -186,26 +200,29 @@ export async function awardAchievement(awardedById: string, username: string, ac
   });
   if (existing) throw new AchievementError("El usuario ya tiene este logro");
 
-  const award = await prisma.userAchievement.create({
-    data: { userId: user.id, achievementId, awardedById, source: "MANUAL" },
-  });
-
-  await Promise.all([
-    logAdminAction({
-      actorId: awardedById,
-      action: "achievement.award",
-      targetType: "User",
-      targetId: user.id,
-      metadata: { achievementId, achievementName: achievement.name },
-    }),
-    createNotification({
+  const award = await prisma.$transaction(async (tx) => {
+    const created = await tx.userAchievement.create({
+      data: { userId: user.id, achievementId, awardedById, source: "MANUAL" },
+    });
+    await awardAchievementCoins(tx, user.id, achievement.id, achievement.coinReward);
+    await createNotification({
       userId: user.id,
       type: "ACHIEVEMENT",
       actorId: awardedById,
       entityType: "Achievement",
       entityId: achievement.id,
-    }),
-  ]);
+    }, tx);
+    await tx.adminActionLog.create({
+      data: {
+        actorId: awardedById,
+        action: "achievement.award",
+        targetType: "User",
+        targetId: user.id,
+        metadata: { achievementId, achievementName: achievement.name, coinReward: achievement.coinReward },
+      },
+    });
+    return created;
+  });
 
   return award;
 }

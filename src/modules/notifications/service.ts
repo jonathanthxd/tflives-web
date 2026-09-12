@@ -1,4 +1,4 @@
-import { NotificationType } from "@prisma/client";
+import { NotificationType, Prisma } from "@prisma/client";
 import { prisma } from "@/infrastructure/database/prisma";
 
 export const NOTIFICATION_CATEGORIES: NotificationType[] = [
@@ -13,6 +13,7 @@ export const NOTIFICATION_CATEGORIES: NotificationType[] = [
   "ANNOUNCEMENT",
   "SECURITY_ALERT",
   "LEVEL_UP",
+  "TFL_COINS",
 ];
 
 interface CreateNotificationInput {
@@ -35,14 +36,14 @@ export async function createNotification({
   actorId,
   entityType,
   entityId,
-}: CreateNotificationInput) {
-  const preference = await prisma.notificationPreference.findUnique({
+}: CreateNotificationInput, client: Prisma.TransactionClient | typeof prisma = prisma) {
+  const preference = await client.notificationPreference.findUnique({
     where: { userId_category: { userId, category: type } },
   });
 
   if (preference && !preference.inAppEnabled) return null;
 
-  return prisma.notification.create({
+  return client.notification.create({
     data: { userId, type, actorId, entityType, entityId },
   });
 }

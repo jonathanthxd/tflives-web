@@ -9,6 +9,7 @@ import { getProgressSummary, levelForXp, type PublicProgress } from "@/modules/p
 import { isProfileComplete } from "@/modules/profiles/completion";
 import { evaluateAutomaticAchievements } from "@/modules/achievements/automatic";
 import { ACHIEVEMENT_TRIGGER_KEYS } from "@/modules/achievements/triggers";
+import { awardAchievementCoins, awardLevelCoins } from "@/modules/economy/service";
 
 type ProgressionSource =
   | "PROFILE_COMPLETE"
@@ -274,6 +275,19 @@ async function awardSource(
       where: { userId },
       data: { xp: totalXp, level: finalLevel },
     });
+
+    // Each server-derived level and fixed progression achievement has its own
+    // wallet source key. Existing v0.6 activity is never replayed: these run
+    // only as part of a newly awarded source event.
+    for (let level = existingProgress.level + 1; level <= finalLevel; level += 1) {
+      await awardLevelCoins(tx, userId, level);
+    }
+    for (const code of allUnlocks) {
+      const achievement = PROGRESSION_ACHIEVEMENTS_BY_CODE.get(code);
+      if (achievement) {
+        await awardAchievementCoins(tx, userId, `progression:${code}`, achievement.coinReward);
+      }
+    }
 
     if (finalLevel > existingProgress.level) {
       await createProgressNotification(tx, userId, "LEVEL_UP", "ProgressLevel", String(finalLevel));

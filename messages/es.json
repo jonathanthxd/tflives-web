@@ -21,7 +21,8 @@
       "POST_PUBLISHED": "Novedades oficiales",
       "ANNOUNCEMENT": "Anuncios globales",
       "SECURITY_ALERT": "Alertas de seguridad",
-      "LEVEL_UP": "Subidas de nivel"
+      "LEVEL_UP": "Subidas de nivel",
+      "TFL_COINS": "Movimientos de TFL Coins"
     },
     "subtitulo": "Administrá tu seguridad, privacidad y notificaciones desde un solo lugar.",
     "secciones": "Secciones de configuración",
@@ -30,7 +31,52 @@
     "seguridad": "Seguridad",
     "seguridadDescripcion": "Acceso, sesiones y 2FA",
     "privacidadDescripcion": "Controlá quién puede interactuar contigo",
-    "notificacionesDescripcion": "Elegí qué avisos querés recibir"
+    "notificacionesDescripcion": "Elegí qué avisos querés recibir",
+    "wallet": "TFL Coins",
+    "walletDescripcion": "Saldo y movimientos de tu wallet"
+  },
+  "Wallet": {
+    "title": "TFL Coins",
+    "description": "Tu saldo y los movimientos recientes de la moneda interna de TFLives.",
+    "balance": "Saldo disponible",
+    "notice": "Las TFL Coins no tienen valor monetario y no se pueden comprar, retirar ni transferir.",
+    "history": "Movimientos recientes",
+    "empty": "Todavía no tenés movimientos de TFL Coins.",
+    "loadError": "No pudimos cargar tu wallet. Probá nuevamente.",
+    "balanceAfter": "Saldo: {balance} TFL",
+    "transactionTypes": {
+      "LEVEL_REWARD": "Recompensa por nivel",
+      "ACHIEVEMENT_REWARD": "Logro desbloqueado",
+      "ADMIN_GRANT": "Ajuste administrativo",
+      "ADMIN_DEDUCT": "Ajuste administrativo",
+      "SPEND": "Uso de TFL Coins"
+    }
+  },
+  "WalletAdmin": {
+    "title": "TFL Coins",
+    "subtitle": "Consultá wallets privadas y realizá ajustes auditables con una razón obligatoria.",
+    "searchLabel": "Buscar miembro",
+    "searchPlaceholder": "Username, nombre o email…",
+    "search": "Buscar",
+    "searchError": "No se pudieron buscar las wallets.",
+    "detailError": "No se pudo cargar la wallet.",
+    "adjustError": "No se pudo realizar el ajuste.",
+    "history": "Movimientos recientes",
+    "empty": "Esta wallet todavía no tiene movimientos.",
+    "adjustTitle": "Ajustar TFL Coins",
+    "adjustDescription": "Cada ajuste crea un movimiento inmutable y queda registrado para auditoría.",
+    "grant": "Otorgar",
+    "deduct": "Descontar",
+    "amount": "Cantidad",
+    "reason": "Razón obligatoria",
+    "reasonPlaceholder": "Explicá el motivo del ajuste"
+  },
+  "AchievementEconomy": {
+    "rewards": "Recompensas",
+    "xpNotAvailable": "Sin recompensa adicional",
+    "coinReward": "Recompensa en TFL Coins",
+    "coinRewardHelp": "Opcional. Se entrega una única vez al desbloquear el logro.",
+    "coinAmount": "+{amount} TFL Coins"
   },
   "Security": {
     "title": "Seguridad de la cuenta",
@@ -157,7 +203,8 @@
       "POST_PUBLISHED": "publicó algo nuevo en TFL Network",
       "ANNOUNCEMENT": "hay un anuncio nuevo",
       "SECURITY_ALERT": "hay una actualización de seguridad en tu cuenta",
-      "LEVEL_UP": "subiste de nivel"
+      "LEVEL_UP": "subiste de nivel",
+      "TFL_COINS": "tuviste un movimiento de TFL Coins"
     }
   },
   "Navbar": {

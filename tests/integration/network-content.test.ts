@@ -47,6 +47,30 @@ test(
         "utf8",
       ),
     );
+    await db.exec(
+      readFileSync(
+        "prisma/migrations/20260913000000_progression_achievements/migration.sql",
+        "utf8",
+      ),
+    );
+    await db.exec(
+      readFileSync(
+        "prisma/migrations/20260914000000_obtainable_achievements/migration.sql",
+        "utf8",
+      ),
+    );
+    await db.exec(
+      readFileSync(
+        "prisma/migrations/20260915000000_team_member_identity/migration.sql",
+        "utf8",
+      ),
+    );
+    await db.exec(
+      readFileSync(
+        "prisma/migrations/20260915000000_tfl_economy/migration.sql",
+        "utf8",
+      ),
+    );
     assert.equal((await db.query(`SELECT id FROM "Comment"`)).rows.length, 1);
     assert.equal((await db.query(`SELECT id FROM "Reaction"`)).rows.length, 1);
     const preserved = await db.query<{ slug: string; published: boolean }>(
@@ -153,7 +177,13 @@ test(
       .join("; ");
     assert.ok(cookie);
 
-    let response = await request(
+    assert.equal((await request("/api/account/wallet")).status, 401);
+    let response = await request("/api/account/wallet", "GET", undefined, cookie);
+    assert.equal(response.status, 200, await response.clone().text());
+    assert.deepEqual(await response.json(), { balance: 0, recentTransactions: [] });
+    assert.equal((await request("/api/admin/wallet", "GET", undefined, cookie)).status, 403);
+
+    response = await request(
       "/api/profile",
       "PATCH",
       {
@@ -237,6 +267,21 @@ test(
     await db.query(`UPDATE "User" SET role='ADMIN' WHERE id=$1`, [
       user.user.id,
     ]);
+    response = await request("/api/admin/wallet?query=profile_member", "GET", undefined, cookie);
+    assert.equal(response.status, 200, await response.clone().text());
+    assert.ok((await response.json()).users.some((entry: { id: string }) => entry.id === user.user.id));
+    response = await request(`/api/admin/wallet/${user.user.id}`, "POST", { direction: "GRANT", amount: 40, reason: "" }, cookie);
+    assert.equal(response.status, 400, await response.clone().text());
+    response = await request(`/api/admin/wallet/${user.user.id}`, "POST", { direction: "GRANT", amount: 40, reason: "Integration reward" }, cookie);
+    assert.equal(response.status, 201, await response.clone().text());
+    const grantedWallet = await response.json();
+    response = await request(`/api/admin/wallet/${user.user.id}`, "POST", { direction: "DEDUCT", amount: 100000, reason: "Cannot overdraft" }, cookie);
+    assert.equal(response.status, 400, await response.clone().text());
+    response = await request("/api/account/wallet", "GET", undefined, cookie);
+    assert.equal(response.status, 200, await response.clone().text());
+    const rewardedWallet = await response.json();
+    assert.equal(rewardedWallet.balance, grantedWallet.balance);
+    assert.ok(rewardedWallet.recentTransactions.some((transaction: { amount: number }) => transaction.amount === 40));
     response = await request("/en/perfil/profile_member_v2");
     assert.equal(response.status, 200, await response.clone().text());
     assert.ok((await response.text()).includes("Administration"));
@@ -307,6 +352,7 @@ test(
     assert.equal(response.status, 200);
     assert.ok((await response.text()).includes("English guide"));
     const team = await create("/api/admin/team", {
+      username: "profile_member_v2",
       name: "Test member",
       roleTitle: "Editor",
       active: true,

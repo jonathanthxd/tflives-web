@@ -21,7 +21,8 @@
       "POST_PUBLISHED": "Official announcements",
       "ANNOUNCEMENT": "Global announcements",
       "SECURITY_ALERT": "Security alerts",
-      "LEVEL_UP": "Level ups"
+      "LEVEL_UP": "Level ups",
+      "TFL_COINS": "TFL Coins activity"
     },
     "subtitulo": "Manage your security, privacy, and notifications in one place.",
     "secciones": "Settings sections",
@@ -30,7 +31,52 @@
     "seguridad": "Security",
     "seguridadDescripcion": "Access, sessions, and 2FA",
     "privacidadDescripcion": "Control who can interact with you",
-    "notificacionesDescripcion": "Choose which alerts you want to receive"
+    "notificacionesDescripcion": "Choose which alerts you want to receive",
+    "wallet": "TFL Coins",
+    "walletDescripcion": "Your wallet balance and activity"
+  },
+  "Wallet": {
+    "title": "TFL Coins",
+    "description": "Your balance and recent activity for TFLives' internal currency.",
+    "balance": "Available balance",
+    "notice": "TFL Coins have no monetary value and cannot be purchased, withdrawn, or transferred.",
+    "history": "Recent activity",
+    "empty": "You don't have any TFL Coins activity yet.",
+    "loadError": "We couldn't load your wallet. Please try again.",
+    "balanceAfter": "Balance: {balance} TFL",
+    "transactionTypes": {
+      "LEVEL_REWARD": "Level reward",
+      "ACHIEVEMENT_REWARD": "Achievement unlocked",
+      "ADMIN_GRANT": "Administrative adjustment",
+      "ADMIN_DEDUCT": "Administrative adjustment",
+      "SPEND": "TFL Coins use"
+    }
+  },
+  "WalletAdmin": {
+    "title": "TFL Coins",
+    "subtitle": "Review private wallets and make auditable adjustments with a required reason.",
+    "searchLabel": "Find a member",
+    "searchPlaceholder": "Username, name, or email…",
+    "search": "Search",
+    "searchError": "We couldn't search wallets.",
+    "detailError": "We couldn't load this wallet.",
+    "adjustError": "We couldn't make the adjustment.",
+    "history": "Recent activity",
+    "empty": "This wallet doesn't have any activity yet.",
+    "adjustTitle": "Adjust TFL Coins",
+    "adjustDescription": "Every adjustment creates an immutable movement and is recorded for audit.",
+    "grant": "Grant",
+    "deduct": "Deduct",
+    "amount": "Amount",
+    "reason": "Required reason",
+    "reasonPlaceholder": "Explain why this adjustment is needed"
+  },
+  "AchievementEconomy": {
+    "rewards": "Rewards",
+    "xpNotAvailable": "No additional reward",
+    "coinReward": "TFL Coins reward",
+    "coinRewardHelp": "Optional. It is awarded only once when the achievement is unlocked.",
+    "coinAmount": "+{amount} TFL Coins"
   },
   "Security": {
     "title": "Account security",
@@ -157,7 +203,8 @@
       "POST_PUBLISHED": "posted something new on TFL Network",
       "ANNOUNCEMENT": "there's a new announcement",
       "SECURITY_ALERT": "there's a security update for your account",
-      "LEVEL_UP": "you reached a new level"
+      "LEVEL_UP": "you reached a new level",
+      "TFL_COINS": "you have TFL Coins activity"
     }
   },
   "Navbar": {
