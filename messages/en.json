@@ -1278,7 +1278,7 @@
     "accent": "Primary color",
     "accentHint": "Changes the interface identity and its backgrounds.",
     "backgrounds": "Backgrounds",
-    "backgroundHint": "Animated previews only come alive while you hover them.",
+    "backgroundHint": "Static styles react to the page without animating. React Bits previews animate on hover.",
     "static": "Static",
     "animated": "Animated",
     "hoverPreview": "Hover to animate",
@@ -1286,10 +1286,9 @@
     "fontHint": "Changes the character of the whole experience.",
     "reset": "Reset TFL style",
     "backgroundNames": {
-      "grid": "TFL Grid",
-      "halo": "Halo",
-      "mesh": "Mesh",
-      "clean": "Clean"
+      "dot": "Dot",
+      "shading": "Reactive shading",
+      "solid": "Solid color"
     },
     "fontDescriptions": {
       "tfl": "The original TFLives identity.",

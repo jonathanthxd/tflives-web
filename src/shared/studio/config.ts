@@ -11,11 +11,9 @@ export type StudioAccentId =
 
 export type StudioFontId = "tfl" | "nunito" | "vt323" | "outfit" | "fredoka";
 
-export type StudioBackgroundId =
-  | "grid"
-  | "halo"
-  | "mesh"
-  | "clean"
+export type StudioStaticBackgroundId = "dot" | "shading" | "solid";
+
+export type StudioAnimatedBackgroundId =
   | "silk"
   | "ghost-fibers"
   | "crt-warp"
@@ -23,6 +21,8 @@ export type StudioBackgroundId =
   | "gradient-waves"
   | "prism"
   | "line-waves";
+
+export type StudioBackgroundId = StudioStaticBackgroundId | StudioAnimatedBackgroundId;
 
 export type StudioPreferences = {
   accent: StudioAccentId;
@@ -33,7 +33,7 @@ export type StudioPreferences = {
 export const DEFAULT_STUDIO_PREFERENCES: StudioPreferences = {
   accent: "blue",
   font: "tfl",
-  background: "grid",
+  background: "dot",
 };
 
 export const STUDIO_STORAGE_KEY = "tflives-studio-v1";
@@ -42,16 +42,19 @@ export const STUDIO_ACCENTS: Array<{
   id: StudioAccentId;
   label: string;
   color: string;
+  secondary: string;
+  tertiary: string;
+  prismHueShift: number;
 }> = [
-  { id: "blue", label: "Blue", color: "#3b82f6" },
-  { id: "slate", label: "Slate", color: "#64748b" },
-  { id: "rose", label: "Rose intense", color: "#f43f5e" },
-  { id: "orange", label: "Orange", color: "#f97316" },
-  { id: "red", label: "Red", color: "#ef4444" },
-  { id: "violet", label: "Violet", color: "#8b5cf6" },
-  { id: "cyan", label: "Cyan", color: "#06b6d4" },
-  { id: "emerald", label: "Emerald", color: "#10b981" },
-  { id: "fuchsia", label: "Fuchsia", color: "#d946ef" },
+  { id: "blue", label: "Blue", color: "#3b82f6", secondary: "#6366f1", tertiary: "#06b6d4", prismHueShift: 4.1 },
+  { id: "slate", label: "Slate", color: "#64748b", secondary: "#818cf8", tertiary: "#94a3b8", prismHueShift: 3.7 },
+  { id: "rose", label: "Rose intense", color: "#f43f5e", secondary: "#ec4899", tertiary: "#fb7185", prismHueShift: 0.45 },
+  { id: "orange", label: "Orange", color: "#f97316", secondary: "#facc15", tertiary: "#ef4444", prismHueShift: 1.05 },
+  { id: "red", label: "Red", color: "#ef4444", secondary: "#f43f5e", tertiary: "#f97316", prismHueShift: 0.15 },
+  { id: "violet", label: "Violet", color: "#8b5cf6", secondary: "#d946ef", tertiary: "#6366f1", prismHueShift: 0 },
+  { id: "cyan", label: "Cyan", color: "#06b6d4", secondary: "#3b82f6", tertiary: "#10b981", prismHueShift: 3.25 },
+  { id: "emerald", label: "Emerald", color: "#10b981", secondary: "#06b6d4", tertiary: "#22c55e", prismHueShift: 2.35 },
+  { id: "fuchsia", label: "Fuchsia", color: "#d946ef", secondary: "#ec4899", tertiary: "#8b5cf6", prismHueShift: -0.35 },
 ];
 
 export const STUDIO_FONTS: Array<{
@@ -93,17 +96,16 @@ export const STUDIO_FONTS: Array<{
 ];
 
 export const STUDIO_STATIC_BACKGROUNDS: Array<{
-  id: StudioBackgroundId;
-  labelKey: "grid" | "halo" | "mesh" | "clean";
+  id: StudioStaticBackgroundId;
+  labelKey: "dot" | "shading" | "solid";
 }> = [
-  { id: "grid", labelKey: "grid" },
-  { id: "halo", labelKey: "halo" },
-  { id: "mesh", labelKey: "mesh" },
-  { id: "clean", labelKey: "clean" },
+  { id: "dot", labelKey: "dot" },
+  { id: "shading", labelKey: "shading" },
+  { id: "solid", labelKey: "solid" },
 ];
 
 export const STUDIO_ANIMATED_BACKGROUNDS: Array<{
-  id: StudioBackgroundId;
+  id: StudioAnimatedBackgroundId;
   label: string;
   reference: string;
 }> = [
@@ -132,6 +134,10 @@ export const STUDIO_ANIMATED_BACKGROUNDS: Array<{
   },
 ];
 
+export function getStudioAccent(accent: StudioAccentId) {
+  return STUDIO_ACCENTS.find((item) => item.id === accent) ?? STUDIO_ACCENTS[0];
+}
+
 export function isStudioAccent(value: unknown): value is StudioAccentId {
   return STUDIO_ACCENTS.some((accent) => accent.id === value);
 }
@@ -144,4 +150,10 @@ export function isStudioBackground(value: unknown): value is StudioBackgroundId 
   return [...STUDIO_STATIC_BACKGROUNDS, ...STUDIO_ANIMATED_BACKGROUNDS].some(
     (background) => background.id === value,
   );
+}
+
+export function isAnimatedStudioBackground(
+  value: StudioBackgroundId,
+): value is StudioAnimatedBackgroundId {
+  return STUDIO_ANIMATED_BACKGROUNDS.some((background) => background.id === value);
 }

@@ -1278,7 +1278,7 @@
     "accent": "Color principal",
     "accentHint": "Cambia la identidad de la interfaz y sus fondos.",
     "backgrounds": "Fondos",
-    "backgroundHint": "Los animados solo cobran vida en la preview al pasar por encima.",
+    "backgroundHint": "Los estáticos responden al entorno sin animarse. Los React Bits se animan en preview al pasar por encima.",
     "static": "Estáticos",
     "animated": "Animados",
     "hoverPreview": "Pasa el cursor para animar",
@@ -1286,10 +1286,9 @@
     "fontHint": "Cambia el carácter de toda la experiencia.",
     "reset": "Restablecer estilo TFL",
     "backgroundNames": {
-      "grid": "TFL Grid",
-      "halo": "Halo",
-      "mesh": "Mesh",
-      "clean": "Clean"
+      "dot": "Dot",
+      "shading": "Shading reactivo",
+      "solid": "Color sólido"
     },
     "fontDescriptions": {
       "tfl": "La identidad original de TFLives.",

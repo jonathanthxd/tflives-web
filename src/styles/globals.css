@@ -250,8 +250,9 @@ body[data-tfl-font="fredoka"] {
 .dark[data-tfl-accent="emerald"] { --primary: 158 72% 50%; --accent: 158 72% 50%; --ring: 158 72% 50%; }
 .dark[data-tfl-accent="fuchsia"] { --primary: 292 88% 65%; --accent: 292 88% 65%; --ring: 292 88% 65%; }
 
-/* Background engine. The animated presets are lightweight local visual
-   interpretations of the React Bits references selected for TFL Studio. */
+/* TFL Studio background engine.
+   Static presets stay CSS/DOM based. Animated presets render the supplied
+   React Bits shaders/components and are code-split by StudioBackground. */
 .studio-background {
   position: absolute;
   inset: 0;
@@ -260,254 +261,214 @@ body[data-tfl-font="fredoka"] {
   isolation: isolate;
 }
 
-.studio-background__layer {
-  position: absolute;
-  inset: -18%;
-  display: block;
-  pointer-events: none;
-  will-change: transform, opacity, background-position;
-}
-
 .studio-background--preview {
   inset: 0;
   min-height: 100%;
 }
 
-.studio-background--paused,
-.studio-background--paused::before,
-.studio-background--paused::after,
-.studio-background--paused .studio-background__layer {
-  animation-play-state: paused !important;
-}
-
-.studio-background--grid {
-  background-image:
-    radial-gradient(ellipse 80% 50% at 50% -10%, hsl(var(--primary) / 0.16), transparent 72%),
-    radial-gradient(circle, hsl(var(--border)) 1px, transparent 1px);
-  background-size: auto, 32px 32px;
-}
-
-.studio-background--halo {
-  background-image:
-    radial-gradient(circle at 18% 20%, hsl(var(--primary) / 0.18), transparent 30%),
-    radial-gradient(circle at 82% 28%, hsl(var(--studio-accent-2) / 0.13), transparent 28%),
-    radial-gradient(circle at 52% 86%, hsl(var(--studio-accent-3) / 0.10), transparent 34%);
-}
-
-.studio-background--mesh {
-  background-image:
-    linear-gradient(hsl(var(--primary) / 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(var(--primary) / 0.06) 1px, transparent 1px),
-    radial-gradient(circle at 50% 0%, hsl(var(--primary) / 0.15), transparent 42%);
-  background-size: 48px 48px, 48px 48px, auto;
-}
-
-.studio-background--clean {
-  background-image: radial-gradient(circle at 50% -12%, hsl(var(--primary) / 0.13), transparent 38%);
-}
-
-@keyframes studio-silk {
-  0%, 100% { transform: translate3d(-4%, -2%, 0) rotate(-4deg) scale(1.04); }
-  50% { transform: translate3d(5%, 4%, 0) rotate(4deg) scale(1.12); }
-}
-
-.studio-background--silk .studio-background__layer--one {
-  inset: -35%;
-  background:
-    repeating-linear-gradient(118deg,
-      transparent 0 5%,
-      hsl(var(--primary) / 0.18) 8%,
-      hsl(var(--studio-accent-2) / 0.09) 12%,
-      transparent 18% 25%);
-  filter: blur(18px) saturate(1.2);
-  animation: studio-silk 9s ease-in-out infinite;
-}
-
-.studio-background--silk .studio-background__layer--two {
-  inset: -42%;
-  background: repeating-radial-gradient(ellipse at 30% 50%, hsl(var(--primary) / 0.13) 0 3%, transparent 7% 14%);
-  filter: blur(10px);
-  opacity: 0.72;
-  animation: studio-silk 14s ease-in-out infinite reverse;
-}
-
-@keyframes studio-ghost-spin {
-  from { transform: rotate(0deg) scale(1.1); }
-  to { transform: rotate(360deg) scale(1.1); }
-}
-
-@keyframes studio-ghost-drift {
-  0%, 100% { transform: translate3d(-5%, 0, 0) rotate(-8deg); opacity: .45; }
-  50% { transform: translate3d(7%, -4%, 0) rotate(6deg); opacity: .85; }
-}
-
-.studio-background--ghost-fibers .studio-background__layer--one {
-  inset: -45%;
-  background: repeating-conic-gradient(from 24deg at 50% 50%, transparent 0 7deg, hsl(var(--primary) / .14) 8deg 9deg, transparent 10deg 18deg);
-  mask-image: radial-gradient(circle, black 0 48%, transparent 74%);
-  filter: blur(.4px);
-  animation: studio-ghost-spin 26s linear infinite;
-}
-
-.studio-background--ghost-fibers .studio-background__layer--two {
-  inset: -30%;
-  background: repeating-linear-gradient(104deg, transparent 0 18px, hsl(var(--studio-accent-2) / .11) 19px 20px, transparent 22px 42px);
-  filter: blur(1px);
-  animation: studio-ghost-drift 11s ease-in-out infinite;
-}
-
-@keyframes studio-crt-scan {
-  from { background-position: 0 0, 0 0; transform: perspective(420px) rotateX(2deg) scale(1.06); }
-  to { background-position: 0 16px, 18px 0; transform: perspective(420px) rotateX(-2deg) scale(1.09); }
-}
-
-@keyframes studio-crt-glow {
-  0%, 100% { opacity: .38; transform: translateX(-8%) scaleX(.95); }
-  50% { opacity: .75; transform: translateX(8%) scaleX(1.05); }
-}
-
-.studio-background--crt-warp {
-  background-image: radial-gradient(ellipse at center, hsl(var(--primary) / .11), transparent 62%);
-}
-
-.studio-background--crt-warp .studio-background__layer--one {
-  inset: -10%;
-  border-radius: 18%;
-  background-image:
-    repeating-linear-gradient(0deg, transparent 0 4px, hsl(var(--primary) / .09) 5px 6px),
-    repeating-linear-gradient(90deg, transparent 0 30px, hsl(var(--primary) / .06) 31px 32px);
-  mask-image: radial-gradient(ellipse 72% 80% at 50% 50%, black 35%, transparent 78%);
-  animation: studio-crt-scan 5.8s linear infinite alternate;
-}
-
-.studio-background--crt-warp .studio-background__layer--two {
-  inset: 12% -30%;
-  background: linear-gradient(90deg, transparent, hsl(var(--studio-accent-2) / .16), transparent);
-  filter: blur(20px);
-  animation: studio-crt-glow 4.4s ease-in-out infinite;
-}
-
-@keyframes studio-molten {
-  0% { transform: rotate(0deg) scale(1.12); }
-  50% { transform: rotate(170deg) scale(1.34); }
-  100% { transform: rotate(360deg) scale(1.12); }
-}
-
-@keyframes studio-molten-pulse {
-  0%, 100% { transform: translate3d(-6%, 3%, 0) scale(.9); opacity: .42; }
-  50% { transform: translate3d(8%, -5%, 0) scale(1.2); opacity: .72; }
-}
-
-.studio-background--molten-metal .studio-background__layer--one {
-  inset: -52%;
-  background: conic-gradient(from 30deg,
-    transparent 0 8%,
-    hsl(var(--primary) / .60) 15%,
-    hsl(var(--studio-accent-2) / .48) 26%,
-    hsl(var(--foreground) / .20) 34%,
-    transparent 45%,
-    hsl(var(--primary) / .55) 64%,
-    transparent 82%);
-  filter: blur(48px) saturate(1.35);
-  animation: studio-molten 18s linear infinite;
-}
-
-.studio-background--molten-metal .studio-background__layer--two {
-  inset: -12%;
-  background: radial-gradient(circle at 40% 50%, hsl(var(--studio-accent-3) / .23), transparent 38%);
-  filter: blur(22px);
-  animation: studio-molten-pulse 8s ease-in-out infinite;
-}
-
-@keyframes studio-gradient-wave-one {
-  0%, 100% { transform: translate3d(-12%, -8%, 0) scale(1); }
-  50% { transform: translate3d(14%, 10%, 0) scale(1.18); }
-}
-
-@keyframes studio-gradient-wave-two {
-  0%, 100% { transform: translate3d(10%, 10%, 0) scale(1.08); }
-  50% { transform: translate3d(-14%, -6%, 0) scale(.92); }
-}
-
-.studio-background--gradient-waves .studio-background__layer--one {
-  background:
-    radial-gradient(ellipse at 20% 35%, hsl(var(--primary) / .30), transparent 35%),
-    radial-gradient(ellipse at 76% 68%, hsl(var(--studio-accent-2) / .22), transparent 38%);
-  filter: blur(18px);
-  animation: studio-gradient-wave-one 12s ease-in-out infinite;
-}
-
-.studio-background--gradient-waves .studio-background__layer--two {
-  background:
-    radial-gradient(ellipse at 68% 20%, hsl(var(--studio-accent-3) / .17), transparent 32%),
-    radial-gradient(ellipse at 35% 85%, hsl(var(--primary) / .18), transparent 36%);
-  filter: blur(26px);
-  animation: studio-gradient-wave-two 16s ease-in-out infinite;
-}
-
-@keyframes studio-prism-turn {
-  from { transform: rotate(-8deg) scale(1.25); }
-  to { transform: rotate(352deg) scale(1.25); }
-}
-
-@keyframes studio-prism-shift {
-  0%, 100% { transform: translateX(-12%) skewX(-12deg); }
-  50% { transform: translateX(14%) skewX(12deg); }
-}
-
-.studio-background--prism .studio-background__layer--one {
-  inset: -55%;
-  background: conic-gradient(from 200deg,
-    transparent 0 10%,
-    hsl(var(--primary) / .32) 15%,
-    transparent 25%,
-    hsl(var(--studio-accent-2) / .28) 36%,
-    transparent 49%,
-    hsl(var(--studio-accent-3) / .25) 61%,
-    transparent 75%,
-    hsl(var(--primary) / .26) 88%,
-    transparent 100%);
-  filter: blur(15px) saturate(1.3);
-  animation: studio-prism-turn 22s linear infinite;
-}
-
-.studio-background--prism .studio-background__layer--two {
-  inset: 4% -30%;
-  background: linear-gradient(110deg, transparent 20%, hsl(var(--foreground) / .06) 38%, hsl(var(--primary) / .19) 50%, transparent 67%);
-  filter: blur(8px);
-  animation: studio-prism-shift 8s ease-in-out infinite;
-}
-
-@keyframes studio-lines-wave {
-  0%, 100% { transform: translate3d(-5%, -1%, 0) rotate(-2deg) scale(1.08); }
-  50% { transform: translate3d(6%, 3%, 0) rotate(2deg) scale(1.16); }
-}
-
-@keyframes studio-lines-wave-two {
-  0%, 100% { transform: translateY(-5%) scale(1.08); opacity: .32; }
-  50% { transform: translateY(7%) scale(.98); opacity: .64; }
-}
-
-.studio-background--line-waves .studio-background__layer--one {
-  inset: -28%;
-  background: repeating-radial-gradient(ellipse at 50% 115%, transparent 0 8px, hsl(var(--primary) / .19) 9px 10px, transparent 11px 22px);
-  mask-image: linear-gradient(to top, black 10%, black 70%, transparent 100%);
-  animation: studio-lines-wave 9s ease-in-out infinite;
-}
-
-.studio-background--line-waves .studio-background__layer--two {
-  inset: -35%;
-  background: repeating-radial-gradient(ellipse at 35% -15%, transparent 0 12px, hsl(var(--studio-accent-2) / .13) 13px 14px, transparent 15px 30px);
-  mask-image: linear-gradient(to bottom, black 15%, transparent 82%);
-  animation: studio-lines-wave-two 12s ease-in-out infinite;
-}
-
-/* Preview cards need enough contrast in both themes without changing the
-   selected site theme itself. */
-.studio-background--preview::after {
-  content: "";
+.studio-background__preview-frame {
   position: absolute;
   inset: 0;
-  box-shadow: inset 0 0 0 1px hsl(var(--foreground) / .025);
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px hsl(var(--foreground) / 0.03);
+  z-index: 4;
+}
+
+/* Static: Dot */
+.studio-background--dot {
+  background-color: hsl(var(--background));
+  background-image:
+    radial-gradient(ellipse 78% 48% at 50% -12%, hsl(var(--primary) / 0.14), transparent 72%),
+    radial-gradient(circle, hsl(var(--primary) / 0.24) 1px, transparent 1.3px);
+  background-size: auto, clamp(21px, 2vw, 30px) clamp(21px, 2vw, 30px);
+  background-position: center, center;
+}
+
+.dark .studio-background--dot {
+  background-image:
+    radial-gradient(ellipse 78% 48% at 50% -12%, hsl(var(--primary) / 0.18), transparent 72%),
+    radial-gradient(circle, hsl(var(--primary) / 0.25) 1px, transparent 1.3px);
+}
+
+/* Static: reactive shading. The full-page variant is populated at runtime
+   from the positions/colors of visible headings and primary UI elements. */
+.studio-background--shading {
+  background-color: hsl(var(--background));
+  background-image:
+    radial-gradient(circle at 30% 32%, hsl(var(--primary) / 0.2), transparent 24%),
+    radial-gradient(circle at 72% 66%, hsl(var(--studio-accent-2) / 0.16), transparent 28%),
+    radial-gradient(circle at 50% -8%, hsl(var(--primary) / 0.1), transparent 36%);
+}
+
+.studio-static-shading-preview {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(16px);
   pointer-events: none;
 }
+
+.studio-static-shading-preview--one {
+  width: 54%;
+  aspect-ratio: 1;
+  left: -8%;
+  top: 2%;
+  background: hsl(var(--primary) / 0.22);
+}
+
+.studio-static-shading-preview--two {
+  width: 46%;
+  aspect-ratio: 1;
+  right: -5%;
+  bottom: -22%;
+  background: hsl(var(--studio-accent-2) / 0.18);
+}
+
+/* Static: one uninterrupted color field. It follows the selected accent but
+   remains theme-aware so page content keeps usable contrast. */
+.studio-background--solid {
+  background: color-mix(in oklab, hsl(var(--primary)) 16%, hsl(var(--background)));
+}
+
+.dark .studio-background--solid {
+  background: color-mix(in oklab, hsl(var(--primary)) 28%, hsl(var(--background)));
+}
+
+/* Animated canvases. Pointer input is observed globally by the interactive
+   shaders, so the visual layer never blocks links/buttons above it. */
+.studio-background--animated {
+  background-color: hsl(var(--background));
+}
+
+.studio-background--animated canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none;
+}
+
+/* Lightweight stills for Studio cards. The real React Bits renderer is only
+   mounted for the hovered/focused card, keeping preview browsing inexpensive. */
+.studio-preview-fallback {
+  overflow: hidden;
+  background-color: hsl(var(--background));
+}
+
+.studio-preview-fallback::before,
+.studio-preview-fallback::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.studio-preview-fallback--silk {
+  background:
+    linear-gradient(128deg, hsl(var(--primary) / .52), transparent 42%),
+    linear-gradient(36deg, hsl(var(--studio-accent-2) / .36), transparent 58%),
+    hsl(var(--background));
+}
+.studio-preview-fallback--silk::before {
+  inset: -45%;
+  background: repeating-linear-gradient(118deg, transparent 0 6%, hsl(var(--foreground) / .12) 9%, transparent 15% 22%);
+  filter: blur(9px);
+  transform: rotate(-8deg);
+}
+
+.studio-preview-fallback--ghost-fibers {
+  background:
+    radial-gradient(circle at 52% 52%, hsl(var(--studio-accent-2) / .25), transparent 38%),
+    hsl(var(--background));
+}
+.studio-preview-fallback--ghost-fibers::before {
+  inset: -38%;
+  background: repeating-conic-gradient(from 18deg, transparent 0 8deg, hsl(var(--primary) / .28) 9deg 10deg, transparent 11deg 19deg);
+  mask-image: radial-gradient(circle, black 0 48%, transparent 73%);
+}
+
+.studio-preview-fallback--crt-warp {
+  background:
+    radial-gradient(ellipse at center, hsl(var(--primary) / .25), transparent 62%),
+    hsl(var(--background));
+}
+.studio-preview-fallback--crt-warp::before {
+  inset: 6%;
+  border-radius: 18%;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 4px, hsl(var(--primary) / .16) 5px 6px),
+    repeating-linear-gradient(90deg, transparent 0 21px, hsl(var(--foreground) / .06) 22px 23px);
+  mask-image: radial-gradient(ellipse, black 35%, transparent 82%);
+}
+
+.studio-preview-fallback--molten-metal {
+  background: hsl(var(--background));
+}
+.studio-preview-fallback--molten-metal::before {
+  inset: -46%;
+  background: conic-gradient(
+    from 30deg,
+    transparent 0 8%,
+    hsl(var(--primary) / .82) 16%,
+    hsl(var(--studio-accent-2) / .6) 29%,
+    hsl(var(--foreground) / .22) 37%,
+    transparent 48%,
+    hsl(var(--primary) / .72) 67%,
+    transparent 84%
+  );
+  filter: blur(22px) saturate(1.35);
+  transform: rotate(34deg);
+}
+
+.studio-preview-fallback--gradient-waves {
+  background:
+    radial-gradient(ellipse at 8% 76%, hsl(var(--primary) / .48), transparent 40%),
+    radial-gradient(ellipse at 70% 42%, hsl(var(--studio-accent-2) / .34), transparent 44%),
+    radial-gradient(ellipse at 52% 104%, hsl(var(--foreground) / .14), transparent 36%),
+    hsl(var(--background));
+}
+
+.studio-preview-fallback--prism {
+  background: hsl(var(--background));
+}
+.studio-preview-fallback--prism::before {
+  inset: -38%;
+  background: conic-gradient(
+    from 210deg,
+    transparent 0 12%,
+    hsl(var(--primary) / .72) 18%,
+    transparent 27%,
+    hsl(var(--studio-accent-2) / .68) 39%,
+    transparent 51%,
+    hsl(var(--studio-accent-3) / .62) 65%,
+    transparent 80%
+  );
+  filter: blur(11px) saturate(1.4);
+  transform: rotate(-14deg);
+}
+
+.studio-preview-fallback--line-waves {
+  background: hsl(var(--background));
+}
+.studio-preview-fallback--line-waves::before,
+.studio-preview-fallback--line-waves::after {
+  inset: -24%;
+  background: repeating-radial-gradient(
+    ellipse at 50% 120%,
+    transparent 0 7px,
+    hsl(var(--primary) / .34) 8px 9px,
+    transparent 10px 18px
+  );
+  mask-image: linear-gradient(to top, black 8%, black 72%, transparent 100%);
+  transform: rotate(-5deg);
+}
+.studio-preview-fallback--line-waves::after {
+  inset: -38%;
+  opacity: .62;
+  background: repeating-radial-gradient(
+    ellipse at 30% -12%,
+    transparent 0 10px,
+    hsl(var(--studio-accent-2) / .28) 11px 12px,
+    transparent 13px 25px
+  );
+  mask-image: linear-gradient(to bottom, black 10%, transparent 86%);
+  transform: rotate(4deg);
+}
+
