@@ -1266,5 +1266,37 @@
     "technicalHealthDescription": "A quick view of technical status and aggregated errors that need attention.",
     "recentErrorsDescription": "Errors grouped by fingerprint to reduce noise and make follow-up easier.",
     "featuredShare": "Featured among active"
+  },
+  "Studio": {
+    "title": "Studio",
+    "subtitle": "Make TFLives feel a little more like yours.",
+    "open": "Open Studio",
+    "close": "Close Studio",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "accent": "Primary color",
+    "accentHint": "Changes the interface identity and its backgrounds.",
+    "backgrounds": "Backgrounds",
+    "backgroundHint": "Animated previews only come alive while you hover them.",
+    "static": "Static",
+    "animated": "Animated",
+    "hoverPreview": "Hover to animate",
+    "font": "Typography",
+    "fontHint": "Changes the character of the whole experience.",
+    "reset": "Reset TFL style",
+    "backgroundNames": {
+      "grid": "TFL Grid",
+      "halo": "Halo",
+      "mesh": "Mesh",
+      "clean": "Clean"
+    },
+    "fontDescriptions": {
+      "tfl": "The original TFLives identity.",
+      "nunito": "Soft, rounded and highly readable.",
+      "vt323": "Retro terminal with lots of personality.",
+      "outfit": "Geometric, modern and clean.",
+      "fredoka": "Playful and friendly without going too far."
+    }
   }
 }

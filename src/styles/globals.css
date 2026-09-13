@@ -29,6 +29,8 @@
     --chart-3: 217 70% 75%;
     --chart-4: 217 60% 40%;
     --chart-5: 217 50% 28%;
+    --studio-accent-2: 235 88% 64%;
+    --studio-accent-3: 190 90% 50%;
   }
 
   .dark {
@@ -62,8 +64,15 @@
     @apply border-border;
   }
 
+  html {
+    background-color: hsl(var(--background));
+  }
+
   body {
-    @apply bg-background text-foreground;
+    --font-body-active: var(--font-inter);
+    --font-display-active: var(--font-space-grotesk);
+    @apply text-foreground;
+    background: transparent;
   }
 
   /* A consistent focus treatment keeps keyboard navigation visible across
@@ -84,3 +93,421 @@
 
 /* Keep anchored and fixed UI from being obscured by mobile browser chrome. */
 .safe-area-bottom { padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }
+
+
+/* --------------------------------------------------------------------------
+   TFL Studio — local, persistent personalization tokens
+   -------------------------------------------------------------------------- */
+body[data-tfl-font="tfl"] {
+  --font-body-active: var(--font-inter);
+  --font-display-active: var(--font-space-grotesk);
+}
+
+body[data-tfl-font="nunito"] {
+  --font-body-active: var(--font-nunito);
+  --font-display-active: var(--font-nunito);
+}
+
+body[data-tfl-font="vt323"] {
+  --font-body-active: var(--font-vt323);
+  --font-display-active: var(--font-vt323);
+}
+
+body[data-tfl-font="outfit"] {
+  --font-body-active: var(--font-outfit);
+  --font-display-active: var(--font-outfit);
+}
+
+body[data-tfl-font="fredoka"] {
+  --font-body-active: var(--font-fredoka);
+  --font-display-active: var(--font-fredoka);
+}
+
+:root[data-tfl-accent="blue"] {
+  --primary: 217 91% 55%;
+  --accent: 217 91% 55%;
+  --ring: 217 91% 55%;
+  --chart-1: 217 91% 55%;
+  --chart-2: 235 88% 64%;
+  --chart-3: 190 90% 50%;
+  --chart-4: 217 62% 42%;
+  --chart-5: 217 45% 30%;
+  --studio-accent-2: 235 88% 64%;
+  --studio-accent-3: 190 90% 50%;
+}
+
+:root[data-tfl-accent="slate"] {
+  --primary: 215 22% 46%;
+  --accent: 215 22% 46%;
+  --ring: 215 22% 46%;
+  --chart-1: 215 22% 46%;
+  --chart-2: 231 24% 56%;
+  --chart-3: 195 28% 48%;
+  --chart-4: 215 18% 35%;
+  --chart-5: 215 16% 26%;
+  --studio-accent-2: 231 28% 58%;
+  --studio-accent-3: 195 34% 50%;
+}
+
+:root[data-tfl-accent="rose"] {
+  --primary: 347 77% 50%;
+  --accent: 347 77% 50%;
+  --ring: 347 77% 50%;
+  --chart-1: 347 77% 50%;
+  --chart-2: 318 72% 57%;
+  --chart-3: 18 88% 57%;
+  --chart-4: 347 60% 39%;
+  --chart-5: 347 45% 27%;
+  --studio-accent-2: 318 76% 59%;
+  --studio-accent-3: 18 90% 58%;
+}
+
+:root[data-tfl-accent="orange"] {
+  --primary: 24 95% 53%;
+  --accent: 24 95% 53%;
+  --ring: 24 95% 53%;
+  --chart-1: 24 95% 53%;
+  --chart-2: 42 94% 55%;
+  --chart-3: 3 86% 58%;
+  --chart-4: 24 78% 42%;
+  --chart-5: 24 60% 29%;
+  --studio-accent-2: 42 94% 55%;
+  --studio-accent-3: 3 86% 58%;
+}
+
+:root[data-tfl-accent="red"] {
+  --primary: 0 84% 60%;
+  --accent: 0 84% 60%;
+  --ring: 0 84% 60%;
+  --chart-1: 0 84% 60%;
+  --chart-2: 337 78% 58%;
+  --chart-3: 22 92% 57%;
+  --chart-4: 0 66% 44%;
+  --chart-5: 0 52% 31%;
+  --studio-accent-2: 337 78% 58%;
+  --studio-accent-3: 22 92% 57%;
+}
+
+:root[data-tfl-accent="violet"] {
+  --primary: 263 84% 58%;
+  --accent: 263 84% 58%;
+  --ring: 263 84% 58%;
+  --chart-1: 263 84% 58%;
+  --chart-2: 291 78% 61%;
+  --chart-3: 226 88% 62%;
+  --chart-4: 263 64% 45%;
+  --chart-5: 263 48% 31%;
+  --studio-accent-2: 291 78% 61%;
+  --studio-accent-3: 226 88% 62%;
+}
+
+:root[data-tfl-accent="cyan"] {
+  --primary: 188 86% 43%;
+  --accent: 188 86% 43%;
+  --ring: 188 86% 43%;
+  --chart-1: 188 86% 43%;
+  --chart-2: 210 86% 58%;
+  --chart-3: 164 74% 43%;
+  --chart-4: 188 66% 34%;
+  --chart-5: 188 48% 25%;
+  --studio-accent-2: 210 86% 58%;
+  --studio-accent-3: 164 74% 43%;
+}
+
+:root[data-tfl-accent="emerald"] {
+  --primary: 158 74% 40%;
+  --accent: 158 74% 40%;
+  --ring: 158 74% 40%;
+  --chart-1: 158 74% 40%;
+  --chart-2: 181 72% 42%;
+  --chart-3: 132 62% 45%;
+  --chart-4: 158 58% 31%;
+  --chart-5: 158 43% 23%;
+  --studio-accent-2: 181 72% 42%;
+  --studio-accent-3: 132 62% 45%;
+}
+
+:root[data-tfl-accent="fuchsia"] {
+  --primary: 292 84% 55%;
+  --accent: 292 84% 55%;
+  --ring: 292 84% 55%;
+  --chart-1: 292 84% 55%;
+  --chart-2: 320 79% 58%;
+  --chart-3: 264 83% 62%;
+  --chart-4: 292 64% 42%;
+  --chart-5: 292 48% 29%;
+  --studio-accent-2: 320 79% 58%;
+  --studio-accent-3: 264 83% 62%;
+}
+
+.dark[data-tfl-accent="blue"] { --primary: 217 91% 60%; --accent: 217 91% 60%; --ring: 217 91% 60%; }
+.dark[data-tfl-accent="slate"] { --primary: 215 28% 66%; --accent: 215 28% 66%; --ring: 215 28% 66%; }
+.dark[data-tfl-accent="rose"] { --primary: 347 86% 64%; --accent: 347 86% 64%; --ring: 347 86% 64%; }
+.dark[data-tfl-accent="orange"] { --primary: 24 95% 58%; --accent: 24 95% 58%; --ring: 24 95% 58%; }
+.dark[data-tfl-accent="red"] { --primary: 0 88% 64%; --accent: 0 88% 64%; --ring: 0 88% 64%; }
+.dark[data-tfl-accent="violet"] { --primary: 263 89% 68%; --accent: 263 89% 68%; --ring: 263 89% 68%; }
+.dark[data-tfl-accent="cyan"] { --primary: 188 86% 55%; --accent: 188 86% 55%; --ring: 188 86% 55%; }
+.dark[data-tfl-accent="emerald"] { --primary: 158 72% 50%; --accent: 158 72% 50%; --ring: 158 72% 50%; }
+.dark[data-tfl-accent="fuchsia"] { --primary: 292 88% 65%; --accent: 292 88% 65%; --ring: 292 88% 65%; }
+
+/* Background engine. The animated presets are lightweight local visual
+   interpretations of the React Bits references selected for TFL Studio. */
+.studio-background {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background-color: hsl(var(--background));
+  isolation: isolate;
+}
+
+.studio-background__layer {
+  position: absolute;
+  inset: -18%;
+  display: block;
+  pointer-events: none;
+  will-change: transform, opacity, background-position;
+}
+
+.studio-background--preview {
+  inset: 0;
+  min-height: 100%;
+}
+
+.studio-background--paused,
+.studio-background--paused::before,
+.studio-background--paused::after,
+.studio-background--paused .studio-background__layer {
+  animation-play-state: paused !important;
+}
+
+.studio-background--grid {
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, hsl(var(--primary) / 0.16), transparent 72%),
+    radial-gradient(circle, hsl(var(--border)) 1px, transparent 1px);
+  background-size: auto, 32px 32px;
+}
+
+.studio-background--halo {
+  background-image:
+    radial-gradient(circle at 18% 20%, hsl(var(--primary) / 0.18), transparent 30%),
+    radial-gradient(circle at 82% 28%, hsl(var(--studio-accent-2) / 0.13), transparent 28%),
+    radial-gradient(circle at 52% 86%, hsl(var(--studio-accent-3) / 0.10), transparent 34%);
+}
+
+.studio-background--mesh {
+  background-image:
+    linear-gradient(hsl(var(--primary) / 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--primary) / 0.06) 1px, transparent 1px),
+    radial-gradient(circle at 50% 0%, hsl(var(--primary) / 0.15), transparent 42%);
+  background-size: 48px 48px, 48px 48px, auto;
+}
+
+.studio-background--clean {
+  background-image: radial-gradient(circle at 50% -12%, hsl(var(--primary) / 0.13), transparent 38%);
+}
+
+@keyframes studio-silk {
+  0%, 100% { transform: translate3d(-4%, -2%, 0) rotate(-4deg) scale(1.04); }
+  50% { transform: translate3d(5%, 4%, 0) rotate(4deg) scale(1.12); }
+}
+
+.studio-background--silk .studio-background__layer--one {
+  inset: -35%;
+  background:
+    repeating-linear-gradient(118deg,
+      transparent 0 5%,
+      hsl(var(--primary) / 0.18) 8%,
+      hsl(var(--studio-accent-2) / 0.09) 12%,
+      transparent 18% 25%);
+  filter: blur(18px) saturate(1.2);
+  animation: studio-silk 9s ease-in-out infinite;
+}
+
+.studio-background--silk .studio-background__layer--two {
+  inset: -42%;
+  background: repeating-radial-gradient(ellipse at 30% 50%, hsl(var(--primary) / 0.13) 0 3%, transparent 7% 14%);
+  filter: blur(10px);
+  opacity: 0.72;
+  animation: studio-silk 14s ease-in-out infinite reverse;
+}
+
+@keyframes studio-ghost-spin {
+  from { transform: rotate(0deg) scale(1.1); }
+  to { transform: rotate(360deg) scale(1.1); }
+}
+
+@keyframes studio-ghost-drift {
+  0%, 100% { transform: translate3d(-5%, 0, 0) rotate(-8deg); opacity: .45; }
+  50% { transform: translate3d(7%, -4%, 0) rotate(6deg); opacity: .85; }
+}
+
+.studio-background--ghost-fibers .studio-background__layer--one {
+  inset: -45%;
+  background: repeating-conic-gradient(from 24deg at 50% 50%, transparent 0 7deg, hsl(var(--primary) / .14) 8deg 9deg, transparent 10deg 18deg);
+  mask-image: radial-gradient(circle, black 0 48%, transparent 74%);
+  filter: blur(.4px);
+  animation: studio-ghost-spin 26s linear infinite;
+}
+
+.studio-background--ghost-fibers .studio-background__layer--two {
+  inset: -30%;
+  background: repeating-linear-gradient(104deg, transparent 0 18px, hsl(var(--studio-accent-2) / .11) 19px 20px, transparent 22px 42px);
+  filter: blur(1px);
+  animation: studio-ghost-drift 11s ease-in-out infinite;
+}
+
+@keyframes studio-crt-scan {
+  from { background-position: 0 0, 0 0; transform: perspective(420px) rotateX(2deg) scale(1.06); }
+  to { background-position: 0 16px, 18px 0; transform: perspective(420px) rotateX(-2deg) scale(1.09); }
+}
+
+@keyframes studio-crt-glow {
+  0%, 100% { opacity: .38; transform: translateX(-8%) scaleX(.95); }
+  50% { opacity: .75; transform: translateX(8%) scaleX(1.05); }
+}
+
+.studio-background--crt-warp {
+  background-image: radial-gradient(ellipse at center, hsl(var(--primary) / .11), transparent 62%);
+}
+
+.studio-background--crt-warp .studio-background__layer--one {
+  inset: -10%;
+  border-radius: 18%;
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0 4px, hsl(var(--primary) / .09) 5px 6px),
+    repeating-linear-gradient(90deg, transparent 0 30px, hsl(var(--primary) / .06) 31px 32px);
+  mask-image: radial-gradient(ellipse 72% 80% at 50% 50%, black 35%, transparent 78%);
+  animation: studio-crt-scan 5.8s linear infinite alternate;
+}
+
+.studio-background--crt-warp .studio-background__layer--two {
+  inset: 12% -30%;
+  background: linear-gradient(90deg, transparent, hsl(var(--studio-accent-2) / .16), transparent);
+  filter: blur(20px);
+  animation: studio-crt-glow 4.4s ease-in-out infinite;
+}
+
+@keyframes studio-molten {
+  0% { transform: rotate(0deg) scale(1.12); }
+  50% { transform: rotate(170deg) scale(1.34); }
+  100% { transform: rotate(360deg) scale(1.12); }
+}
+
+@keyframes studio-molten-pulse {
+  0%, 100% { transform: translate3d(-6%, 3%, 0) scale(.9); opacity: .42; }
+  50% { transform: translate3d(8%, -5%, 0) scale(1.2); opacity: .72; }
+}
+
+.studio-background--molten-metal .studio-background__layer--one {
+  inset: -52%;
+  background: conic-gradient(from 30deg,
+    transparent 0 8%,
+    hsl(var(--primary) / .60) 15%,
+    hsl(var(--studio-accent-2) / .48) 26%,
+    hsl(var(--foreground) / .20) 34%,
+    transparent 45%,
+    hsl(var(--primary) / .55) 64%,
+    transparent 82%);
+  filter: blur(48px) saturate(1.35);
+  animation: studio-molten 18s linear infinite;
+}
+
+.studio-background--molten-metal .studio-background__layer--two {
+  inset: -12%;
+  background: radial-gradient(circle at 40% 50%, hsl(var(--studio-accent-3) / .23), transparent 38%);
+  filter: blur(22px);
+  animation: studio-molten-pulse 8s ease-in-out infinite;
+}
+
+@keyframes studio-gradient-wave-one {
+  0%, 100% { transform: translate3d(-12%, -8%, 0) scale(1); }
+  50% { transform: translate3d(14%, 10%, 0) scale(1.18); }
+}
+
+@keyframes studio-gradient-wave-two {
+  0%, 100% { transform: translate3d(10%, 10%, 0) scale(1.08); }
+  50% { transform: translate3d(-14%, -6%, 0) scale(.92); }
+}
+
+.studio-background--gradient-waves .studio-background__layer--one {
+  background:
+    radial-gradient(ellipse at 20% 35%, hsl(var(--primary) / .30), transparent 35%),
+    radial-gradient(ellipse at 76% 68%, hsl(var(--studio-accent-2) / .22), transparent 38%);
+  filter: blur(18px);
+  animation: studio-gradient-wave-one 12s ease-in-out infinite;
+}
+
+.studio-background--gradient-waves .studio-background__layer--two {
+  background:
+    radial-gradient(ellipse at 68% 20%, hsl(var(--studio-accent-3) / .17), transparent 32%),
+    radial-gradient(ellipse at 35% 85%, hsl(var(--primary) / .18), transparent 36%);
+  filter: blur(26px);
+  animation: studio-gradient-wave-two 16s ease-in-out infinite;
+}
+
+@keyframes studio-prism-turn {
+  from { transform: rotate(-8deg) scale(1.25); }
+  to { transform: rotate(352deg) scale(1.25); }
+}
+
+@keyframes studio-prism-shift {
+  0%, 100% { transform: translateX(-12%) skewX(-12deg); }
+  50% { transform: translateX(14%) skewX(12deg); }
+}
+
+.studio-background--prism .studio-background__layer--one {
+  inset: -55%;
+  background: conic-gradient(from 200deg,
+    transparent 0 10%,
+    hsl(var(--primary) / .32) 15%,
+    transparent 25%,
+    hsl(var(--studio-accent-2) / .28) 36%,
+    transparent 49%,
+    hsl(var(--studio-accent-3) / .25) 61%,
+    transparent 75%,
+    hsl(var(--primary) / .26) 88%,
+    transparent 100%);
+  filter: blur(15px) saturate(1.3);
+  animation: studio-prism-turn 22s linear infinite;
+}
+
+.studio-background--prism .studio-background__layer--two {
+  inset: 4% -30%;
+  background: linear-gradient(110deg, transparent 20%, hsl(var(--foreground) / .06) 38%, hsl(var(--primary) / .19) 50%, transparent 67%);
+  filter: blur(8px);
+  animation: studio-prism-shift 8s ease-in-out infinite;
+}
+
+@keyframes studio-lines-wave {
+  0%, 100% { transform: translate3d(-5%, -1%, 0) rotate(-2deg) scale(1.08); }
+  50% { transform: translate3d(6%, 3%, 0) rotate(2deg) scale(1.16); }
+}
+
+@keyframes studio-lines-wave-two {
+  0%, 100% { transform: translateY(-5%) scale(1.08); opacity: .32; }
+  50% { transform: translateY(7%) scale(.98); opacity: .64; }
+}
+
+.studio-background--line-waves .studio-background__layer--one {
+  inset: -28%;
+  background: repeating-radial-gradient(ellipse at 50% 115%, transparent 0 8px, hsl(var(--primary) / .19) 9px 10px, transparent 11px 22px);
+  mask-image: linear-gradient(to top, black 10%, black 70%, transparent 100%);
+  animation: studio-lines-wave 9s ease-in-out infinite;
+}
+
+.studio-background--line-waves .studio-background__layer--two {
+  inset: -35%;
+  background: repeating-radial-gradient(ellipse at 35% -15%, transparent 0 12px, hsl(var(--studio-accent-2) / .13) 13px 14px, transparent 15px 30px);
+  mask-image: linear-gradient(to bottom, black 15%, transparent 82%);
+  animation: studio-lines-wave-two 12s ease-in-out infinite;
+}
+
+/* Preview cards need enough contrast in both themes without changing the
+   selected site theme itself. */
+.studio-background--preview::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 0 1px hsl(var(--foreground) / .025);
+  pointer-events: none;
+}

@@ -55,8 +55,8 @@ const config: Config = {
   			}
   		},
   		fontFamily: {
-  			sans: ['var(--font-inter)', 'var(--font-geist-sans)', 'sans-serif'],
-  			display: ['var(--font-space-grotesk)', 'var(--font-geist-sans)', 'sans-serif'],
+  			sans: ['var(--font-body-active)', 'var(--font-inter)', 'var(--font-geist-sans)', 'sans-serif'],
+  			display: ['var(--font-display-active)', 'var(--font-space-grotesk)', 'var(--font-geist-sans)', 'sans-serif'],
   			mono: ['var(--font-jetbrains-mono)', 'ui-monospace', 'monospace'],
   		},
   		borderRadius: {
@@ -120,7 +120,7 @@ const config: Config = {
   						borderBottomColor: 'hsl(var(--primary))',
   					},
   					'h1, h2, h3, h4': {
-  						fontFamily: 'var(--font-space-grotesk)',
+  						fontFamily: 'var(--font-display-active)',
   						fontWeight: '600',
   						letterSpacing: '-0.01em',
   					},

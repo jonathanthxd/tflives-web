@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
-import { useTheme } from "next-themes";
 import { authClient } from "@/infrastructure/auth/client";
 import AuthHeader from "@/shared/ui/layout/auth-header";
 import UserMenu from "@/shared/ui/layout/user-menu";
@@ -11,6 +10,7 @@ import NotificationBell from "@/modules/notifications/components/notification-be
 import NotificationToasts from "@/modules/notifications/components/notification-toasts";
 import GlobalChat from "@/modules/chat/components/global-chat";
 import MessagingUnreadLink from "@/modules/messaging/components/messaging-unread-link";
+import StudioMenu from "@/shared/ui/studio/studio-menu";
 
 const MINIMAL_HEADER_ROUTES = [
   "/login",
@@ -30,9 +30,6 @@ export default function Navbar() {
   const { data: session } = authClient.useSession();
   const isAuthRoute = MINIMAL_HEADER_ROUTES.includes(pathname);
 
-  // resolvedTheme (y no theme) porque ThemeProvider usa enableSystem: con
-  // theme === "system" la comparación contra "dark" daría un click sin efecto.
-  const { resolvedTheme, setTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState<{
     id: string;
@@ -110,30 +107,9 @@ export default function Navbar() {
 
       <div className="relative w-full px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Left: Theme toggle + locale switch (flex-1 para que ocupe espacio) */}
+          {/* Left: Studio + locale switch */}
           <div className="flex-1 flex items-center justify-start gap-1">
-            <button
-              onClick={() =>
-                setTheme(resolvedTheme === "dark" ? "light" : "dark")
-              }
-              aria-label={t("cambiarTema")}
-              title={t("cambiarTema")}
-              className="grid min-h-11 min-w-11 place-items-center rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
-                />
-              </svg>
-            </button>
+            <StudioMenu />
             <Link
               href={pathname}
               locale={locale === "es" ? "en" : "es"}
