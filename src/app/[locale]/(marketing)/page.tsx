@@ -29,9 +29,9 @@ export default async function Home() {
   const c = await getTranslations("Content");
 
   return (
-    <main className="relative overflow-hidden pt-20">
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center">
+    <main className="relative overflow-hidden pt-16 md:pt-20">
+      {/* Hero Section: fills exactly the visible viewport below the fixed navbar. */}
+      <section className="relative min-h-[calc(100svh-4rem)] md:min-h-[calc(100svh-5rem)] flex flex-col items-center justify-center">
         <HeroGlow />
 
         {/* Content */}
@@ -56,7 +56,7 @@ export default async function Home() {
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-0 right-0 flex flex-col items-center gap-2 text-muted-foreground/50 animate-bounce">
+        <div className="absolute bottom-10 left-0 right-0 flex flex-col items-center gap-2 text-muted-foreground/50 animate-bounce md:bottom-12">
           <span className="text-xs uppercase tracking-widest">
             {t("scroll")}
           </span>

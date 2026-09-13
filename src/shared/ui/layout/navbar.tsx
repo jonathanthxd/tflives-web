@@ -108,7 +108,7 @@ export default function Navbar() {
       {/* Glassmorphism */}
       <div className="absolute inset-0 bg-background/70 backdrop-blur-xl border-b border-primary/10 shadow-lg shadow-black/5" />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative w-full px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Left: Theme toggle + locale switch (flex-1 para que ocupe espacio) */}
           <div className="flex-1 flex items-center justify-start gap-1">
@@ -213,33 +213,12 @@ export default function Navbar() {
           {/* Right: User / Login (flex-1 para que ocupe espacio) */}
           <div className="flex-1 flex items-center justify-end">
             {user ? (
-              <div className="flex items-center gap-1 md:gap-2 ml-4 md:ml-8 lg:ml-12">
-                <NotificationBell userId={user.id} />
-                <NotificationToasts />
-                <MessagingUnreadLink />
-                <Link
-                  href="/mensajes"
-                  title={t("mensajes")}
-                  className="hidden"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"
-                    />
-                  </svg>
-                </Link>
+              <div className="flex items-center gap-1 md:gap-2">
                 <Link
                   href="/amigos"
                   title={t("amigos")}
-                  className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300 hidden md:inline-flex"
+                  aria-label={t("amigos")}
+                  className="hidden min-h-11 min-w-11 items-center justify-center rounded-lg text-muted-foreground transition-all duration-300 hover:bg-primary/5 hover:text-primary md:inline-flex"
                 >
                   <svg
                     className="w-5 h-5"
@@ -255,6 +234,9 @@ export default function Navbar() {
                     />
                   </svg>
                 </Link>
+                <NotificationBell userId={user.id} />
+                <NotificationToasts />
+                <MessagingUnreadLink />
                 <UserMenu
                   displayName={displayName}
                   username={user.username}
