@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
@@ -21,8 +22,22 @@ const MINIMAL_HEADER_ROUTES = [
   "/verify-email",
 ];
 
-const navLinkClass =
-  "relative inline-flex min-h-11 items-center whitespace-nowrap text-sm font-medium tracking-wide text-muted-foreground transition-colors duration-200 hover:text-primary after:absolute after:bottom-1 after:left-0 after:h-px after:w-0 after:bg-primary/70 after:transition-all after:duration-200 hover:after:w-full aria-[current=page]:text-primary aria-[current=page]:after:w-full";
+const NAV_LAYOUT_TRANSITION = {
+  type: "spring" as const,
+  stiffness: 430,
+  damping: 38,
+  mass: 0.72,
+};
+
+function navLinkClass(compact: boolean) {
+  return [
+    "relative inline-flex min-h-11 items-center whitespace-nowrap text-sm font-medium text-muted-foreground",
+    "transition-[color,letter-spacing] duration-300 ease-out hover:text-primary",
+    compact ? "tracking-[0.01em]" : "tracking-[0.055em]",
+    "after:absolute after:bottom-1 after:left-0 after:h-px after:w-0 after:bg-primary/70",
+    "after:transition-all after:duration-300 hover:after:w-full aria-[current=page]:text-primary aria-[current=page]:after:w-full",
+  ].join(" ");
+}
 
 export default function Navbar() {
   const t = useTranslations("Navbar");
@@ -34,6 +49,7 @@ export default function Navbar() {
   const isAuthRoute = MINIMAL_HEADER_ROUTES.includes(pathname);
 
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState<{
     id: string;
     name: string | null;
@@ -86,6 +102,28 @@ export default function Navbar() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
+  useEffect(() => {
+    let frame = 0;
+
+    const update = () => {
+      frame = 0;
+      const y = window.scrollY;
+      setScrolled((current) => (current ? y > 3 : y > 12));
+    };
+
+    const onScroll = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
+
   const handleLogout = async () => {
     await authClient.signOut();
     setUser(null);
@@ -101,19 +139,73 @@ export default function Navbar() {
   const isCurrent = (href: string) =>
     pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
 
-  return (
-    <nav className="fixed inset-x-0 top-0 z-50" aria-label="TFLives">
-      <div className="absolute inset-0 border-b border-primary/10 bg-background/70 shadow-lg shadow-black/5 backdrop-blur-xl" />
+  // Opening the mobile drawer intentionally expands the shell again so the
+  // navigation never feels squeezed into a pill while it contains a menu.
+  const compact = scrolled && !mobileOpen;
 
-      <div className="relative w-full px-3 sm:px-5 lg:px-6">
-        <div className="grid h-16 grid-cols-[1fr_auto_1fr] items-center md:h-20">
+  return (
+    <nav
+      className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-2 sm:px-3 lg:px-4"
+      aria-label="TFLives"
+    >
+      <motion.div
+        layout
+        initial={false}
+        transition={{ layout: NAV_LAYOUT_TRANSITION }}
+        className={`pointer-events-auto relative isolate border backdrop-blur-2xl transition-[max-width,border-radius,background-color,border-color,box-shadow,margin] duration-500 ease-[cubic-bezier(.2,.8,.2,1)] ${
+          compact
+            ? "mt-2 w-[96%] max-w-[74rem] rounded-full border-primary/15 bg-background/[0.78] shadow-[0_18px_55px_-24px_rgba(0,0,0,0.42),0_0_34px_-22px_hsl(var(--primary)/0.75)] dark:bg-background/[0.66]"
+            : "mt-1 w-full max-w-none rounded-[22px] border-white/35 bg-background/[0.72] shadow-[0_14px_42px_-28px_rgba(0,0,0,0.38)] dark:border-white/[0.10] dark:bg-background/[0.60] md:mt-2"
+        }`}
+      >
+        {/* Premium glass layers live in their own clipped plane so menus can overflow the shell. */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]" aria-hidden="true">
+          <motion.div
+            animate={{ opacity: compact ? 0.8 : 0.55 }}
+            transition={{ duration: 0.35 }}
+            className="absolute inset-0 bg-gradient-to-b from-white/[0.13] via-white/[0.025] to-transparent dark:from-white/[0.07] dark:via-white/[0.015]"
+          />
+          <motion.div
+            animate={{ opacity: compact ? 0.3 : 0.16, scaleX: compact ? 0.78 : 1 }}
+            transition={NAV_LAYOUT_TRANSITION}
+            className="absolute inset-x-[12%] -bottom-5 h-10 rounded-full bg-primary/50 blur-3xl"
+          />
+          <div className="absolute inset-x-8 top-px h-px bg-gradient-to-r from-transparent via-white/55 to-transparent dark:via-white/18" />
+
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.div
+              key={compact ? "compact" : "expanded"}
+              initial={{ x: "-150%", opacity: 0 }}
+              animate={{ x: "285%", opacity: [0, 0.32, 0] }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.62, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute -inset-y-8 w-[28%] -skew-x-12 bg-gradient-to-r from-transparent via-white/30 to-transparent blur-md dark:via-white/12"
+            />
+          </AnimatePresence>
+        </div>
+
+        <motion.div
+          layout
+          transition={{ layout: NAV_LAYOUT_TRANSITION }}
+          className={`relative grid grid-cols-[1fr_auto_1fr] items-center transition-[height,padding] duration-500 ease-[cubic-bezier(.2,.8,.2,1)] ${
+            compact
+              ? "h-14 px-2 sm:px-3 md:h-[60px] lg:px-4"
+              : "h-[60px] px-2.5 sm:px-4 md:h-[72px] lg:px-5"
+          }`}
+        >
           {/* Utilities */}
-          <div className="flex min-w-0 items-center justify-start gap-0.5">
-            <StudioMenu />
+          <div
+            className={`flex min-w-0 items-center justify-start transition-[gap] duration-500 ${
+              compact ? "gap-0" : "gap-0.5"
+            }`}
+          >
+            <StudioMenu compact={compact} />
             <Link
               href={pathname}
               locale={locale === "es" ? "en" : "es"}
-              className="inline-flex min-h-11 items-center rounded-lg px-2 text-xs font-semibold uppercase text-muted-foreground transition-colors duration-200 hover:bg-primary/5 hover:text-primary"
+              className={`inline-flex min-h-11 items-center px-2 text-xs font-semibold uppercase text-muted-foreground transition-[color,background-color,border-radius,letter-spacing] duration-300 hover:bg-primary/5 hover:text-primary ${
+                compact ? "rounded-full tracking-[0.02em]" : "rounded-xl tracking-[0.07em]"
+              }`}
             >
               {locale === "es" ? "EN" : "ES"}
             </Link>
@@ -121,19 +213,27 @@ export default function Navbar() {
 
           {/* Primary navigation: deliberately symmetrical around the brand. */}
           <div className="flex items-center justify-center">
-            <div className="hidden items-center lg:grid lg:grid-cols-[1fr_auto_1fr] lg:gap-5 xl:gap-6">
-              <div className="flex items-center justify-end gap-5 xl:gap-6">
+            <div
+              className={`hidden items-center transition-[column-gap] duration-500 lg:grid lg:grid-cols-[1fr_auto_1fr] ${
+                compact ? "lg:gap-3.5 xl:gap-4" : "lg:gap-5 xl:gap-6"
+              }`}
+            >
+              <div
+                className={`flex items-center justify-end transition-[gap] duration-500 ${
+                  compact ? "gap-3.5 xl:gap-4" : "gap-5 xl:gap-6"
+                }`}
+              >
                 <Link
                   href="/streamers"
                   aria-current={isCurrent("/streamers") ? "page" : undefined}
-                  className={navLinkClass}
+                  className={navLinkClass(compact)}
                 >
                   {t("streamers")}
                 </Link>
                 <Link
                   href="/proyectos"
                   aria-current={isCurrent("/proyectos") ? "page" : undefined}
-                  className={navLinkClass}
+                  className={navLinkClass(compact)}
                 >
                   {t("proyectos")}
                 </Link>
@@ -142,7 +242,9 @@ export default function Navbar() {
               <Link
                 href="/"
                 aria-current={pathname === "/" ? "page" : undefined}
-                className="group flex min-h-11 min-w-[96px] flex-col items-center justify-center px-1"
+                className={`group flex min-h-11 flex-col items-center justify-center px-1 transition-[min-width] duration-500 ${
+                  compact ? "min-w-[84px]" : "min-w-[96px]"
+                }`}
               >
                 <span className="font-display text-xl font-bold tracking-tight transition-all duration-300 group-hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)] md:text-2xl lg:text-3xl">
                   <span className="text-foreground transition-colors duration-300 group-hover:text-primary">TFL</span>
@@ -151,18 +253,22 @@ export default function Navbar() {
                 <span className="mt-0.5 h-px w-0 bg-gradient-to-r from-transparent via-primary/50 to-transparent transition-all duration-300 group-hover:w-full" />
               </Link>
 
-              <div className="flex items-center justify-start gap-5 xl:gap-6">
+              <div
+                className={`flex items-center justify-start transition-[gap] duration-500 ${
+                  compact ? "gap-3.5 xl:gap-4" : "gap-5 xl:gap-6"
+                }`}
+              >
                 <Link
                   href="/cosmeticos"
                   aria-current={isCurrent("/cosmeticos") ? "page" : undefined}
-                  className={navLinkClass}
+                  className={navLinkClass(compact)}
                 >
                   {t("cosmeticos")}
                 </Link>
                 <Link
                   href="/trayectoria"
                   aria-current={isCurrent("/trayectoria") ? "page" : undefined}
-                  className={navLinkClass}
+                  className={navLinkClass(compact)}
                 >
                   {t("trayectoria")}
                 </Link>
@@ -182,12 +288,16 @@ export default function Navbar() {
           </div>
 
           {/* Account utilities */}
-          <div className="flex min-w-0 items-center justify-end gap-1">
+          <div
+            className={`flex min-w-0 items-center justify-end transition-[gap] duration-500 ${
+              compact ? "gap-0 sm:gap-0.5" : "gap-0.5 sm:gap-1"
+            }`}
+          >
             {user ? (
               <>
-                <div className="hidden items-center rounded-xl border border-border/60 bg-background/45 p-0.5 shadow-sm sm:flex">
-                  <NotificationBell userId={user.id} />
-                  <MessagingUnreadLink />
+                <div className="hidden items-center sm:flex">
+                  <NotificationBell userId={user.id} compact={compact} />
+                  <MessagingUnreadLink compact={compact} />
                 </div>
                 <NotificationToasts />
                 <UserMenu
@@ -196,12 +306,15 @@ export default function Navbar() {
                   role={user.role}
                   image={user.image}
                   onLogout={handleLogout}
+                  compact={compact}
                 />
               </>
             ) : (
               <Link
                 href="/login"
-                className="inline-flex min-h-11 items-center whitespace-nowrap rounded-full border border-muted-foreground/20 px-3 text-xs font-medium text-muted-foreground backdrop-blur-sm transition-all duration-200 hover:border-primary/50 hover:bg-primary/5 hover:text-primary md:px-4 md:text-sm"
+                className={`inline-flex min-h-11 items-center whitespace-nowrap border border-muted-foreground/20 px-3 text-xs font-medium text-muted-foreground backdrop-blur-sm transition-all duration-300 hover:border-primary/50 hover:bg-primary/5 hover:text-primary md:px-4 md:text-sm ${
+                  compact ? "rounded-full" : "rounded-xl"
+                }`}
               >
                 {t("login")}
               </Link>
@@ -214,7 +327,9 @@ export default function Navbar() {
               aria-expanded={mobileOpen}
               aria-controls="site-mobile-menu"
               aria-label={mobileOpen ? t("cerrarMenu") : t("abrirMenu")}
-              className="ml-0.5 grid min-h-11 min-w-11 place-items-center rounded-lg text-muted-foreground transition-colors duration-200 hover:bg-primary/5 hover:text-primary lg:hidden"
+              className={`ml-0.5 grid min-h-11 min-w-11 place-items-center text-muted-foreground transition-[color,background-color,border-radius] duration-300 hover:bg-primary/5 hover:text-primary lg:hidden ${
+                compact ? "rounded-full" : "rounded-xl"
+              }`}
             >
               {mobileOpen ? (
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -227,72 +342,72 @@ export default function Navbar() {
               )}
             </button>
           </div>
-        </div>
-      </div>
+        </motion.div>
 
-      <div
-        id="site-mobile-menu"
-        className={`overflow-hidden transition-all duration-300 ease-in-out lg:hidden ${
-          mobileOpen ? "max-h-[calc(100dvh-4rem)] opacity-100" : "pointer-events-none max-h-0 opacity-0"
-        }`}
-      >
-        <div className="border-b border-primary/10 bg-background/95 shadow-inner backdrop-blur-xl">
-          <div className="safe-area-bottom max-h-[calc(100dvh-4rem)] overflow-y-auto px-4 py-4">
-            <div className="grid gap-1 sm:grid-cols-2">
-              <Link href="/" className="flex min-h-11 items-center rounded-xl px-3 font-medium text-primary hover:bg-primary/5" onClick={() => setMobileOpen(false)}>
-                TFLives
-              </Link>
-              <Link href="/proyectos" className="flex min-h-11 items-center rounded-xl px-3 text-muted-foreground hover:bg-primary/5 hover:text-primary" onClick={() => setMobileOpen(false)}>
-                {t("proyectos")}
-              </Link>
-              <Link href="/streamers" className="flex min-h-11 items-center rounded-xl px-3 text-muted-foreground hover:bg-primary/5 hover:text-primary" onClick={() => setMobileOpen(false)}>
-                {t("streamers")}
-              </Link>
-              <Link href="/cosmeticos" className="flex min-h-11 items-center rounded-xl px-3 text-muted-foreground hover:bg-primary/5 hover:text-primary" onClick={() => setMobileOpen(false)}>
-                {t("cosmeticos")}
-              </Link>
-              <Link href="/trayectoria" className="flex min-h-11 items-center rounded-xl px-3 text-muted-foreground hover:bg-primary/5 hover:text-primary" onClick={() => setMobileOpen(false)}>
-                {t("trayectoria")}
-              </Link>
-            </div>
+        <div
+          id="site-mobile-menu"
+          className={`relative overflow-hidden transition-[max-height,opacity] duration-300 ease-out lg:hidden ${
+            mobileOpen ? "max-h-[calc(100dvh-5rem)] opacity-100" : "pointer-events-none max-h-0 opacity-0"
+          }`}
+        >
+          <div className="border-t border-white/10 bg-background/45 backdrop-blur-xl">
+            <div className="safe-area-bottom max-h-[calc(100dvh-5rem)] overflow-y-auto px-4 py-4">
+              <div className="grid gap-1 sm:grid-cols-2">
+                <Link href="/" className="flex min-h-11 items-center rounded-xl px-3 font-medium text-primary hover:bg-primary/5" onClick={() => setMobileOpen(false)}>
+                  TFLives
+                </Link>
+                <Link href="/proyectos" className="flex min-h-11 items-center rounded-xl px-3 text-muted-foreground hover:bg-primary/5 hover:text-primary" onClick={() => setMobileOpen(false)}>
+                  {t("proyectos")}
+                </Link>
+                <Link href="/streamers" className="flex min-h-11 items-center rounded-xl px-3 text-muted-foreground hover:bg-primary/5 hover:text-primary" onClick={() => setMobileOpen(false)}>
+                  {t("streamers")}
+                </Link>
+                <Link href="/cosmeticos" className="flex min-h-11 items-center rounded-xl px-3 text-muted-foreground hover:bg-primary/5 hover:text-primary" onClick={() => setMobileOpen(false)}>
+                  {t("cosmeticos")}
+                </Link>
+                <Link href="/trayectoria" className="flex min-h-11 items-center rounded-xl px-3 text-muted-foreground hover:bg-primary/5 hover:text-primary" onClick={() => setMobileOpen(false)}>
+                  {t("trayectoria")}
+                </Link>
+              </div>
 
-            {user ? (
-              <div className="mt-3 space-y-1 border-t border-primary/10 pt-3">
-                <Link
-                  href={user.username ? `/perfil/${user.username}` : "/onboarding/username"}
-                  className="flex min-h-11 items-center rounded-xl px-3 font-medium text-primary hover:bg-primary/5"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {tUser("miPerfil")}
-                </Link>
-                <Link href="/mensajes" className="flex min-h-11 items-center rounded-xl px-3 text-muted-foreground hover:bg-primary/5 hover:text-primary" onClick={() => setMobileOpen(false)}>
-                  {t("mensajes")}
-                </Link>
-                {(user.role === "ADMIN" || user.role === "MOD") && (
-                  <Link href="/admin" className="flex min-h-11 items-center rounded-xl px-3 text-foreground hover:bg-primary/5 hover:text-primary" onClick={() => setMobileOpen(false)}>
-                    {tUser("panelAdmin")}
+              {user ? (
+                <div className="mt-3 space-y-1 border-t border-primary/10 pt-3">
+                  <Link
+                    href={user.username ? `/perfil/${user.username}` : "/onboarding/username"}
+                    className="flex min-h-11 items-center rounded-xl px-3 font-medium text-primary hover:bg-primary/5"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {tUser("miPerfil")}
                   </Link>
-                )}
-                <button
-                  onClick={() => {
-                    handleLogout();
-                    setMobileOpen(false);
-                  }}
-                  className="flex min-h-11 w-full items-center rounded-xl px-3 text-left text-red-700 hover:bg-destructive/10 dark:text-red-400"
-                >
-                  {tUser("cerrarSesion")}
-                </button>
-              </div>
-            ) : (
-              <div className="mt-3 border-t border-primary/10 pt-3">
-                <Link href="/login" className="flex min-h-11 items-center rounded-xl px-3 text-muted-foreground hover:bg-primary/5 hover:text-primary" onClick={() => setMobileOpen(false)}>
-                  {t("login")}
-                </Link>
-              </div>
-            )}
+                  <Link href="/mensajes" className="flex min-h-11 items-center rounded-xl px-3 text-muted-foreground hover:bg-primary/5 hover:text-primary" onClick={() => setMobileOpen(false)}>
+                    {t("mensajes")}
+                  </Link>
+                  {(user.role === "ADMIN" || user.role === "MOD") && (
+                    <Link href="/admin" className="flex min-h-11 items-center rounded-xl px-3 text-foreground hover:bg-primary/5 hover:text-primary" onClick={() => setMobileOpen(false)}>
+                      {tUser("panelAdmin")}
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setMobileOpen(false);
+                    }}
+                    className="flex min-h-11 w-full items-center rounded-xl px-3 text-left text-red-700 hover:bg-destructive/10 dark:text-red-400"
+                  >
+                    {tUser("cerrarSesion")}
+                  </button>
+                </div>
+              ) : (
+                <div className="mt-3 border-t border-primary/10 pt-3">
+                  <Link href="/login" className="flex min-h-11 items-center rounded-xl px-3 text-muted-foreground hover:bg-primary/5 hover:text-primary" onClick={() => setMobileOpen(false)}>
+                    {t("login")}
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </nav>
   );
 }

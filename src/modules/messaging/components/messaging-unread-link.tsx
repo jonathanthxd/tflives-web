@@ -5,7 +5,7 @@ import { MessageCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
-export default function MessagingUnreadLink() {
+export default function MessagingUnreadLink({ compact = false }: { compact?: boolean }) {
   const t = useTranslations("Navbar");
   const [unread, setUnread] = useState(0);
 
@@ -36,7 +36,7 @@ export default function MessagingUnreadLink() {
       href="/mensajes"
       title={t("mensajes")}
       aria-label={t("mensajes")}
-      className="relative hidden size-10 items-center justify-center rounded-[10px] text-muted-foreground transition-colors duration-200 hover:bg-primary/[0.08] hover:text-primary sm:inline-flex"
+      className={`relative hidden size-10 items-center justify-center text-muted-foreground transition-[color,background-color,border-radius] duration-300 hover:bg-primary/[0.08] hover:text-primary sm:inline-flex ${compact ? "rounded-full" : "rounded-xl"}`}
     >
       <MessageCircle className="size-5" strokeWidth={1.6} />
       {unread > 0 && (

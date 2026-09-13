@@ -11,9 +11,10 @@ interface UserMenuProps {
   role: string;
   image: string | null;
   onLogout: () => void;
+  compact?: boolean;
 }
 
-export default function UserMenu({ displayName, username, role, image, onLogout }: UserMenuProps) {
+export default function UserMenu({ displayName, username, role, image, onLogout, compact = false }: UserMenuProps) {
   const t = useTranslations("UserMenu");
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -85,25 +86,41 @@ export default function UserMenu({ displayName, username, role, image, onLogout 
         aria-expanded={open}
         aria-haspopup="menu"
         aria-controls="user-navigation-menu"
-        className="flex min-h-11 items-center gap-1.5 rounded-xl border border-primary/20 bg-primary/10 px-2.5 text-primary text-xs font-medium transition-all hover:bg-primary/20 md:gap-2 md:px-3 md:text-sm"
+        aria-label={compact ? displayName || t("miPerfil") : undefined}
+        className={`flex min-h-11 items-center text-primary text-xs font-medium transition-[padding,gap,border-radius,background-color,color] duration-300 hover:bg-primary/[0.08] md:text-sm ${
+          compact
+            ? "gap-0 rounded-full p-1"
+            : "gap-1.5 rounded-xl px-2.5 md:gap-2 md:px-3"
+        } ${open ? "bg-primary/[0.10]" : "bg-transparent"}`}
       >
         <UserAvatar
           identity={{ displayName, name: displayName, username, image }}
-          className="size-5 text-[10px] md:size-6 md:text-xs"
+          className={`transition-[width,height,font-size,box-shadow] duration-300 ${
+            compact
+              ? "size-8 text-xs shadow-[0_0_0_1px_hsl(var(--primary)/0.25),0_0_18px_-8px_hsl(var(--primary)/0.8)]"
+              : "size-5 text-[10px] md:size-6 md:text-xs"
+          }`}
           alt={displayName || "User"}
         />
-        <span className="max-w-[80px] md:max-w-[140px] truncate" title={displayName}>
+        <span
+          className={`overflow-hidden whitespace-nowrap transition-[max-width,opacity,margin] duration-300 ${
+            compact ? "max-w-0 opacity-0" : "max-w-[80px] opacity-100 md:max-w-[140px]"
+          }`}
+          title={displayName}
+          aria-hidden={compact}
+        >
           {displayName}
         </span>
-        <svg
-          className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          strokeWidth={2}
+        <span
+          className={`grid overflow-hidden transition-[width,opacity,transform] duration-300 ${
+            compact ? "w-0 opacity-0" : "w-3.5 opacity-100"
+          } ${open && !compact ? "rotate-180" : ""}`}
+          aria-hidden="true"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-        </svg>
+          <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </span>
       </button>
 
       {open && (

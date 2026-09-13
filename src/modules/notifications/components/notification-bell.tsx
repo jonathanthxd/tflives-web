@@ -33,7 +33,7 @@ function actorName(actor: Actor | null) {
   return actor.displayName || actor.name || actor.username || "Alguien";
 }
 
-export default function NotificationBell({ userId }: { userId: string }) {
+export default function NotificationBell({ userId, compact = false }: { userId: string; compact?: boolean }) {
   const t = useTranslations("Notifications");
   const locale = useLocale();
   const [open, setOpen] = useState(false);
@@ -160,7 +160,7 @@ export default function NotificationBell({ userId }: { userId: string }) {
         aria-label={t("titulo")}
         aria-expanded={open}
         aria-haspopup="menu"
-        className="relative hidden size-10 items-center justify-center rounded-[10px] text-muted-foreground transition-colors duration-200 hover:bg-primary/[0.08] hover:text-primary sm:inline-flex"
+        className={`relative hidden size-10 items-center justify-center text-muted-foreground transition-[color,background-color,border-radius] duration-300 hover:bg-primary/[0.08] hover:text-primary sm:inline-flex ${compact ? "rounded-full" : "rounded-xl"}`}
       >
         <Bell className="size-5" strokeWidth={1.6} />
         {unreadCount > 0 && (

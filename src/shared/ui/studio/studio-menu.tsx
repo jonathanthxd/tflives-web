@@ -66,7 +66,7 @@ function AnimatedPreview({
   );
 }
 
-export default function StudioMenu() {
+export default function StudioMenu({ compact = false }: { compact?: boolean }) {
   const t = useTranslations("Studio");
   const { resolvedTheme, setTheme } = useTheme();
   const {
@@ -116,7 +116,9 @@ export default function StudioMenu() {
         aria-haspopup="dialog"
         aria-label={t("open")}
         title={t("open")}
-        className={`grid min-h-11 min-w-11 place-items-center rounded-lg transition-all duration-300 ${
+        className={`grid min-h-11 min-w-11 place-items-center transition-[color,background-color,border-radius] duration-300 ${
+          compact ? "rounded-full" : "rounded-xl"
+        } ${
           open
             ? "bg-primary/10 text-primary"
             : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
@@ -129,7 +131,7 @@ export default function StudioMenu() {
         <div
           role="dialog"
           aria-label={t("title")}
-          className="fixed left-3 top-[4.5rem] z-[80] flex max-h-[calc(100dvh-5.25rem)] w-[calc(100vw-1.5rem)] max-w-[28rem] flex-col overflow-hidden rounded-3xl border border-border/80 bg-background/[0.92] shadow-2xl shadow-black/20 backdrop-blur-2xl md:left-5 md:top-[5.5rem] md:max-h-[calc(100dvh-6.5rem)]"
+          className="absolute left-0 top-[calc(100%+0.75rem)] z-[80] flex max-h-[calc(100dvh-6rem)] w-[calc(100vw-1.5rem)] max-w-[28rem] flex-col overflow-hidden rounded-3xl border border-border/80 bg-background/[0.92] shadow-2xl shadow-black/20 backdrop-blur-2xl"
         >
           <div className="flex items-start justify-between gap-4 border-b border-border/70 px-5 py-4">
             <div>
