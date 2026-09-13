@@ -51,7 +51,7 @@ export default function AdminSidebar({
         aria-label={t("navigation")}
         aria-hidden={!drawerVisible}
         inert={!drawerVisible}
-        className={`fixed inset-y-0 left-0 z-40 flex w-[min(18rem,calc(100vw-2.5rem))] flex-col overflow-y-auto border-r border-primary/10 bg-background/95 shadow-2xl backdrop-blur-xl transition-transform duration-200 lg:w-64 lg:translate-x-0 lg:shadow-none ${open ? "translate-x-0" : "-translate-x-full"}`}
+        className={`tfl-glass tfl-glass-strong fixed inset-y-0 left-0 z-40 flex w-[min(18rem,calc(100vw-2.5rem))] flex-col overflow-y-auto border-r border-primary/10 transition-transform duration-200 lg:w-64 lg:translate-x-0 lg:shadow-none ${open ? "translate-x-0" : "-translate-x-full"}`}
       >
         <div className="relative flex items-start justify-between px-6 pb-5 pt-6 lg:pt-8">
           <div>

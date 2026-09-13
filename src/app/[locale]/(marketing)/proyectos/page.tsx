@@ -41,7 +41,7 @@ export default async function ProjectsPage() {
           {projects.map(({ key, href, icon: Icon, detailIcon: DetailIcon }, index) => (
             <article
               key={key}
-              className="group relative isolate min-h-[23rem] overflow-hidden rounded-[2rem] border border-primary/15 bg-card/55 p-6 shadow-sm backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-primary/35 hover:shadow-xl hover:shadow-primary/5 sm:p-8"
+              className="tfl-glass tfl-glass-soft group relative isolate min-h-[23rem] overflow-hidden rounded-[2rem] border border-primary/15 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/35 hover:shadow-[0_22px_60px_-34px_hsl(var(--primary)/0.34)] sm:p-8"
             >
               <div
                 className={`pointer-events-none absolute inset-0 -z-10 opacity-80 ${
@@ -57,7 +57,7 @@ export default async function ProjectsPage() {
                   <span className="grid size-12 place-items-center rounded-2xl border border-primary/15 bg-primary/10 text-primary shadow-inner shadow-primary/5">
                     <Icon className="size-6" strokeWidth={1.7} />
                   </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-border/80 bg-background/55 px-3 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur-sm">
+                  <span className="tfl-glass-chip inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium text-muted-foreground">
                     <DetailIcon className="size-3.5 text-primary" />
                     {t(`${key}.eyebrow`)}
                   </span>

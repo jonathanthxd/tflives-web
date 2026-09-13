@@ -129,7 +129,7 @@ export default function UserMenu({ displayName, username, role, image, onLogout,
           ref={menuRef}
           role="menu"
           onKeyDown={handleMenuKeyDown}
-          className="absolute right-0 mt-2 w-56 rounded-2xl border border-border bg-card/95 backdrop-blur-xl shadow-xl shadow-black/10 p-1.5 z-50 origin-top-right animate-in fade-in-0 zoom-in-95 slide-in-from-top-1 duration-150"
+          className="tfl-glass tfl-glass-strong absolute right-0 z-50 mt-2 w-56 rounded-2xl border p-1.5 origin-top-right animate-in fade-in-0 zoom-in-95 slide-in-from-top-1 duration-150"
         >
           <Link
             href={profileHref}

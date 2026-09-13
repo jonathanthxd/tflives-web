@@ -178,7 +178,7 @@ export default function SettingsPage() {
         <nav
           role="tablist"
           aria-label={t("secciones")}
-          className="grid gap-2 rounded-2xl border border-border bg-card/50 p-2 backdrop-blur-sm sm:grid-cols-2 lg:grid-cols-5"
+          className="tfl-glass tfl-glass-soft grid gap-2 rounded-2xl border p-2 sm:grid-cols-2 lg:grid-cols-5"
         >
           {tabs.map(({ id, label, description, icon: Icon }) => {
             const active = section === id;

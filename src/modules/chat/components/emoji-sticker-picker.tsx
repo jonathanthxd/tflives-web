@@ -81,7 +81,7 @@ export default function EmojiStickerPicker({
   );
 
   return (
-    <div className={`w-[17rem] max-w-[calc(100vw-1rem)] overflow-hidden rounded-xl border border-border bg-card/98 shadow-2xl shadow-black/25 backdrop-blur-xl ${className}`}>
+    <div className={`tfl-glass tfl-glass-strong w-[17rem] max-w-[calc(100vw-1rem)] overflow-hidden rounded-xl border ${className}`}>
       {!reactionOnly && (
         <div className="grid grid-cols-2 border-b border-border p-1">
           <button

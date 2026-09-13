@@ -56,7 +56,7 @@ export default function PostCard({
       transition={{ duration: 0.4 }}
     >
       <Link href={`/network/${slug}`}>
-        <div className="group relative bg-card/60 backdrop-blur-md border border-primary/10 rounded-2xl overflow-hidden transition-all duration-500 hover:border-primary/30 hover:shadow-[0_0_40px_hsl(var(--primary)/0.08)] hover:-translate-y-1">
+        <div className="tfl-glass tfl-glass-soft group relative border border-primary/10 rounded-2xl overflow-hidden transition-all duration-500 hover:border-primary/30 hover:shadow-[0_18px_52px_-34px_hsl(var(--primary)/0.42)] hover:-translate-y-1">
           {/* Image placeholder or actual image */}
           <div className="relative h-48 bg-muted/30 overflow-hidden">
             {image ? (

@@ -32,7 +32,7 @@ export default function OAuthErrorNotice() {
     <aside
       role="alert"
       aria-live="assertive"
-      className="fixed inset-x-4 top-20 z-[90] mx-auto max-w-2xl rounded-2xl border border-amber-400/25 bg-background/95 p-4 shadow-2xl shadow-black/25 backdrop-blur-xl sm:top-24 sm:p-5"
+      className="tfl-glass tfl-glass-strong fixed inset-x-4 top-20 z-[90] mx-auto max-w-2xl rounded-2xl border border-amber-400/25 p-4 sm:top-24 sm:p-5"
     >
       <div className="flex items-start gap-3">
         <div className="mt-0.5 grid size-10 shrink-0 place-items-center rounded-xl border border-amber-400/20 bg-amber-400/10 text-amber-300">

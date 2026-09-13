@@ -174,7 +174,7 @@ export default function NotificationBell({ userId, compact = false }: { userId: 
         <div
           role="menu"
           aria-label={t("titulo")}
-          className="absolute right-0 z-50 mt-3 w-[min(24rem,calc(100vw-2rem))] origin-top-right overflow-hidden rounded-2xl border border-border/80 bg-card/95 shadow-2xl shadow-black/15 backdrop-blur-2xl animate-in fade-in-0 zoom-in-95 slide-in-from-top-1 duration-150"
+          className="tfl-glass tfl-glass-strong absolute right-0 z-50 mt-3 w-[min(24rem,calc(100vw-2rem))] origin-top-right overflow-hidden rounded-2xl border animate-in fade-in-0 zoom-in-95 slide-in-from-top-1 duration-150"
         >
           <div className="flex items-center justify-between gap-3 border-b border-border/70 px-4 py-3.5">
             <div className="min-w-0">

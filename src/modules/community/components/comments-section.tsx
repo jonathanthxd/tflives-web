@@ -210,7 +210,7 @@ export default function CommentsSection({ postId }: { postId: string }) {
       {reportingId && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setReportingId(null)} />
-          <div className="relative w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-xl">
+          <div className="tfl-glass tfl-glass-strong relative w-full max-w-sm rounded-2xl border p-6">
             <h2 className="mb-2 font-display text-lg font-semibold text-foreground">Reportar comentario</h2>
             <textarea
               autoFocus

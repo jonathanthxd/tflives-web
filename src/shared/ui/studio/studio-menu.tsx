@@ -131,7 +131,7 @@ export default function StudioMenu({ compact = false }: { compact?: boolean }) {
         <div
           role="dialog"
           aria-label={t("title")}
-          className="absolute left-0 top-[calc(100%+0.75rem)] z-[80] flex max-h-[calc(100dvh-6rem)] w-[calc(100vw-1.5rem)] max-w-[28rem] flex-col overflow-hidden rounded-3xl border border-border/80 bg-background/[0.92] shadow-2xl shadow-black/20 backdrop-blur-2xl"
+          className="tfl-glass tfl-glass-strong absolute left-0 top-[calc(100%+0.75rem)] z-[80] flex max-h-[calc(100dvh-6rem)] w-[calc(100vw-1.5rem)] max-w-[28rem] flex-col overflow-hidden rounded-3xl border"
         >
           <div className="flex items-start justify-between gap-4 border-b border-border/70 px-5 py-4">
             <div>

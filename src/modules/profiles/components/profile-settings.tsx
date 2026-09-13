@@ -153,7 +153,7 @@ export function ProfileSettings({ profile, onUpdated }: { profile: EditableProfi
             type="button"
             onClick={() => bannerInput.current?.click()}
             disabled={uploading !== null}
-            className="absolute right-4 top-4 inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-white/15 bg-background/80 px-3 py-2 text-xs font-medium text-foreground backdrop-blur transition hover:border-primary/40 disabled:opacity-60"
+            className="tfl-glass-chip absolute right-4 top-4 inline-flex min-h-11 items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-medium text-foreground transition hover:border-primary/40 disabled:opacity-60"
           >
             <ImageIcon className="size-3.5" aria-hidden="true" />
             {uploading === "banner" ? t("uploading") : t("changeBanner")}

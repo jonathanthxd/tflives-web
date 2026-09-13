@@ -33,7 +33,7 @@ function navLinkClass(compact: boolean) {
   return [
     "relative inline-flex min-h-11 items-center whitespace-nowrap text-sm font-medium text-muted-foreground",
     "transition-[color,letter-spacing] duration-300 ease-out hover:text-primary",
-    compact ? "tracking-[0.01em]" : "tracking-[0.055em]",
+    compact ? "tracking-[0.012em]" : "tracking-[0.035em]",
     "after:absolute after:bottom-1 after:left-0 after:h-px after:w-0 after:bg-primary/70",
     "after:transition-all after:duration-300 hover:after:w-full aria-[current=page]:text-primary aria-[current=page]:after:w-full",
   ].join(" ");
@@ -144,18 +144,17 @@ export default function Navbar() {
   const compact = scrolled && !mobileOpen;
 
   return (
-    <nav
-      className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-2 sm:px-3 lg:px-4"
+    <>
+      <nav
+        className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-2 sm:px-3 lg:px-4"
       aria-label="TFLives"
     >
       <motion.div
-        layout
         initial={false}
-        transition={{ layout: NAV_LAYOUT_TRANSITION }}
-        className={`pointer-events-auto relative isolate border backdrop-blur-2xl transition-[max-width,border-radius,background-color,border-color,box-shadow,margin] duration-500 ease-[cubic-bezier(.2,.8,.2,1)] ${
+        className={`tfl-glass pointer-events-auto relative isolate border transition-[width,border-radius,margin] duration-500 ease-[cubic-bezier(.2,.8,.2,1)] will-change-[width,border-radius] ${
           compact
-            ? "mt-2 w-[96%] max-w-[74rem] rounded-full border-primary/15 bg-background/[0.78] shadow-[0_18px_55px_-24px_rgba(0,0,0,0.42),0_0_34px_-22px_hsl(var(--primary)/0.75)] dark:bg-background/[0.66]"
-            : "mt-1 w-full max-w-none rounded-[22px] border-white/35 bg-background/[0.72] shadow-[0_14px_42px_-28px_rgba(0,0,0,0.38)] dark:border-white/[0.10] dark:bg-background/[0.60] md:mt-2"
+            ? "mt-2 w-[min(96%,74rem)] rounded-full"
+            : "mt-1 w-full rounded-[22px] md:mt-2"
         }`}
       >
         {/* Premium glass layers live in their own clipped plane so menus can overflow the shell. */}
@@ -163,14 +162,14 @@ export default function Navbar() {
           <motion.div
             animate={{ opacity: compact ? 0.8 : 0.55 }}
             transition={{ duration: 0.35 }}
-            className="absolute inset-0 bg-gradient-to-b from-white/[0.13] via-white/[0.025] to-transparent dark:from-white/[0.07] dark:via-white/[0.015]"
+            className="absolute inset-0 bg-gradient-to-b from-primary/[0.045] via-foreground/[0.012] to-transparent dark:from-white/[0.035] dark:via-primary/[0.012]"
           />
           <motion.div
             animate={{ opacity: compact ? 0.3 : 0.16, scaleX: compact ? 0.78 : 1 }}
             transition={NAV_LAYOUT_TRANSITION}
-            className="absolute inset-x-[12%] -bottom-5 h-10 rounded-full bg-primary/50 blur-3xl"
+            className="absolute inset-x-[16%] -bottom-5 h-9 rounded-full bg-primary/35 blur-3xl"
           />
-          <div className="absolute inset-x-8 top-px h-px bg-gradient-to-r from-transparent via-white/55 to-transparent dark:via-white/18" />
+          <div className="absolute inset-x-10 top-px h-px bg-gradient-to-r from-transparent via-white/28 to-transparent dark:via-white/12" />
 
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.div
@@ -179,14 +178,12 @@ export default function Navbar() {
               animate={{ x: "285%", opacity: [0, 0.32, 0] }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.62, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute -inset-y-8 w-[28%] -skew-x-12 bg-gradient-to-r from-transparent via-white/30 to-transparent blur-md dark:via-white/12"
+              className="absolute -inset-y-8 w-[24%] -skew-x-12 bg-gradient-to-r from-transparent via-primary/16 to-transparent blur-md dark:via-white/[0.07]"
             />
           </AnimatePresence>
         </div>
 
-        <motion.div
-          layout
-          transition={{ layout: NAV_LAYOUT_TRANSITION }}
+        <div
           className={`relative grid grid-cols-[1fr_auto_1fr] items-center transition-[height,padding] duration-500 ease-[cubic-bezier(.2,.8,.2,1)] ${
             compact
               ? "h-14 px-2 sm:px-3 md:h-[60px] lg:px-4"
@@ -299,7 +296,6 @@ export default function Navbar() {
                   <NotificationBell userId={user.id} compact={compact} />
                   <MessagingUnreadLink compact={compact} />
                 </div>
-                <NotificationToasts />
                 <UserMenu
                   displayName={displayName}
                   username={user.username}
@@ -312,15 +308,13 @@ export default function Navbar() {
             ) : (
               <Link
                 href="/login"
-                className={`inline-flex min-h-11 items-center whitespace-nowrap border border-muted-foreground/20 px-3 text-xs font-medium text-muted-foreground backdrop-blur-sm transition-all duration-300 hover:border-primary/50 hover:bg-primary/5 hover:text-primary md:px-4 md:text-sm ${
+                className={`tfl-glass-chip inline-flex min-h-11 items-center whitespace-nowrap border px-3 text-xs font-medium text-muted-foreground transition-all duration-300 hover:border-primary/50 hover:bg-primary/5 hover:text-primary md:px-4 md:text-sm ${
                   compact ? "rounded-full" : "rounded-xl"
                 }`}
               >
                 {t("login")}
               </Link>
             )}
-
-            {user && <GlobalChat userId={user.id} />}
 
             <button
               onClick={() => setMobileOpen((value) => !value)}
@@ -342,7 +336,7 @@ export default function Navbar() {
               )}
             </button>
           </div>
-        </motion.div>
+        </div>
 
         <div
           id="site-mobile-menu"
@@ -350,7 +344,7 @@ export default function Navbar() {
             mobileOpen ? "max-h-[calc(100dvh-5rem)] opacity-100" : "pointer-events-none max-h-0 opacity-0"
           }`}
         >
-          <div className="border-t border-white/10 bg-background/45 backdrop-blur-xl">
+          <div className="tfl-glass-bar border-t">
             <div className="safe-area-bottom max-h-[calc(100dvh-5rem)] overflow-y-auto px-4 py-4">
               <div className="grid gap-1 sm:grid-cols-2">
                 <Link href="/" className="flex min-h-11 items-center rounded-xl px-3 font-medium text-primary hover:bg-primary/5" onClick={() => setMobileOpen(false)}>
@@ -408,6 +402,13 @@ export default function Navbar() {
           </div>
         </div>
       </motion.div>
-    </nav>
+      </nav>
+      {user && (
+        <>
+          <NotificationToasts />
+          <GlobalChat userId={user.id} />
+        </>
+      )}
+    </>
   );
 }

@@ -44,7 +44,7 @@ export default function ConfirmDialog({
         aria-labelledby={`${id}-title`}
         aria-describedby={description ? `${id}-description` : undefined}
         aria-busy={busy}
-        className="relative w-full max-w-sm rounded-2xl border border-border bg-card p-5 shadow-xl animate-in fade-in-0 zoom-in-95 duration-150 sm:p-6"
+        className="tfl-glass tfl-glass-strong relative w-full max-w-sm rounded-2xl border p-5 animate-in fade-in-0 zoom-in-95 duration-150 sm:p-6"
       >
         <button
           type="button"

@@ -37,7 +37,7 @@ export function StatCard({
   const t = TONES[tone];
   return (
     <div
-      className={`group relative overflow-hidden rounded-2xl border bg-card/40 p-5 backdrop-blur-sm transition-colors duration-300 ${t.ring}`}
+      className={`tfl-glass tfl-glass-soft group relative overflow-hidden rounded-2xl border p-5 transition-colors duration-300 ${t.ring}`}
     >
       <span className={`absolute inset-x-0 top-0 h-px ${t.bar}`} />
       <div className={`mb-4 flex h-9 w-9 items-center justify-center rounded-lg border ${t.chip}`}>

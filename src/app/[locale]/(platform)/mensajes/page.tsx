@@ -741,7 +741,7 @@ export default function MessagesPage() {
                       </svg>
                     </button>
                     {menuOpen && (
-                      <div className="absolute right-0 mt-2 w-48 rounded-2xl border border-border bg-card/95 backdrop-blur-xl shadow-xl p-1.5 z-50">
+                      <div className="tfl-glass tfl-glass-strong absolute right-0 z-50 mt-2 w-48 rounded-2xl border p-1.5">
                         {!conversation.isGroup && otherParticipant?.username && (
                           <IntlLink
                             href={`/perfil/${otherParticipant.username}`}

@@ -74,7 +74,7 @@ export default function NotificationToasts() {
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 60, scale: 0.9, transition: { duration: 0.2, ease: "easeIn" } }}
               transition={{ type: "spring", stiffness: 380, damping: 28 }}
-              className="pointer-events-auto relative overflow-hidden rounded-2xl border border-primary/15 bg-card/95 backdrop-blur-xl shadow-xl shadow-black/20"
+              className="tfl-glass tfl-glass-strong pointer-events-auto relative overflow-hidden rounded-2xl border border-primary/15"
             >
               <div className="flex items-start gap-3 p-3.5 pr-9">
                 <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">

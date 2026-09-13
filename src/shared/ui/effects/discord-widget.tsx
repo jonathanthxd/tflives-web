@@ -65,7 +65,7 @@ export default function DiscordWidget() {
       style={{ bottom: "max(1rem, env(safe-area-inset-bottom))" }}
     >
       {open && (
-        <section className="absolute bottom-[calc(100%+0.8rem)] left-0 w-[min(21rem,calc(100vw-1.5rem))] overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#101116]/95 shadow-[0_26px_90px_-30px_rgba(0,0,0,0.82),0_18px_48px_-24px_rgba(88,101,242,0.72)] backdrop-blur-2xl">
+        <section className="tfl-glass tfl-glass-strong absolute bottom-[calc(100%+0.8rem)] left-0 w-[min(21rem,calc(100vw-1.5rem))] overflow-hidden rounded-[1.5rem] border border-[#5865F2]/20">
           <div className="relative overflow-hidden px-4 pb-4 pt-4">
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_8%_0%,rgba(88,101,242,0.38),transparent_44%),radial-gradient(circle_at_100%_28%,rgba(125,135,255,0.14),transparent_38%)]" />
             <div className="pointer-events-none absolute -right-12 -top-14 h-32 w-32 rounded-full border border-white/5 bg-[#5865F2]/10 blur-xl" />

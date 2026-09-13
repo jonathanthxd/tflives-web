@@ -96,6 +96,114 @@
 
 
 /* --------------------------------------------------------------------------
+   TFL Glass — shared visual material
+   --------------------------------------------------------------------------
+   One material language for floating chrome, cards and popovers. Shapes can
+   change per component, but opacity, blur, border and depth stay consistent.
+   The finish is deliberately restrained: less bright "Aero" gloss, more
+   neutral depth with a small accent reflection.
+*/
+.tfl-glass {
+  background:
+    linear-gradient(180deg, hsl(var(--foreground) / 0.025), transparent 34%),
+    hsl(var(--background) / 0.68);
+  border-color: hsl(var(--foreground) / 0.085);
+  -webkit-backdrop-filter: blur(22px) saturate(145%);
+  backdrop-filter: blur(22px) saturate(145%);
+  box-shadow:
+    inset 0 1px 0 hsl(0 0% 100% / 0.16),
+    inset 0 -1px 0 hsl(var(--foreground) / 0.025),
+    0 20px 55px -34px hsl(var(--foreground) / 0.32),
+    0 0 0 1px hsl(var(--primary) / 0.018);
+}
+
+.dark .tfl-glass {
+  background:
+    linear-gradient(180deg, hsl(0 0% 100% / 0.045), transparent 34%),
+    hsl(var(--background) / 0.66);
+  border-color: hsl(0 0% 100% / 0.085);
+  box-shadow:
+    inset 0 1px 0 hsl(0 0% 100% / 0.085),
+    inset 0 -1px 0 hsl(0 0% 100% / 0.018),
+    0 22px 60px -34px hsl(0 0% 0% / 0.68),
+    0 0 32px -26px hsl(var(--primary) / 0.46);
+}
+
+.tfl-glass-soft {
+  background:
+    linear-gradient(180deg, hsl(var(--foreground) / 0.018), transparent 42%),
+    hsl(var(--card) / 0.48);
+  -webkit-backdrop-filter: blur(15px) saturate(132%);
+  backdrop-filter: blur(15px) saturate(132%);
+  box-shadow:
+    inset 0 1px 0 hsl(0 0% 100% / 0.11),
+    0 16px 46px -36px hsl(var(--foreground) / 0.28);
+}
+
+.dark .tfl-glass-soft {
+  background:
+    linear-gradient(180deg, hsl(0 0% 100% / 0.03), transparent 42%),
+    hsl(var(--card) / 0.42);
+  box-shadow:
+    inset 0 1px 0 hsl(0 0% 100% / 0.055),
+    0 18px 50px -36px hsl(0 0% 0% / 0.58);
+}
+
+.tfl-glass-strong {
+  background:
+    linear-gradient(180deg, hsl(var(--foreground) / 0.022), transparent 30%),
+    hsl(var(--background) / 0.86);
+  -webkit-backdrop-filter: blur(28px) saturate(155%);
+  backdrop-filter: blur(28px) saturate(155%);
+  box-shadow:
+    inset 0 1px 0 hsl(0 0% 100% / 0.18),
+    0 26px 72px -34px hsl(var(--foreground) / 0.38),
+    0 0 36px -30px hsl(var(--primary) / 0.52);
+}
+
+.dark .tfl-glass-strong {
+  background:
+    linear-gradient(180deg, hsl(0 0% 100% / 0.045), transparent 30%),
+    hsl(var(--background) / 0.80);
+  box-shadow:
+    inset 0 1px 0 hsl(0 0% 100% / 0.075),
+    0 28px 78px -34px hsl(0 0% 0% / 0.76),
+    0 0 38px -30px hsl(var(--primary) / 0.50);
+}
+
+.tfl-glass-bar {
+  background:
+    linear-gradient(180deg, hsl(var(--foreground) / 0.018), transparent 40%),
+    hsl(var(--background) / 0.78);
+  border-color: hsl(var(--foreground) / 0.075);
+  -webkit-backdrop-filter: blur(24px) saturate(145%);
+  backdrop-filter: blur(24px) saturate(145%);
+  box-shadow:
+    inset 0 1px 0 hsl(0 0% 100% / 0.12),
+    0 16px 46px -36px hsl(var(--foreground) / 0.3);
+}
+
+.dark .tfl-glass-bar {
+  background:
+    linear-gradient(180deg, hsl(0 0% 100% / 0.035), transparent 40%),
+    hsl(var(--background) / 0.74);
+  border-color: hsl(0 0% 100% / 0.07);
+}
+
+.tfl-glass-chip {
+  background: hsl(var(--background) / 0.62);
+  border-color: hsl(var(--foreground) / 0.09);
+  -webkit-backdrop-filter: blur(14px) saturate(135%);
+  backdrop-filter: blur(14px) saturate(135%);
+  box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.10);
+}
+
+.dark .tfl-glass-chip {
+  background: hsl(var(--background) / 0.56);
+  border-color: hsl(0 0% 100% / 0.075);
+}
+
+/* --------------------------------------------------------------------------
    TFL Studio — local, persistent personalization tokens
    -------------------------------------------------------------------------- */
 body[data-tfl-font="tfl"] {

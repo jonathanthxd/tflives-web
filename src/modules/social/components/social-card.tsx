@@ -69,7 +69,7 @@ function PeopleDialog({
       }}
       className="m-auto max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto border-0 bg-transparent p-4 backdrop:bg-black/55 backdrop:backdrop-blur-sm"
     >
-      <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
+      <div className="tfl-glass tfl-glass-strong overflow-hidden rounded-2xl border">
         <div className="flex items-center justify-between border-b border-border px-5 py-4">
           <h2 className="font-display text-base font-semibold text-foreground">{title}</h2>
           <button

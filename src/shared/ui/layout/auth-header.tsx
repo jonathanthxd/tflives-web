@@ -7,7 +7,7 @@ export default function AuthHeader() {
   const t = useTranslations("AuthHeader");
   return (
     <header className="fixed top-0 left-0 right-0 z-50">
-      <div className="absolute inset-0 bg-background/70 backdrop-blur-xl border-b border-primary/10" />
+      <div className="tfl-glass-bar absolute inset-0 border-b border-primary/10" />
       <div className="relative max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 h-16 md:h-20 flex items-center justify-between">
         <Link href="/" className="font-display text-xl md:text-2xl font-bold tracking-tight whitespace-nowrap">
           <span className="text-foreground">TFL</span>
