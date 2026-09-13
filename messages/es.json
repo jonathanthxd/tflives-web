@@ -199,7 +199,7 @@
   "Notifications": {
     "titulo": "Notificaciones",
     "marcarTodoLeido": "Marcar todo como leído",
-    "sinNotificaciones": "No tenés notificaciones todavía",
+    "sinNotificaciones": "No tienes notificaciones nuevas por ahora.",
     "cerrar": "Cerrar",
     "message": {
       "FRIEND_REQUEST": "te envió una solicitud de amistad",
@@ -221,7 +221,11 @@
       "CREATOR_REJECTED": "tu solicitud de creador fue revisada",
       "CREATOR_STATUS": "tu estado de creador fue actualizado",
       "CREATOR_FEATURED": "tu perfil fue destacado en Streamers"
-    }
+    },
+    "pendientes": "{count, plural, one {# nueva} other {# nuevas}}",
+    "todoAlDia": "Todo al día",
+    "sinNotificacionesTitulo": "Todo tranquilo por aquí",
+    "noLeida": "Notificación no leída"
   },
   "Navbar": {
     "streamers": "Streamers",
@@ -238,7 +242,8 @@
     "cambiarTema": "Cambiar tema",
     "abrirMenu": "Abrir menú",
     "cerrarMenu": "Cerrar menú",
-    "skipToContent": "Saltar al contenido"
+    "skipToContent": "Saltar al contenido",
+    "proyectos": "Proyectos"
   },
   "Footer": {
     "streamers": "Streamers",
@@ -1303,5 +1308,22 @@
     },
     "darkOnly": "Solo tema oscuro",
     "darkOnlyHint": "Cambia a Oscuro para usar fondos animados."
+  },
+  "Projects": {
+    "title": "Nuestros proyectos",
+    "description": "Explora las experiencias que forman TFLives. Cada proyecto tiene su propia identidad, comunidad y propósito dentro del ecosistema.",
+    "network": {
+      "eyebrow": "Minecraft",
+      "title": "TFL Network",
+      "description": "Nuestra network de Minecraft: modalidades, estado de servicio, wiki, novedades y todo lo relacionado con la experiencia dentro del servidor.",
+      "cta": "Explorar TFL Network"
+    },
+    "community": {
+      "eyebrow": "Comunidad",
+      "title": "TFLives Comunidad",
+      "description": "El punto de encuentro de TFLives: noticias, actividad, conversaciones y las personas que hacen crecer nuestra comunidad.",
+      "cta": "Explorar la comunidad"
+    },
+    "footer": "Los proyectos viven dentro de TFLives, pero cada uno puede crecer con su propia identidad y experiencia."
   }
 }

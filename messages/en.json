@@ -199,7 +199,7 @@
   "Notifications": {
     "titulo": "Notifications",
     "marcarTodoLeido": "Mark all as read",
-    "sinNotificaciones": "You don't have any notifications yet",
+    "sinNotificaciones": "New activity will appear here.",
     "cerrar": "Close",
     "message": {
       "FRIEND_REQUEST": "sent you a friend request",
@@ -221,7 +221,11 @@
       "CREATOR_REJECTED": "your creator application was reviewed",
       "CREATOR_STATUS": "your creator status was updated",
       "CREATOR_FEATURED": "your profile was featured in Streamers"
-    }
+    },
+    "pendientes": "{count, plural, one {# new} other {# new}}",
+    "todoAlDia": "All caught up",
+    "sinNotificacionesTitulo": "All quiet here",
+    "noLeida": "Unread notification"
   },
   "Navbar": {
     "streamers": "Streamers",
@@ -238,7 +242,8 @@
     "cambiarTema": "Toggle theme",
     "abrirMenu": "Open menu",
     "cerrarMenu": "Close menu",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "proyectos": "Projects"
   },
   "Footer": {
     "streamers": "Streamers",
@@ -1303,5 +1308,22 @@
     },
     "darkOnly": "Dark mode only",
     "darkOnlyHint": "Switch to Dark to use animated backgrounds."
+  },
+  "Projects": {
+    "title": "Our projects",
+    "description": "Explore the experiences that make up TFLives. Each project has its own identity, community and purpose within the ecosystem.",
+    "network": {
+      "eyebrow": "Minecraft",
+      "title": "TFL Network",
+      "description": "Our Minecraft network: game modes, service status, wiki, updates and everything related to the in-server experience.",
+      "cta": "Explore TFL Network"
+    },
+    "community": {
+      "eyebrow": "Community",
+      "title": "TFLives Community",
+      "description": "The meeting point for TFLives: news, activity, conversations and the people who keep our community growing.",
+      "cta": "Explore the community"
+    },
+    "footer": "Projects live within TFLives, while each can grow with its own identity and experience."
   }
 }

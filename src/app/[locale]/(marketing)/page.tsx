@@ -47,7 +47,7 @@ export default async function Home() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
-              href="/network"
+              href="/proyectos"
               className="px-8 py-4 border border-muted-foreground/30 rounded-xl text-muted-foreground font-medium transition-all duration-300 hover:border-primary/50 hover:text-primary"
             >
               {t("explorarNetwork")}
