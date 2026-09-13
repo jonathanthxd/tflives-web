@@ -26,6 +26,7 @@ export interface GradientWavesProps {
   parallaxStrength?: number;
   grain?: boolean;
   grainIntensity?: number;
+  paused?: boolean;
   className?: string;
 }
 
@@ -157,6 +158,8 @@ type GradientWavesCtx = {
   renderer: InstanceType<typeof Renderer>;
   program: InstanceType<typeof Program>;
   mesh: InstanceType<typeof Mesh>;
+  render: () => void;
+  setPaused: (value: boolean) => void;
 };
 const ctxMap = new WeakMap<HTMLDivElement, GradientWavesCtx>();
 
@@ -181,6 +184,7 @@ const GradientWaves: React.FC<GradientWavesProps> = ({
   parallaxStrength = 0.5,
   grain = true,
   grainIntensity = 0.05,
+  paused = false,
   className = ''
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -238,7 +242,6 @@ const GradientWaves: React.FC<GradientWavesProps> = ({
     });
 
     const mesh = new Mesh(gl, { geometry, program });
-    ctxMap.set(container, { renderer, program, mesh });
 
     const setSize = () => {
       const rect = container.getBoundingClientRect();
@@ -273,7 +276,9 @@ const GradientWaves: React.FC<GradientWavesProps> = ({
     let raf = 0;
     let isVisible = true;
     let isPageVisible = !document.hidden;
+    let isPaused = paused;
     const t0 = performance.now();
+    const render = () => renderer.render({ scene: mesh });
 
     const loop = (t: number) => {
       (program.uniforms.iTime as { value: number }).value = (t - t0) * 0.001;
@@ -284,12 +289,12 @@ const GradientWaves: React.FC<GradientWavesProps> = ({
       const m = (program.uniforms.uMouse as { value: Float32Array }).value;
       m[0] = currentMouse[0];
       m[1] = currentMouse[1];
-      renderer.render({ scene: mesh });
+      render();
       raf = requestAnimationFrame(loop);
     };
 
     const tryStart = () => {
-      if (isVisible && isPageVisible && raf === 0) raf = requestAnimationFrame(loop);
+      if (isVisible && isPageVisible && !isPaused && raf === 0) raf = requestAnimationFrame(loop);
     };
     const tryStop = () => {
       if (raf !== 0) {
@@ -313,6 +318,23 @@ const GradientWaves: React.FC<GradientWavesProps> = ({
     };
     document.addEventListener('visibilitychange', onVisibility);
 
+    ctxMap.set(container, {
+      renderer,
+      program,
+      mesh,
+      render,
+      setPaused(value) {
+        isPaused = value;
+        if (isPaused) {
+          tryStop();
+          render();
+        } else {
+          tryStart();
+        }
+      }
+    });
+
+    render();
     tryStart();
 
     return () => {
@@ -357,6 +379,7 @@ const GradientWaves: React.FC<GradientWavesProps> = ({
     u.uGrainIntensity.value = grainIntensity;
     u.uParallax.value = parallaxStrength;
     u.uEnableMouse.value = mouseInteraction;
+    ctx.setPaused(paused);
     const hc = u.uHorizonColor.value as Float32Array;
     const wc = u.uWaveColor.value as Float32Array;
     const cc = u.uCrestColor.value as Float32Array;
@@ -372,6 +395,7 @@ const GradientWaves: React.FC<GradientWavesProps> = ({
     cc[0] = cr[0];
     cc[1] = cr[1];
     cc[2] = cr[2];
+    ctx.render();
   }, [
     horizonColor,
     waveColor,
@@ -392,7 +416,8 @@ const GradientWaves: React.FC<GradientWavesProps> = ({
     grain,
     grainIntensity,
     mouseInteraction,
-    parallaxStrength
+    parallaxStrength,
+    paused
   ]);
 
   return <div ref={containerRef} className={`relative h-full w-full overflow-hidden ${className}`.trim()} />;

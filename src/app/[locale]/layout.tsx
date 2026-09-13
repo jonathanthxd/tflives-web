@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
-import { Fredoka, Inter, JetBrains_Mono, Nunito, Outfit, Space_Grotesk, VT323 } from "next/font/google";
+import { Chakra_Petch, Fredoka, Inter, JetBrains_Mono, Nunito, Outfit, Pixelify_Sans, Quicksand, Rubik, Space_Grotesk, VT323 } from "next/font/google";
 import { GeistSans } from "geist/font/sans";
 import { routing } from "@/i18n/routing";
 import { ThemeProvider } from "@/providers/theme-provider";
@@ -47,6 +47,27 @@ const fredoka = Fredoka({
   weight: ["400", "500", "600", "700"],
 });
 
+const pixelify = Pixelify_Sans({
+  subsets: ["latin"],
+  variable: "--font-pixelify",
+  weight: ["400", "500", "600", "700"],
+});
+const chakra = Chakra_Petch({
+  subsets: ["latin"],
+  variable: "--font-chakra",
+  weight: ["400", "500", "600", "700"],
+});
+const quicksand = Quicksand({
+  subsets: ["latin"],
+  variable: "--font-quicksand",
+  weight: ["400", "500", "600", "700"],
+});
+const rubik = Rubik({
+  subsets: ["latin"],
+  variable: "--font-rubik",
+  weight: ["400", "500", "600", "700", "800"],
+});
+
 export const metadata: Metadata = siteMetadata;
 
 export function generateStaticParams() {
@@ -68,7 +89,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} ${nunito.variable} ${vt323.variable} ${outfit.variable} ${fredoka.variable} ${GeistSans.variable} font-sans antialiased min-h-screen relative`}
+        className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} ${nunito.variable} ${vt323.variable} ${outfit.variable} ${fredoka.variable} ${pixelify.variable} ${chakra.variable} ${quicksand.variable} ${rubik.variable} ${GeistSans.variable} font-sans antialiased min-h-screen relative`}
       >
         <NextIntlClientProvider>
           <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>

@@ -1278,12 +1278,12 @@
     "accent": "Color principal",
     "accentHint": "Cambia la identidad de la interfaz y sus fondos.",
     "backgrounds": "Fondos",
-    "backgroundHint": "Los estáticos responden al entorno sin animarse. Los React Bits se animan en preview al pasar por encima.",
+    "backgroundHint": "Los estáticos responden al entorno. Los fondos animados usan sus shaders reales y solo están disponibles en tema oscuro.",
     "static": "Estáticos",
     "animated": "Animados",
     "hoverPreview": "Pasa el cursor para animar",
     "font": "Tipografía",
-    "fontHint": "Cambia el carácter de toda la experiencia.",
+    "fontHint": "Cambia el carácter de toda la experiencia. Studio ajusta automáticamente la legibilidad de las fuentes que lo necesitan.",
     "reset": "Restablecer estilo TFL",
     "backgroundNames": {
       "dot": "Dot",
@@ -1295,7 +1295,13 @@
       "nunito": "Suave, redondeada y muy legible.",
       "vt323": "Retro terminal con mucha personalidad.",
       "outfit": "Geométrica, moderna y limpia.",
-      "fredoka": "Divertida y amigable sin exagerar."
-    }
+      "fredoka": "Divertida y amigable sin exagerar.",
+      "pixelify": "Pixel moderna, divertida y mucho más legible.",
+      "chakra": "Tecnológica y angular sin perder claridad.",
+      "quicksand": "Redondeada, ligera y muy limpia.",
+      "rubik": "Contemporánea, compacta y versátil."
+    },
+    "darkOnly": "Solo tema oscuro",
+    "darkOnlyHint": "Cambia a Oscuro para usar fondos animados."
   }
 }

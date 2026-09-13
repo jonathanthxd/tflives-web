@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Check, Moon, Palette, RotateCcw, Sun, X } from "lucide-react";
+import { Check, LockKeyhole, Moon, Palette, RotateCcw, Sun, X } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useStudio } from "@/providers/studio-provider";
 import {
@@ -10,9 +10,61 @@ import {
   STUDIO_ANIMATED_BACKGROUNDS,
   STUDIO_FONTS,
   STUDIO_STATIC_BACKGROUNDS,
+  isAnimatedStudioBackground,
+  type StudioAnimatedBackgroundId,
   type StudioBackgroundId,
 } from "@/shared/studio/config";
 import { StudioBackground } from "@/shared/ui/studio/studio-background";
+
+function AnimatedPreview({
+  background,
+  animate,
+  locked,
+}: {
+  background: StudioAnimatedBackgroundId;
+  animate: boolean;
+  locked: boolean;
+}) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (locked) {
+      setVisible(false);
+      return;
+    }
+
+    const root = rootRef.current;
+    if (!root) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setVisible(entry.isIntersecting),
+      { rootMargin: "80px 0px" },
+    );
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, [locked]);
+
+  return (
+    <div ref={rootRef} className="relative h-20 overflow-hidden bg-[#05010a]">
+      {visible ? (
+        <StudioBackground background={background} preview animate={animate} />
+      ) : (
+        <div
+          className={`studio-preview-fallback studio-preview-fallback--${background} absolute inset-0`}
+          aria-hidden="true"
+        />
+      )}
+      {locked && (
+        <div className="absolute inset-0 z-10 grid place-items-center bg-black/50 backdrop-blur-[1px]">
+          <span className="grid size-8 place-items-center rounded-full border border-white/15 bg-black/45 text-white/80 shadow-lg">
+            <LockKeyhole className="size-3.5" aria-hidden="true" />
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function StudioMenu() {
   const t = useTranslations("Studio");
@@ -29,6 +81,7 @@ export default function StudioMenu() {
   const [open, setOpen] = useState(false);
   const [animatedPreview, setAnimatedPreview] = useState<StudioBackgroundId | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
+  const animatedLocked = resolvedTheme === "light";
 
   useEffect(() => {
     if (!open) return;
@@ -47,6 +100,12 @@ export default function StudioMenu() {
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [open]);
+
+  const chooseLightTheme = () => {
+    setAnimatedPreview(null);
+    if (isAnimatedStudioBackground(background)) setBackground("dot");
+    setTheme("light");
+  };
 
   return (
     <div ref={rootRef} className="relative">
@@ -100,7 +159,7 @@ export default function StudioMenu() {
               <div className="grid grid-cols-2 gap-1 rounded-2xl border border-border bg-muted/[0.45] p-1.5">
                 <button
                   type="button"
-                  onClick={() => setTheme("light")}
+                  onClick={chooseLightTheme}
                   className={`flex min-h-12 items-center justify-center gap-2 rounded-xl px-3 text-sm font-semibold transition ${
                     resolvedTheme === "light"
                       ? "bg-background text-foreground shadow-sm ring-1 ring-border"
@@ -134,7 +193,7 @@ export default function StudioMenu() {
                   <p className="mt-1 text-xs text-muted-foreground/75">{t("accentHint")}</p>
                 </div>
               </div>
-              <div className="flex flex-wrap gap-3" role="radiogroup" aria-label={t("accent")}> 
+              <div className="flex flex-wrap gap-3" role="radiogroup" aria-label={t("accent")}>
                 {STUDIO_ACCENTS.map((item) => (
                   <button
                     key={item.id}
@@ -150,8 +209,7 @@ export default function StudioMenu() {
                         : "border-background shadow-[0_0_0_1px_hsl(var(--border))]"
                     }`}
                     style={{ backgroundColor: item.color }}
-                  >
-                  </button>
+                  />
                 ))}
               </div>
             </section>
@@ -195,33 +253,47 @@ export default function StudioMenu() {
                 <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/70">
                   {t("animated")}
                 </p>
-                <span className="text-[10px] text-muted-foreground/60">{t("hoverPreview")}</span>
+                <span className={`inline-flex items-center gap-1 text-[10px] ${animatedLocked ? "text-amber-500" : "text-muted-foreground/60"}`}>
+                  {animatedLocked && <LockKeyhole className="size-3" aria-hidden="true" />}
+                  {animatedLocked ? t("darkOnly") : t("hoverPreview")}
+                </span>
               </div>
+              {animatedLocked && (
+                <p className="mb-2 rounded-xl border border-amber-500/20 bg-amber-500/[0.07] px-3 py-2 text-[11px] leading-4 text-muted-foreground">
+                  {t("darkOnlyHint")}
+                </p>
+              )}
               <div className="grid grid-cols-2 gap-2.5">
                 {STUDIO_ANIMATED_BACKGROUNDS.map((item) => {
-                  const previewIsActive = animatedPreview === item.id;
+                  const previewIsActive = !animatedLocked && animatedPreview === item.id;
                   return (
                     <button
                       key={item.id}
                       type="button"
+                      disabled={animatedLocked}
                       onClick={() => setBackground(item.id)}
-                      onMouseEnter={() => setAnimatedPreview(item.id)}
+                      onMouseEnter={() => !animatedLocked && setAnimatedPreview(item.id)}
                       onMouseLeave={() => setAnimatedPreview((current) => (current === item.id ? null : current))}
-                      onFocus={() => setAnimatedPreview(item.id)}
+                      onFocus={() => !animatedLocked && setAnimatedPreview(item.id)}
                       onBlur={() => setAnimatedPreview((current) => (current === item.id ? null : current))}
                       className={`group overflow-hidden rounded-2xl border text-left transition ${
-                        background === item.id
-                          ? "border-primary ring-2 ring-primary/20"
-                          : "border-border hover:border-primary/40"
+                        animatedLocked
+                          ? "cursor-not-allowed border-border/60 opacity-65"
+                          : background === item.id
+                            ? "border-primary ring-2 ring-primary/20"
+                            : "border-border hover:border-primary/40"
                       }`}
-                      aria-pressed={background === item.id}
+                      aria-pressed={!animatedLocked && background === item.id}
+                      title={animatedLocked ? t("darkOnlyHint") : item.label}
                     >
-                      <div className="relative h-20 overflow-hidden bg-background">
-                        <StudioBackground background={item.id} preview animate={previewIsActive} />
-                      </div>
+                      <AnimatedPreview background={item.id} animate={previewIsActive} locked={animatedLocked} />
                       <div className="flex items-center justify-between bg-card/90 px-3 py-2">
                         <span className="text-xs font-medium text-foreground">{item.label}</span>
-                        {background === item.id && <Check className="size-3.5 text-primary" aria-hidden="true" />}
+                        {animatedLocked ? (
+                          <LockKeyhole className="size-3.5 text-muted-foreground/60" aria-hidden="true" />
+                        ) : background === item.id ? (
+                          <Check className="size-3.5 text-primary" aria-hidden="true" />
+                        ) : null}
                       </div>
                     </button>
                   );
@@ -255,7 +327,7 @@ export default function StudioMenu() {
                     </span>
                     <span
                       className="shrink-0 text-lg text-foreground"
-                      style={{ fontFamily: item.cssVar }}
+                      style={{ fontFamily: item.cssVar, fontSizeAdjust: item.sizeAdjust ?? "none" }}
                       aria-hidden="true"
                     >
                       TFLives

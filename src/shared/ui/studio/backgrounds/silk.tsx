@@ -103,9 +103,10 @@ void main() {
 
 interface SilkPlaneProps {
   uniforms: SilkUniforms;
+  paused: boolean;
 }
 
-const SilkPlane = forwardRef<Mesh, SilkPlaneProps>(function SilkPlane({ uniforms }, ref) {
+const SilkPlane = forwardRef<Mesh, SilkPlaneProps>(function SilkPlane({ uniforms, paused }, ref) {
   const { viewport } = useThree();
 
   useLayoutEffect(() => {
@@ -116,6 +117,7 @@ const SilkPlane = forwardRef<Mesh, SilkPlaneProps>(function SilkPlane({ uniforms
   }, [ref, viewport]);
 
   useFrame((_state: RootState, delta: number) => {
+    if (paused) return;
     const mesh = ref as React.MutableRefObject<Mesh | null>;
     if (mesh.current) {
       const material = mesh.current.material as ShaderMaterial & {
@@ -141,6 +143,7 @@ export interface SilkProps {
   noiseIntensity?: number;
   rotation?: number;
   lightMode?: boolean;
+  paused?: boolean;
 }
 
 const Silk: React.FC<SilkProps> = ({
@@ -150,6 +153,7 @@ const Silk: React.FC<SilkProps> = ({
   noiseIntensity = 1.5,
   rotation = 0,
   lightMode = false,
+  paused = false,
 }) => {
   const meshRef = useRef<Mesh>(null);
 
@@ -177,8 +181,8 @@ const Silk: React.FC<SilkProps> = ({
   }, [speed, scale, noiseIntensity, color, rotation, lightMode, uniforms]);
 
   return (
-    <Canvas dpr={[1, 2]} frameloop="always">
-      <SilkPlane ref={meshRef} uniforms={uniforms} />
+    <Canvas dpr={[1, 2]} frameloop={paused ? "demand" : "always"}>
+      <SilkPlane ref={meshRef} uniforms={uniforms} paused={paused} />
     </Canvas>
   );
 };

@@ -1278,12 +1278,12 @@
     "accent": "Primary color",
     "accentHint": "Changes the interface identity and its backgrounds.",
     "backgrounds": "Backgrounds",
-    "backgroundHint": "Static styles react to the page without animating. React Bits previews animate on hover.",
+    "backgroundHint": "Static styles react to the page. Animated backgrounds use their real shaders and are available only in dark mode.",
     "static": "Static",
     "animated": "Animated",
     "hoverPreview": "Hover to animate",
     "font": "Typography",
-    "fontHint": "Changes the character of the whole experience.",
+    "fontHint": "Changes the character of the experience. Studio automatically normalizes readability for fonts that need it.",
     "reset": "Reset TFL style",
     "backgroundNames": {
       "dot": "Dot",
@@ -1295,7 +1295,13 @@
       "nunito": "Soft, rounded and highly readable.",
       "vt323": "Retro terminal with lots of personality.",
       "outfit": "Geometric, modern and clean.",
-      "fredoka": "Playful and friendly without going too far."
-    }
+      "fredoka": "Playful and friendly without going too far.",
+      "pixelify": "Modern pixel style that stays highly readable.",
+      "chakra": "Technical and angular without losing clarity.",
+      "quicksand": "Rounded, light and very clean.",
+      "rubik": "Contemporary, compact and versatile."
+    },
+    "darkOnly": "Dark mode only",
+    "darkOnlyHint": "Switch to Dark to use animated backgrounds."
   }
 }

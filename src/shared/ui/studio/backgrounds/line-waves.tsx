@@ -18,6 +18,7 @@ interface LineWavesProps {
   enableMouseInteraction?: boolean;
   mouseInfluence?: number;
   lightMode?: boolean;
+  paused?: boolean;
 }
 
 function hexToVec3(hex: string): [number, number, number] {
@@ -176,6 +177,7 @@ export default function LineWaves({
   enableMouseInteraction = true,
   mouseInfluence = 2.0,
   lightMode = false,
+  paused = false,
 }: LineWavesProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -250,10 +252,9 @@ export default function LineWaves({
       window.addEventListener("mouseleave", handleMouseLeave);
     }
 
-    let animationFrameId: number;
+    let animationFrameId: number | null = null;
 
     function update(time: number) {
-      animationFrameId = requestAnimationFrame(update);
       program.uniforms.uTime.value = time * 0.001;
 
       if (enableMouseInteraction) {
@@ -267,11 +268,16 @@ export default function LineWaves({
       }
 
       renderer.render({ scene: mesh });
+      if (!paused) animationFrameId = requestAnimationFrame(update);
     }
-    animationFrameId = requestAnimationFrame(update);
+    if (paused) {
+      renderer.render({ scene: mesh });
+    } else {
+      animationFrameId = requestAnimationFrame(update);
+    }
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      if (animationFrameId !== null) cancelAnimationFrame(animationFrameId);
       window.removeEventListener("resize", resize);
       if (enableMouseInteraction) {
         window.removeEventListener("mousemove", handleMouseMove);
@@ -295,6 +301,7 @@ export default function LineWaves({
     enableMouseInteraction,
     mouseInfluence,
     lightMode,
+    paused,
   ]);
 
   return <div ref={containerRef} className="w-full h-full" />;

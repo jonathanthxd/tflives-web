@@ -22,14 +22,14 @@ const LineWaves = dynamic(() => import("./backgrounds/line-waves"), { ssr: false
 
 function AnimatedBackground({
   background,
-  lightMode,
+  paused,
 }: {
   background: StudioAnimatedBackgroundId;
-  lightMode: boolean;
+  paused: boolean;
 }) {
   const { accent } = useStudio();
   const palette = getStudioAccent(accent);
-  const pageBase = lightMode ? "#f8fafc" : "#05010a";
+  const pageBase = "#05010a";
 
   switch (background) {
     case "silk":
@@ -40,7 +40,8 @@ function AnimatedBackground({
           color={palette.color}
           noiseIntensity={1.5}
           rotation={0}
-          lightMode={lightMode}
+          lightMode={false}
+          paused={paused}
         />
       );
     case "ghost-fibers":
@@ -70,9 +71,9 @@ function AnimatedBackground({
           vignette={0.8}
           grain={0.05}
           dpr={1}
-          lightMode={lightMode}
+          lightMode={false}
           fps={60}
-          paused={false}
+          paused={paused}
         />
       );
     case "crt-warp":
@@ -97,7 +98,7 @@ function AnimatedBackground({
           mouseStrength={0.5}
           dpr={1}
           fps={30}
-          paused={false}
+          paused={paused}
         />
       );
     case "molten-metal":
@@ -118,11 +119,12 @@ function AnimatedBackground({
           colorMode="molten"
           grain
           grainIntensity={0.05}
-          mouseInteraction
-          mouseStrength={0.3}
+          mouseInteraction={false}
+          mouseStrength={0}
           opacity={1}
           backgroundColor={pageBase}
-          lightMode={lightMode}
+          lightMode={false}
+          paused={paused}
         />
       );
     case "gradient-waves":
@@ -144,17 +146,18 @@ function AnimatedBackground({
           detail="medium"
           brightness={1}
           opacity={1}
-          mouseInteraction
+          mouseInteraction={!paused}
           parallaxStrength={0.5}
           grain
           grainIntensity={0.05}
+          paused={paused}
         />
       );
     case "prism":
       return (
         <Prism
           animationType="rotate"
-          timeScale={0.5}
+          timeScale={paused ? 0 : 0.5}
           height={3.5}
           baseWidth={5.5}
           scale={3.6}
@@ -162,7 +165,7 @@ function AnimatedBackground({
           colorFrequency={1}
           noise={0}
           glow={1}
-          lightMode={lightMode}
+          lightMode={false}
         />
       );
     case "line-waves":
@@ -179,23 +182,13 @@ function AnimatedBackground({
           color1={palette.color}
           color2={palette.secondary}
           color3={palette.tertiary}
-          enableMouseInteraction
+          enableMouseInteraction={!paused}
           mouseInfluence={2}
-          lightMode={lightMode}
+          lightMode={false}
+          paused={paused}
         />
       );
   }
-}
-
-function StaticAnimatedPreview({ background }: { background: StudioAnimatedBackgroundId }) {
-  return (
-    <div
-      className={cn(
-        "studio-preview-fallback absolute inset-0",
-        `studio-preview-fallback--${background}`,
-      )}
-    />
-  );
 }
 
 export function StudioBackground({
@@ -217,6 +210,15 @@ export function StudioBackground({
   }
 
   if (isAnimatedStudioBackground(background)) {
+    if (lightMode && !preview) {
+      return (
+        <div
+          aria-hidden="true"
+          className={cn("studio-background studio-background--dot", className)}
+        />
+      );
+    }
+
     return (
       <div
         aria-hidden="true"
@@ -226,13 +228,9 @@ export function StudioBackground({
           className,
         )}
       >
-        {animate ? (
-          <div className="absolute inset-0">
-            <AnimatedBackground background={background} lightMode={lightMode} />
-          </div>
-        ) : (
-          <StaticAnimatedPreview background={background} />
-        )}
+        <div className="absolute inset-0">
+          <AnimatedBackground background={background} paused={preview && !animate} />
+        </div>
         {preview && <span className="studio-background__preview-frame" />}
       </div>
     );

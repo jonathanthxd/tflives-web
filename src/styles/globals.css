@@ -123,6 +123,44 @@ body[data-tfl-font="fredoka"] {
   --font-display-active: var(--font-fredoka);
 }
 
+body[data-tfl-font="pixelify"] {
+  --font-body-active: var(--font-pixelify);
+  --font-display-active: var(--font-pixelify);
+  font-size-adjust: 0.59;
+}
+
+body[data-tfl-font="chakra"] {
+  --font-body-active: var(--font-chakra);
+  --font-display-active: var(--font-chakra);
+}
+
+body[data-tfl-font="quicksand"] {
+  --font-body-active: var(--font-quicksand);
+  --font-display-active: var(--font-quicksand);
+}
+
+body[data-tfl-font="rubik"] {
+  --font-body-active: var(--font-rubik);
+  --font-display-active: var(--font-rubik);
+}
+
+/* Pixel/terminal faces have a smaller apparent x-height at the same CSS size.
+   font-size-adjust preserves the site's responsive type scale while normalizing
+   perceived readability instead of globally zooming layouts. */
+body[data-tfl-font="vt323"] {
+  font-size-adjust: 0.66;
+}
+
+@media (max-width: 640px) {
+  body[data-tfl-font="vt323"] { font-size-adjust: 0.69; }
+  body[data-tfl-font="pixelify"] { font-size-adjust: 0.61; }
+}
+
+body[data-tfl-font="vt323"] :where(code, pre, kbd, .font-mono),
+body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
+  font-size-adjust: none;
+}
+
 :root[data-tfl-accent="blue"] {
   --primary: 217 91% 55%;
   --accent: 217 91% 55%;
@@ -240,6 +278,111 @@ body[data-tfl-font="fredoka"] {
   --studio-accent-3: 264 83% 62%;
 }
 
+
+:root[data-tfl-accent="indigo"] {
+  --primary: 239 84% 67%;
+  --accent: 239 84% 67%;
+  --ring: 239 84% 67%;
+  --chart-1: 239 84% 67%;
+  --chart-2: 258 90% 66%;
+  --chart-3: 217 91% 60%;
+  --chart-4: 239 66% 55%;
+  --chart-5: 239 50% 43%;
+  --studio-accent-2: 258 90% 66%;
+  --studio-accent-3: 217 91% 60%;
+}
+
+:root[data-tfl-accent="pink"] {
+  --primary: 330 81% 60%;
+  --accent: 330 81% 60%;
+  --ring: 330 81% 60%;
+  --chart-1: 330 81% 60%;
+  --chart-2: 350 89% 60%;
+  --chart-3: 292 84% 61%;
+  --chart-4: 330 63% 48%;
+  --chart-5: 330 47% 36%;
+  --studio-accent-2: 350 89% 60%;
+  --studio-accent-3: 292 84% 61%;
+}
+
+:root[data-tfl-accent="amber"] {
+  --primary: 38 92% 50%;
+  --accent: 38 92% 50%;
+  --ring: 38 92% 50%;
+  --chart-1: 38 92% 50%;
+  --chart-2: 25 95% 53%;
+  --chart-3: 50 98% 64%;
+  --chart-4: 38 74% 38%;
+  --chart-5: 38 58% 26%;
+  --studio-accent-2: 25 95% 53%;
+  --studio-accent-3: 50 98% 64%;
+}
+
+:root[data-tfl-accent="yellow"] {
+  --primary: 45 93% 47%;
+  --accent: 45 93% 47%;
+  --ring: 45 93% 47%;
+  --chart-1: 45 93% 47%;
+  --chart-2: 38 92% 50%;
+  --chart-3: 84 81% 44%;
+  --chart-4: 45 75% 35%;
+  --chart-5: 45 59% 23%;
+  --studio-accent-2: 38 92% 50%;
+  --studio-accent-3: 84 81% 44%;
+}
+
+:root[data-tfl-accent="lime"] {
+  --primary: 84 81% 44%;
+  --accent: 84 81% 44%;
+  --ring: 84 81% 44%;
+  --chart-1: 84 81% 44%;
+  --chart-2: 142 71% 45%;
+  --chart-3: 45 93% 47%;
+  --chart-4: 84 63% 32%;
+  --chart-5: 84 47% 20%;
+  --studio-accent-2: 142 71% 45%;
+  --studio-accent-3: 45 93% 47%;
+}
+
+:root[data-tfl-accent="green"] {
+  --primary: 142 71% 45%;
+  --accent: 142 71% 45%;
+  --ring: 142 71% 45%;
+  --chart-1: 142 71% 45%;
+  --chart-2: 160 84% 39%;
+  --chart-3: 84 81% 44%;
+  --chart-4: 142 53% 33%;
+  --chart-5: 142 37% 21%;
+  --studio-accent-2: 160 84% 39%;
+  --studio-accent-3: 84 81% 44%;
+}
+
+:root[data-tfl-accent="teal"] {
+  --primary: 173 80% 40%;
+  --accent: 173 80% 40%;
+  --ring: 173 80% 40%;
+  --chart-1: 173 80% 40%;
+  --chart-2: 189 94% 43%;
+  --chart-3: 142 71% 45%;
+  --chart-4: 173 62% 28%;
+  --chart-5: 173 46% 20%;
+  --studio-accent-2: 189 94% 43%;
+  --studio-accent-3: 142 71% 45%;
+}
+
+:root[data-tfl-accent="sky"] {
+  --primary: 199 89% 48%;
+  --accent: 199 89% 48%;
+  --ring: 199 89% 48%;
+  --chart-1: 199 89% 48%;
+  --chart-2: 189 94% 43%;
+  --chart-3: 239 84% 67%;
+  --chart-4: 199 71% 36%;
+  --chart-5: 199 55% 24%;
+  --studio-accent-2: 189 94% 43%;
+  --studio-accent-3: 239 84% 67%;
+}
+
 .dark[data-tfl-accent="blue"] { --primary: 217 91% 60%; --accent: 217 91% 60%; --ring: 217 91% 60%; }
 .dark[data-tfl-accent="slate"] { --primary: 215 28% 66%; --accent: 215 28% 66%; --ring: 215 28% 66%; }
 .dark[data-tfl-accent="rose"] { --primary: 347 86% 64%; --accent: 347 86% 64%; --ring: 347 86% 64%; }
@@ -249,6 +392,14 @@ body[data-tfl-font="fredoka"] {
 .dark[data-tfl-accent="cyan"] { --primary: 188 86% 55%; --accent: 188 86% 55%; --ring: 188 86% 55%; }
 .dark[data-tfl-accent="emerald"] { --primary: 158 72% 50%; --accent: 158 72% 50%; --ring: 158 72% 50%; }
 .dark[data-tfl-accent="fuchsia"] { --primary: 292 88% 65%; --accent: 292 88% 65%; --ring: 292 88% 65%; }
+.dark[data-tfl-accent="indigo"] { --primary: 239 88% 72%; --accent: 239 88% 72%; --ring: 239 88% 72%; }
+.dark[data-tfl-accent="pink"] { --primary: 330 85% 68%; --accent: 330 85% 68%; --ring: 330 85% 68%; }
+.dark[data-tfl-accent="amber"] { --primary: 38 96% 58%; --accent: 38 96% 58%; --ring: 38 96% 58%; }
+.dark[data-tfl-accent="yellow"] { --primary: 45 96% 55%; --accent: 45 96% 55%; --ring: 45 96% 55%; }
+.dark[data-tfl-accent="lime"] { --primary: 84 85% 52%; --accent: 84 85% 52%; --ring: 84 85% 52%; }
+.dark[data-tfl-accent="green"] { --primary: 142 75% 53%; --accent: 142 75% 53%; --ring: 142 75% 53%; }
+.dark[data-tfl-accent="teal"] { --primary: 173 84% 52%; --accent: 173 84% 52%; --ring: 173 84% 52%; }
+.dark[data-tfl-accent="sky"] { --primary: 199 93% 56%; --accent: 199 93% 56%; --ring: 199 93% 56%; }
 
 /* TFL Studio background engine.
    Static presets stay CSS/DOM based. Animated presets render the supplied

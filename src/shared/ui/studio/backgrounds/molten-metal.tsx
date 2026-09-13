@@ -26,6 +26,7 @@ export interface MoltenMetalProps {
   opacity?: number;
   backgroundColor?: string;
   lightMode?: boolean;
+  paused?: boolean;
   className?: string;
 }
 
@@ -150,6 +151,8 @@ type MoltenMetalCtx = {
   renderer: InstanceType<typeof Renderer>;
   program: InstanceType<typeof Program>;
   mesh: InstanceType<typeof Mesh>;
+  render: () => void;
+  setPaused: (value: boolean) => void;
 };
 const ctxMap = new WeakMap<HTMLDivElement, MoltenMetalCtx>();
 
@@ -174,6 +177,7 @@ const MoltenMetal: React.FC<MoltenMetalProps> = ({
   opacity = 1.0,
   backgroundColor = '#FFFFFF',
   lightMode = false,
+  paused = false,
   className = ''
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -230,7 +234,6 @@ const MoltenMetal: React.FC<MoltenMetalProps> = ({
     });
 
     const mesh = new Mesh(gl, { geometry, program });
-    ctxMap.set(container, { renderer, program, mesh });
 
     const setSize = () => {
       const rect = container.getBoundingClientRect();
@@ -259,13 +262,17 @@ const MoltenMetal: React.FC<MoltenMetalProps> = ({
       targetMouse[0] = 0.5;
       targetMouse[1] = 0.5;
     };
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    window.addEventListener('mouseleave', handleMouseLeave);
+    if (mouseInteraction) {
+      window.addEventListener('mousemove', handleMouseMove, { passive: true });
+      window.addEventListener('mouseleave', handleMouseLeave);
+    }
 
     let raf = 0;
     let isVisible = true;
     let isPageVisible = !document.hidden;
+    let isPaused = paused;
     const t0 = performance.now();
+    const render = () => renderer.render({ scene: mesh });
 
     const loop = (t: number) => {
       program.uniforms.iTime.value = (t - t0) * 0.001;
@@ -274,12 +281,12 @@ const MoltenMetal: React.FC<MoltenMetalProps> = ({
       const m = program.uniforms.uMouse.value as Float32Array;
       m[0] = currentMouse[0];
       m[1] = currentMouse[1];
-      renderer.render({ scene: mesh });
+      render();
       raf = requestAnimationFrame(loop);
     };
 
     const tryStart = () => {
-      if (isVisible && isPageVisible && raf === 0) raf = requestAnimationFrame(loop);
+      if (isVisible && isPageVisible && !isPaused && raf === 0) raf = requestAnimationFrame(loop);
     };
     const tryStop = () => {
       if (raf !== 0) {
@@ -303,6 +310,23 @@ const MoltenMetal: React.FC<MoltenMetalProps> = ({
     };
     document.addEventListener('visibilitychange', onVisibility);
 
+    ctxMap.set(container, {
+      renderer,
+      program,
+      mesh,
+      render,
+      setPaused(value) {
+        isPaused = value;
+        if (isPaused) {
+          tryStop();
+          render();
+        } else {
+          tryStart();
+        }
+      }
+    });
+
+    render();
     tryStart();
 
     return () => {
@@ -310,8 +334,10 @@ const MoltenMetal: React.FC<MoltenMetalProps> = ({
       ro.disconnect();
       io.disconnect();
       document.removeEventListener('visibilitychange', onVisibility);
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseleave', handleMouseLeave);
+      if (mouseInteraction) {
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('mouseleave', handleMouseLeave);
+      }
       ctxMap.delete(container);
       if (canvas.parentNode === container) container.removeChild(canvas);
       gl.getExtension('WEBGL_lose_context')?.loseContext();
@@ -340,6 +366,7 @@ const MoltenMetal: React.FC<MoltenMetalProps> = ({
     u.uOpacity.value = opacity;
     u.uMouseStrength.value = mouseStrength;
     u.uEnableMouse.value = mouseInteraction;
+    ctx.setPaused(paused);
     const c1 = hexToRgb(color1);
     const c2 = hexToRgb(color2);
     const c3 = hexToRgb(color3);
@@ -359,6 +386,7 @@ const MoltenMetal: React.FC<MoltenMetalProps> = ({
     u.uBackgroundColor.value[0] = bg[0];
     u.uBackgroundColor.value[1] = bg[1];
     u.uBackgroundColor.value[2] = bg[2];
+    ctx.render();
   }, [
     color1,
     color2,
@@ -379,7 +407,8 @@ const MoltenMetal: React.FC<MoltenMetalProps> = ({
     mouseStrength,
     opacity,
     backgroundColor,
-    lightMode
+    lightMode,
+    paused
   ]);
 
   return <div ref={containerRef} className={`relative h-full w-full overflow-hidden ${className}`.trim()} />;
