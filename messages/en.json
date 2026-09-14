@@ -436,7 +436,16 @@
     "saved": "Changes saved.",
     "saveFailed": "We couldn't save the profile.",
     "discard": "Discard changes",
-    "connectionError": "Connection error"
+    "connectionError": "Connection error",
+    "editorAvatarTitle": "Adjust profile picture",
+    "editorBannerTitle": "Adjust banner",
+    "editorAvatarDescription": "Drag the image and use zoom until the framing looks right.",
+    "editorBannerDescription": "Reframe the image before publishing. You will see the exact area that will be saved.",
+    "editorZoom": "Zoom",
+    "editorReset": "Reset framing",
+    "editorCancel": "Cancel",
+    "editorApply": "Apply and publish",
+    "editorProcessing": "Preparing image…"
   },
   "ProfilePlaceholders": {
     "comunidad": "Community",

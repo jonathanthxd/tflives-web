@@ -39,7 +39,7 @@ function AnimatedPreview({
 
     const observer = new IntersectionObserver(
       ([entry]) => setVisible(entry.isIntersecting),
-      { rootMargin: "80px 0px" },
+      { rootMargin: "240px 0px" },
     );
     observer.observe(root);
     return () => observer.disconnect();
@@ -50,10 +50,9 @@ function AnimatedPreview({
       {visible ? (
         <StudioBackground background={background} preview animate={animate} />
       ) : (
-        <div
-          className={`studio-preview-fallback studio-preview-fallback--${background} absolute inset-0`}
-          aria-hidden="true"
-        />
+        <div className="absolute inset-0 grid place-items-center bg-[#05010a]" aria-hidden="true">
+          <span className="size-2 rounded-full bg-primary/55 shadow-[0_0_18px_hsl(var(--primary)/0.45)] animate-pulse" />
+        </div>
       )}
       {locked && (
         <div className="absolute inset-0 z-10 grid place-items-center bg-black/50 backdrop-blur-[1px]">

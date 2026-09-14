@@ -9,6 +9,7 @@ import { Card } from "@/shared/ui/card";
 import { FormField } from "@/shared/ui/form-field";
 import { Input } from "@/shared/ui/input";
 import { UserAvatar } from "@/modules/profiles/components/user-identity";
+import { ProfileImageEditor } from "@/modules/profiles/components/profile-image-editor";
 import {
   SOCIAL_PLATFORMS,
   parseSocialLinks,
@@ -64,6 +65,7 @@ export function ProfileSettings({ profile, onUpdated }: { profile: EditableProfi
   const [savedDraft, setSavedDraft] = useState(() => profileToForm(profile));
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState<"avatar" | "banner" | null>(null);
+  const [pendingImage, setPendingImage] = useState<{ file: File; kind: "avatar" | "banner" } | null>(null);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
 
@@ -161,7 +163,7 @@ export function ProfileSettings({ profile, onUpdated }: { profile: EditableProfi
           <input ref={bannerInput} type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={(event) => {
             const file = event.currentTarget.files?.[0];
             event.currentTarget.value = "";
-            if (file) void uploadAsset(file, "banner");
+            if (file) setPendingImage({ file, kind: "banner" });
           }} />
         </div>
         <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-end sm:p-6">
@@ -183,7 +185,7 @@ export function ProfileSettings({ profile, onUpdated }: { profile: EditableProfi
             <input ref={avatarInput} type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={(event) => {
               const file = event.currentTarget.files?.[0];
               event.currentTarget.value = "";
-              if (file) void uploadAsset(file, "avatar");
+              if (file) setPendingImage({ file, kind: "avatar" });
             }} />
           </div>
           <div className="min-w-0">
@@ -260,6 +262,28 @@ export function ProfileSettings({ profile, onUpdated }: { profile: EditableProfi
           {saving ? t("saving") : t("save")}
         </Button>
       </div>
+
+      {pendingImage && (
+        <ProfileImageEditor
+          file={pendingImage.file}
+          kind={pendingImage.kind}
+          labels={{
+            title: pendingImage.kind === "avatar" ? t("editorAvatarTitle") : t("editorBannerTitle"),
+            description: pendingImage.kind === "avatar" ? t("editorAvatarDescription") : t("editorBannerDescription"),
+            zoom: t("editorZoom"),
+            reset: t("editorReset"),
+            cancel: t("editorCancel"),
+            apply: t("editorApply"),
+            processing: t("editorProcessing"),
+          }}
+          onCancel={() => setPendingImage(null)}
+          onConfirm={async (file) => {
+            const kind = pendingImage.kind;
+            setPendingImage(null);
+            await uploadAsset(file, kind);
+          }}
+        />
+      )}
     </form>
   );
 }

@@ -436,7 +436,16 @@
     "saved": "Cambios guardados.",
     "saveFailed": "No se pudo guardar el perfil.",
     "discard": "Descartar cambios",
-    "connectionError": "Error de conexión"
+    "connectionError": "Error de conexión",
+    "editorAvatarTitle": "Ajustar foto de perfil",
+    "editorBannerTitle": "Ajustar banner",
+    "editorAvatarDescription": "Arrastra la imagen y usa el zoom hasta que el encuadre quede como quieres.",
+    "editorBannerDescription": "Reencuadra la imagen antes de publicarla. Verás exactamente el área que se guardará.",
+    "editorZoom": "Zoom",
+    "editorReset": "Restablecer encuadre",
+    "editorCancel": "Cancelar",
+    "editorApply": "Aplicar y publicar",
+    "editorProcessing": "Preparando imagen…"
   },
   "ProfilePlaceholders": {
     "comunidad": "Comunidad",
