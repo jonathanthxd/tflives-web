@@ -549,7 +549,9 @@
       }
     },
     "obtainableAchievements": "Metas de comunidad",
-    "automaticGoal": "Logro automático"
+    "automaticGoal": "Logro automático",
+    "achievementFilters": "Filtrar logros",
+    "allAchievements": "Todos"
   },
   "FriendsPage": {
     "titulo": "Amigos",

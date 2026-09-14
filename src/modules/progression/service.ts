@@ -1,9 +1,14 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/infrastructure/database/prisma";
 import {
+  LEGACY_PROGRESSION_ACHIEVEMENTS,
+  PRODUCTION_PROGRESSION_ACHIEVEMENTS,
   PROGRESSION_ACHIEVEMENTS,
   PROGRESSION_ACHIEVEMENTS_BY_CODE,
+  progressionAchievementCopy,
+  type ProgressionAchievement,
   type ProgressionAchievementCode,
+  type ProgressionMetric,
 } from "@/modules/progression/catalog";
 import { getProgressSummary, levelForXp, type PublicProgress } from "@/modules/progression/level";
 import { isProfileComplete } from "@/modules/profiles/completion";
@@ -40,6 +45,9 @@ export interface ProgressionAchievementView {
   code: ProgressionAchievementCode;
   category: string;
   iconKey: string;
+  title: string;
+  description: string;
+  coinReward: number;
   unlockedAt: string | null;
 }
 
@@ -85,23 +93,85 @@ export interface ProgressionAchievementFacts {
   directMessages: number;
   friendships: number;
   level: number;
+  xp: number;
 }
 
-/** Pure achievement rules keep the catalogue deterministic and easy to test. */
+function metricValue(facts: ProgressionAchievementFacts, metric: ProgressionMetric) {
+  switch (metric) {
+    case "PROFILE_COMPLETE": return facts.profileComplete ? 1 : 0;
+    case "EMAIL_VERIFIED": return facts.emailVerified ? 1 : 0;
+    case "OAUTH_CONNECTIONS": return facts.oauthConnections;
+    case "GLOBAL_MESSAGES": return facts.globalMessages;
+    case "DIRECT_MESSAGES": return facts.directMessages;
+    case "FRIENDSHIPS": return facts.friendships;
+    case "LEVEL": return facts.level;
+    case "XP": return facts.xp;
+  }
+}
+
+function achievementRequirementsMet(achievement: ProgressionAchievement, facts: ProgressionAchievementFacts) {
+  return achievement.requirements.every((requirement) => metricValue(facts, requirement.metric) >= requirement.min);
+}
+
+/** Pure production rules: every milestone is derived from server-owned facts. */
 export function achievementCodesForFacts(facts: ProgressionAchievementFacts) {
-  const eligible = new Set<ProgressionAchievementCode>();
-  if (facts.profileComplete) eligible.add("PROFILE_COMPLETE");
-  if (facts.emailVerified) eligible.add("EMAIL_VERIFIED");
-  if (facts.oauthConnections > 0) eligible.add("OAUTH_CONNECTED");
-  if (facts.globalMessages >= 1) eligible.add("FIRST_GLOBAL_MESSAGE");
-  if (facts.globalMessages >= 10) eligible.add("GLOBAL_REGULAR");
-  if (facts.directMessages >= 1) eligible.add("FIRST_DM");
-  if (facts.directMessages >= 10) eligible.add("DM_REGULAR");
-  if (facts.friendships >= 1) eligible.add("FIRST_FRIEND");
-  if (facts.friendships >= 5) eligible.add("SOCIAL_FIVE");
-  if (facts.level >= 5) eligible.add("LEVEL_FIVE");
-  if (facts.level >= 10) eligible.add("LEVEL_TEN");
-  return PROGRESSION_ACHIEVEMENTS.filter((achievement) => eligible.has(achievement.code)).map((achievement) => achievement.code);
+  return PROGRESSION_ACHIEVEMENTS
+    .filter((achievement) => achievementRequirementsMet(achievement, facts))
+    .map((achievement) => achievement.code);
+}
+
+type ProgressionDatabase = Prisma.TransactionClient;
+
+async function resolveProgressionFacts(
+  client: ProgressionDatabase,
+  userId: string,
+  overrides: { level?: number; xp?: number } = {},
+): Promise<ProgressionAchievementFacts> {
+  const [user, oauthConnections, globalMessages, directMessages, friendships, progress] = await Promise.all([
+    client.user.findUnique({
+      where: { id: userId },
+      select: {
+        bio: true,
+        displayName: true,
+        image: true,
+        minecraftUsername: true,
+        socialLinks: true,
+        emailVerified: true,
+      },
+    }),
+    client.account.count({ where: { userId, providerId: { not: "credential" } } }),
+    client.globalChatMessage.count({ where: { authorId: userId, deletedAt: null } }),
+    client.directMessage.count({ where: { senderId: userId, deletedAt: null } }),
+    client.friendship.count({
+      where: { status: "ACCEPTED", OR: [{ requesterId: userId }, { addresseeId: userId }] },
+    }),
+    client.userProgress.findUnique({ where: { userId }, select: { level: true, xp: true } }),
+  ]);
+
+  return {
+    profileComplete: Boolean(user && isProfileComplete(user)),
+    emailVerified: Boolean(user?.emailVerified),
+    oauthConnections,
+    globalMessages,
+    directMessages,
+    friendships,
+    level: overrides.level ?? progress?.level ?? 1,
+    xp: overrides.xp ?? progress?.xp ?? 0,
+  };
+}
+
+async function eligibleAchievementCodes(
+  tx: ProgressionTransaction,
+  userId: string,
+  level: number,
+) {
+  // Legacy v0.6 achievements keep their original XP-reward flow. The 200
+  // production milestones are reconciled after this transaction so they can
+  // never recursively alter level calculations.
+  const facts = await resolveProgressionFacts(tx, userId, { level });
+  return LEGACY_PROGRESSION_ACHIEVEMENTS
+    .filter((achievement) => achievementRequirementsMet(achievement, facts))
+    .map((achievement) => achievement.code);
 }
 
 async function sourceIsValid(
@@ -161,30 +231,6 @@ async function isActivityWithinLimits(
   });
 }
 
-async function eligibleAchievementCodes(
-  tx: ProgressionTransaction,
-  userId: string,
-  level: number,
-) {
-  const [profileCompletions, emailVerifications, oauthConnections, globalMessages, directMessages, friendships] = await Promise.all([
-    tx.progressEvent.count({ where: { userId, source: "PROFILE_COMPLETE" } }),
-    tx.progressEvent.count({ where: { userId, source: "EMAIL_VERIFIED" } }),
-    tx.progressEvent.count({ where: { userId, source: "OAUTH_CONNECTED" } }),
-    tx.progressEvent.count({ where: { userId, source: "GLOBAL_MESSAGE" } }),
-    tx.progressEvent.count({ where: { userId, source: "DIRECT_MESSAGE" } }),
-    tx.progressEvent.count({ where: { userId, source: "FRIENDSHIP" } }),
-  ]);
-  return achievementCodesForFacts({
-    profileComplete: profileCompletions > 0,
-    emailVerified: emailVerifications > 0,
-    oauthConnections,
-    globalMessages,
-    directMessages,
-    friendships,
-    level,
-  });
-}
-
 async function unlockEligibleAchievements(
   tx: ProgressionTransaction,
   userId: string,
@@ -200,6 +246,70 @@ async function unlockEligibleAchievements(
     unlocks.push(code);
   }
   return unlocks;
+}
+
+const PRODUCTION_CHECKPOINTS = new Map<ProgressionMetric, Set<number>>();
+for (const achievement of PRODUCTION_PROGRESSION_ACHIEVEMENTS) {
+  for (const requirement of achievement.requirements) {
+    const values = PRODUCTION_CHECKPOINTS.get(requirement.metric) ?? new Set<number>();
+    values.add(requirement.min);
+    PRODUCTION_CHECKPOINTS.set(requirement.metric, values);
+  }
+}
+
+async function sourceReachedProductionCheckpoint(userId: string, source: ProgressionSource) {
+  let metric: ProgressionMetric | null = null;
+  let value = 0;
+
+  if (source === "GLOBAL_MESSAGE") {
+    metric = "GLOBAL_MESSAGES";
+    value = await prisma.globalChatMessage.count({ where: { authorId: userId, deletedAt: null } });
+  } else if (source === "DIRECT_MESSAGE") {
+    metric = "DIRECT_MESSAGES";
+    value = await prisma.directMessage.count({ where: { senderId: userId, deletedAt: null } });
+  } else {
+    return false;
+  }
+
+  return PRODUCTION_CHECKPOINTS.get(metric)?.has(value) ?? false;
+}
+
+async function reconcileProductionAchievements(userId: string) {
+  const facts = await resolveProgressionFacts(prisma, userId);
+  const existing = await prisma.userProgressAchievement.findMany({
+    where: { userId },
+    select: { code: true },
+  });
+  const earned = new Set(existing.map((row) => row.code));
+  const candidates = PRODUCTION_PROGRESSION_ACHIEVEMENTS.filter(
+    (achievement) => !earned.has(achievement.code) && achievementRequirementsMet(achievement, facts),
+  );
+  if (!candidates.length) return [];
+
+  // A long-time member may satisfy many milestones on the first reconciliation.
+  // Unlock every valid one, but only notify the highest new milestone per
+  // category so production rollout never turns into a notification storm.
+  const notifyByCategory = new Map<string, string>();
+  for (const achievement of candidates) notifyByCategory.set(achievement.category, achievement.code);
+  const notifyCodes = new Set(notifyByCategory.values());
+  const unlocked: string[] = [];
+
+  for (const achievement of candidates) {
+    try {
+      await prisma.$transaction(async (tx) => {
+        await tx.userProgressAchievement.create({ data: { userId, code: achievement.code } });
+        await awardAchievementCoins(tx, userId, `progression:${achievement.code}`, achievement.coinReward);
+        if (notifyCodes.has(achievement.code)) {
+          await createProgressNotification(tx, userId, "ACHIEVEMENT", "ProgressAchievement", achievement.code);
+        }
+      });
+      unlocked.push(achievement.code);
+    } catch (error) {
+      if (!(error instanceof Prisma.PrismaClientKnownRequestError) || error.code !== "P2002") throw error;
+    }
+  }
+
+  return unlocked;
 }
 
 async function createProgressNotification(
@@ -306,8 +416,16 @@ async function awardSource(
     };
   }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
 
-  // Admin-created obtainable achievements use real application counters. This
-  // runs after the XP transaction so LEVEL/XP conditions see the latest state.
+  // Production catalogue reconciliation is deliberately outside the XP
+  // transaction: all 200 new milestones have zero XP reward, so they cannot
+  // recursively influence levels. It also runs when the current activity hit
+  // an XP cooldown/cap, keeping message/friendship milestones accurate.
+  if (result.awarded || await sourceReachedProductionCheckpoint(userId, source)) {
+    await reconcileProductionAchievements(userId);
+  }
+
+  // Admin-created obtainable achievements continue using their independent
+  // database-backed catalogue and real application counters.
   await evaluateAutomaticAchievements(userId, ACHIEVEMENT_TRIGGER_KEYS);
   return result;
 }
@@ -348,7 +466,7 @@ export async function getPublicProgressSummary(userId: string): Promise<PublicPr
   return getProgressSummary(progress, achievementCount);
 }
 
-export async function getPublicProgressionProfile(userId: string): Promise<ProgressionProfileData> {
+export async function getPublicProgressionProfile(userId: string, locale = "es"): Promise<ProgressionProfileData> {
   const [progress, unlocks] = await Promise.all([
     prisma.userProgress.findUnique({ where: { userId }, select: { xp: true, level: true } }),
     prisma.userProgressAchievement.findMany({
@@ -360,11 +478,17 @@ export async function getPublicProgressionProfile(userId: string): Promise<Progr
   const unlocksByCode = new Map(unlocks.map((unlock) => [unlock.code, unlock.unlockedAt]));
   return {
     progress: getProgressSummary(progress, unlocks.length),
-    achievements: PROGRESSION_ACHIEVEMENTS.map((achievement) => ({
-      code: achievement.code,
-      category: achievement.category,
-      iconKey: achievement.iconKey,
-      unlockedAt: unlocksByCode.get(achievement.code)?.toISOString() ?? null,
-    })),
+    achievements: PROGRESSION_ACHIEVEMENTS.map((achievement) => {
+      const copy = progressionAchievementCopy(achievement, locale);
+      return {
+        code: achievement.code,
+        category: achievement.category,
+        iconKey: achievement.iconKey,
+        title: copy.title,
+        description: copy.description,
+        coinReward: achievement.coinReward,
+        unlockedAt: unlocksByCode.get(achievement.code)?.toISOString() ?? null,
+      };
+    }),
   };
 }

@@ -549,7 +549,9 @@
       }
     },
     "obtainableAchievements": "Community goals",
-    "automaticGoal": "Automatic achievement"
+    "automaticGoal": "Automatic achievement",
+    "achievementFilters": "Filter achievements",
+    "allAchievements": "All"
   },
   "FriendsPage": {
     "titulo": "Friends",

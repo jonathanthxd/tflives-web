@@ -7,6 +7,7 @@ import { getPublicProgressionProfile } from "@/modules/progression/service";
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const username = searchParams.get("username");
+  const locale = searchParams.get("locale") === "en" ? "en" : "es";
   if (!username) return NextResponse.json({ error: "Falta username" }, { status: 400 });
 
   try {
@@ -30,7 +31,7 @@ export async function GET(request: Request) {
     const [achievements, obtainableAchievements, progression] = await Promise.all([
       listUserAchievements(username),
       listUserObtainableAchievements(username),
-      getPublicProgressionProfile(target.id),
+      getPublicProgressionProfile(target.id, locale),
     ]);
     return NextResponse.json({ achievements, obtainableAchievements, progression }, { status: 200 });
   } catch (error) {

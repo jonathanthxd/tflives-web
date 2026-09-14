@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { LockKeyhole, Sparkles, Trophy } from "lucide-react";
 import { Card } from "@/shared/ui/card";
@@ -31,6 +31,9 @@ interface ProgressionAchievement {
   code: string;
   category: string;
   iconKey: string;
+  title: string;
+  description: string;
+  coinReward: number;
   unlockedAt: string | null;
 }
 
@@ -62,10 +65,11 @@ export default function AchievementsCard({ username, embedded = false }: { usern
   const t = useTranslations("Progression");
   const locale = useLocale();
   const [data, setData] = useState<AchievementsResponse | null>(null);
+  const [category, setCategory] = useState<"ALL" | "IDENTITY" | "COMMUNITY" | "SOCIAL" | "PROGRESS">("ALL");
 
   useEffect(() => {
     let cancelled = false;
-    fetch(`/api/achievements/user?username=${encodeURIComponent(username)}`, { cache: "no-store" })
+    fetch(`/api/achievements/user?username=${encodeURIComponent(username)}&locale=${encodeURIComponent(locale)}`, { cache: "no-store" })
       .then((res) => (res.ok ? res.json() : EMPTY_DATA))
       .then((response) => {
         if (!cancelled) setData(normalizedResponse(response));
@@ -77,7 +81,15 @@ export default function AchievementsCard({ username, embedded = false }: { usern
     return () => {
       cancelled = true;
     };
-  }, [username]);
+  }, [username, locale]);
+
+  const filteredProgression = useMemo(() => {
+    if (!data) return [];
+    if (category === "ALL") return data.progression.achievements;
+    return data.progression.achievements.filter((achievement) => achievement.category === category);
+  }, [category, data]);
+
+  const categories = ["ALL", "IDENTITY", "COMMUNITY", "SOCIAL", "PROGRESS"] as const;
 
   const content = (
     <section aria-label={t("achievementsTitle")}>
@@ -96,6 +108,33 @@ export default function AchievementsCard({ username, embedded = false }: { usern
         )}
       </div>
 
+      {data && (
+        <div className="mb-4 flex flex-wrap gap-1.5" role="group" aria-label={t("achievementFilters")}>
+          {categories.map((key) => {
+            const selected = category === key;
+            const count = key === "ALL"
+              ? data.progression.achievements.length
+              : data.progression.achievements.filter((achievement) => achievement.category === key).length;
+            return (
+              <button
+                key={key}
+                type="button"
+                aria-pressed={selected}
+                onClick={() => setCategory(key)}
+                className={`rounded-full border px-2.5 py-1 text-[11px] font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 ${
+                  selected
+                    ? "border-primary/30 bg-primary/10 text-primary"
+                    : "border-border/70 bg-background/30 text-muted-foreground hover:border-primary/20 hover:text-foreground"
+                }`}
+              >
+                {key === "ALL" ? t("allAchievements") : t(`category.${key}`)}
+                <span className="ml-1 opacity-70">{count}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+
       {data === null && (
         <div className="flex gap-2">
           {[0, 1, 2].map((i) => (
@@ -107,7 +146,7 @@ export default function AchievementsCard({ username, embedded = false }: { usern
       {data !== null && (
         <div className="max-h-[30rem] overflow-y-auto pr-2 [scrollbar-width:thin]">
           <div className="space-y-2">
-          {data.progression.achievements.map((item) => {
+          {filteredProgression.map((item) => {
             const Icon = ACHIEVEMENT_ICONS[item.iconKey] ?? Trophy;
             const unlocked = Boolean(item.unlockedAt);
             return (
@@ -123,14 +162,21 @@ export default function AchievementsCard({ username, embedded = false }: { usern
                 </span>
                 <span className="min-w-0">
                   <span className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                    <span className="text-sm font-medium text-foreground">{t(`achievements.${item.code}.title`)}</span>
+                    <span className="text-sm font-medium text-foreground">{item.title}</span>
                     <span className="text-[11px] uppercase tracking-wide text-muted-foreground">{t(`category.${item.category}`)}</span>
                   </span>
-                  <span className="mt-0.5 block text-xs leading-5 text-muted-foreground">{t(`achievements.${item.code}.description`)}</span>
-                  <span className="mt-1 block text-[11px] text-muted-foreground">
-                    {unlocked
-                      ? t("unlockedOn", { date: new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(new Date(item.unlockedAt!)) })
-                      : t("locked")}
+                  <span className="mt-0.5 block text-xs leading-5 text-muted-foreground">{item.description}</span>
+                  <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-muted-foreground">
+                    <span>
+                      {unlocked
+                        ? t("unlockedOn", { date: new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(new Date(item.unlockedAt!)) })
+                        : t("locked")}
+                    </span>
+                    {item.coinReward > 0 && (
+                      <span className="rounded-full border border-primary/15 bg-primary/5 px-1.5 py-0.5 text-primary/80">
+                        +{item.coinReward.toLocaleString(locale)} TFL
+                      </span>
+                    )}
                   </span>
                 </span>
               </article>

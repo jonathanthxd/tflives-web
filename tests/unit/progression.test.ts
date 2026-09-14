@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { PGlite } from "@electric-sql/pglite";
-import { PROGRESSION_ACHIEVEMENTS } from "../../src/modules/progression/catalog";
+import { PROGRESSION_ACHIEVEMENTS, PRODUCTION_ACHIEVEMENT_COUNT } from "../../src/modules/progression/catalog";
 import { getProgressSummary, levelForXp, xpRequiredForLevel } from "../../src/modules/progression/level";
 import { achievementCodesForFacts, activityAwardAllowed } from "../../src/modules/progression/service";
 import { describeAchievementTrigger, normalizedTriggerValue } from "../../src/modules/achievements/triggers";
@@ -37,18 +37,30 @@ test("activity XP caps and cooldowns are enforced from server-owned rules", () =
 test("achievement rules unlock only real thresholds and level rewards cannot duplicate them", () => {
   const none = achievementCodesForFacts({
     profileComplete: false, emailVerified: false, oauthConnections: 0,
-    globalMessages: 0, directMessages: 0, friendships: 0, level: 1,
+    globalMessages: 0, directMessages: 0, friendships: 0, level: 1, xp: 0,
   });
   assert.deepEqual(none, []);
 
   const milestones = achievementCodesForFacts({
     profileComplete: true, emailVerified: true, oauthConnections: 1,
-    globalMessages: 10, directMessages: 10, friendships: 5, level: 10,
+    globalMessages: 10, directMessages: 10, friendships: 5, level: 10, xp: 2_000,
   });
-  assert.equal(milestones.length, PROGRESSION_ACHIEVEMENTS.length);
   assert.equal(new Set(milestones).size, milestones.length);
+  assert.ok(milestones.includes("PROFILE_COMPLETE"));
   assert.ok(milestones.includes("LEVEL_FIVE"));
   assert.ok(milestones.includes("LEVEL_TEN"));
+  assert.ok(milestones.includes("XP_01_1"));
+});
+
+
+test("production progression catalogue contains exactly 200 new durable milestones", () => {
+  assert.equal(PRODUCTION_ACHIEVEMENT_COUNT, 200);
+  assert.equal(PROGRESSION_ACHIEVEMENTS.length, 211);
+  assert.equal(new Set(PROGRESSION_ACHIEVEMENTS.map((achievement) => achievement.code)).size, 211);
+  const production = PROGRESSION_ACHIEVEMENTS.slice(11);
+  assert.ok(production.every((achievement) => achievement.xpReward === 0));
+  assert.ok(production.every((achievement) => achievement.requirements.length > 0));
+  assert.ok(production.every((achievement) => achievement.copy.es.title && achievement.copy.en.title));
 });
 
 test("v0.6 migration creates isolated progression data with idempotency keys", async () => {
