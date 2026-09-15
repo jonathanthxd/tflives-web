@@ -53,6 +53,22 @@ test("achievement rules unlock only real thresholds and level rewards cannot dup
 });
 
 
+test("pre-existing OAuth links qualify from current server facts without replaying the link event", () => {
+  const linked = achievementCodesForFacts({
+    profileComplete: false, emailVerified: false, oauthConnections: 2,
+    globalMessages: 0, directMessages: 0, friendships: 0, level: 1, xp: 0,
+  });
+  assert.ok(linked.includes("OAUTH_CONNECTED"));
+  assert.ok(linked.includes("IDENTITY_DUAL_LINK"));
+});
+
+test("achievement API reconciles fixed and admin automatic achievements before returning the profile", () => {
+  const route = readFileSync("src/app/api/achievements/user/route.ts", "utf8");
+  assert.match(route, /reconcileProgressionAchievements\(target\.id\)/);
+  assert.match(route, /evaluateAutomaticAchievements\(target\.id, ACHIEVEMENT_TRIGGER_KEYS\)/);
+});
+
+
 test("production progression catalogue contains exactly 200 new durable milestones", () => {
   assert.equal(PRODUCTION_ACHIEVEMENT_COUNT, 200);
   assert.equal(PROGRESSION_ACHIEVEMENTS.length, 211);

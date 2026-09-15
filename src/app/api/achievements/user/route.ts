@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import { listUserAchievements, listUserObtainableAchievements, AchievementError } from "@/modules/achievements/service";
 import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { prisma } from "@/infrastructure/database/prisma";
-import { getPublicProgressionProfile } from "@/modules/progression/service";
+import { getPublicProgressionProfile, reconcileProgressionAchievements } from "@/modules/progression/service";
+import { evaluateAutomaticAchievements } from "@/modules/achievements/automatic";
+import { ACHIEVEMENT_TRIGGER_KEYS } from "@/modules/achievements/triggers";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -28,6 +30,13 @@ export async function GET(request: Request) {
       });
       if (blocked) return NextResponse.json({ error: "Perfil no disponible" }, { status: 403 });
     }
+    // Achievements are reconciled from current server facts whenever the
+    // achievement surface is requested. This makes pre-existing Google/Discord
+    // links, verified email, profile completion, messages, friendships, XP, and
+    // levels count even if they happened before a particular achievement shipped.
+    await reconcileProgressionAchievements(target.id);
+    await evaluateAutomaticAchievements(target.id, ACHIEVEMENT_TRIGGER_KEYS);
+
     const [achievements, obtainableAchievements, progression] = await Promise.all([
       listUserAchievements(username),
       listUserObtainableAchievements(username),

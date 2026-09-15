@@ -16,9 +16,12 @@ export function CosmeticAvatarFrame({ preset, className, children }: { preset?: 
   if (!definition || definition.type !== "AVATAR_FRAME") return <span className={cn("relative inline-grid shrink-0 place-items-center", className)}>{children}</span>;
   return (
     <span className={cn("cosmetic-avatar-frame relative inline-grid shrink-0 place-items-center", className)} data-variant={definition.variant} style={styleFor(preset)}>
+      <span aria-hidden className="cosmetic-avatar-frame__aura" />
+      <span aria-hidden className="cosmetic-avatar-frame__motif" />
       <span aria-hidden className="cosmetic-avatar-frame__orbit" />
-      <span aria-hidden className="cosmetic-avatar-frame__ornament">✦</span>
-      <span className="relative z-[2] inline-grid place-items-center">{children}</span>
+      <span aria-hidden className="cosmetic-avatar-frame__particles" />
+      <span aria-hidden className="cosmetic-avatar-frame__ornament" />
+      <span className="relative z-[4] inline-grid place-items-center">{children}</span>
     </span>
   );
 }

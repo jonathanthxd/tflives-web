@@ -118,7 +118,11 @@ test("purchase API ignores client price, avoids persistent purchase notification
   assert.match(service, /applyWalletTransaction/);
   assert.match(service, /cosmetic-purchase:\$\{userId\}:\$\{cosmetic\.id\}/);
   assert.match(service, /isPresetForType/);
-  assert.doesNotMatch(service, /createNotification/);
+  const purchaseSection = service.slice(
+    service.indexOf("export async function purchaseCosmetic"),
+    service.indexOf("export async function equipCosmetic"),
+  );
+  assert.doesNotMatch(purchaseSection, /createNotification/);
   assert.match(cleanupMigration, /DELETE FROM "Notification"/);
   assert.match(cleanupMigration, /type = 'COSMETIC'/);
 });
@@ -242,4 +246,24 @@ test("production cosmetic fixture contains one finalized bilingual commercial en
     assert.ok(item.name_en.trim().length > 0);
     assert.ok(item.price > 0);
   }
+});
+
+
+test("all sixteen avatar frames have dedicated structural layers and variant recipes", () => {
+  const renderer = readFileSync("src/modules/cosmetics/components/cosmetic-renderer.tsx", "utf8");
+  const css = readFileSync("src/styles/globals.css", "utf8");
+  const frameVariants = Object.values(COSMETIC_PRESETS)
+    .filter((preset) => preset.type === "AVATAR_FRAME")
+    .map((preset) => preset.variant);
+  assert.equal(frameVariants.length, 16);
+  assert.equal(new Set(frameVariants).size, 16);
+  assert.match(renderer, /cosmetic-avatar-frame__aura/);
+  assert.match(renderer, /cosmetic-avatar-frame__motif/);
+  assert.match(renderer, /cosmetic-avatar-frame__particles/);
+  for (const variant of frameVariants) {
+    assert.ok(css.includes(`cosmetic-avatar-frame[data-variant="${variant}"]`));
+  }
+  assert.match(css, /clip-path: polygon/);
+  assert.match(css, /cosmetic-galaxy-orbit/);
+  assert.match(css, /cosmetic-frame-embers/);
 });

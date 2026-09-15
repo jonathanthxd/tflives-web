@@ -940,134 +940,523 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
 .cosmetic-avatar-frame {
   isolation: isolate;
   border-radius: 999px;
+  --frame-ring: 7px;
 }
 
 .cosmetic-avatar-frame::before,
 .cosmetic-avatar-frame::after,
-.cosmetic-avatar-frame__orbit {
+.cosmetic-avatar-frame__aura,
+.cosmetic-avatar-frame__motif,
+.cosmetic-avatar-frame__motif::before,
+.cosmetic-avatar-frame__motif::after,
+.cosmetic-avatar-frame__orbit,
+.cosmetic-avatar-frame__orbit::before,
+.cosmetic-avatar-frame__orbit::after,
+.cosmetic-avatar-frame__particles,
+.cosmetic-avatar-frame__particles::before,
+.cosmetic-avatar-frame__particles::after,
+.cosmetic-avatar-frame__ornament,
+.cosmetic-avatar-frame__ornament::before,
+.cosmetic-avatar-frame__ornament::after {
   content: "";
   position: absolute;
   pointer-events: none;
-  border-radius: 999px;
 }
 
+/* Every frame keeps a clean circular aperture around the avatar. The layers
+   outside that aperture are intentionally free to become petals, shards,
+   reticles, flames, crowns, or orbital hardware. */
 .cosmetic-avatar-frame::before {
-  inset: -7px;
-  z-index: 0;
+  inset: calc(var(--frame-ring) * -1);
+  z-index: 3;
+  border-radius: 999px;
   padding: 3px;
   background: linear-gradient(135deg, var(--cosmetic-1), var(--cosmetic-2), var(--cosmetic-3));
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--cosmetic-2) 55%, transparent));
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--cosmetic-2) 50%, transparent));
 }
 
 .cosmetic-avatar-frame::after {
-  inset: -12px;
-  z-index: -1;
-  background: radial-gradient(circle, color-mix(in srgb, var(--cosmetic-2) 26%, transparent), transparent 66%);
-  opacity: .8;
+  inset: -3px;
+  z-index: 3;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--cosmetic-1) 42%, white 12%);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--cosmetic-3) 26%, transparent),
+    0 0 8px color-mix(in srgb, var(--cosmetic-2) 20%, transparent);
+}
+
+.cosmetic-avatar-frame__aura {
+  inset: -24px;
+  z-index: 0;
+  border-radius: 999px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--cosmetic-2) 24%, transparent) 0 32%, transparent 68%);
+  filter: blur(10px);
+  opacity: .72;
+}
+
+.cosmetic-avatar-frame__motif {
+  inset: -18px;
+  z-index: 1;
+  border-radius: 999px;
 }
 
 .cosmetic-avatar-frame__orbit {
-  inset: -13px;
-  z-index: 1;
+  inset: -14px;
+  z-index: 2;
+  border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--cosmetic-1) 42%, transparent);
   opacity: 0;
 }
 
+.cosmetic-avatar-frame__particles {
+  inset: -20px;
+  z-index: 2;
+  border-radius: 999px;
+  opacity: 0;
+}
+
 .cosmetic-avatar-frame__ornament {
-  position: absolute;
   left: 50%;
-  top: -18px;
-  z-index: 4;
-  display: none;
+  top: -20px;
+  z-index: 6;
+  width: 26px;
+  height: 22px;
   translate: -50% 0;
   color: var(--cosmetic-1);
-  font-size: 13px;
-  line-height: 1;
-  text-shadow: 0 0 10px var(--cosmetic-2);
+  opacity: 0;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--cosmetic-2) 72%, transparent));
 }
 
+/* Forged bronze: riveted segmented metal with cardinal clamps. */
+.cosmetic-avatar-frame[data-variant="metal"]::before {
+  inset: -8px;
+  padding: 4px;
+  background:
+    repeating-conic-gradient(from 8deg,
+      #fff7 0 2deg,
+      var(--cosmetic-1) 2deg 17deg,
+      color-mix(in srgb, var(--cosmetic-3) 82%, black) 17deg 21deg,
+      var(--cosmetic-2) 21deg 39deg,
+      #0008 39deg 43deg);
+  filter: drop-shadow(0 2px 3px #0009) drop-shadow(0 0 8px color-mix(in srgb, var(--cosmetic-1) 30%, transparent));
+}
+.cosmetic-avatar-frame[data-variant="metal"] .cosmetic-avatar-frame__motif {
+  inset: -13px;
+  border: 3px solid color-mix(in srgb, var(--cosmetic-3) 75%, black);
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--cosmetic-1) 55%, black), 0 0 0 1px #0008;
+}
+.cosmetic-avatar-frame[data-variant="metal"] .cosmetic-avatar-frame__particles {
+  opacity: 1;
+  background:
+    radial-gradient(circle at 50% 2%, #fff 0 2px, var(--cosmetic-2) 2.5px 4px, transparent 4.5px),
+    radial-gradient(circle at 98% 50%, #fff 0 2px, var(--cosmetic-2) 2.5px 4px, transparent 4.5px),
+    radial-gradient(circle at 50% 98%, #fff 0 2px, var(--cosmetic-2) 2.5px 4px, transparent 4.5px),
+    radial-gradient(circle at 2% 50%, #fff 0 2px, var(--cosmetic-2) 2.5px 4px, transparent 4.5px);
+}
+
+/* Monochrome: machined double ring with stark cutouts, not a recolor. */
 .cosmetic-avatar-frame[data-variant="mono"]::before {
-  background: linear-gradient(145deg, var(--cosmetic-1), var(--cosmetic-2) 45%, var(--cosmetic-3));
-  filter: none;
+  inset: -8px;
+  padding: 3px;
+  background: repeating-conic-gradient(from 0deg, #f8fafc 0 18deg, #475569 18deg 24deg, #0f172a 24deg 42deg, #94a3b8 42deg 47deg);
+  filter: drop-shadow(0 2px 4px #0008);
+}
+.cosmetic-avatar-frame[data-variant="mono"] .cosmetic-avatar-frame__motif {
+  inset: -15px;
+  border-radius: 50%;
+  background: conic-gradient(transparent 0 10%, #f8fafc 10% 13%, transparent 13% 37%, #64748b 37% 40%, transparent 40% 60%, #f8fafc 60% 63%, transparent 63% 87%, #64748b 87% 90%, transparent 90%);
+  -webkit-mask: radial-gradient(circle, transparent 0 72%, #000 73% 100%);
+  mask: radial-gradient(circle, transparent 0 72%, #000 73% 100%);
+  opacity: .8;
 }
 
+/* Ocean: asymmetrical tide arcs and bubbles around the circular aperture. */
 .cosmetic-avatar-frame[data-variant="wave"]::before {
   inset: -8px;
+  padding: 3px;
+  background: conic-gradient(from 105deg, var(--cosmetic-3), var(--cosmetic-2) 18%, var(--cosmetic-1) 34%, transparent 38% 44%, var(--cosmetic-2) 50%, var(--cosmetic-1) 69%, var(--cosmetic-3) 86%, var(--cosmetic-2));
+  animation: cosmetic-frame-spin 7.5s linear infinite;
+}
+.cosmetic-avatar-frame[data-variant="wave"] .cosmetic-avatar-frame__motif {
+  inset: -19px;
+  background:
+    radial-gradient(ellipse at 25% 8%, color-mix(in srgb, var(--cosmetic-1) 75%, transparent) 0 11%, transparent 12%),
+    radial-gradient(ellipse at 83% 73%, color-mix(in srgb, var(--cosmetic-2) 62%, transparent) 0 14%, transparent 15%),
+    radial-gradient(ellipse at 18% 75%, color-mix(in srgb, var(--cosmetic-1) 38%, transparent) 0 9%, transparent 10%);
+  filter: blur(.2px) drop-shadow(0 0 7px var(--cosmetic-2));
+  animation: cosmetic-frame-tide 4.2s ease-in-out infinite alternate;
+}
+.cosmetic-avatar-frame[data-variant="wave"] .cosmetic-avatar-frame__particles {
+  opacity: .8;
+  background:
+    radial-gradient(circle at 82% 14%, #fff9 0 2px, transparent 2.6px),
+    radial-gradient(circle at 91% 28%, color-mix(in srgb, var(--cosmetic-1) 70%, white) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 10% 30%, #fff7 0 1.5px, transparent 2px);
+  animation: cosmetic-frame-float 3.2s ease-in-out infinite alternate;
+}
+
+/* Rose pulse: ECG-like segments and expanding heartbeat halos. */
+.cosmetic-avatar-frame[data-variant="pulse"]::before {
+  inset: -8px;
+  padding: 4px;
+  background: repeating-conic-gradient(from -6deg, var(--cosmetic-1) 0 8deg, transparent 8deg 13deg, var(--cosmetic-2) 13deg 21deg, transparent 21deg 31deg);
+  animation: cosmetic-frame-heartbeat 1.9s ease-in-out infinite;
+}
+.cosmetic-avatar-frame[data-variant="pulse"] .cosmetic-avatar-frame__orbit {
+  opacity: .9;
+  border: 2px solid color-mix(in srgb, var(--cosmetic-1) 70%, transparent);
+  animation: cosmetic-pulse-ring 1.9s ease-out infinite;
+}
+.cosmetic-avatar-frame[data-variant="pulse"] .cosmetic-avatar-frame__motif {
+  inset: -16px;
+  background: conic-gradient(transparent 0 23%, var(--cosmetic-1) 23% 25%, transparent 25% 47%, var(--cosmetic-2) 47% 51%, transparent 51% 74%, var(--cosmetic-1) 74% 77%, transparent 77%);
+  -webkit-mask: radial-gradient(circle, transparent 0 76%, #000 77%);
+  mask: radial-gradient(circle, transparent 0 76%, #000 77%);
+}
+
+/* Frost: true ice-shard silhouette around a circular inner ring. */
+.cosmetic-avatar-frame[data-variant="frost"]::before {
+  inset: -7px;
+  padding: 3px;
+  background: repeating-conic-gradient(from 0deg, #fff 0 3deg, var(--cosmetic-1) 3deg 9deg, transparent 9deg 13deg, var(--cosmetic-2) 13deg 18deg, transparent 18deg 25deg);
+  filter: drop-shadow(0 0 9px color-mix(in srgb, var(--cosmetic-1) 78%, transparent));
+}
+.cosmetic-avatar-frame[data-variant="frost"] .cosmetic-avatar-frame__motif {
+  inset: -21px;
+  background: linear-gradient(145deg, #fff, var(--cosmetic-1) 36%, var(--cosmetic-2));
+  clip-path: polygon(50% 0, 56% 19%, 68% 5%, 70% 25%, 87% 14%, 80% 34%, 100% 34%, 84% 48%, 100% 58%, 79% 61%, 91% 79%, 70% 73%, 68% 100%, 56% 79%, 45% 100%, 41% 78%, 22% 92%, 28% 70%, 4% 72%, 21% 55%, 0 45%, 23% 40%, 9% 22%, 32% 29%, 34% 6%, 45% 24%);
+  -webkit-mask: radial-gradient(circle, transparent 0 62%, #000 63% 100%);
+  mask: radial-gradient(circle, transparent 0 62%, #000 63% 100%);
+  opacity: .92;
+  filter: drop-shadow(0 0 7px color-mix(in srgb, var(--cosmetic-1) 65%, transparent));
+}
+.cosmetic-avatar-frame[data-variant="frost"] .cosmetic-avatar-frame__particles {
+  opacity: .85;
+  background:
+    radial-gradient(circle at 12% 21%, #fff 0 1.5px, transparent 2px),
+    radial-gradient(circle at 88% 27%, #fff 0 1px, transparent 1.8px),
+    radial-gradient(circle at 79% 88%, #fff 0 1.7px, transparent 2.2px),
+    radial-gradient(circle at 23% 84%, #fff 0 1.1px, transparent 1.8px);
+  animation: cosmetic-frame-twinkle 2.8s ease-in-out infinite alternate;
+}
+
+/* Emerald circuit: PCB geometry, squared nodes, and a counter-rotating bus. */
+.cosmetic-avatar-frame[data-variant="circuit"]::before {
+  border-radius: 30%;
+  inset: -9px;
   padding: 2px;
-  background: conic-gradient(from 90deg, var(--cosmetic-1), var(--cosmetic-2), var(--cosmetic-1), var(--cosmetic-3), var(--cosmetic-1));
+  background: conic-gradient(from 45deg, var(--cosmetic-1) 0 7%, transparent 7% 15%, var(--cosmetic-2) 15% 25%, transparent 25% 39%, var(--cosmetic-1) 39% 51%, transparent 51% 66%, var(--cosmetic-2) 66% 77%, transparent 77% 91%, var(--cosmetic-1) 91%);
+}
+.cosmetic-avatar-frame[data-variant="circuit"] .cosmetic-avatar-frame__motif {
+  inset: -15px;
+  border-radius: 28%;
+  border: 1px solid color-mix(in srgb, var(--cosmetic-1) 48%, transparent);
+  background:
+    linear-gradient(90deg, transparent 47%, color-mix(in srgb, var(--cosmetic-1) 60%, transparent) 48% 52%, transparent 53%) top/18% 7px no-repeat,
+    linear-gradient(90deg, transparent 47%, color-mix(in srgb, var(--cosmetic-2) 60%, transparent) 48% 52%, transparent 53%) bottom/18% 7px no-repeat,
+    linear-gradient(0deg, transparent 47%, color-mix(in srgb, var(--cosmetic-1) 60%, transparent) 48% 52%, transparent 53%) left/7px 18% no-repeat,
+    linear-gradient(0deg, transparent 47%, color-mix(in srgb, var(--cosmetic-2) 60%, transparent) 48% 52%, transparent 53%) right/7px 18% no-repeat;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--cosmetic-2) 35%, transparent);
+}
+.cosmetic-avatar-frame[data-variant="circuit"] .cosmetic-avatar-frame__orbit {
+  inset: -19px;
+  opacity: .72;
+  border: 2px dashed color-mix(in srgb, var(--cosmetic-1) 52%, transparent);
+  animation: cosmetic-frame-spin 15s linear infinite reverse;
+}
+.cosmetic-avatar-frame[data-variant="circuit"] .cosmetic-avatar-frame__particles {
+  opacity: 1;
+  background:
+    radial-gradient(circle at 11% 18%, var(--cosmetic-1) 0 2px, transparent 2.5px),
+    radial-gradient(circle at 89% 18%, var(--cosmetic-2) 0 2px, transparent 2.5px),
+    radial-gradient(circle at 89% 82%, var(--cosmetic-1) 0 2px, transparent 2.5px),
+    radial-gradient(circle at 11% 82%, var(--cosmetic-2) 0 2px, transparent 2.5px);
+}
+
+/* Inferno: a spiked flame corona, hot inner rim, and rising embers. */
+.cosmetic-avatar-frame[data-variant="flame"]::before {
+  inset: -8px;
+  padding: 4px;
+  background: conic-gradient(from 0deg, var(--cosmetic-3), var(--cosmetic-2) 16%, var(--cosmetic-1) 26%, var(--cosmetic-2) 34%, var(--cosmetic-3) 50%, var(--cosmetic-2) 67%, var(--cosmetic-1) 80%, var(--cosmetic-3));
+  animation: cosmetic-hue-breathe 1.8s ease-in-out infinite;
+}
+.cosmetic-avatar-frame[data-variant="flame"] .cosmetic-avatar-frame__motif {
+  inset: -22px;
+  background: conic-gradient(from -6deg, var(--cosmetic-1), var(--cosmetic-2), var(--cosmetic-3), var(--cosmetic-1));
+  clip-path: polygon(50% 0, 55% 20%, 63% 5%, 66% 24%, 78% 10%, 78% 30%, 93% 20%, 86% 39%, 100% 43%, 82% 51%, 97% 63%, 77% 64%, 85% 82%, 67% 72%, 66% 95%, 55% 78%, 47% 100%, 41% 77%, 28% 93%, 30% 71%, 10% 82%, 20% 62%, 0 59%, 18% 48%, 1% 37%, 22% 35%, 10% 17%, 31% 27%, 32% 5%, 44% 22%);
+  -webkit-mask: radial-gradient(circle, transparent 0 63%, #000 64% 100%);
+  mask: radial-gradient(circle, transparent 0 63%, #000 64% 100%);
+  filter: blur(.2px) drop-shadow(0 0 9px var(--cosmetic-2));
+  animation: cosmetic-frame-flame 1.5s ease-in-out infinite alternate;
+}
+.cosmetic-avatar-frame[data-variant="flame"] .cosmetic-avatar-frame__particles {
+  opacity: .92;
+  background:
+    radial-gradient(circle at 19% 78%, #fff5 0 1.5px, transparent 2px),
+    radial-gradient(circle at 79% 83%, var(--cosmetic-1) 0 1.6px, transparent 2.2px),
+    radial-gradient(circle at 72% 15%, #fff7 0 1px, transparent 1.6px),
+    radial-gradient(circle at 31% 10%, var(--cosmetic-2) 0 1.3px, transparent 1.9px);
+  animation: cosmetic-frame-embers 2.3s linear infinite;
+}
+
+/* Toxic: hazard sectors, orbiting droplets, and acidic bubbles. */
+.cosmetic-avatar-frame[data-variant="toxic"]::before {
+  inset: -8px;
+  padding: 3px;
+  background: conic-gradient(from 0deg, var(--cosmetic-1) 0 9%, transparent 9% 18%, var(--cosmetic-2) 18% 28%, transparent 28% 42%, var(--cosmetic-1) 42% 52%, transparent 52% 66%, var(--cosmetic-2) 66% 76%, transparent 76% 90%, var(--cosmetic-1) 90%);
   animation: cosmetic-frame-spin 7s linear infinite;
 }
-.cosmetic-avatar-frame[data-variant="wave"]::after { inset: -15px; opacity: .95; animation: cosmetic-breathe 3.4s ease-in-out infinite; }
+.cosmetic-avatar-frame[data-variant="toxic"] .cosmetic-avatar-frame__motif {
+  inset: -19px;
+  background:
+    radial-gradient(circle at 50% 7%, color-mix(in srgb, var(--cosmetic-1) 88%, white) 0 8%, transparent 8.5%),
+    radial-gradient(circle at 88% 70%, color-mix(in srgb, var(--cosmetic-2) 82%, white) 0 8%, transparent 8.5%),
+    radial-gradient(circle at 12% 70%, color-mix(in srgb, var(--cosmetic-1) 76%, white) 0 8%, transparent 8.5%);
+  filter: drop-shadow(0 0 8px var(--cosmetic-1));
+  animation: cosmetic-frame-toxic 3.6s ease-in-out infinite;
+}
+.cosmetic-avatar-frame[data-variant="toxic"] .cosmetic-avatar-frame__particles {
+  opacity: .9;
+  background:
+    radial-gradient(circle at 17% 22%, #d9f99d 0 2px, transparent 2.6px),
+    radial-gradient(circle at 90% 38%, #bef264 0 1.4px, transparent 2px),
+    radial-gradient(circle at 73% 91%, #ecfccb 0 2.3px, transparent 3px),
+    radial-gradient(circle at 8% 62%, #a3e635 0 1.2px, transparent 1.8px);
+  animation: cosmetic-frame-float 2.9s ease-in-out infinite alternate;
+}
 
-.cosmetic-avatar-frame[data-variant="pulse"]::before { animation: cosmetic-breathe 2.1s ease-in-out infinite; }
-.cosmetic-avatar-frame[data-variant="pulse"]::after { animation: cosmetic-pulse-ring 2.1s ease-out infinite; }
-
-.cosmetic-avatar-frame[data-variant="frost"]::before {
+/* Prism: faceted crystal teeth and a refracting inner rim. */
+.cosmetic-avatar-frame[data-variant="prism"]::before {
+  inset: -8px;
   padding: 4px;
-  background: repeating-conic-gradient(from 0deg, var(--cosmetic-1) 0 7deg, transparent 7deg 15deg, var(--cosmetic-2) 15deg 22deg, transparent 22deg 30deg);
-  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--cosmetic-1) 70%, transparent));
+  background: conic-gradient(from 0deg, #22d3ee, #60a5fa, #a78bfa, #f472b6, #fb7185, #facc15, #34d399, #22d3ee);
+  animation: cosmetic-frame-spin 8.5s linear infinite;
 }
-.cosmetic-avatar-frame[data-variant="frost"]::after { background: radial-gradient(circle, color-mix(in srgb, var(--cosmetic-1) 34%, transparent), transparent 58%); }
-
-.cosmetic-avatar-frame[data-variant="circuit"]::before {
-  border-radius: 26%;
-  inset: -9px;
-  padding: 2px;
-  background: conic-gradient(from 45deg, var(--cosmetic-1) 0 8%, transparent 8% 17%, var(--cosmetic-2) 17% 27%, transparent 27% 42%, var(--cosmetic-1) 42% 52%, transparent 52% 67%, var(--cosmetic-2) 67% 76%, transparent 76% 92%, var(--cosmetic-1) 92%);
+.cosmetic-avatar-frame[data-variant="prism"] .cosmetic-avatar-frame__motif {
+  inset: -20px;
+  background: conic-gradient(from 12deg, #67e8f9, #c4b5fd, #f9a8d4, #fde68a, #6ee7b7, #67e8f9);
+  clip-path: polygon(50% 0, 56% 18%, 66% 4%, 70% 22%, 84% 11%, 82% 31%, 100% 29%, 87% 46%, 100% 54%, 82% 61%, 94% 79%, 73% 72%, 70% 98%, 57% 79%, 48% 100%, 42% 79%, 26% 94%, 29% 71%, 7% 78%, 19% 59%, 0 51%, 18% 43%, 4% 26%, 25% 31%, 25% 8%, 41% 23%);
+  -webkit-mask: radial-gradient(circle, transparent 0 66%, #000 67% 100%);
+  mask: radial-gradient(circle, transparent 0 66%, #000 67% 100%);
+  opacity: .82;
+  filter: drop-shadow(0 0 8px #c4b5fd);
+  animation: cosmetic-prism-facet 4s ease-in-out infinite alternate;
 }
-.cosmetic-avatar-frame[data-variant="circuit"] .cosmetic-avatar-frame__orbit { opacity: .7; border-style: dashed; animation: cosmetic-frame-spin 14s linear infinite reverse; }
 
-.cosmetic-avatar-frame[data-variant="flame"]::before {
-  inset: -9px;
-  padding: 4px;
-  background: conic-gradient(from 0deg, var(--cosmetic-3), var(--cosmetic-2) 18%, var(--cosmetic-1) 26%, var(--cosmetic-2) 34%, var(--cosmetic-3) 52%, var(--cosmetic-2) 70%, var(--cosmetic-1) 82%, var(--cosmetic-3));
-  animation: cosmetic-frame-spin 3.8s linear infinite;
-}
-.cosmetic-avatar-frame[data-variant="flame"]::after { animation: cosmetic-breathe 1.7s ease-in-out infinite; }
-
-.cosmetic-avatar-frame[data-variant="toxic"]::before { background: conic-gradient(var(--cosmetic-1), transparent 16%, var(--cosmetic-2) 24%, transparent 42%, var(--cosmetic-1) 57%, transparent 73%, var(--cosmetic-2)); animation: cosmetic-frame-spin 6s linear infinite; }
-.cosmetic-avatar-frame[data-variant="toxic"] .cosmetic-avatar-frame__orbit { opacity: .75; border: 3px dotted color-mix(in srgb, var(--cosmetic-1) 70%, transparent); animation: cosmetic-frame-spin 10s linear infinite reverse; }
-
-.cosmetic-avatar-frame[data-variant="prism"]::before,
-.cosmetic-avatar-frame[data-variant="galaxy"]::before {
-  inset: -9px;
-  padding: 4px;
-  background: conic-gradient(from 0deg, var(--cosmetic-1), var(--cosmetic-2), var(--cosmetic-3), var(--cosmetic-1));
-  animation: cosmetic-frame-spin 4.8s linear infinite;
-}
-.cosmetic-avatar-frame[data-variant="prism"]::after { animation: cosmetic-hue-breathe 4s ease-in-out infinite; }
-
+/* Cyber grid: targeting reticle with four brackets and tracking pips. */
 .cosmetic-avatar-frame[data-variant="grid"]::before {
+  inset: -7px;
+  padding: 3px;
   background: repeating-conic-gradient(from 0deg, var(--cosmetic-1) 0 4deg, transparent 4deg 10deg, var(--cosmetic-2) 10deg 14deg, transparent 14deg 22deg);
-  animation: cosmetic-frame-spin 12s linear infinite;
+  animation: cosmetic-frame-spin 14s linear infinite;
 }
-.cosmetic-avatar-frame[data-variant="grid"] .cosmetic-avatar-frame__orbit { inset: -17px; opacity: .55; border-style: dotted; }
+.cosmetic-avatar-frame[data-variant="grid"] .cosmetic-avatar-frame__motif {
+  inset: -18px;
+  border-radius: 22%;
+  background:
+    linear-gradient(var(--cosmetic-1), var(--cosmetic-1)) left top/22% 2px no-repeat,
+    linear-gradient(var(--cosmetic-1), var(--cosmetic-1)) left top/2px 22% no-repeat,
+    linear-gradient(var(--cosmetic-2), var(--cosmetic-2)) right top/22% 2px no-repeat,
+    linear-gradient(var(--cosmetic-2), var(--cosmetic-2)) right top/2px 22% no-repeat,
+    linear-gradient(var(--cosmetic-2), var(--cosmetic-2)) right bottom/22% 2px no-repeat,
+    linear-gradient(var(--cosmetic-2), var(--cosmetic-2)) right bottom/2px 22% no-repeat,
+    linear-gradient(var(--cosmetic-1), var(--cosmetic-1)) left bottom/22% 2px no-repeat,
+    linear-gradient(var(--cosmetic-1), var(--cosmetic-1)) left bottom/2px 22% no-repeat;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--cosmetic-1) 65%, transparent));
+}
+.cosmetic-avatar-frame[data-variant="grid"] .cosmetic-avatar-frame__orbit {
+  inset: -22px;
+  opacity: .55;
+  border: 1px dashed color-mix(in srgb, var(--cosmetic-1) 54%, transparent);
+  animation: cosmetic-frame-spin 18s linear infinite reverse;
+}
 
-.cosmetic-avatar-frame[data-variant="petal"]::before { background: linear-gradient(135deg, var(--cosmetic-1), var(--cosmetic-2)); }
-.cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__orbit { opacity: .85; border: 5px dotted color-mix(in srgb, var(--cosmetic-1) 65%, transparent); animation: cosmetic-frame-spin 16s linear infinite; }
+/* Sakura: individual petals orbit the avatar instead of a dotted circle. */
+.cosmetic-avatar-frame[data-variant="petal"]::before {
+  inset: -7px;
+  padding: 3px;
+  background: linear-gradient(135deg, #fff1f2, var(--cosmetic-1), var(--cosmetic-2), #fff1f2);
+}
+.cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__motif {
+  inset: -21px;
+  background:
+    radial-gradient(ellipse 12% 19% at 50% 4%, #fff5f7 0 58%, transparent 62%),
+    radial-gradient(ellipse 12% 19% at 94% 48%, var(--cosmetic-1) 0 58%, transparent 62%),
+    radial-gradient(ellipse 12% 19% at 52% 96%, #fbcfe8 0 58%, transparent 62%),
+    radial-gradient(ellipse 12% 19% at 5% 52%, var(--cosmetic-2) 0 58%, transparent 62%),
+    radial-gradient(ellipse 10% 16% at 81% 16%, #fecdd3 0 58%, transparent 62%),
+    radial-gradient(ellipse 10% 16% at 18% 82%, #f9a8d4 0 58%, transparent 62%);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--cosmetic-1) 50%, transparent));
+  animation: cosmetic-frame-petals 12s linear infinite;
+}
+.cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__particles {
+  opacity: .62;
+  background:
+    radial-gradient(circle at 20% 30%, #fff 0 1.3px, transparent 1.8px),
+    radial-gradient(circle at 75% 78%, #fff 0 1px, transparent 1.6px);
+  animation: cosmetic-frame-float 3.8s ease-in-out infinite alternate;
+}
 
+/* Void: eclipse arcs and two satellites rotating around a black core. */
 .cosmetic-avatar-frame[data-variant="void"]::before {
-  inset: -10px;
+  inset: -9px;
   padding: 4px;
-  background: conic-gradient(from 110deg, var(--cosmetic-3) 0 28%, var(--cosmetic-2) 38%, var(--cosmetic-1) 47%, var(--cosmetic-3) 58% 86%, var(--cosmetic-2));
-  box-shadow: inset 0 0 20px #000, 0 0 24px color-mix(in srgb, var(--cosmetic-2) 45%, transparent);
+  background: conic-gradient(from 110deg, #020617 0 23%, var(--cosmetic-2) 34%, var(--cosmetic-1) 43%, #020617 54% 82%, var(--cosmetic-2));
+  box-shadow: inset 0 0 20px #000, 0 0 24px color-mix(in srgb, var(--cosmetic-2) 44%, transparent);
 }
-.cosmetic-avatar-frame[data-variant="void"]::after { background: radial-gradient(circle, transparent 48%, color-mix(in srgb, var(--cosmetic-2) 28%, transparent) 58%, transparent 74%); animation: cosmetic-breathe 3s ease-in-out infinite; }
+.cosmetic-avatar-frame[data-variant="void"] .cosmetic-avatar-frame__motif {
+  inset: -18px;
+  border: 4px solid transparent;
+  border-top-color: color-mix(in srgb, var(--cosmetic-2) 72%, transparent);
+  border-right-color: color-mix(in srgb, var(--cosmetic-1) 34%, transparent);
+  border-radius: 999px;
+  filter: drop-shadow(0 0 10px var(--cosmetic-2));
+  animation: cosmetic-frame-spin 10s linear infinite;
+}
+.cosmetic-avatar-frame[data-variant="void"] .cosmetic-avatar-frame__particles {
+  opacity: 1;
+  background:
+    radial-gradient(circle at 8% 52%, #c4b5fd 0 3px, #7c3aed 3.5px 5px, transparent 5.5px),
+    radial-gradient(circle at 91% 36%, #fff 0 1.4px, transparent 2px),
+    radial-gradient(circle at 70% 92%, #a78bfa 0 1px, transparent 1.7px);
+  animation: cosmetic-frame-orbit 8s linear infinite;
+}
 
-.cosmetic-avatar-frame[data-variant="flare"]::before { inset: -10px; padding: 4px; background: conic-gradient(from 0deg, var(--cosmetic-1), var(--cosmetic-2) 7%, transparent 12% 20%, var(--cosmetic-1) 25%, var(--cosmetic-2) 32%, transparent 38% 48%, var(--cosmetic-1) 55%, var(--cosmetic-2) 64%, transparent 70% 82%, var(--cosmetic-1)); animation: cosmetic-frame-spin 8s linear infinite; }
-.cosmetic-avatar-frame[data-variant="flare"] .cosmetic-avatar-frame__orbit { inset: -18px; opacity: .75; border: 2px dashed color-mix(in srgb, var(--cosmetic-1) 70%, transparent); }
+/* Solar flare: unmistakable sunburst silhouette with a breathing corona. */
+.cosmetic-avatar-frame[data-variant="flare"]::before {
+  inset: -8px;
+  padding: 4px;
+  background: conic-gradient(from 0deg, #fff7ae, var(--cosmetic-1), var(--cosmetic-2), #fff7ae, var(--cosmetic-1));
+  filter: drop-shadow(0 0 10px var(--cosmetic-2));
+}
+.cosmetic-avatar-frame[data-variant="flare"] .cosmetic-avatar-frame__motif {
+  inset: -23px;
+  background: conic-gradient(from 0deg, #fff9b0, var(--cosmetic-1), var(--cosmetic-2), var(--cosmetic-1), #fff9b0);
+  clip-path: polygon(50% 0, 55% 22%, 63% 3%, 66% 24%, 78% 9%, 77% 30%, 94% 19%, 85% 39%, 100% 42%, 81% 50%, 99% 58%, 84% 61%, 94% 80%, 75% 70%, 72% 96%, 59% 77%, 50% 100%, 43% 78%, 27% 96%, 30% 72%, 8% 84%, 18% 61%, 0 57%, 19% 50%, 1% 41%, 20% 38%, 6% 20%, 27% 30%, 28% 4%, 42% 23%);
+  -webkit-mask: radial-gradient(circle, transparent 0 64%, #000 65% 100%);
+  mask: radial-gradient(circle, transparent 0 64%, #000 65% 100%);
+  opacity: .9;
+  filter: drop-shadow(0 0 11px color-mix(in srgb, var(--cosmetic-1) 78%, transparent));
+  animation: cosmetic-frame-solar 6s linear infinite;
+}
+.cosmetic-avatar-frame[data-variant="flare"] .cosmetic-avatar-frame__aura {
+  opacity: 1;
+  background: radial-gradient(circle, color-mix(in srgb, var(--cosmetic-1) 38%, transparent), color-mix(in srgb, var(--cosmetic-2) 18%, transparent) 42%, transparent 72%);
+  animation: cosmetic-breathe 2.4s ease-in-out infinite;
+}
 
-.cosmetic-avatar-frame[data-variant="royal"]::before { inset: -9px; padding: 4px; background: linear-gradient(135deg, var(--cosmetic-1), #fff3 38%, var(--cosmetic-2), var(--cosmetic-3)); }
-.cosmetic-avatar-frame[data-variant="royal"] .cosmetic-avatar-frame__ornament { display: block; font-size: 16px; }
-.cosmetic-avatar-frame[data-variant="royal"]::after { opacity: 1; background: radial-gradient(circle, color-mix(in srgb, var(--cosmetic-1) 25%, transparent), color-mix(in srgb, var(--cosmetic-2) 16%, transparent) 42%, transparent 68%); }
+/* Royal: crown, side filigree, and jewel settings around the portrait. */
+.cosmetic-avatar-frame[data-variant="royal"]::before {
+  inset: -9px;
+  padding: 4px;
+  background: linear-gradient(135deg, #fff8b8, var(--cosmetic-1) 22%, #fff3 38%, var(--cosmetic-2) 64%, var(--cosmetic-3));
+  filter: drop-shadow(0 2px 3px #0008) drop-shadow(0 0 10px color-mix(in srgb, var(--cosmetic-1) 42%, transparent));
+}
+.cosmetic-avatar-frame[data-variant="royal"] .cosmetic-avatar-frame__motif {
+  inset: -17px;
+  border: 2px solid color-mix(in srgb, var(--cosmetic-1) 34%, transparent);
+  border-left-width: 5px;
+  border-right-width: 5px;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cosmetic-2) 24%, transparent);
+}
+.cosmetic-avatar-frame[data-variant="royal"] .cosmetic-avatar-frame__ornament {
+  top: -29px;
+  width: 34px;
+  height: 26px;
+  opacity: 1;
+}
+.cosmetic-avatar-frame[data-variant="royal"] .cosmetic-avatar-frame__ornament::before {
+  inset: 0;
+  background: linear-gradient(180deg, #fff7b2, var(--cosmetic-1) 48%, var(--cosmetic-2));
+  clip-path: polygon(4% 84%, 10% 28%, 31% 58%, 50% 5%, 69% 58%, 90% 28%, 96% 84%, 82% 100%, 18% 100%);
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--cosmetic-1) 65%, transparent));
+}
+.cosmetic-avatar-frame[data-variant="royal"] .cosmetic-avatar-frame__ornament::after {
+  left: 50%; top: 13px; width: 5px; aspect-ratio: 1; translate: -50% 0; rotate: 45deg;
+  background: #fef3c7;
+  box-shadow: -12px 3px 0 color-mix(in srgb, var(--cosmetic-2) 70%, white), 12px 3px 0 color-mix(in srgb, var(--cosmetic-2) 70%, white);
+}
+.cosmetic-avatar-frame[data-variant="royal"] .cosmetic-avatar-frame__particles {
+  opacity: .9;
+  background:
+    radial-gradient(circle at 1% 50%, #fff7b2 0 2px, var(--cosmetic-1) 2.5px 4px, transparent 4.5px),
+    radial-gradient(circle at 99% 50%, #fff7b2 0 2px, var(--cosmetic-1) 2.5px 4px, transparent 4.5px),
+    radial-gradient(circle at 50% 99%, #e9d5ff 0 2px, var(--cosmetic-2) 2.5px 4px, transparent 4.5px);
+}
 
-.cosmetic-avatar-frame[data-variant="nebula"]::before { background: conic-gradient(from 40deg, var(--cosmetic-1), var(--cosmetic-2), transparent 32%, var(--cosmetic-3), var(--cosmetic-1), transparent 71%, var(--cosmetic-2)); animation: cosmetic-frame-spin 9s linear infinite; }
-.cosmetic-avatar-frame[data-variant="nebula"] .cosmetic-avatar-frame__orbit,
-.cosmetic-avatar-frame[data-variant="galaxy"] .cosmetic-avatar-frame__orbit { inset: -18px; opacity: .8; border: 3px dotted color-mix(in srgb, var(--cosmetic-1) 56%, transparent); animation: cosmetic-frame-spin 18s linear infinite reverse; }
-.cosmetic-avatar-frame[data-variant="galaxy"]::after { opacity: 1; animation: cosmetic-breathe 2.8s ease-in-out infinite; }
+/* Nebula: cloudy gas knots with stardust, visibly softer than Galaxy. */
+.cosmetic-avatar-frame[data-variant="nebula"]::before {
+  inset: -8px;
+  padding: 3px;
+  background: conic-gradient(from 40deg, var(--cosmetic-1), var(--cosmetic-2), transparent 29%, var(--cosmetic-3), var(--cosmetic-1), transparent 69%, var(--cosmetic-2));
+  animation: cosmetic-frame-spin 11s linear infinite;
+}
+.cosmetic-avatar-frame[data-variant="nebula"] .cosmetic-avatar-frame__aura {
+  inset: -30px;
+  opacity: .92;
+  background:
+    radial-gradient(ellipse at 30% 36%, color-mix(in srgb, var(--cosmetic-2) 42%, transparent), transparent 34%),
+    radial-gradient(ellipse at 74% 65%, color-mix(in srgb, var(--cosmetic-3) 36%, transparent), transparent 38%),
+    radial-gradient(circle at 60% 20%, color-mix(in srgb, var(--cosmetic-1) 28%, transparent), transparent 30%);
+  filter: blur(9px);
+  animation: cosmetic-frame-nebula 6s ease-in-out infinite alternate;
+}
+.cosmetic-avatar-frame[data-variant="nebula"] .cosmetic-avatar-frame__particles {
+  opacity: .9;
+  background:
+    radial-gradient(circle at 14% 24%, #fff 0 1.4px, transparent 2px),
+    radial-gradient(circle at 88% 30%, #fff 0 1px, transparent 1.7px),
+    radial-gradient(circle at 78% 88%, #fff 0 1.6px, transparent 2.2px),
+    radial-gradient(circle at 24% 82%, #ddd6fe 0 1.2px, transparent 1.9px),
+    radial-gradient(circle at 50% 3%, #cffafe 0 1px, transparent 1.7px);
+  animation: cosmetic-frame-twinkle 2.5s ease-in-out infinite alternate;
+}
+
+/* Galaxy: two orbital planes, a planet, and dense stars. */
+.cosmetic-avatar-frame[data-variant="galaxy"]::before {
+  inset: -8px;
+  padding: 4px;
+  background: conic-gradient(from 0deg, var(--cosmetic-1), var(--cosmetic-2), var(--cosmetic-3), #22d3ee, var(--cosmetic-1));
+  animation: cosmetic-frame-spin 6.8s linear infinite;
+}
+.cosmetic-avatar-frame[data-variant="galaxy"] .cosmetic-avatar-frame__orbit {
+  inset: -21px;
+  opacity: .82;
+  border: 1px solid color-mix(in srgb, var(--cosmetic-1) 58%, transparent);
+  transform: rotate(58deg) scaleY(.63);
+  box-shadow: 0 0 7px color-mix(in srgb, var(--cosmetic-2) 40%, transparent);
+  animation: cosmetic-galaxy-orbit 9s linear infinite;
+}
+.cosmetic-avatar-frame[data-variant="galaxy"] .cosmetic-avatar-frame__orbit::before {
+  inset: -5px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--cosmetic-3) 52%, transparent);
+  transform: rotate(62deg) scaleY(.72);
+}
+.cosmetic-avatar-frame[data-variant="galaxy"] .cosmetic-avatar-frame__particles {
+  opacity: 1;
+  background:
+    radial-gradient(circle at 4% 56%, #fff 0 1.4px, transparent 2px),
+    radial-gradient(circle at 19% 13%, #bfdbfe 0 1px, transparent 1.7px),
+    radial-gradient(circle at 83% 17%, #f5d0fe 0 1.5px, transparent 2.1px),
+    radial-gradient(circle at 94% 65%, #fff 0 1px, transparent 1.6px),
+    radial-gradient(circle at 72% 94%, #a5f3fc 0 1.4px, transparent 2px),
+    radial-gradient(circle at 27% 91%, #fff 0 1px, transparent 1.6px);
+  animation: cosmetic-frame-twinkle 2.2s ease-in-out infinite alternate;
+}
+.cosmetic-avatar-frame[data-variant="galaxy"] .cosmetic-avatar-frame__particles::after {
+  right: -2px;
+  top: 29%;
+  width: 7px;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 30%, #fff, var(--cosmetic-3) 24%, var(--cosmetic-2) 70%);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--cosmetic-2) 68%, transparent);
+  animation: cosmetic-frame-planet 5s ease-in-out infinite alternate;
+}
 
 /* Profile accents ---------------------------------------------------------- */
 
@@ -1625,6 +2014,48 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
 /* Cosmetic motion ---------------------------------------------------------- */
 
 @keyframes cosmetic-frame-spin { to { transform: rotate(360deg); } }
+@keyframes cosmetic-frame-tide {
+  0% { transform: rotate(-5deg) scale(.97); }
+  55% { transform: rotate(7deg) scale(1.04); }
+  100% { transform: rotate(12deg) scale(.99); }
+}
+@keyframes cosmetic-frame-float { from { transform: translate3d(-2px, 2px, 0); } to { transform: translate3d(3px, -4px, 0); } }
+@keyframes cosmetic-frame-heartbeat {
+  0%, 38%, 100% { transform: scale(1); filter: brightness(1); }
+  44% { transform: scale(1.055); filter: brightness(1.22); }
+  51% { transform: scale(.985); }
+  58% { transform: scale(1.035); filter: brightness(1.12); }
+}
+@keyframes cosmetic-frame-twinkle { from { opacity: .45; filter: brightness(.9); } to { opacity: 1; filter: brightness(1.35); } }
+@keyframes cosmetic-frame-flame { from { transform: scale(.96) rotate(-1deg); filter: brightness(.92); } to { transform: scale(1.035) rotate(1.5deg); filter: brightness(1.2); } }
+@keyframes cosmetic-frame-embers {
+  0% { transform: translateY(5px) scale(.8); opacity: .2; }
+  35% { opacity: 1; }
+  100% { transform: translateY(-9px) scale(1.15); opacity: .08; }
+}
+@keyframes cosmetic-frame-toxic {
+  0%, 100% { transform: rotate(-3deg) scale(.98); }
+  50% { transform: rotate(4deg) scale(1.04); }
+}
+@keyframes cosmetic-prism-facet {
+  from { transform: rotate(-2deg) scale(.98); filter: hue-rotate(0deg) brightness(.95); }
+  to { transform: rotate(3deg) scale(1.03); filter: hue-rotate(24deg) brightness(1.22); }
+}
+@keyframes cosmetic-frame-petals { to { transform: rotate(360deg); } }
+@keyframes cosmetic-frame-orbit { to { transform: rotate(360deg); } }
+@keyframes cosmetic-frame-solar { to { transform: rotate(360deg); } }
+@keyframes cosmetic-frame-nebula {
+  from { transform: translate3d(-4px, -2px, 0) scale(.98) rotate(-3deg); }
+  to { transform: translate3d(5px, 3px, 0) scale(1.05) rotate(4deg); }
+}
+@keyframes cosmetic-galaxy-orbit {
+  from { transform: rotate(58deg) scaleY(.63) rotate(0deg); }
+  to { transform: rotate(58deg) scaleY(.63) rotate(360deg); }
+}
+@keyframes cosmetic-frame-planet {
+  from { transform: translate3d(-2px, -2px, 0) scale(.9); filter: brightness(.9); }
+  to { transform: translate3d(3px, 4px, 0) scale(1.12); filter: brightness(1.2); }
+}
 @keyframes cosmetic-breathe { 0%, 100% { opacity: .58; transform: scale(.98); } 50% { opacity: 1; transform: scale(1.035); } }
 @keyframes cosmetic-pulse-ring { 0% { opacity: .8; transform: scale(.92); } 70%, 100% { opacity: 0; transform: scale(1.16); } }
 @keyframes cosmetic-hue-breathe { 0%,100% { filter: saturate(1) brightness(1); } 50% { filter: saturate(1.35) brightness(1.15); } }

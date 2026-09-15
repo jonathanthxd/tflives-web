@@ -274,42 +274,85 @@ async function sourceReachedProductionCheckpoint(userId: string, source: Progres
   return PRODUCTION_CHECKPOINTS.get(metric)?.has(value) ?? false;
 }
 
-async function reconcileProductionAchievements(userId: string) {
-  const facts = await resolveProgressionFacts(prisma, userId);
-  const existing = await prisma.userProgressAchievement.findMany({
-    where: { userId },
-    select: { code: true },
-  });
-  const earned = new Set(existing.map((row) => row.code));
-  const candidates = PRODUCTION_PROGRESSION_ACHIEVEMENTS.filter(
-    (achievement) => !earned.has(achievement.code) && achievementRequirementsMet(achievement, facts),
-  );
-  if (!candidates.length) return [];
+export async function reconcileProgressionAchievements(userId: string) {
+  return prisma.$transaction(async (tx) => {
+    const progress = await tx.userProgress.upsert({
+      where: { userId },
+      create: { userId, xp: 0, level: 1 },
+      update: { updatedAt: new Date() },
+    });
+    const existing = await tx.userProgressAchievement.findMany({
+      where: { userId },
+      select: { code: true },
+    });
+    const unlocked = new Set(existing.map((row) => row.code as ProgressionAchievementCode));
+    const initialLevel = levelForXp(progress.xp);
+    let workingXp = progress.xp;
+    let workingLevel = initialLevel;
+    const baseFacts = await resolveProgressionFacts(tx, userId, { level: workingLevel, xp: workingXp });
+    const newlyUnlocked: ProgressionAchievementCode[] = [];
 
-  // A long-time member may satisfy many milestones on the first reconciliation.
-  // Unlock every valid one, but only notify the highest new milestone per
-  // category so production rollout never turns into a notification storm.
-  const notifyByCategory = new Map<string, string>();
-  for (const achievement of candidates) notifyByCategory.set(achievement.category, achievement.code);
-  const notifyCodes = new Set(notifyByCategory.values());
-  const unlocked: string[] = [];
+    // Reconcile from current server truth, not from historical client events.
+    // Legacy achievements may add XP, so repeat a bounded number of passes to
+    // allow those rewards to unlock level-based milestones. Production
+    // achievements grant no XP, making the loop converge immediately.
+    for (let pass = 0; pass < 5; pass += 1) {
+      const facts: ProgressionAchievementFacts = {
+        ...baseFacts,
+        level: workingLevel,
+        xp: workingXp,
+      };
+      const candidates = PROGRESSION_ACHIEVEMENTS.filter(
+        (achievement) => !unlocked.has(achievement.code) && achievementRequirementsMet(achievement, facts),
+      );
+      if (!candidates.length) break;
 
-  for (const achievement of candidates) {
-    try {
-      await prisma.$transaction(async (tx) => {
+      let xpReward = 0;
+      for (const achievement of candidates) {
         await tx.userProgressAchievement.create({ data: { userId, code: achievement.code } });
+        unlocked.add(achievement.code);
+        newlyUnlocked.push(achievement.code);
+        xpReward += achievement.xpReward;
         await awardAchievementCoins(tx, userId, `progression:${achievement.code}`, achievement.coinReward);
-        if (notifyCodes.has(achievement.code)) {
-          await createProgressNotification(tx, userId, "ACHIEVEMENT", "ProgressAchievement", achievement.code);
-        }
-      });
-      unlocked.push(achievement.code);
-    } catch (error) {
-      if (!(error instanceof Prisma.PrismaClientKnownRequestError) || error.code !== "P2002") throw error;
-    }
-  }
+      }
 
-  return unlocked;
+      workingXp += xpReward;
+      workingLevel = levelForXp(workingXp);
+    }
+
+    if (workingXp !== progress.xp || workingLevel !== progress.level) {
+      await tx.userProgress.update({
+        where: { userId },
+        data: { xp: workingXp, level: workingLevel },
+      });
+    }
+
+    for (let level = initialLevel + 1; level <= workingLevel; level += 1) {
+      await awardLevelCoins(tx, userId, level);
+    }
+
+    if (newlyUnlocked.length) {
+      // Catch-up can unlock dozens of milestones for an established member.
+      // Persist every valid unlock/reward, but surface at most one notification
+      // per category so reconciliation never becomes notification spam.
+      const notifyByCategory = new Map<string, ProgressionAchievementCode>();
+      for (const code of newlyUnlocked) {
+        const achievement = PROGRESSION_ACHIEVEMENTS_BY_CODE.get(code);
+        if (achievement) notifyByCategory.set(achievement.category, code);
+      }
+      await Promise.all(
+        [...notifyByCategory.values()].map((code) =>
+          createProgressNotification(tx, userId, "ACHIEVEMENT", "ProgressAchievement", code),
+        ),
+      );
+    }
+
+    if (workingLevel > initialLevel) {
+      await createProgressNotification(tx, userId, "LEVEL_UP", "ProgressLevel", String(workingLevel));
+    }
+
+    return newlyUnlocked;
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
 }
 
 async function createProgressNotification(
@@ -416,12 +459,11 @@ async function awardSource(
     };
   }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
 
-  // Production catalogue reconciliation is deliberately outside the XP
-  // transaction: all 200 new milestones have zero XP reward, so they cannot
-  // recursively influence levels. It also runs when the current activity hit
-  // an XP cooldown/cap, keeping message/friendship milestones accurate.
+  // Reconcile the fixed catalogue against current server facts outside the XP
+  // source transaction. This catches both current activity and milestones that
+  // may predate the achievement rollout.
   if (result.awarded || await sourceReachedProductionCheckpoint(userId, source)) {
-    await reconcileProductionAchievements(userId);
+    await reconcileProgressionAchievements(userId);
   }
 
   // Admin-created obtainable achievements continue using their independent
