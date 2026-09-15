@@ -330,3 +330,22 @@ test("public team cards reuse equipped cosmetic renderers instead of duplicating
   assert.match(css, /\.team-cosmetic-card/);
   assert.match(css, /\.team-cosmetic-card__surface \.cosmetic-profile-atmosphere/);
 });
+
+test("light mode keeps pale cosmetics legible without changing the dark recipes", () => {
+  const css = readFileSync("src/styles/globals.css", "utf8");
+  const lightSection = css.slice(
+    css.indexOf("/* Light-mode cosmetic contrast"),
+    css.indexOf("/* Cosmetics catalogue shelves"),
+  );
+
+  assert.match(lightSection, /:root:not\(\.dark\) \.cosmetic-nameplate/);
+  assert.match(lightSection, /:root:not\(\.dark\) \.cosmetic-nameplate\[data-variant="soft"\]/);
+  assert.match(lightSection, /:root:not\(\.dark\) \.cosmetic-nameplate\[data-variant="frost"\]/);
+  assert.match(lightSection, /:root:not\(\.dark\) \.cosmetic-nameplate\[data-variant="holo"\]/);
+  assert.match(lightSection, /:root:not\(\.dark\) \.cosmetic-profile-badge/);
+  assert.match(lightSection, /:root:not\(\.dark\) \.cosmetic-avatar-frame\[data-variant="petal"\]::before/);
+  assert.match(lightSection, /:root:not\(\.dark\) \.cosmetic-profile-atmosphere/);
+  assert.match(lightSection, /:root:not\(\.dark\) \.cosmetic-banner-layer/);
+  assert.match(lightSection, /var\(--cosmetic-3\)/);
+  assert.doesNotMatch(lightSection, /prefers-reduced-motion|motion-reduce|deviceMemory|hardwareConcurrency|saveData|low-power/i);
+});

@@ -2414,6 +2414,254 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
 .cosmetic-banner-layer[data-variant="void"] { mix-blend-mode: normal; background: radial-gradient(ellipse at 50% 45%, transparent 0 16%, color-mix(in srgb, var(--cosmetic-2) 25%, transparent) 31%, color-mix(in srgb, var(--cosmetic-3) 78%, transparent) 67%); }
 
 
+/* Light-mode cosmetic contrast ---------------------------------------------
+   Cosmetics are authored from their preset palette, not a second light-theme
+   catalogue. On bright surfaces we selectively deepen edges/text and increase
+   local separation so pale recipes keep their identity without becoming dark
+   recolours. Dark mode remains byte-for-byte governed by the rules above. */
+
+:root:not(.dark) .cosmetic-preview-scene {
+  box-shadow:
+    inset 0 0 0 1px hsl(var(--foreground) / .035),
+    0 18px 42px -38px hsl(var(--foreground) / .28);
+}
+
+
+:root:not(.dark) .cosmetic-avatar-frame::after {
+  border-color: color-mix(in srgb, var(--cosmetic-3) 38%, hsl(var(--border)));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--cosmetic-1) 28%, white),
+    0 0 0 1px color-mix(in srgb, var(--cosmetic-3) 12%, transparent),
+    0 0 9px color-mix(in srgb, var(--cosmetic-2) 18%, transparent);
+}
+
+:root:not(.dark) .cosmetic-avatar-frame[data-variant="mono"]::before,
+:root:not(.dark) .cosmetic-avatar-frame[data-variant="frost"]::before,
+:root:not(.dark) .cosmetic-avatar-frame[data-variant="petal"]::before,
+:root:not(.dark) .cosmetic-avatar-frame[data-variant="prism"]::before {
+  filter:
+    drop-shadow(0 0 7px color-mix(in srgb, var(--cosmetic-2) 30%, transparent))
+    drop-shadow(0 1px 2px color-mix(in srgb, var(--cosmetic-3) 52%, transparent));
+}
+
+:root:not(.dark) .cosmetic-avatar-frame[data-variant="frost"] .cosmetic-avatar-frame__piece:nth-child(-n+4),
+:root:not(.dark) .cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__piece:nth-child(n+2) {
+  filter:
+    drop-shadow(0 0 4px color-mix(in srgb, var(--cosmetic-2) 34%, transparent))
+    drop-shadow(0 1px 1px color-mix(in srgb, var(--cosmetic-3) 42%, transparent));
+}
+
+:root:not(.dark) .cosmetic-avatar-frame[data-variant="frost"] .cosmetic-avatar-frame__piece:nth-child(n+5) {
+  background: color-mix(in srgb, var(--cosmetic-2) 28%, white);
+  box-shadow:
+    0 0 7px color-mix(in srgb, var(--cosmetic-2) 70%, transparent),
+    0 1px 1px color-mix(in srgb, var(--cosmetic-3) 42%, transparent);
+}
+
+:root:not(.dark) .cosmetic-profile-atmosphere {
+  opacity: .94;
+  filter: saturate(1.18) contrast(1.04);
+}
+
+:root:not(.dark) .cosmetic-profile-atmosphere::before {
+  background: radial-gradient(circle, color-mix(in srgb, var(--cosmetic-1) 37%, transparent), transparent 65%);
+}
+
+:root:not(.dark) .cosmetic-profile-atmosphere::after {
+  background: radial-gradient(circle, color-mix(in srgb, var(--cosmetic-2) 31%, transparent), transparent 65%);
+}
+
+:root:not(.dark) .profile-cosmetic-scope [data-profile-hero] {
+  border-color: color-mix(in srgb, var(--cosmetic-3) 26%, hsl(var(--border)));
+  box-shadow:
+    0 22px 72px -38px color-mix(in srgb, var(--cosmetic-2) 48%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--cosmetic-1) 8%, transparent);
+}
+
+:root:not(.dark) .profile-cosmetic-scope [data-slot="card"] {
+  border-color: color-mix(in srgb, var(--cosmetic-3) 15%, hsl(var(--border)));
+  box-shadow: 0 18px 52px -44px color-mix(in srgb, var(--cosmetic-3) 34%, transparent);
+}
+
+
+:root:not(.dark) .cosmetic-nameplate:is(
+  [data-variant="solid"],
+  [data-variant="soft"],
+  [data-variant="glass"],
+  [data-variant="frost"],
+  [data-variant="pixel"],
+  [data-variant="chrome"],
+  [data-variant="holo"]
+) {
+  --nameplate-shadow: color-mix(in srgb, var(--cosmetic-3) 26%, transparent);
+  border-color: color-mix(in srgb, var(--cosmetic-3) 36%, hsl(var(--border)));
+  box-shadow:
+    0 .22em .72em -.32em var(--nameplate-shadow),
+    inset 0 1px 0 rgb(255 255 255 / .82);
+  color: color-mix(in srgb, var(--cosmetic-3) 78%, hsl(var(--foreground)));
+  text-shadow: 0 1px 0 rgb(255 255 255 / .48);
+}
+
+/* Rose / soft is intentionally pastel, but the label and silhouette must not
+   disappear into a white card. The palette stays rose; only local contrast is
+   deepened for the light surface. */
+:root:not(.dark) .cosmetic-nameplate[data-variant="soft"] {
+  border-color: color-mix(in srgb, var(--cosmetic-2) 48%, var(--cosmetic-3));
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--cosmetic-1) 38%, white),
+    color-mix(in srgb, var(--cosmetic-2) 28%, white)
+  );
+  color: color-mix(in srgb, var(--cosmetic-3) 86%, hsl(var(--foreground)));
+  box-shadow:
+    0 .24em .8em -.34em color-mix(in srgb, var(--cosmetic-2) 42%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / .9),
+    inset 0 0 0 1px color-mix(in srgb, var(--cosmetic-1) 18%, transparent);
+}
+
+:root:not(.dark) .cosmetic-nameplate[data-variant="soft"] .cosmetic-nameplate__microfx {
+  opacity: .9;
+}
+
+:root:not(.dark) .cosmetic-nameplate[data-variant="solid"] {
+  border-color: color-mix(in srgb, var(--cosmetic-3) 35%, hsl(var(--border)));
+  background: color-mix(in srgb, var(--cosmetic-2) 20%, hsl(var(--card)));
+  color: color-mix(in srgb, var(--cosmetic-3) 82%, hsl(var(--foreground)));
+}
+
+:root:not(.dark) .cosmetic-nameplate[data-variant="glass"] {
+  border-color: color-mix(in srgb, var(--cosmetic-3) 30%, hsl(var(--border)));
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--cosmetic-1) 20%, hsl(var(--card) / .92)),
+    color-mix(in srgb, var(--cosmetic-2) 17%, hsl(var(--card) / .78))
+  );
+  color: color-mix(in srgb, var(--cosmetic-3) 80%, hsl(var(--foreground)));
+}
+
+:root:not(.dark) .cosmetic-nameplate[data-variant="frost"] {
+  color: color-mix(in srgb, var(--cosmetic-3) 88%, #0f172a);
+  border-color: color-mix(in srgb, var(--cosmetic-2) 46%, var(--cosmetic-3));
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--cosmetic-1) 60%, white),
+    color-mix(in srgb, var(--cosmetic-2) 35%, white)
+  );
+  text-shadow: 0 1px 0 #fff;
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 .22em .75em -.34em color-mix(in srgb, var(--cosmetic-2) 48%, transparent);
+}
+
+:root:not(.dark) .cosmetic-nameplate[data-variant="pixel"] {
+  color: color-mix(in srgb, var(--cosmetic-3) 86%, hsl(var(--foreground)));
+  border-color: color-mix(in srgb, var(--cosmetic-3) 58%, hsl(var(--border)));
+  background: color-mix(in srgb, var(--cosmetic-1) 18%, white);
+  box-shadow: 4px 4px 0 color-mix(in srgb, var(--cosmetic-3) 52%, hsl(var(--border)));
+  text-shadow: 1px 1px 0 rgb(255 255 255 / .8);
+}
+
+:root:not(.dark) .cosmetic-nameplate[data-variant="holo"] {
+  border-color: color-mix(in srgb, var(--cosmetic-2) 55%, var(--cosmetic-3));
+  background: color-mix(in srgb, hsl(var(--card)) 74%, var(--cosmetic-1) 26%);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / .72),
+    0 .2em .72em -.3em color-mix(in srgb, var(--cosmetic-2) 42%, transparent);
+}
+
+:root:not(.dark) .cosmetic-nameplate[data-variant="holo"] .cosmetic-nameplate__label {
+  background: linear-gradient(
+    100deg,
+    color-mix(in srgb, var(--cosmetic-1) 72%, var(--cosmetic-3)),
+    color-mix(in srgb, var(--cosmetic-2) 72%, #334155),
+    color-mix(in srgb, var(--cosmetic-3) 80%, #1e293b),
+    color-mix(in srgb, var(--cosmetic-1) 72%, var(--cosmetic-3))
+  );
+  background-size: 240% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* These recipes deliberately own a dark/saturated plate. Keep their original
+   foreground logic instead of forcing the generic light-surface ink onto them. */
+:root:not(.dark) .cosmetic-nameplate[data-variant="neon"] {
+  color: var(--cosmetic-1);
+  text-shadow: 0 0 .35em var(--cosmetic-1), 0 0 .8em var(--cosmetic-2);
+}
+
+:root:not(.dark) .cosmetic-nameplate[data-variant="matrix"] {
+  color: var(--cosmetic-1);
+  text-shadow: 0 0 .45em var(--cosmetic-2);
+}
+
+:root:not(.dark) .cosmetic-nameplate[data-variant="flame"],
+:root:not(.dark) .cosmetic-nameplate[data-variant="molten"] {
+  color: #fff7ed;
+  text-shadow: 0 1px 2px rgb(69 10 10 / .55);
+}
+
+:root:not(.dark) .cosmetic-nameplate[data-variant="aurora"],
+:root:not(.dark) .cosmetic-nameplate[data-variant="sunset"],
+:root:not(.dark) .cosmetic-nameplate[data-variant="galaxy"] {
+  color: white;
+  text-shadow: 0 1px 2px rgb(15 23 42 / .5);
+}
+
+:root:not(.dark) .cosmetic-nameplate[data-variant="royal"] {
+  color: #fff7c2;
+  text-shadow: 0 1px 2px rgb(30 10 60 / .65);
+}
+
+:root:not(.dark) .cosmetic-nameplate[data-variant="void"] {
+  color: color-mix(in srgb, var(--cosmetic-1) 78%, white);
+  text-shadow: 0 0 .5em var(--cosmetic-2);
+}
+
+:root:not(.dark) .cosmetic-nameplate[data-variant="chrome"] {
+  color: #0f172a;
+  border-color: color-mix(in srgb, var(--cosmetic-3) 32%, #94a3b8);
+  box-shadow:
+    0 .2em .7em -.35em rgb(15 23 42 / .35),
+    inset 0 1px 0 #fff;
+}
+
+:root:not(.dark) .cosmetic-profile-badge {
+  border-color: color-mix(in srgb, var(--cosmetic-3) 46%, hsl(var(--border)));
+  filter: drop-shadow(0 .18rem .3rem color-mix(in srgb, var(--cosmetic-3) 28%, transparent));
+  text-shadow: 0 1px 3px rgb(15 23 42 / .55);
+}
+
+:root:not(.dark) .cosmetic-profile-badge::after {
+  border-color: color-mix(in srgb, var(--cosmetic-3) 30%, transparent);
+  opacity: .82;
+}
+
+:root:not(.dark) .cosmetic-profile-badge[data-variant="frost"] {
+  color: color-mix(in srgb, var(--cosmetic-3) 88%, #0f172a);
+  background: linear-gradient(145deg, #fff, color-mix(in srgb, var(--cosmetic-1) 52%, white), color-mix(in srgb, var(--cosmetic-2) 44%, white));
+  text-shadow: 0 1px 0 #fff;
+}
+
+:root:not(.dark) .cosmetic-profile-badge[data-variant="ghost"] {
+  opacity: 1;
+  border-color: color-mix(in srgb, var(--cosmetic-3) 45%, hsl(var(--border)));
+}
+
+:root:not(.dark) .cosmetic-profile-badge[data-variant="metal"],
+:root:not(.dark) .cosmetic-profile-badge[data-variant="gem"] {
+  border-color: color-mix(in srgb, var(--cosmetic-3) 52%, #64748b);
+}
+
+:root:not(.dark) .cosmetic-banner-layer {
+  opacity: .94;
+  filter: saturate(1.08) contrast(1.03);
+}
+
+:root:not(.dark) .team-cosmetic-card__banner .cosmetic-banner-layer {
+  opacity: .88;
+}
+
+
 /* Cosmetics catalogue shelves --------------------------------------------- */
 
 .cosmetics-shelf {
