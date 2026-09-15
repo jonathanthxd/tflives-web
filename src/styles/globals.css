@@ -2415,10 +2415,54 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
 
 /* Messaging cosmetics ----------------------------------------------------- */
 
-/* Compact global-chat avatars keep the portrait readable without letting
-   large frame ornaments dominate the narrow floating panel. */
+/* Chat-density avatar frames ------------------------------------------------
+   Profile frames are intentionally theatrical. Messaging needs the same
+   identity in a much denser information surface, so chat keeps the ring and
+   signature details while shrinking the atmosphere/ornament envelope. The
+   preset itself is unchanged; this is a presentation context, not a second
+   cosmetic catalogue. */
+.tfl-chat-avatar-frame {
+  --frame-ring: 4px;
+}
+
+.tfl-chat-avatar-frame::before {
+  inset: -5px;
+  padding: 2px;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--cosmetic-2) 38%, transparent));
+}
+
+.tfl-chat-avatar-frame::after {
+  inset: -2px;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--cosmetic-3) 18%, transparent),
+    0 0 5px color-mix(in srgb, var(--cosmetic-2) 15%, transparent);
+}
+
+.tfl-chat-avatar-frame .cosmetic-avatar-frame__aura {
+  inset: -11px;
+  scale: .72;
+  filter: blur(6px);
+  opacity: .28;
+}
+
+.tfl-chat-avatar-frame .cosmetic-avatar-frame__motif,
+.tfl-chat-avatar-frame .cosmetic-avatar-frame__signature,
+.tfl-chat-avatar-frame .cosmetic-avatar-frame__orbit,
+.tfl-chat-avatar-frame .cosmetic-avatar-frame__particles,
+.tfl-chat-avatar-frame .cosmetic-avatar-frame__ambient,
+.tfl-chat-avatar-frame .cosmetic-avatar-frame__ornament {
+  scale: .68;
+  transform-origin: center;
+}
+
+.tfl-chat-avatar-frame .cosmetic-avatar-frame__details {
+  scale: .60;
+  transform-origin: center;
+  opacity: .78;
+}
+
 .cosmetic-avatar-frame--global-chat .cosmetic-avatar-frame__aura {
-  opacity: .46;
+  opacity: .22;
 }
 
 /* Avatar decorations stay visually present in messaging, but do not animate
@@ -2448,6 +2492,32 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
   animation-play-state: running !important;
 }
 
+/* Global Chat uses the same calm-by-default behavior as private messaging.
+   Motion returns only when the user intentionally inspects the avatar. */
+.tfl-chat-avatar-frame,
+.tfl-chat-avatar-frame::before,
+.tfl-chat-avatar-frame::after,
+.tfl-chat-avatar-frame *,
+.tfl-chat-avatar-frame *::before,
+.tfl-chat-avatar-frame *::after {
+  animation-play-state: paused !important;
+}
+
+.tfl-chat-avatar-frame:hover,
+.tfl-chat-avatar-frame:hover::before,
+.tfl-chat-avatar-frame:hover::after,
+.tfl-chat-avatar-frame:hover *,
+.tfl-chat-avatar-frame:hover *::before,
+.tfl-chat-avatar-frame:hover *::after,
+.tfl-chat-avatar-frame:focus-within,
+.tfl-chat-avatar-frame:focus-within::before,
+.tfl-chat-avatar-frame:focus-within::after,
+.tfl-chat-avatar-frame:focus-within *,
+.tfl-chat-avatar-frame:focus-within *::before,
+.tfl-chat-avatar-frame:focus-within *::after {
+  animation-play-state: running !important;
+}
+
 .tfl-messages-shell {
   isolation: isolate;
   backdrop-filter: blur(18px) saturate(1.08);
@@ -2469,6 +2539,11 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
   pointer-events: auto;
 }
 
+.tfl-global-message-row {
+  margin-inline: -.75rem;
+  padding-inline: .75rem;
+}
+
 @media (min-width: 640px) {
   .tfl-message-row {
     margin-inline: -1rem;
@@ -2488,6 +2563,10 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
 }
 
 :root:not(.dark) .tfl-message-row:hover {
+  background: hsl(var(--foreground) / .055);
+}
+
+:root:not(.dark) .tfl-global-message-row:hover {
   background: hsl(var(--foreground) / .055);
 }
 

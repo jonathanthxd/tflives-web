@@ -14,7 +14,7 @@ import { CosmeticAvatarFrame } from "@/modules/cosmetics/components/cosmetic-ren
 import { cosmeticVisualsByType, type SafeCosmeticVisual } from "@/modules/cosmetics/visuals";
 import { UserAvatar } from "@/modules/profiles/components/user-identity";
 import { formatUserTime } from "@/shared/lib/date-time";
-import { ChevronLeft, MessageSquarePlus, MoreHorizontal, Plus, Search, Send, Smile, Users } from "lucide-react";
+import { ChevronLeft, Flag, MessageSquarePlus, MoreHorizontal, Pencil, Plus, Reply, Search, Send, Smile, Trash2, Users } from "lucide-react";
 
 interface PersonSummary {
   id: string;
@@ -65,10 +65,10 @@ function displayNameOf(person: PersonSummary) {
 function Avatar({ person, compact = false }: { person: PersonSummary; compact?: boolean }) {
   const cosmetics = cosmeticVisualsByType(person.cosmetics);
   return (
-    <span className={`relative grid shrink-0 place-items-center ${compact ? "size-10" : "size-11"}`}>
+    <span className={`relative grid shrink-0 place-items-center ${compact ? "size-9" : "size-10"}`}>
       <CosmeticAvatarFrame
         preset={cosmetics.AVATAR_FRAME?.visualPreset}
-        className={`tfl-messaging-avatar absolute ${compact ? "scale-[0.70]" : "scale-[0.78]"}`}
+        className={`tfl-chat-avatar-frame tfl-messaging-avatar absolute ${compact ? "scale-[0.62]" : "scale-[0.68]"}`}
       >
         <UserAvatar identity={person} className="size-14 shrink-0 text-sm" />
       </CosmeticAvatarFrame>
@@ -829,7 +829,7 @@ export default function MessagesPage() {
                         const isEditing = editingMessageId === m.id;
                         const canEdit = mine && !m.deletedAt && !!m.content.trim() && messageClock > 0 && messageClock - new Date(m.createdAt).getTime() <= 15 * 60_000;
                         return (
-                          <article id={`message-${m.id}`} key={m.id} className={`tfl-message-row group relative grid grid-cols-[48px_minmax(0,1fr)] gap-2 py-0.5 transition-colors hover:bg-foreground/[0.045] ${grouped ? "mt-0" : "mt-3"}`}>
+                          <article id={`message-${m.id}`} key={m.id} className={`tfl-message-row group relative grid grid-cols-[44px_minmax(0,1fr)] gap-1.5 py-0.5 transition-colors hover:bg-foreground/[0.045] ${grouped ? "mt-0" : "mt-2.5"}`}>
                             <div className="flex justify-center pt-1">
                               {grouped ? <time className="mt-1 hidden text-[9px] text-muted-foreground/70 group-hover:block">{formatUserTime(m.createdAt, locale)}</time> : <Avatar person={m.sender} compact />}
                             </div>
@@ -879,9 +879,9 @@ export default function MessagesPage() {
                               <div className="tfl-message-actions absolute right-3 top-0 z-10 flex -translate-y-1/2 items-center rounded-lg border border-border/70 bg-card/95 px-0.5 opacity-100 shadow-md backdrop-blur-sm transition-opacity sm:opacity-0 sm:group-hover:opacity-100 focus-within:opacity-100">
                                 {quickReactions.filter((emoji) => !m.reactions.some((reaction) => reaction.emoji === emoji)).slice(0, 2).map((emoji) => <button key={emoji} type="button" onClick={() => void reactToMessage(m, emoji)} aria-label={`${t("reaccionar")} ${emoji}`} className="grid size-7 place-items-center rounded-md text-xs hover:bg-primary/10">{emoji}</button>)}
                                 <button type="button" onPointerDown={(event) => { event.preventDefault(); event.stopPropagation(); const rect = event.currentTarget.getBoundingClientRect(); setReactionPicker((current) => current?.messageId === m.id ? null : { messageId: m.id, anchorRect: { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, width: rect.width, height: rect.height } }); }} aria-label={t("masReacciones")} aria-expanded={reactionPicker?.messageId === m.id} className="grid size-7 place-items-center rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary"><Smile className="size-3.5" aria-hidden="true" /></button>
-                                <button type="button" onClick={() => setReplyToMessage(m)} className="grid h-7 place-items-center rounded-md px-2 text-[10px] text-muted-foreground hover:bg-primary/10 hover:text-primary">{t("responder")}</button>
-                                {mine && canEdit && <button type="button" onClick={() => startEditingMessage(m)} className="grid h-7 place-items-center rounded-md px-2 text-[10px] text-muted-foreground hover:bg-primary/10 hover:text-primary">{t("editarMensaje")}</button>}
-                                {mine ? <button type="button" onClick={() => setDeleteTarget(m)} className="grid h-7 place-items-center rounded-md px-2 text-[10px] text-muted-foreground hover:bg-destructive/10 hover:text-destructive">{t("eliminarMensaje")}</button> : <button type="button" aria-label={t("reportar")} onClick={() => { setReportTarget({ targetType: "DIRECT_MESSAGE", targetId: m.id }); setShowReport(true); }} className="grid h-7 place-items-center rounded-md px-2 text-[10px] text-muted-foreground hover:bg-destructive/10 hover:text-destructive">⚑</button>}
+                                <button type="button" onClick={() => setReplyToMessage(m)} title={t("responder")} aria-label={t("responder")} className="grid size-7 place-items-center rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary"><Reply className="size-3.5" aria-hidden="true" /></button>
+                                {mine && canEdit && <button type="button" onClick={() => startEditingMessage(m)} title={t("editarMensaje")} aria-label={t("editarMensaje")} className="grid size-7 place-items-center rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary"><Pencil className="size-3.5" aria-hidden="true" /></button>}
+                                {mine ? <button type="button" onClick={() => setDeleteTarget(m)} title={t("eliminarMensaje")} aria-label={t("eliminarMensaje")} className="grid size-7 place-items-center rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive"><Trash2 className="size-3.5" aria-hidden="true" /></button> : <button type="button" title={t("reportar")} aria-label={t("reportar")} onClick={() => { setReportTarget({ targetType: "DIRECT_MESSAGE", targetId: m.id }); setShowReport(true); }} className="grid size-7 place-items-center rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive"><Flag className="size-3.5" aria-hidden="true" /></button>}
                               </div>
                             )}
                           </article>

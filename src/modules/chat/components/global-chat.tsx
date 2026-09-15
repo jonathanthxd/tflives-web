@@ -41,12 +41,12 @@ function personName(person: Person) {
 function ChatAvatar({ person }: { person: Person }) {
   const cosmetics = cosmeticVisualsByType(person.cosmetics);
   return (
-    <span className="relative mt-0.5 grid size-8 shrink-0 place-items-center self-start">
+    <span className="relative mt-0.5 grid size-7 shrink-0 place-items-center self-start">
       <CosmeticAvatarFrame
         preset={cosmetics.AVATAR_FRAME?.visualPreset}
-        className="cosmetic-avatar-frame--global-chat absolute scale-[0.68]"
+        className="tfl-chat-avatar-frame cosmetic-avatar-frame--global-chat absolute scale-[0.56]"
       >
-        <UserAvatar identity={person} className="size-11 text-[10px]" />
+        <UserAvatar identity={person} className="size-12 text-[10px]" />
       </CosmeticAvatarFrame>
     </span>
   );
@@ -411,37 +411,64 @@ export default function GlobalChat({ userId }: { userId: string }) {
           {error && <div role="alert" className="mx-3 mt-2 flex items-center justify-between gap-2 rounded-lg bg-destructive/10 px-2.5 py-2 text-xs text-destructive"><span>{error}</span>{retryPayload && <button type="button" onClick={() => void send(retryPayload)} className="font-semibold underline">{t("reintentar")}</button>}</div>}
           <div ref={scrollRef} onScroll={handleScroll} className="min-h-0 flex-1 overflow-y-auto px-3 py-3" aria-live="polite">
             {nextCursor && <button type="button" onClick={loadOlder} disabled={loadingOlder} className="mb-3 w-full rounded-lg border border-border px-2 py-1.5 text-xs text-muted-foreground hover:bg-primary/5 disabled:opacity-50">{loadingOlder ? <Loader2 className="mx-auto h-3.5 w-3.5 animate-spin" /> : t("cargarAnteriores")}</button>}
-            {loading && !messages.length ? <div className="flex h-full items-center justify-center text-sm text-muted-foreground"><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t("cargando")}</div> : messages.length === 0 ? <p className="py-10 text-center text-sm text-muted-foreground">{t("sinMensajes")}</p> : <div className="space-y-3">
-              {messages.map((message) => <article id={`global-message-${message.id}`} key={message.id} className="group flex gap-2.5 py-1">
-                <ChatAvatar person={message.author} />
-                <div className="min-w-0 flex-1"><div className="flex items-baseline gap-1.5"><span className="truncate text-xs font-semibold text-foreground">{personName(message.author)}</span>{message.author.username && <span className="truncate text-[10px] text-muted-foreground">@{message.author.username}</span>}<time className="ml-auto shrink-0 text-[10px] text-muted-foreground">{formatUserTime(message.createdAt, locale)}</time></div>
-                  {message.replyTo && <button type="button" onClick={() => document.getElementById(`global-message-${message.replyTo?.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" })} className="mt-1 block max-w-full truncate border-l-2 border-primary/50 pl-2 text-left text-[11px] text-muted-foreground hover:text-primary">{personName(message.replyTo.author)}: {textPreview(message.replyTo)}</button>}
-                  {message.deletedAt ? <p className="mt-1 text-xs italic text-muted-foreground">{t("mensajeEliminado")}</p> : <><p className="whitespace-pre-wrap break-words text-sm text-foreground"><MessageText content={message.content} /></p>{message.sticker && <img src={message.sticker.assetUrl} alt={message.sticker.name} className="mt-1 h-16 w-16 object-contain" />}</>}
-                  {!message.deletedAt && <div className="mt-1.5 flex flex-wrap items-center gap-1">
-                    {message.reactions.map((reaction) => <button key={reaction.emoji} type="button" onClick={() => void react(message, reaction.emoji)} aria-label={`${t("reaccionar")}: ${reaction.emoji}`} className={`rounded-full border px-1.5 py-0.5 text-[11px] ${reaction.mine ? "border-primary/40 bg-primary/10" : "border-border hover:bg-primary/5"}`}>{reaction.emoji} {reaction.count}</button>)}
-                    {quickReactions.filter((emoji) => !message.reactions.some((reaction) => reaction.emoji === emoji)).map((emoji) => <button key={emoji} type="button" onClick={() => void react(message, emoji)} aria-label={`${t("reaccionar")}: ${emoji}`} className="rounded-full px-1 py-0.5 text-xs transition-opacity hover:bg-primary/10 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100">{emoji}</button>)}
-                    <span>
-                      <button
-                        type="button"
-                        onPointerDown={(event) => {
-                          event.preventDefault();
-                          event.stopPropagation();
-                          const rect = event.currentTarget.getBoundingClientRect();
-                          setReactionPicker((current) => current?.messageId === message.id ? null : {
-                            messageId: message.id,
-                            anchorRect: { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, width: rect.width, height: rect.height },
-                          });
-                        }}
-                        aria-label={t("masReacciones")}
-                        aria-expanded={reactionPicker?.messageId === message.id}
-                        className="grid h-8 w-8 place-items-center rounded-full border border-transparent text-muted-foreground transition-[opacity,background-color,border-color,color] hover:border-primary/20 hover:bg-primary/10 hover:text-primary sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100"
-                      ><Plus className="h-3 w-3" /></button>
-                    </span>
-                    <button type="button" onClick={() => setReplyTo(message)} className="rounded px-1 py-0.5 text-[11px] text-muted-foreground hover:bg-primary/10 hover:text-primary sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100"><Reply className="inline h-3 w-3" /> {t("responder")}</button>
-                    <button type="button" onClick={() => setReporting(message)} className="rounded p-1 text-muted-foreground hover:bg-primary/10 hover:text-primary sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100" aria-label={t("reportar")}><Flag className="h-3 w-3" /></button>
-                    {message.authorId !== userId && message.author.username && <button type="button" onClick={() => void blockAuthor(message)} className="rounded p-1 text-muted-foreground hover:bg-primary/10 hover:text-primary sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100" aria-label={t("bloquear", { name: personName(message.author) })}><X className="h-3 w-3" /></button>}
-                  </div>}</div>
-              </article>)}</div>}
+            {loading && !messages.length ? <div className="flex h-full items-center justify-center text-sm text-muted-foreground"><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t("cargando")}</div> : messages.length === 0 ? <p className="py-10 text-center text-sm text-muted-foreground">{t("sinMensajes")}</p> : <div className="space-y-0.5">
+              {messages.map((message, index) => {
+                const previous = index > 0 ? messages[index - 1] : null;
+                const grouped = !!previous
+                  && previous.authorId === message.authorId
+                  && !message.replyTo
+                  && new Date(message.createdAt).getTime() - new Date(previous.createdAt).getTime() < 5 * 60_000;
+                return (
+                  <article
+                    id={`global-message-${message.id}`}
+                    key={message.id}
+                    className={`tfl-global-message-row group relative grid grid-cols-[36px_minmax(0,1fr)] gap-1.5 py-1 transition-colors hover:bg-foreground/[0.045] ${grouped ? "mt-0" : "mt-2.5"}`}
+                  >
+                    <div className="flex justify-center pt-0.5">
+                      {grouped ? <time className="mt-1 hidden text-[9px] text-muted-foreground/70 group-hover:block">{formatUserTime(message.createdAt, locale)}</time> : <ChatAvatar person={message.author} />}
+                    </div>
+                    <div className="min-w-0 pr-1">
+                      {!grouped && (
+                        <div className="mb-0.5 flex min-w-0 items-baseline gap-1.5">
+                          <span className="truncate text-xs font-semibold text-foreground">{personName(message.author)}</span>
+                          {message.author.username && <span className="truncate text-[10px] text-muted-foreground">@{message.author.username}</span>}
+                          <time className="ml-auto shrink-0 text-[10px] text-muted-foreground">{formatUserTime(message.createdAt, locale)}</time>
+                        </div>
+                      )}
+                      {message.replyTo && <button type="button" onClick={() => document.getElementById(`global-message-${message.replyTo?.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" })} className="mb-1 block max-w-full truncate border-l-2 border-primary/50 pl-2 text-left text-[11px] text-muted-foreground hover:text-primary">{personName(message.replyTo.author)}: {textPreview(message.replyTo)}</button>}
+                      {message.deletedAt ? <p className="text-xs italic text-muted-foreground">{t("mensajeEliminado")}</p> : <><p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-foreground"><MessageText content={message.content} /></p>{message.sticker && <img src={message.sticker.assetUrl} alt={message.sticker.name} className="mt-1 h-16 w-16 object-contain" />}</>}
+                      {!message.deletedAt && message.reactions.length > 0 && <div className="mt-1 flex flex-wrap items-center gap-1">
+                        {message.reactions.map((reaction) => <button key={reaction.emoji} type="button" onClick={() => void react(message, reaction.emoji)} aria-label={`${t("reaccionar")}: ${reaction.emoji}`} className={`rounded-full border px-1.5 py-0.5 text-[11px] ${reaction.mine ? "border-primary/40 bg-primary/10 text-primary" : "border-border bg-card/60 text-foreground hover:bg-primary/5"}`}>{reaction.emoji} {reaction.count}</button>)}
+                      </div>}
+                    </div>
+
+                    {!message.deletedAt && (
+                      <div className="tfl-message-actions absolute right-2 top-0 z-10 flex -translate-y-1/2 items-center rounded-lg border border-border/70 bg-card/95 px-0.5 opacity-100 shadow-md backdrop-blur-sm transition-opacity sm:opacity-0 sm:group-hover:opacity-100 focus-within:opacity-100">
+                        {quickReactions.filter((emoji) => !message.reactions.some((reaction) => reaction.emoji === emoji)).slice(0, 2).map((emoji) => <button key={emoji} type="button" onClick={() => void react(message, emoji)} aria-label={`${t("reaccionar")}: ${emoji}`} className="grid size-7 place-items-center rounded-md text-xs hover:bg-primary/10">{emoji}</button>)}
+                        <button
+                          type="button"
+                          onPointerDown={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            const rect = event.currentTarget.getBoundingClientRect();
+                            setReactionPicker((current) => current?.messageId === message.id ? null : {
+                              messageId: message.id,
+                              anchorRect: { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, width: rect.width, height: rect.height },
+                            });
+                          }}
+                          aria-label={t("masReacciones")}
+                          aria-expanded={reactionPicker?.messageId === message.id}
+                          className="grid size-7 place-items-center rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                        ><Plus className="h-3.5 w-3.5" /></button>
+                        <button type="button" onClick={() => setReplyTo(message)} title={t("responder")} aria-label={t("responder")} className="grid size-7 place-items-center rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary"><Reply className="h-3.5 w-3.5" /></button>
+                        <button type="button" onClick={() => setReporting(message)} title={t("reportar")} aria-label={t("reportar")} className="grid size-7 place-items-center rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive"><Flag className="h-3.5 w-3.5" /></button>
+                        {message.authorId !== userId && message.author.username && <button type="button" onClick={() => void blockAuthor(message)} title={t("bloquear", { name: personName(message.author) })} aria-label={t("bloquear", { name: personName(message.author) })} className="grid size-7 place-items-center rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive"><X className="h-3.5 w-3.5" /></button>}
+                      </div>
+                    )}
+                  </article>
+                );
+              })}
+            </div>}
           </div>
           {replyTo && <div className="flex items-center gap-2 border-t border-border bg-primary/5 px-3 py-1.5 text-xs"><span className="min-w-0 flex-1 truncate">{t("respondiendoA", { name: personName(replyTo.author) })}</span><button type="button" onClick={() => setReplyTo(null)} className="text-muted-foreground hover:text-primary">{t("cancelarRespuesta")}</button></div>}
           <form onSubmit={submit} className="safe-area-bottom flex items-end gap-1 border-t border-border p-2">
