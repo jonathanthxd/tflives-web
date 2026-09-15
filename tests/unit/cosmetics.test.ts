@@ -128,22 +128,31 @@ test("purchase API ignores client price, avoids persistent purchase notification
 });
 
 
-test("all sixteen avatar frames keep dedicated layered geometry and preview headroom", () => {
+test("avatar frames 3.0 keep sixteen semantic recipes without full-frame vinyl rotation", () => {
   const css = readFileSync("src/styles/globals.css", "utf8");
   const renderer = readFileSync("src/modules/cosmetics/components/cosmetic-renderer.tsx", "utf8");
   const frameVariants = Object.values(COSMETIC_PRESETS)
     .filter((preset) => preset.type === "AVATAR_FRAME")
     .map((preset) => preset.variant);
+  const avatarCss = css.slice(
+    css.indexOf("/* Avatar frames ------------------------------------------------------------ */"),
+    css.indexOf("/* Profile accents ---------------------------------------------------------- */"),
+  );
 
   assert.equal(frameVariants.length, 16);
   assert.equal(new Set(frameVariants).size, 16);
   for (const variant of frameVariants) {
-    assert.match(css, new RegExp(`\\.cosmetic-avatar-frame\\[data-variant="${variant}"\\]`));
+    assert.match(avatarCss, new RegExp(`\.cosmetic-avatar-frame\[data-variant="${variant}"\]`));
   }
-  assert.match(renderer, /cosmetic-avatar-frame__motif/);
-  assert.match(renderer, /cosmetic-avatar-frame__orbit/);
-  assert.match(renderer, /cosmetic-avatar-frame__particles/);
-  assert.match(renderer, /cosmetic-avatar-frame__ornament/);
+  assert.doesNotMatch(avatarCss, /cosmetic-frame-spin|cosmetic-frame-petals|cosmetic-frame-orbit|cosmetic-frame-solar/);
+  assert.match(renderer, /FRAME_DETAIL_COUNTS/);
+  assert.match(renderer, /AvatarFrameDetails/);
+  assert.match(renderer, /cosmetic-avatar-frame__piece--/);
+  assert.match(css, /tfl-frame-petal-fall-a/);
+  assert.match(css, /tfl-frame-flame-tongue/);
+  assert.match(css, /tfl-frame-circuit-node/);
+  assert.match(css, /tfl-frame-toxic-drip/);
+  assert.match(css, /tfl-frame-galaxy-planet/);
   assert.match(renderer, /CosmeticAvatarFrame preset=\{preset\} className="translate-y-1"/);
 });
 
@@ -268,21 +277,21 @@ test("production cosmetic fixture contains one finalized bilingual commercial en
 });
 
 
-test("all sixteen avatar frames have dedicated structural layers and variant recipes", () => {
-  const renderer = readFileSync("src/modules/cosmetics/components/cosmetic-renderer.tsx", "utf8");
+test("sakura ornaments are free from circular clipping and profile hero allows frame overflow", () => {
   const css = readFileSync("src/styles/globals.css", "utf8");
-  const frameVariants = Object.values(COSMETIC_PRESETS)
-    .filter((preset) => preset.type === "AVATAR_FRAME")
-    .map((preset) => preset.variant);
-  assert.equal(frameVariants.length, 16);
-  assert.equal(new Set(frameVariants).size, 16);
-  assert.match(renderer, /cosmetic-avatar-frame__aura/);
-  assert.match(renderer, /cosmetic-avatar-frame__motif/);
-  assert.match(renderer, /cosmetic-avatar-frame__particles/);
-  for (const variant of frameVariants) {
-    assert.ok(css.includes(`cosmetic-avatar-frame[data-variant="${variant}"]`));
-  }
-  assert.match(css, /clip-path: polygon/);
-  assert.match(css, /cosmetic-galaxy-orbit/);
-  assert.match(css, /cosmetic-frame-embers/);
+  const profile = readFileSync("src/modules/profiles/components/profile-view.tsx", "utf8");
+  const sakuraStart = css.indexOf('/* 11 — Sakura:');
+  const sakuraEnd = css.indexOf('/* 12 — Void:', sakuraStart);
+  const sakuraCss = css.slice(sakuraStart, sakuraEnd);
+
+  assert.match(css, /\.cosmetic-avatar-frame \{[\s\S]*overflow: visible/);
+  assert.match(css, /\.cosmetic-avatar-frame__details \{[\s\S]*overflow: visible/);
+  assert.match(sakuraCss, /cosmetic-avatar-frame__piece--1/);
+  assert.match(sakuraCss, /border-top: 3px solid #9f5f55/);
+  assert.match(sakuraCss, /tfl-frame-petal-fall-a/);
+  assert.match(sakuraCss, /tfl-frame-petal-fall-b/);
+  assert.match(sakuraCss, /tfl-frame-petal-fall-c/);
+  assert.doesNotMatch(sakuraCss, /animation:\s*cosmetic-frame-spin|animation:\s*cosmetic-frame-petals/);
+  assert.match(profile, /data-profile-hero className="overflow-visible/);
+  assert.match(profile, /relative h-44 overflow-hidden rounded-t-3xl/);
 });

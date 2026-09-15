@@ -70,8 +70,8 @@ export default function ProfileView({
       </div>
 
       <Reveal className="mx-auto max-w-6xl">
-        <section data-profile-hero className="overflow-hidden rounded-3xl border border-primary/10 bg-card/40 shadow-[0_20px_60px_-30px_hsl(var(--primary)/0.35)]">
-          <div className="relative h-44 sm:h-60">
+        <section data-profile-hero className="overflow-visible rounded-3xl border border-primary/10 bg-card/40 shadow-[0_20px_60px_-30px_hsl(var(--primary)/0.35)]">
+          <div className="relative h-44 overflow-hidden rounded-t-3xl sm:h-60">
             {profile.bannerUrl ? (
               <img src={profile.bannerUrl} alt="" referrerPolicy="no-referrer" className="absolute inset-0 size-full object-cover" />
             ) : (

@@ -11,6 +11,43 @@ function styleFor(preset?: CosmeticVisualPresetKey): CSSProperties {
   return presetCssVariables(preset) as CSSProperties;
 }
 
+const FRAME_DETAIL_COUNTS: Record<string, number> = {
+  metal: 5,
+  mono: 5,
+  wave: 7,
+  pulse: 5,
+  frost: 7,
+  circuit: 8,
+  flame: 9,
+  toxic: 8,
+  prism: 8,
+  grid: 7,
+  petal: 8,
+  void: 7,
+  flare: 8,
+  royal: 7,
+  nebula: 8,
+  galaxy: 8,
+};
+
+/**
+ * Avatar-frame motion is intentionally semantic rather than shared.
+ * Each preset receives independent pieces so petals can fall, embers can rise,
+ * circuit nodes can pulse, gems can sparkle, etc. The portrait stays circular;
+ * the decorative silhouette is never clipped to that circle.
+ */
+function AvatarFrameDetails({ variant }: { variant: string }) {
+  const count = FRAME_DETAIL_COUNTS[variant] ?? 0;
+  if (!count) return null;
+  return (
+    <span aria-hidden className="cosmetic-avatar-frame__details">
+      {Array.from({ length: count }, (_, index) => (
+        <span key={index} className={`cosmetic-avatar-frame__piece cosmetic-avatar-frame__piece--${index + 1}`} />
+      ))}
+    </span>
+  );
+}
+
 export function CosmeticAvatarFrame({ preset, className, children }: { preset?: CosmeticVisualPresetKey; className?: string; children: ReactNode }) {
   const definition = preset ? COSMETIC_PRESETS[preset] : null;
   if (!definition || definition.type !== "AVATAR_FRAME") return <span className={cn("relative inline-grid shrink-0 place-items-center", className)}>{children}</span>;
@@ -21,6 +58,7 @@ export function CosmeticAvatarFrame({ preset, className, children }: { preset?: 
       <span aria-hidden className="cosmetic-avatar-frame__orbit" />
       <span aria-hidden className="cosmetic-avatar-frame__particles" />
       <span aria-hidden className="cosmetic-avatar-frame__ornament" />
+      <AvatarFrameDetails variant={definition.variant} />
       <span className="relative z-[4] inline-grid place-items-center">{children}</span>
     </span>
   );
