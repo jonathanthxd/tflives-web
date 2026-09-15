@@ -12,6 +12,7 @@ export const ADMIN_SECTIONS = [
   "modalities",
   "users",
   "reports",
+  "chat",
   "moderation",
   "staffLog",
   "analytics",
@@ -38,6 +39,7 @@ export const SECTION_ACCESS: Record<AdminSection, Role[]> = {
   modalities: ["ADMIN"],
   users: ["ADMIN"],
   reports: ["MOD", "ADMIN"],
+  chat: ["MOD", "ADMIN"],
   moderation: ["MOD", "ADMIN"],
   staffLog: ["ADMIN"],
   analytics: ["ADMIN"],
@@ -123,6 +125,7 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
     items: [
       { section: "users", href: "/admin/users", label: "navUsers" },
       { section: "reports", href: "/admin/reports", label: "navReports" },
+      { section: "chat", href: "/admin/chat", label: "navChat" },
       { section: "moderation", href: "/admin/moderation", label: "navModeration" },
       { section: "creators", href: "/admin/creators", label: "navCreators" },
       { section: "team", href: "/admin/team", label: "navTeam" },

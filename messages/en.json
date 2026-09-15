@@ -836,7 +836,9 @@
     "hideError": "Couldn't hide the message",
     "context": "Context",
     "messageDeleted": "Message removed",
-    "hideMessage": "Hide message"
+    "hideMessage": "Hide message",
+    "title": "Chat & stickers",
+    "subtitle": "Manage the official stickers available in global chat and direct messages."
   },
   "Cosmetics": {
     "eyebrow": "TFLives identity",
@@ -1161,7 +1163,8 @@
     "navAnalytics": "Analytics",
     "activeUsers7d": "Active users (7d)",
     "errorsLast24h": "Errors (24h)",
-    "significantEventsLast24h": "Significant events (24h)"
+    "significantEventsLast24h": "Significant events (24h)",
+    "navChat": "Chat & stickers"
   },
   "Analytics": {
     "title": "Analytics and health",

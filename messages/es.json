@@ -836,7 +836,9 @@
     "hideError": "No se pudo ocultar el mensaje",
     "context": "Contexto",
     "messageDeleted": "Mensaje eliminado",
-    "hideMessage": "Ocultar mensaje"
+    "hideMessage": "Ocultar mensaje",
+    "title": "Chat y stickers",
+    "subtitle": "Gestioná los stickers oficiales disponibles en el chat global y los mensajes privados."
   },
   "Cosmetics": {
     "eyebrow": "Identidad de TFLives",
@@ -1161,7 +1163,8 @@
     "navAnalytics": "Analítica",
     "activeUsers7d": "Usuarios activos (7d)",
     "errorsLast24h": "Errores (24 h)",
-    "significantEventsLast24h": "Eventos significativos (24 h)"
+    "significantEventsLast24h": "Eventos significativos (24 h)",
+    "navChat": "Chat y stickers"
   },
   "Analytics": {
     "title": "Analítica y salud",

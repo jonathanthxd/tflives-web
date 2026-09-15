@@ -12,7 +12,7 @@ function failure(error: unknown) {
 
 export async function GET() {
   try {
-    await requireAdminSection("reports");
+    await requireAdminSection("chat");
     return NextResponse.json({ stickers: await listStickersForAdmin() });
   } catch (error) {
     return failure(error);
@@ -21,7 +21,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    await requireAdminSection("reports");
+    await requireAdminSection("chat");
     const body = await request.json();
     const sticker = await saveSticker(body);
     return NextResponse.json({ sticker }, { status: 201 });
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
-    await requireAdminSection("reports");
+    await requireAdminSection("chat");
     const body = await request.json();
     if (typeof body.id !== "string") return NextResponse.json({ error: "Sticker inválido" }, { status: 400 });
     const sticker = await saveSticker(body);

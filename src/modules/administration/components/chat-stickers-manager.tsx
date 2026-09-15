@@ -34,7 +34,7 @@ export default function ChatStickersManager({ initialStickers }: { initialSticke
   }
 
   return (
-    <section className="mt-10 rounded-2xl border border-primary/10 bg-card/20 p-5">
+    <section className="tfl-glass tfl-glass-soft rounded-2xl border border-primary/10 p-5">
       <h2 className="font-display text-lg font-semibold text-foreground">{t("stickersTitle")}</h2>
       <p className="mt-1 text-sm text-muted-foreground">{t("stickersDescription")}</p>
       {error && <p role="alert" className="mt-3 text-sm text-destructive">{error}</p>}
