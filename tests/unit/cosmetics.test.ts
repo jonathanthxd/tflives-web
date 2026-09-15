@@ -349,3 +349,31 @@ test("light mode keeps pale cosmetics legible without changing the dark recipes"
   assert.match(lightSection, /var\(--cosmetic-3\)/);
   assert.doesNotMatch(lightSection, /prefers-reduced-motion|motion-reduce|deviceMemory|hardwareConcurrency|saveData|low-power/i);
 });
+
+test("chat surfaces reuse equipped cosmetic renderers and keep DM banner styling inside the shared cosmetic renderer", () => {
+  const profiles = readFileSync("src/modules/profiles/service.ts", "utf8");
+  const globalService = readFileSync("src/modules/chat/service.ts", "utf8");
+  const globalChat = readFileSync("src/modules/chat/components/global-chat.tsx", "utf8");
+  const messagingService = readFileSync("src/modules/messaging/service.ts", "utf8");
+  const messagesPage = readFileSync("src/app/[locale]/(platform)/mensajes/page.tsx", "utf8");
+  const renderer = readFileSync("src/modules/cosmetics/components/cosmetic-renderer.tsx", "utf8");
+  const css = readFileSync("src/styles/globals.css", "utf8");
+
+  assert.match(profiles, /publicIdentityWithCosmeticsSelect/);
+  assert.match(profiles, /toPublicIdentityWithCosmetics/);
+  assert.match(profiles, /isEntitlementActive/);
+  assert.match(globalService, /toPublicIdentityWithCosmetics/);
+  assert.match(globalChat, /CosmeticAvatarFrame/);
+  assert.match(globalChat, /cosmeticVisualsByType/);
+  assert.match(messagingService, /publicIdentityWithCosmeticsSelect/);
+  assert.match(messagingService, /toPublicIdentityWithCosmetics/);
+  assert.match(messagesPage, /CosmeticAvatarFrame/);
+  assert.match(messagesPage, /CosmeticMessageFrame/);
+  assert.match(messagesPage, /messageBannerPreset/);
+  assert.match(messagesPage, /grid-cols-\[300px_minmax\(0,1fr\)\]/);
+  assert.match(renderer, /export function CosmeticMessageFrame/);
+  assert.match(renderer, /CosmeticBannerLayer preset=\{preset\}/);
+  assert.match(css, /\.cosmetic-message-frame__edge/);
+  assert.match(css, /\.tfl-messages-shell/);
+  assert.doesNotMatch(css.slice(css.indexOf("\/\* Messaging cosmetics"), css.indexOf("\/\* Light-mode cosmetic contrast")), /prefers-reduced-motion|motion-reduce|deviceMemory|hardwareConcurrency|saveData|low-power/i);
+});

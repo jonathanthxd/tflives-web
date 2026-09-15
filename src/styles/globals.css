@@ -2413,6 +2413,94 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
 .cosmetic-banner-layer[data-variant="royal"]::after { left: 50%; top: 10%; width: 8px; height: 8px; translate: -50% -50%; rotate: 45deg; background: var(--cosmetic-1); box-shadow: 0 0 14px var(--cosmetic-1); }
 .cosmetic-banner-layer[data-variant="void"] { mix-blend-mode: normal; background: radial-gradient(ellipse at 50% 45%, transparent 0 16%, color-mix(in srgb, var(--cosmetic-2) 25%, transparent) 31%, color-mix(in srgb, var(--cosmetic-3) 78%, transparent) 67%); }
 
+/* Messaging cosmetics ----------------------------------------------------- */
+
+.cosmetic-message-frame {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, hsl(var(--border)) 82%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, hsl(var(--card)) 68%, transparent);
+  box-shadow: 0 7px 20px -18px hsl(var(--foreground) / .28);
+}
+
+.cosmetic-message-frame--equipped {
+  border-color: color-mix(in srgb, var(--cosmetic-2) 34%, hsl(var(--border)));
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--cosmetic-1) 5%, hsl(var(--card))), color-mix(in srgb, var(--cosmetic-3) 4%, hsl(var(--card))));
+  box-shadow:
+    0 9px 26px -20px color-mix(in srgb, var(--cosmetic-2) 44%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--cosmetic-1) 5%, transparent);
+}
+
+.cosmetic-message-frame__edge,
+.cosmetic-message-frame__ambient {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.cosmetic-message-frame__edge {
+  z-index: 3;
+  border-radius: inherit;
+  padding: 1.5px;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.cosmetic-message-frame__edge .cosmetic-banner-layer {
+  inset: -1px;
+  border-radius: inherit;
+  opacity: 1;
+}
+
+.cosmetic-message-frame__ambient {
+  z-index: 0;
+  background:
+    radial-gradient(circle at 8% 20%, color-mix(in srgb, var(--cosmetic-1) 10%, transparent), transparent 38%),
+    radial-gradient(circle at 92% 80%, color-mix(in srgb, var(--cosmetic-2) 8%, transparent), transparent 42%);
+  opacity: .9;
+}
+
+.tfl-messages-shell {
+  isolation: isolate;
+  backdrop-filter: blur(18px) saturate(1.08);
+}
+
+.tfl-direct-message-viewport {
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
+}
+
+.tfl-direct-message-viewport::-webkit-scrollbar {
+  width: 10px;
+}
+
+.tfl-direct-message-viewport::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: color-mix(in srgb, hsl(var(--foreground)) 20%, transparent);
+  background-clip: padding-box;
+}
+
+:root:not(.dark) .cosmetic-message-frame {
+  border-color: color-mix(in srgb, hsl(var(--border)) 88%, hsl(var(--foreground)) 7%);
+  background: color-mix(in srgb, hsl(var(--card)) 94%, hsl(var(--muted)) 6%);
+  box-shadow: 0 8px 22px -18px hsl(var(--foreground) / .34);
+}
+
+:root:not(.dark) .cosmetic-message-frame--equipped {
+  border-color: color-mix(in srgb, var(--cosmetic-3) 34%, hsl(var(--border)));
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--cosmetic-1) 7%, white), color-mix(in srgb, var(--cosmetic-2) 5%, hsl(var(--card))));
+}
+
+:root:not(.dark) .cosmetic-message-frame__edge {
+  filter: saturate(1.15) contrast(1.08);
+}
+
 
 /* Light-mode cosmetic contrast ---------------------------------------------
    Cosmetics are authored from their preset palette, not a second light-theme

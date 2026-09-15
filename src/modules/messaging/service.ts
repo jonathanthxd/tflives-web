@@ -1,7 +1,8 @@
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/infrastructure/database/prisma";
 import { createNotification } from "@/modules/notifications/service";
 import { areFriends } from "@/modules/social/service";
-import { publicIdentitySelect } from "@/modules/profiles/service";
+import { publicIdentityWithCosmeticsSelect, toPublicIdentityWithCosmetics } from "@/modules/profiles/service";
 import { awardDirectMessage } from "@/modules/progression/service";
 import { getActiveBanOrSuspension, isMuted } from "@/modules/administration/sanctions";
 import {
@@ -21,7 +22,9 @@ export class MessagingError extends Error {
   }
 }
 
-const PARTICIPANT_SELECT = publicIdentitySelect;
+const PARTICIPANT_SELECT = publicIdentityWithCosmeticsSelect;
+type MessagingIdentityRecord = Prisma.UserGetPayload<{ select: typeof PARTICIPANT_SELECT }>;
+type MessagingIdentity = ReturnType<typeof toPublicIdentityWithCosmetics>;
 
 const DIRECT_MESSAGE_INCLUDE = {
   sender: { select: PARTICIPANT_SELECT },
@@ -56,18 +59,18 @@ function serialiseDirectMessage(
   message: {
     id: string; conversationId: string; senderId: string; content: string; createdAt: Date;
     editedAt: Date | null; deletedAt: Date | null;
-    sender: { id: string; username: string | null; displayName: string | null; name: string; image: string | null };
+    sender: MessagingIdentityRecord;
     sticker: { id: string; name: string; assetUrl: string; category: string | null } | null;
-    replyTo: { id: string; sender: { id: string; username: string | null; displayName: string | null; name: string; image: string | null }; content: string; deletedAt: Date | null; sticker: { id: string; name: string; assetUrl: string; category: string | null } | null } | null;
+    replyTo: { id: string; sender: MessagingIdentityRecord; content: string; deletedAt: Date | null; sticker: { id: string; name: string; assetUrl: string; category: string | null } | null } | null;
     reactions: { emoji: string; userId: string }[];
   },
   userId: string,
 ) {
   return {
-    id: message.id, conversationId: message.conversationId, senderId: message.senderId, sender: message.sender,
+    id: message.id, conversationId: message.conversationId, senderId: message.senderId, sender: toPublicIdentityWithCosmetics(message.sender),
     content: message.deletedAt ? "" : message.content, sticker: message.sticker,
     replyTo: message.replyTo ? {
-      id: message.replyTo.id, sender: message.replyTo.sender,
+      id: message.replyTo.id, sender: toPublicIdentityWithCosmetics(message.replyTo.sender),
       content: message.replyTo.deletedAt ? "" : message.replyTo.content,
       sticker: message.replyTo.sticker, deletedAt: message.replyTo.deletedAt,
     } : null,
@@ -361,7 +364,7 @@ export async function report(reporterId: string, targetType: string, targetId: s
 
 export interface InboxEntry {
   conversationId: string; isGroup: boolean; name: string | null; status: "ACTIVE" | "PENDING"; updatedAt: Date;
-  otherParticipants: { id: string; username: string | null; displayName: string | null; name: string; image: string | null }[];
+  otherParticipants: MessagingIdentity[];
   lastMessage: { content: string; senderId: string; createdAt: Date } | null; unread: boolean;
 }
 
@@ -381,7 +384,7 @@ export async function listInbox(userId: string): Promise<{ active: InboxEntry[];
     const lastMessage = conversation.messages[0] ?? null;
     const entry: InboxEntry = {
       conversationId: conversation.id, isGroup: conversation.isGroup, name: conversation.name, status: participation.status as "ACTIVE" | "PENDING", updatedAt: conversation.updatedAt,
-      otherParticipants: others.filter((other) => other.status !== "LEFT").map((other) => other.user),
+      otherParticipants: others.filter((other) => other.status !== "LEFT").map((other) => toPublicIdentityWithCosmetics(other.user)),
       lastMessage: lastMessage ? { content: lastMessage.deletedAt ? "" : lastMessage.content, senderId: lastMessage.senderId, createdAt: lastMessage.createdAt } : null,
       unread: !!lastMessage && lastMessage.senderId !== userId && (!participation.lastReadAt || lastMessage.createdAt > participation.lastReadAt),
     };
@@ -408,5 +411,14 @@ export async function getConversation(conversationId: string, userId: string, op
   if (!conversation) throw new MessagingError("Conversación no encontrada", 404);
   const hasMore = !after && conversation.messages.length > limit;
   const messages = (after ? conversation.messages.slice(0, limit) : conversation.messages.slice(0, limit).reverse()).map((message) => serialiseDirectMessage(message, userId));
-  return { conversation: { ...conversation, messages }, myParticipant: participant, nextCursor: hasMore ? messages[0]?.id ?? null : null, incremental: !!after };
+  return {
+    conversation: {
+      ...conversation,
+      participants: conversation.participants.map((entry) => ({ ...entry, user: toPublicIdentityWithCosmetics(entry.user) })),
+      messages,
+    },
+    myParticipant: participant,
+    nextCursor: hasMore ? messages[0]?.id ?? null : null,
+    incremental: !!after,
+  };
 }

@@ -10,9 +10,11 @@ import { Input } from "@/shared/ui/input";
 import ConfirmDialog from "@/shared/ui/confirm-dialog";
 import { AnchoredEmojiStickerPicker, type PickerAnchorRect } from "@/modules/chat/components/emoji-sticker-picker";
 import { getQuickReactions, recordReactionUse } from "@/modules/chat/reaction-preferences";
+import { CosmeticAvatarFrame, CosmeticMessageFrame } from "@/modules/cosmetics/components/cosmetic-renderer";
+import { cosmeticVisualsByType, type SafeCosmeticVisual } from "@/modules/cosmetics/visuals";
 import { UserAvatar } from "@/modules/profiles/components/user-identity";
 import { formatUserTime } from "@/shared/lib/date-time";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, MessageSquarePlus, MoreHorizontal, Plus, Search, Send, Smile, Users } from "lucide-react";
 
 interface PersonSummary {
   id: string;
@@ -20,6 +22,7 @@ interface PersonSummary {
   displayName: string | null;
   name: string | null;
   image: string | null;
+  cosmetics: SafeCosmeticVisual[];
 }
 
 interface InboxEntry {
@@ -60,12 +63,21 @@ function displayNameOf(person: PersonSummary) {
 }
 
 function Avatar({ person }: { person: PersonSummary }) {
-  return <UserAvatar identity={person} className="size-10 shrink-0 text-sm" />;
+  const cosmetics = cosmeticVisualsByType(person.cosmetics);
+  return (
+    <CosmeticAvatarFrame preset={cosmetics.AVATAR_FRAME?.visualPreset} className="shrink-0 scale-[0.84]">
+      <UserAvatar identity={person} className="size-12 shrink-0 text-sm" />
+    </CosmeticAvatarFrame>
+  );
+}
+
+function messageBannerPreset(person: PersonSummary) {
+  return cosmeticVisualsByType(person.cosmetics).BANNER_STYLE?.visualPreset;
 }
 
 function conversationTitle(entry: { isGroup: boolean; name: string | null; otherParticipants: PersonSummary[] }) {
   if (entry.isGroup) return entry.name || "Grupo";
-  return displayNameOf(entry.otherParticipants[0] ?? { id: "", username: null, displayName: null, name: null, image: null });
+  return displayNameOf(entry.otherParticipants[0] ?? { id: "", username: null, displayName: null, name: null, image: null, cosmetics: [] });
 }
 
 function MessageDialog({
@@ -108,6 +120,7 @@ export default function MessagesPage() {
 
   const [activeId, setActiveId] = useState<string | null>(null);
   const [mobileConversationOpen, setMobileConversationOpen] = useState(false);
+  const [conversationSearch, setConversationSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [active, setActive] = useState<InboxEntry[]>([]);
   const [requests, setRequests] = useState<InboxEntry[]>([]);
@@ -611,368 +624,314 @@ export default function MessagesPage() {
   }
 
   const otherParticipant = conversation?.participants.find((p) => p.userId !== myUserId)?.user ?? null;
+  const normalizedConversationSearch = conversationSearch.trim().toLowerCase();
+  const visibleActive = normalizedConversationSearch
+    ? active.filter((entry) => {
+        const title = conversationTitle(entry).toLowerCase();
+        const usernames = entry.otherParticipants.map((person) => person.username || "").join(" ").toLowerCase();
+        return title.includes(normalizedConversationSearch) || usernames.includes(normalizedConversationSearch);
+      })
+    : active;
 
   return (
-    <main className="min-h-screen pt-24 pb-16 px-4">
-      <div className="max-w-5xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="font-display text-2xl font-bold text-foreground">{t("titulo")}</h1>
-          <div className="flex gap-2">
-            <Button size="sm" variant="outline" onClick={openNewGroup}>
-              {t("nuevoGrupo")}
-            </Button>
-            <Button size="sm" onClick={openNewMessage}>
-              {t("nuevoMensaje")}
-            </Button>
-          </div>
-        </div>
-
+    <main className="min-h-screen px-3 pb-3 pt-20 sm:px-5 sm:pb-5 sm:pt-24">
+      <div className="mx-auto h-[calc(100dvh-6rem)] min-h-[560px] max-w-[1440px] sm:h-[calc(100dvh-7rem)]">
         {error && (
-          <div role="alert" className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive text-sm">
+          <div role="alert" className="mb-3 rounded-xl border border-destructive/20 bg-destructive/10 px-4 py-2.5 text-sm text-destructive">
             {error}
           </div>
         )}
 
-        <Card className="grid min-h-[480px] grid-cols-1 overflow-hidden sm:grid-cols-3">
-          <div className={`${mobileConversationOpen ? "hidden sm:block" : "block"} max-h-[calc(100dvh-11rem)] overflow-y-auto border-border sm:col-span-1 sm:max-h-[600px] sm:border-r`}>
-            {requests.length > 0 && (
-              <div className="border-b border-border">
-                <p className="px-4 pt-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {t("solicitudesMensaje")}
-                </p>
-                {requests.map((entry) => (
-                  <div key={entry.conversationId} className="flex items-center gap-3 px-4 py-3">
-                    <Avatar person={entry.otherParticipants[0] ?? { id: "", username: null, displayName: null, name: null, image: null }} />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-foreground truncate">{conversationTitle(entry)}</p>
-                      {entry.lastMessage && (
-                        <p className="text-xs text-muted-foreground truncate">{entry.lastMessage.content}</p>
-                      )}
-                    </div>
-                    <div className="flex gap-1 shrink-0">
-                      <Button size="xs" onClick={() => respondRequest(entry.conversationId, "open")}>
-                        {t("abrir")}
-                      </Button>
-                      <Button size="xs" variant="ghost" onClick={() => respondRequest(entry.conversationId, "decline")}>
-                        {t("rechazarSolicitud")}
-                      </Button>
-                    </div>
+        <Card className="tfl-messages-shell grid h-full min-h-0 grid-cols-1 overflow-hidden rounded-2xl border-border/80 bg-card/85 p-0 shadow-2xl sm:grid-cols-[300px_minmax(0,1fr)]">
+          <aside className={`${mobileConversationOpen ? "hidden sm:flex" : "flex"} min-h-0 flex-col border-border bg-muted/20 sm:border-r`}>
+            <div className="flex h-14 shrink-0 items-center justify-between border-b border-border/80 px-3">
+              <h1 className="truncate px-2 font-display text-base font-semibold text-foreground">{t("titulo")}</h1>
+              <div className="flex items-center gap-1">
+                <button type="button" onClick={openNewGroup} title={t("nuevoGrupo")} aria-label={t("nuevoGrupo")} className="grid size-8 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary">
+                  <Users className="size-4" aria-hidden="true" />
+                </button>
+                <button type="button" onClick={openNewMessage} title={t("nuevoMensaje")} aria-label={t("nuevoMensaje")} className="grid size-8 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary">
+                  <MessageSquarePlus className="size-4" aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+
+            <div className="shrink-0 border-b border-border/70 p-2.5">
+              <label className="flex h-9 items-center gap-2 rounded-lg border border-border/80 bg-background/65 px-3 text-muted-foreground shadow-inner focus-within:border-primary/45 focus-within:text-foreground">
+                <Search className="size-3.5 shrink-0" aria-hidden="true" />
+                <input
+                  value={conversationSearch}
+                  onChange={(event) => setConversationSearch(event.target.value)}
+                  placeholder={t("buscarPlaceholder")}
+                  className="min-w-0 flex-1 bg-transparent text-xs text-foreground outline-none placeholder:text-muted-foreground"
+                />
+              </label>
+            </div>
+
+            <div className="min-h-0 flex-1 overflow-y-auto px-2 py-2">
+              {requests.length > 0 && (
+                <section className="mb-3">
+                  <p className="px-2 pb-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">{t("solicitudesMensaje")}</p>
+                  <div className="space-y-1">
+                    {requests.map((entry) => {
+                      const person = entry.otherParticipants[0] ?? { id: "", username: null, displayName: null, name: null, image: null, cosmetics: [] };
+                      return (
+                        <div key={entry.conversationId} className="rounded-xl border border-primary/15 bg-primary/5 p-2.5">
+                          <div className="flex items-center gap-3">
+                            <Avatar person={person} />
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate text-sm font-semibold text-foreground">{conversationTitle(entry)}</p>
+                              <p className="truncate text-xs text-muted-foreground">{entry.lastMessage?.content || `@${person.username || "tflives"}`}</p>
+                            </div>
+                          </div>
+                          <div className="mt-2 flex gap-1.5 pl-[52px]">
+                            <Button size="xs" onClick={() => respondRequest(entry.conversationId, "open")}>{t("abrir")}</Button>
+                            <Button size="xs" variant="ghost" onClick={() => respondRequest(entry.conversationId, "decline")}>{t("rechazarSolicitud")}</Button>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                ))}
-              </div>
-            )}
+                </section>
+              )}
 
-            {active.length === 0 && requests.length === 0 ? (
-              <div className="p-6 text-center">
-                <p className="text-sm text-muted-foreground mb-4">{t("sinConversaciones")}</p>
+              <div className="flex items-center justify-between px-2 pb-1.5 pt-1">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">{t("titulo")}</p>
+                <button type="button" onClick={openNewMessage} aria-label={t("nuevoMensaje")} className="grid size-6 place-items-center rounded text-muted-foreground hover:bg-primary/10 hover:text-primary">
+                  <Plus className="size-3.5" aria-hidden="true" />
+                </button>
               </div>
-            ) : (
-              <div className="divide-y divide-border">
-                {active.map((entry) => (
-                  <button
-                    key={entry.conversationId}
-                    onClick={() => selectConversation(entry.conversationId)}
-                    className={`flex w-full items-center gap-3 px-4 py-3 text-left transition-colors ${
-                      activeId === entry.conversationId ? "bg-primary/5" : "hover:bg-primary/5"
-                    }`}
-                  >
-                    <Avatar person={entry.otherParticipants[0] ?? { id: "", username: null, displayName: null, name: null, image: null }} />
-                    <div className="min-w-0 flex-1">
-                      <p className={`text-sm truncate ${entry.unread ? "font-semibold text-foreground" : "font-medium text-foreground"}`}>
-                        {conversationTitle(entry)}
-                      </p>
-                      {entry.lastMessage && (
-                        <p className={`text-xs truncate ${entry.unread ? "text-foreground" : "text-muted-foreground"}`}>
-                          {entry.lastMessage.content}
-                        </p>
-                      )}
-                    </div>
-                    {entry.unread && <span className="h-2 w-2 rounded-full bg-primary shrink-0" />}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
 
-          <div className={`${mobileConversationOpen ? "flex" : "hidden sm:flex"} min-h-[calc(100dvh-11rem)] flex-col sm:col-span-2 sm:min-h-[480px] sm:max-h-[600px]`}>
+              {active.length === 0 && requests.length === 0 ? (
+                <div className="px-4 py-8 text-center">
+                  <p className="text-sm text-muted-foreground">{t("sinConversaciones")}</p>
+                  <button type="button" onClick={openNewMessage} className="mt-3 text-xs font-medium text-primary hover:underline">{t("nuevoMensaje")}</button>
+                </div>
+              ) : visibleActive.length === 0 ? (
+                <div className="px-4 py-8 text-center text-xs text-muted-foreground">{t("elegiConversacion")}</div>
+              ) : (
+                <div className="space-y-0.5">
+                  {visibleActive.map((entry) => {
+                    const person = entry.otherParticipants[0] ?? { id: "", username: null, displayName: null, name: null, image: null, cosmetics: [] };
+                    return (
+                      <button
+                        key={entry.conversationId}
+                        onClick={() => selectConversation(entry.conversationId)}
+                        className={`group flex w-full items-center gap-3 rounded-xl px-2.5 py-2 text-left transition-colors ${
+                          activeId === entry.conversationId ? "bg-primary/10 text-foreground" : "text-muted-foreground hover:bg-foreground/[0.045] hover:text-foreground"
+                        }`}
+                      >
+                        {entry.isGroup ? (
+                          <div className="grid size-10 shrink-0 place-items-center rounded-full bg-primary/10 text-primary"><Users className="size-[18px]" aria-hidden="true" /></div>
+                        ) : <Avatar person={person} />}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <p className={`min-w-0 flex-1 truncate text-sm ${entry.unread ? "font-semibold text-foreground" : "font-medium"}`}>{conversationTitle(entry)}</p>
+                            {entry.unread && <span className="size-2 shrink-0 rounded-full bg-primary shadow-[0_0_10px_hsl(var(--primary)/0.55)]" />}
+                          </div>
+                          <p className={`truncate text-xs ${entry.unread ? "text-foreground/80" : "text-muted-foreground"}`}>
+                            {entry.lastMessage?.content || (person.username ? `@${person.username}` : t("sinMensajes"))}
+                          </p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </aside>
+
+          <section className={`${mobileConversationOpen ? "flex" : "hidden sm:flex"} min-h-0 min-w-0 flex-col bg-background/35`}>
             {conversation ? (
               <>
-                <div className="flex items-center justify-between border-b border-border px-3 py-3 sm:px-4">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <button type="button" onClick={() => setMobileConversationOpen(false)} className="grid size-10 shrink-0 place-items-center rounded-lg text-muted-foreground hover:bg-primary/5 hover:text-primary sm:hidden" aria-label={t("volverAConversaciones")}>
+                <header className="flex h-14 shrink-0 items-center justify-between border-b border-border/80 bg-card/50 px-3 sm:px-4">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <button type="button" onClick={() => setMobileConversationOpen(false)} className="grid size-9 shrink-0 place-items-center rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary sm:hidden" aria-label={t("volverAConversaciones")}>
                       <ChevronLeft className="size-5" aria-hidden="true" />
                     </button>
-                    {otherParticipant && !conversation.isGroup && <Avatar person={otherParticipant} />}
-                    {conversation.isGroup && (
-                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-16.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                        </svg>
-                      </div>
+                    {otherParticipant && !conversation.isGroup ? <Avatar person={otherParticipant} /> : (
+                      <div className="grid size-9 shrink-0 place-items-center rounded-full bg-primary/10 text-primary"><Users className="size-[18px]" aria-hidden="true" /></div>
                     )}
-                    <p className="font-medium text-foreground truncate">
-                      {conversation.isGroup
-                        ? conversation.name || t("grupoSinNombre")
-                        : displayNameOf(otherParticipant ?? { id: "", username: null, displayName: null, name: null, image: null })}
-                    </p>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="truncate text-sm font-semibold text-foreground">
+                          {conversation.isGroup ? conversation.name || t("grupoSinNombre") : displayNameOf(otherParticipant ?? { id: "", username: null, displayName: null, name: null, image: null, cosmetics: [] })}
+                        </p>
+                        {!conversation.isGroup && otherParticipant?.username && <span className="hidden truncate text-xs text-muted-foreground md:inline">@{otherParticipant.username}</span>}
+                      </div>
+                      {conversation.isGroup && <p className="text-[11px] text-muted-foreground">{conversation.participants.filter((participant) => participant.status === "ACTIVE").length} {t("miembros").toLowerCase()}</p>}
+                    </div>
                     {conversation.isGroup && (
-                      <details className="relative">
-                        <summary className="cursor-pointer text-xs text-primary">{t("miembros")}</summary>
-                        <div className="absolute left-0 top-6 z-40 w-64 rounded-xl border border-border bg-card p-3 shadow-xl">
-                          <div className="max-h-36 space-y-1 overflow-y-auto">
+                      <details className="relative hidden md:block">
+                        <summary className="cursor-pointer list-none rounded-md px-2 py-1 text-[11px] font-medium text-primary hover:bg-primary/10">{t("miembros")}</summary>
+                        <div className="tfl-glass tfl-glass-strong absolute left-0 top-8 z-40 w-72 rounded-2xl border p-3 shadow-xl">
+                          <div className="max-h-48 space-y-1 overflow-y-auto">
                             {conversation.participants.filter((participant) => participant.status === "ACTIVE").map((participant) => (
-                              <div key={participant.userId} className="flex items-center gap-2 text-xs"><span className="min-w-0 flex-1 truncate">{displayNameOf(participant.user)}</span>{conversation.participants.find((item) => item.userId === myUserId)?.role === "OWNER" && participant.userId !== myUserId && <button type="button" disabled={busy} onClick={() => removeMember(participant.userId)} className="text-destructive hover:underline">{t("quitarMiembro")}</button>}</div>
+                              <div key={participant.userId} className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs hover:bg-primary/5">
+                                <Avatar person={participant.user} />
+                                <span className="min-w-0 flex-1 truncate">{displayNameOf(participant.user)}</span>
+                                {conversation.participants.find((item) => item.userId === myUserId)?.role === "OWNER" && participant.userId !== myUserId && (
+                                  <button type="button" disabled={busy} onClick={() => removeMember(participant.userId)} className="text-destructive hover:underline">{t("quitarMiembro")}</button>
+                                )}
+                              </div>
                             ))}
                           </div>
-                          {conversation.participants.find((participant) => participant.userId === myUserId)?.role === "OWNER" && <div className="mt-2 flex gap-1"><Input value={memberUsername} onChange={(event) => setMemberUsername(event.target.value)} placeholder={t("usernameMiembro")} className="h-8 text-xs" /><Button type="button" size="xs" disabled={busy || !memberUsername.trim()} onClick={addMember}>{t("agregarMiembro")}</Button></div>}
+                          {conversation.participants.find((participant) => participant.userId === myUserId)?.role === "OWNER" && (
+                            <div className="mt-2 flex gap-1">
+                              <Input value={memberUsername} onChange={(event) => setMemberUsername(event.target.value)} placeholder={t("usernameMiembro")} className="h-8 text-xs" />
+                              <Button type="button" size="xs" disabled={busy || !memberUsername.trim()} onClick={addMember}>{t("agregarMiembro")}</Button>
+                            </div>
+                          )}
                         </div>
                       </details>
                     )}
                   </div>
 
                   <div className="relative" ref={menuRef}>
-                    <button
-                      onClick={() => setMenuOpen((v) => !v)}
-                      aria-label={t("opciones")}
-                      className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-colors"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zm0 6a.75.75 0 110-1.5.75.75 0 010 1.5zm0 6a.75.75 0 110-1.5.75.75 0 010 1.5z" />
-                      </svg>
+                    <button onClick={() => setMenuOpen((value) => !value)} aria-label={t("opciones")} className="grid size-9 place-items-center rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary">
+                      <MoreHorizontal className="size-5" aria-hidden="true" />
                     </button>
                     {menuOpen && (
                       <div className="tfl-glass tfl-glass-strong absolute right-0 z-50 mt-2 w-48 rounded-2xl border p-1.5">
                         {!conversation.isGroup && otherParticipant?.username && (
-                          <IntlLink
-                            href={`/perfil/${otherParticipant.username}`}
-                            className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-foreground hover:bg-primary/5 hover:text-primary transition-colors"
-                            onClick={() => setMenuOpen(false)}
-                          >
+                          <IntlLink href={`/perfil/${otherParticipant.username}`} className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-foreground transition-colors hover:bg-primary/5 hover:text-primary" onClick={() => setMenuOpen(false)}>
                             {t("verPerfil")}
                           </IntlLink>
                         )}
-                        {!conversation.isGroup && (
-                          <button
-                            onClick={() => {
-                              setMenuOpen(false);
-                              setShowBlockConfirm(true);
-                            }}
-                            className="flex w-full items-center gap-2 px-3 py-2 rounded-xl text-sm text-foreground hover:bg-primary/5 hover:text-primary transition-colors"
-                          >
-                            {t("bloquear")}
-                          </button>
-                        )}
-                        {conversation.isGroup && (
-                          <button
-                            onClick={() => {
-                              setMenuOpen(false);
-                              setShowLeaveConfirm(true);
-                            }}
-                            className="flex w-full items-center gap-2 px-3 py-2 rounded-xl text-sm text-foreground hover:bg-primary/5 hover:text-primary transition-colors"
-                          >
-                            {t("salirDelGrupo")}
-                          </button>
-                        )}
-                        {conversation.isGroup && conversation.participants.find((participant) => participant.userId === myUserId)?.role === "OWNER" && (
-                          <button
-                            onClick={() => { setMenuOpen(false); setShowCloseGroupConfirm(true); }}
-                            className="flex w-full items-center gap-2 px-3 py-2 rounded-xl text-sm text-destructive hover:bg-destructive/5 transition-colors"
-                          >
-                            {t("cerrarGrupo")}
-                          </button>
-                        )}
-                        <button
-                          onClick={() => {
-                            setMenuOpen(false);
-                            if (activeId) setReportTarget({ targetType: "CONVERSATION", targetId: activeId });
-                            setShowReport(true);
-                          }}
-                          className="flex w-full items-center gap-2 px-3 py-2 rounded-xl text-sm text-destructive hover:bg-destructive/5 transition-colors"
-                        >
-                          {t("reportar")}
-                        </button>
+                        {!conversation.isGroup && <button onClick={() => { setMenuOpen(false); setShowBlockConfirm(true); }} className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-foreground transition-colors hover:bg-primary/5 hover:text-primary">{t("bloquear")}</button>}
+                        {conversation.isGroup && <button onClick={() => { setMenuOpen(false); setShowLeaveConfirm(true); }} className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-foreground transition-colors hover:bg-primary/5 hover:text-primary">{t("salirDelGrupo")}</button>}
+                        {conversation.isGroup && conversation.participants.find((participant) => participant.userId === myUserId)?.role === "OWNER" && <button onClick={() => { setMenuOpen(false); setShowCloseGroupConfirm(true); }} className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-destructive transition-colors hover:bg-destructive/5">{t("cerrarGrupo")}</button>}
+                        <button onClick={() => { setMenuOpen(false); if (activeId) setReportTarget({ targetType: "CONVERSATION", targetId: activeId }); setShowReport(true); }} className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-destructive transition-colors hover:bg-destructive/5">{t("reportar")}</button>
                       </div>
                     )}
                   </div>
-                </div>
+                </header>
 
-                <div ref={messageViewportRef} onScroll={trackConversationScroll} className="flex-1 overflow-y-auto p-4 space-y-2">
+                <div ref={messageViewportRef} onScroll={trackConversationScroll} className="tfl-direct-message-viewport min-h-0 flex-1 overflow-y-auto px-2 py-4 sm:px-4">
                   {nextCursor && (
-                    <button type="button" onClick={loadOlderMessages} className="mb-2 w-full rounded-lg border border-border px-3 py-1.5 text-xs text-muted-foreground hover:bg-primary/5">
-                      {t("cargarAnteriores")}
-                    </button>
+                    <div className="mb-4 flex justify-center">
+                      <button type="button" onClick={loadOlderMessages} className="rounded-full border border-border bg-card/80 px-3 py-1.5 text-[11px] font-medium text-muted-foreground shadow-sm hover:bg-primary/5 hover:text-primary">{t("cargarAnteriores")}</button>
+                    </div>
                   )}
                   {conversation.messages.length === 0 ? (
-                    <p className="text-sm text-muted-foreground text-center mt-8">{t("sinMensajes")}</p>
+                    <div className="mx-auto flex h-full max-w-md flex-col items-center justify-center px-6 text-center">
+                      {otherParticipant && !conversation.isGroup && <Avatar person={otherParticipant} />}
+                      <p className="mt-4 text-base font-semibold text-foreground">{conversation.isGroup ? conversation.name || t("grupoSinNombre") : displayNameOf(otherParticipant ?? { id: "", username: null, displayName: null, name: null, image: null, cosmetics: [] })}</p>
+                      <p className="mt-1 text-sm text-muted-foreground">{t("sinMensajes")}</p>
+                    </div>
                   ) : (
-                    conversation.messages.map((m) => {
-                      const mine = m.senderId === myUserId;
-                      const isEditing = editingMessageId === m.id;
-                      const canEdit =
-                        mine &&
-                        !m.deletedAt &&
-                        !!m.content.trim() &&
-                        messageClock > 0 &&
-                        messageClock - new Date(m.createdAt).getTime() <= 15 * 60_000;
-                      return (
-                        <div id={`message-${m.id}`} key={m.id} className={`group flex ${mine ? "justify-end" : "justify-start"}`}>
-                          <div
-                            className={`max-w-[88%] rounded-2xl px-3.5 py-2 text-sm sm:max-w-[75%] ${
-                              mine ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"
-                            }`}
-                          >
-                            {m.replyTo && (
-                              <button type="button" onClick={() => document.getElementById(`message-${m.replyTo?.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" })} className={`mb-1 block max-w-full truncate border-l-2 pl-2 text-left text-[11px] ${mine ? "border-primary-foreground/50 text-primary-foreground/80" : "border-primary/60 text-muted-foreground"}`}>
-                                {displayNameOf(m.replyTo.sender)}: {m.replyTo.deletedAt ? t("mensajeEliminado") : m.replyTo.content}
-                              </button>
-                            )}
-                            {m.deletedAt ? (
-                              <p className="italic opacity-70">{t("mensajeEliminado")}</p>
-                            ) : isEditing ? (
-                              <div className="space-y-2">
-                                <textarea
-                                  autoFocus
-                                  value={editingDraft}
-                                  onChange={(event) => setEditingDraft(event.target.value)}
-                                  maxLength={2000}
-                                  rows={2}
-                                  className="max-h-32 min-h-16 w-full min-w-0 resize-y rounded-xl border border-primary-foreground/20 bg-background/15 px-3 py-2 text-sm text-inherit outline-none placeholder:text-current/50 focus-visible:ring-2 focus-visible:ring-primary-foreground/40"
-                                />
-                                {m.sticker && <img src={m.sticker.assetUrl} alt={m.sticker.name} className="h-16 w-16 object-contain" />}
-                                <div className="flex justify-end gap-2 text-[11px]">
-                                  <button
-                                    type="button"
-                                    disabled={busy}
-                                    onClick={() => { setEditingMessageId(null); setEditingDraft(""); }}
-                                    className="rounded-lg px-2 py-1 opacity-80 hover:bg-black/10 hover:opacity-100"
-                                  >
-                                    {t("cancelar")}
-                                  </button>
-                                  <button
-                                    type="button"
-                                    disabled={busy || !editingDraft.trim()}
-                                    onClick={() => void saveEditedMessage(m.id)}
-                                    className="rounded-lg bg-background/20 px-2 py-1 font-medium hover:bg-background/30 disabled:opacity-50"
-                                  >
-                                    {t("guardarEdicion")}
-                                  </button>
+                    <div className="space-y-0.5">
+                      {conversation.messages.map((m, index) => {
+                        const mine = m.senderId === myUserId;
+                        const previous = index > 0 ? conversation.messages[index - 1] : null;
+                        const grouped = !!previous && previous.senderId === m.senderId && !m.replyTo && new Date(m.createdAt).getTime() - new Date(previous.createdAt).getTime() < 5 * 60_000;
+                        const isEditing = editingMessageId === m.id;
+                        const canEdit = mine && !m.deletedAt && !!m.content.trim() && messageClock > 0 && messageClock - new Date(m.createdAt).getTime() <= 15 * 60_000;
+                        const bannerPreset = messageBannerPreset(m.sender);
+                        return (
+                          <article id={`message-${m.id}`} key={m.id} className={`group relative grid grid-cols-[48px_minmax(0,1fr)] gap-2 rounded-lg px-1.5 py-0.5 transition-colors hover:bg-foreground/[0.035] sm:px-2 ${grouped ? "mt-0" : "mt-3"}`}>
+                            <div className="flex justify-center pt-1">
+                              {grouped ? <time className="mt-1 hidden text-[9px] text-muted-foreground/70 group-hover:block">{formatUserTime(m.createdAt, locale)}</time> : <Avatar person={m.sender} />}
+                            </div>
+                            <div className="min-w-0 pr-1">
+                              {!grouped && (
+                                <div className="mb-0.5 flex min-w-0 items-baseline gap-2">
+                                  <span className={`truncate text-sm font-semibold ${mine ? "text-primary" : "text-foreground"}`}>{displayNameOf(m.sender)}</span>
+                                  {m.sender.username && <span className="hidden truncate text-[11px] text-muted-foreground md:inline">@{m.sender.username}</span>}
+                                  <time className="shrink-0 text-[10px] text-muted-foreground">{formatUserTime(m.createdAt, locale)}</time>
                                 </div>
-                              </div>
-                            ) : (
-                              <>
-                                <p className="whitespace-pre-line break-words">{m.content}</p>
-                                {m.sticker && <img src={m.sticker.assetUrl} alt={m.sticker.name} className="mt-1 h-16 w-16 object-contain" />}
-                              </>
-                            )}
-                            <p className={`mt-0.5 text-[10px] ${mine ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
-                              {formatUserTime(m.createdAt, locale)}{m.editedAt ? ` · ${t("editado")}` : ""}
-                            </p>
-                            {!m.deletedAt && !isEditing && <div className="mt-1 flex flex-wrap items-center gap-1">
-                              {m.reactions.map((reaction) => <button key={reaction.emoji} type="button" onClick={() => void reactToMessage(m, reaction.emoji)} className={`rounded-full border px-1.5 py-0.5 text-[10px] ${mine ? "border-primary-foreground/30" : "border-border"} ${reaction.mine ? "bg-primary/15" : ""}`}>{reaction.emoji} {reaction.count}</button>)}
-                              {quickReactions.filter((emoji) => !m.reactions.some((reaction) => reaction.emoji === emoji)).map((emoji) => <button key={emoji} type="button" onClick={() => void reactToMessage(m, emoji)} aria-label={`${t("reaccionar")} ${emoji}`} className="rounded px-1 text-xs sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100">{emoji}</button>)}
-                              <span>
-                                <button
-                                  type="button"
-                                  onPointerDown={(event) => {
-                                    event.preventDefault();
-                                    event.stopPropagation();
-                                    const rect = event.currentTarget.getBoundingClientRect();
-                                    setReactionPicker((current) => current?.messageId === m.id ? null : {
-                                      messageId: m.id,
-                                      anchorRect: { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, width: rect.width, height: rect.height },
-                                    });
-                                  }}
-                                  aria-label={t("masReacciones")}
-                                  aria-expanded={reactionPicker?.messageId === m.id}
-                                  className="grid size-8 place-items-center rounded-full text-xs hover:bg-primary/10 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100"
-                                >+</button>
-                              </span>
-                              <button type="button" onClick={() => setReplyToMessage(m)} className="rounded px-1 text-[10px] sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100">↩ {t("responder")}</button>
-                              {mine && canEdit && (
-                                <button type="button" onClick={() => startEditingMessage(m)} className="rounded px-1 text-[10px] opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100">✎ {t("editarMensaje")}</button>
                               )}
-                              {mine ? (
-                                <button type="button" onClick={() => setDeleteTarget(m)} className="rounded px-1 text-[10px] opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100">⌫ {t("eliminarMensaje")}</button>
-                              ) : (
-                                <button type="button" aria-label={t("reportar")} onClick={() => { setReportTarget({ targetType: "DIRECT_MESSAGE", targetId: m.id }); setShowReport(true); }} className="rounded px-1 text-[10px] sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100">⚑</button>
+
+                              <CosmeticMessageFrame preset={bannerPreset} className="max-w-[min(100%,760px)]">
+                                <div className="px-3 py-2 text-sm text-foreground">
+                                  {m.replyTo && (
+                                    <button type="button" onClick={() => document.getElementById(`message-${m.replyTo?.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" })} className="mb-1.5 block max-w-full truncate border-l-2 border-primary/55 pl-2 text-left text-[11px] text-muted-foreground hover:text-primary">
+                                      <span className="font-medium text-foreground/80">{displayNameOf(m.replyTo.sender)}</span>: {m.replyTo.deletedAt ? t("mensajeEliminado") : m.replyTo.content}
+                                    </button>
+                                  )}
+                                  {m.deletedAt ? (
+                                    <p className="italic text-muted-foreground">{t("mensajeEliminado")}</p>
+                                  ) : isEditing ? (
+                                    <div className="space-y-2">
+                                      <textarea autoFocus value={editingDraft} onChange={(event) => setEditingDraft(event.target.value)} maxLength={2000} rows={2} className="max-h-32 min-h-16 w-full min-w-0 resize-y rounded-xl border border-border bg-background/70 px-3 py-2 text-sm text-foreground outline-none focus-visible:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary/15" />
+                                      {m.sticker && <img src={m.sticker.assetUrl} alt={m.sticker.name} className="h-16 w-16 object-contain" />}
+                                      <div className="flex justify-end gap-2 text-[11px]">
+                                        <button type="button" disabled={busy} onClick={() => { setEditingMessageId(null); setEditingDraft(""); }} className="rounded-lg px-2 py-1 text-muted-foreground hover:bg-primary/5 hover:text-foreground">{t("cancelar")}</button>
+                                        <button type="button" disabled={busy || !editingDraft.trim()} onClick={() => void saveEditedMessage(m.id)} className="rounded-lg bg-primary/10 px-2 py-1 font-medium text-primary hover:bg-primary/15 disabled:opacity-50">{t("guardarEdicion")}</button>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <>
+                                      <p className="whitespace-pre-line break-words leading-relaxed">{m.content}</p>
+                                      {m.sticker && <img src={m.sticker.assetUrl} alt={m.sticker.name} className="mt-1 h-20 w-20 object-contain" />}
+                                    </>
+                                  )}
+                                  {m.editedAt && <p className="mt-0.5 text-[10px] text-muted-foreground">{t("editado")}</p>}
+                                </div>
+                              </CosmeticMessageFrame>
+
+                              {!m.deletedAt && !isEditing && (
+                                <div className="mt-1 flex min-h-7 flex-wrap items-center gap-1 pl-1">
+                                  {m.reactions.map((reaction) => <button key={reaction.emoji} type="button" onClick={() => void reactToMessage(m, reaction.emoji)} className={`rounded-full border px-2 py-0.5 text-[11px] ${reaction.mine ? "border-primary/35 bg-primary/10 text-primary" : "border-border bg-card/60 text-foreground"}`}>{reaction.emoji} {reaction.count}</button>)}
+                                  <div className="flex items-center rounded-lg border border-border/70 bg-card/90 px-0.5 opacity-100 shadow-sm sm:opacity-0 sm:group-hover:opacity-100 focus-within:opacity-100">
+                                    {quickReactions.filter((emoji) => !m.reactions.some((reaction) => reaction.emoji === emoji)).slice(0, 2).map((emoji) => <button key={emoji} type="button" onClick={() => void reactToMessage(m, emoji)} aria-label={`${t("reaccionar")} ${emoji}`} className="grid size-7 place-items-center rounded-md text-xs hover:bg-primary/10">{emoji}</button>)}
+                                    <button type="button" onPointerDown={(event) => { event.preventDefault(); event.stopPropagation(); const rect = event.currentTarget.getBoundingClientRect(); setReactionPicker((current) => current?.messageId === m.id ? null : { messageId: m.id, anchorRect: { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, width: rect.width, height: rect.height } }); }} aria-label={t("masReacciones")} aria-expanded={reactionPicker?.messageId === m.id} className="grid size-7 place-items-center rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary"><Smile className="size-3.5" aria-hidden="true" /></button>
+                                    <button type="button" onClick={() => setReplyToMessage(m)} className="grid h-7 place-items-center rounded-md px-2 text-[10px] text-muted-foreground hover:bg-primary/10 hover:text-primary">{t("responder")}</button>
+                                    {mine && canEdit && <button type="button" onClick={() => startEditingMessage(m)} className="grid h-7 place-items-center rounded-md px-2 text-[10px] text-muted-foreground hover:bg-primary/10 hover:text-primary">{t("editarMensaje")}</button>}
+                                    {mine ? <button type="button" onClick={() => setDeleteTarget(m)} className="grid h-7 place-items-center rounded-md px-2 text-[10px] text-muted-foreground hover:bg-destructive/10 hover:text-destructive">{t("eliminarMensaje")}</button> : <button type="button" aria-label={t("reportar")} onClick={() => { setReportTarget({ targetType: "DIRECT_MESSAGE", targetId: m.id }); setShowReport(true); }} className="grid h-7 place-items-center rounded-md px-2 text-[10px] text-muted-foreground hover:bg-destructive/10 hover:text-destructive">⚑</button>}
+                                  </div>
+                                </div>
                               )}
-                            </div>}
-                          </div>
-                        </div>
-                      );
-                    })
+                            </div>
+                          </article>
+                        );
+                      })}
+                    </div>
                   )}
                   <div ref={messagesEndRef} />
                 </div>
 
-                {replyToMessage && <div className="flex items-center justify-between border-t border-border bg-primary/5 px-3 py-1.5 text-xs"><span className="truncate">{t("respondiendoA", { name: displayNameOf(replyToMessage.sender) })}</span><button type="button" onClick={() => setReplyToMessage(null)} className="text-primary hover:underline">{t("cancelarRespuesta")}</button></div>}
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    sendMessage();
-                  }}
-                  className="flex items-end gap-2 border-t border-border p-3"
-                >
-                  <button ref={expressionButtonRef} type="button" onClick={() => setShowExpressions((value) => !value)} aria-label={t("emojisYStickers")} aria-expanded={showExpressions} className="rounded-lg p-2 text-muted-foreground hover:bg-primary/5">☺</button>
-                  <textarea
-                    ref={messageComposerRef}
-                    value={draft}
-                    onChange={(e) => {
-                      setDraft(e.target.value);
-                      e.currentTarget.style.height = "auto";
-                      e.currentTarget.style.height = `${Math.min(e.currentTarget.scrollHeight, 96)}px`;
-                    }}
-                    placeholder={t("escribiMensaje")}
-                    rows={1}
-                    maxLength={2000}
-                    onKeyDown={(e) => {
-                      if (e.key !== "Enter" || e.shiftKey || e.nativeEvent.isComposing) return;
-                      e.preventDefault();
-                      e.currentTarget.form?.requestSubmit();
-                    }}
-                    className="max-h-24 min-h-11 flex-1 resize-none overflow-y-auto rounded-xl border border-input bg-input/30 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-all duration-200 focus-visible:border-ring focus-visible:ring-4 focus-visible:ring-ring/15"
-                  />
-                  <Button type="submit" size="sm" className="min-h-11 sm:min-h-9" disabled={!draft.trim()}>
-                    {t("enviar")}
-                  </Button>
-                </form>
+                <div className="shrink-0 px-3 pb-3 sm:px-4 sm:pb-4">
+                  {replyToMessage && (
+                    <div className="flex items-center justify-between rounded-t-xl border border-b-0 border-border bg-muted/65 px-3 py-2 text-xs">
+                      <span className="min-w-0 truncate text-muted-foreground">{t("respondiendoA", { name: displayNameOf(replyToMessage.sender) })}</span>
+                      <button type="button" onClick={() => setReplyToMessage(null)} className="ml-3 shrink-0 text-primary hover:underline">{t("cancelarRespuesta")}</button>
+                    </div>
+                  )}
+                  <form onSubmit={(event) => { event.preventDefault(); sendMessage(); }} className={`flex items-end gap-1.5 border border-border bg-muted/45 p-2 shadow-inner ${replyToMessage ? "rounded-b-xl" : "rounded-xl"}`}>
+                    <button type="button" onClick={openNewMessage} aria-label={t("nuevoMensaje")} className="grid size-9 shrink-0 place-items-center rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary"><Plus className="size-[18px]" aria-hidden="true" /></button>
+                    <textarea
+                      ref={messageComposerRef}
+                      value={draft}
+                      onChange={(event) => { setDraft(event.target.value); event.currentTarget.style.height = "auto"; event.currentTarget.style.height = `${Math.min(event.currentTarget.scrollHeight, 120)}px`; }}
+                      placeholder={t("escribiMensaje")}
+                      rows={1}
+                      maxLength={2000}
+                      onKeyDown={(event) => { if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) return; event.preventDefault(); event.currentTarget.form?.requestSubmit(); }}
+                      className="max-h-28 min-h-9 flex-1 resize-none overflow-y-auto bg-transparent px-2 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground"
+                    />
+                    <button ref={expressionButtonRef} type="button" onClick={() => setShowExpressions((value) => !value)} aria-label={t("emojisYStickers")} aria-expanded={showExpressions} className="grid size-9 shrink-0 place-items-center rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary"><Smile className="size-[18px]" aria-hidden="true" /></button>
+                    <button type="submit" aria-label={t("enviar")} disabled={!draft.trim()} className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground shadow-sm transition-opacity disabled:opacity-40"><Send className="size-4" aria-hidden="true" /></button>
+                  </form>
+                </div>
+
                 {reactionPicker && (() => {
                   const message = conversation.messages.find((item) => item.id === reactionPicker.messageId);
-                  return message ? (
-                    <AnchoredEmojiStickerPicker
-                      open
-                      anchorRect={reactionPicker.anchorRect}
-                      onClose={() => setReactionPicker(null)}
-                      reactionOnly
-                      onEmojiSelect={(emoji) => {
-                        void reactToMessage(message, emoji);
-                        setReactionPicker(null);
-                      }}
-                      labels={{ emojis: t("emojis"), stickers: t("stickers"), emptyStickers: t("sinStickers") }}
-                    />
-                  ) : null;
+                  return message ? <AnchoredEmojiStickerPicker open anchorRect={reactionPicker.anchorRect} onClose={() => setReactionPicker(null)} reactionOnly onEmojiSelect={(emoji) => { void reactToMessage(message, emoji); setReactionPicker(null); }} labels={{ emojis: t("emojis"), stickers: t("stickers"), emptyStickers: t("sinStickers") }} /> : null;
                 })()}
-                <AnchoredEmojiStickerPicker
-                  open={showExpressions}
-                  anchorEl={expressionButtonRef.current}
-                  onClose={() => setShowExpressions(false)}
-                  onEmojiSelect={insertEmoji}
-                  stickers={stickers}
-                  onStickerSelect={sendSticker}
-                  labels={{ emojis: t("emojis"), stickers: t("stickers"), emptyStickers: t("sinStickers"), customEmojis: t("emojisCustom") }}
-                />
+                <AnchoredEmojiStickerPicker open={showExpressions} anchorEl={expressionButtonRef.current} onClose={() => setShowExpressions(false)} onEmojiSelect={insertEmoji} stickers={stickers} onStickerSelect={sendSticker} labels={{ emojis: t("emojis"), stickers: t("stickers"), emptyStickers: t("sinStickers"), customEmojis: t("emojisCustom") }} />
               </>
             ) : (
-              <div className="flex-1 flex items-center justify-center p-8 text-center">
-                <p className="text-sm text-muted-foreground">
-                  {active.length > 0 || requests.length > 0 ? t("elegiConversacion") : t("sinConversacionesDescripcion")}
-                </p>
+              <div className="flex h-full flex-col items-center justify-center p-8 text-center">
+                <div className="grid size-16 place-items-center rounded-full border border-border bg-muted/60 text-primary shadow-inner"><MessageSquarePlus className="size-7" aria-hidden="true" /></div>
+                <p className="mt-4 text-base font-semibold text-foreground">{t("titulo")}</p>
+                <p className="mt-1 max-w-sm text-sm text-muted-foreground">{active.length > 0 || requests.length > 0 ? t("elegiConversacion") : t("sinConversacionesDescripcion")}</p>
+                <Button size="sm" className="mt-4" onClick={openNewMessage}>{t("nuevoMensaje")}</Button>
               </div>
             )}
-          </div>
+          </section>
         </Card>
       </div>
-
       {showNewMessage && (
         <MessageDialog open={showNewMessage} labelledBy="new-message-title" onClose={() => setShowNewMessage(false)}>
           <div className="relative w-full rounded-2xl border border-border bg-card p-5 shadow-xl sm:p-6">

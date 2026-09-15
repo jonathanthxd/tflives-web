@@ -18,6 +18,12 @@ export const publicIdentitySelect = {
   role: true,
 } satisfies Prisma.UserSelect;
 
+export const publicIdentityWithCosmeticsSelect = {
+  ...publicIdentitySelect,
+  equippedCosmetics: { select: { type: true, cosmetic: { select: { visualPreset: true, premiumOnly: true } } } },
+  premiumEntitlements: { select: { startsAt: true, expiresAt: true, revokedAt: true } },
+} satisfies Prisma.UserSelect;
+
 export const publicProfileSelect = {
   ...publicIdentitySelect,
   bio: true,
@@ -34,6 +40,7 @@ export const publicProfileSelect = {
 } satisfies Prisma.UserSelect;
 
 type IdentityRecord = Prisma.UserGetPayload<{ select: typeof publicIdentitySelect }>;
+type IdentityWithCosmeticsRecord = Prisma.UserGetPayload<{ select: typeof publicIdentityWithCosmeticsSelect }>;
 type ProfileRecord = Prisma.UserGetPayload<{ select: typeof publicProfileSelect }>;
 
 /** A deliberately small identity shape for every public/community surface. */
@@ -45,6 +52,17 @@ export function toPublicIdentity(user: IdentityRecord): PublicIdentity {
     name: user.name,
     image: isSafeProfileMediaUrl(user.image) ? user.image : null,
     role: user.role,
+  };
+}
+
+export function toPublicIdentityWithCosmetics(user: IdentityWithCosmeticsRecord) {
+  const hasActivePremium = user.premiumEntitlements.some((entitlement) => isEntitlementActive(entitlement));
+  return {
+    ...toPublicIdentity(user),
+    cosmetics: user.equippedCosmetics
+      .filter((equipped) => !equipped.cosmetic.premiumOnly || hasActivePremium)
+      .map((equipped) => toSafeCosmeticVisual({ type: equipped.type, visualPreset: equipped.cosmetic.visualPreset }))
+      .filter((cosmetic): cosmetic is NonNullable<typeof cosmetic> => cosmetic !== null),
   };
 }
 

@@ -3,7 +3,7 @@ import { prisma } from "@/infrastructure/database/prisma";
 import { getActiveBanOrSuspension, isMuted } from "@/modules/administration/sanctions";
 import { logAdminAction } from "@/modules/administration/action-log";
 import { createNotification } from "@/modules/notifications/service";
-import { publicIdentitySelect } from "@/modules/profiles/service";
+import { publicIdentityWithCosmeticsSelect, toPublicIdentityWithCosmetics } from "@/modules/profiles/service";
 import { awardGlobalMessage } from "@/modules/progression/service";
 import {
   assertReactionEmoji,
@@ -16,7 +16,7 @@ import {
 
 export { ChatValidationError } from "@/modules/chat/shared";
 
-const AUTHOR_SELECT = publicIdentitySelect;
+const AUTHOR_SELECT = publicIdentityWithCosmeticsSelect;
 
 const MESSAGE_INCLUDE = {
   author: { select: AUTHOR_SELECT },
@@ -61,7 +61,7 @@ function publicMessage(
   const replyTo = message.replyTo && !blockedUserIds.has(message.replyTo.authorId)
     ? {
         id: message.replyTo.id,
-        author: message.replyTo.author,
+        author: toPublicIdentityWithCosmetics(message.replyTo.author),
         content: message.replyTo.deletedAt && !canModerate ? "" : message.replyTo.content,
         sticker: message.replyTo.sticker,
         deletedAt: message.replyTo.deletedAt,
@@ -70,7 +70,7 @@ function publicMessage(
   return {
     id: message.id,
     authorId: message.authorId,
-    author: message.author,
+    author: toPublicIdentityWithCosmetics(message.author),
     content: message.deletedAt && !canModerate ? "" : message.content,
     sticker: message.sticker,
     replyTo,
