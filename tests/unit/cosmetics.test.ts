@@ -128,6 +128,25 @@ test("purchase API ignores client price, avoids persistent purchase notification
 });
 
 
+test("all sixteen avatar frames keep dedicated layered geometry and preview headroom", () => {
+  const css = readFileSync("src/styles/globals.css", "utf8");
+  const renderer = readFileSync("src/modules/cosmetics/components/cosmetic-renderer.tsx", "utf8");
+  const frameVariants = Object.values(COSMETIC_PRESETS)
+    .filter((preset) => preset.type === "AVATAR_FRAME")
+    .map((preset) => preset.variant);
+
+  assert.equal(frameVariants.length, 16);
+  assert.equal(new Set(frameVariants).size, 16);
+  for (const variant of frameVariants) {
+    assert.match(css, new RegExp(`\\.cosmetic-avatar-frame\\[data-variant="${variant}"\\]`));
+  }
+  assert.match(renderer, /cosmetic-avatar-frame__motif/);
+  assert.match(renderer, /cosmetic-avatar-frame__orbit/);
+  assert.match(renderer, /cosmetic-avatar-frame__particles/);
+  assert.match(renderer, /cosmetic-avatar-frame__ornament/);
+  assert.match(renderer, /CosmeticAvatarFrame preset=\{preset\} className="translate-y-1"/);
+});
+
 test("production cosmetics expose eighty safe recipes across all five visual types", () => {
   const entries = Object.entries(COSMETIC_PRESETS);
   assert.equal(entries.length, 80);

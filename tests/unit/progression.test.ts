@@ -4,8 +4,13 @@ import { readFileSync } from "node:fs";
 import { PGlite } from "@electric-sql/pglite";
 import { PROGRESSION_ACHIEVEMENTS, PRODUCTION_ACHIEVEMENT_COUNT } from "../../src/modules/progression/catalog";
 import { getProgressSummary, levelForXp, xpRequiredForLevel } from "../../src/modules/progression/level";
-import { achievementCodesForFacts, activityAwardAllowed } from "../../src/modules/progression/service";
+import {
+  achievementCodesForFacts,
+  activityAwardAllowed,
+  isRetryableAchievementReconciliationError,
+} from "../../src/modules/progression/service";
 import { describeAchievementTrigger, normalizedTriggerValue } from "../../src/modules/achievements/triggers";
+import { selectAutomaticAchievementNotificationIds } from "../../src/modules/achievements/automatic";
 
 test("level formula has stable boundaries and a bounded progress summary", () => {
   assert.equal(xpRequiredForLevel(1), 0);
@@ -65,9 +70,36 @@ test("pre-existing OAuth links qualify from current server facts without replayi
 test("achievement API reconciles fixed and admin automatic achievements before returning the profile", () => {
   const route = readFileSync("src/app/api/achievements/user/route.ts", "utf8");
   assert.match(route, /reconcileProgressionAchievements\(target\.id\)/);
-  assert.match(route, /evaluateAutomaticAchievements\(target\.id, ACHIEVEMENT_TRIGGER_KEYS\)/);
+  assert.match(route, /evaluateAutomaticAchievements\(target\.id, ACHIEVEMENT_TRIGGER_KEYS, "significant-per-trigger"\)/);
 });
 
+
+
+
+test("achievement catch-up surfaces only the highest threshold per trigger", () => {
+  const ids = selectAutomaticAchievementNotificationIds([
+    { id: "global-10", trigger: "GLOBAL_MESSAGES", triggerValue: 10 },
+    { id: "global-100", trigger: "GLOBAL_MESSAGES", triggerValue: 100 },
+    { id: "oauth-1", trigger: "OAUTH_CONNECTIONS", triggerValue: 1 },
+    { id: "oauth-2", trigger: "OAUTH_CONNECTIONS", triggerValue: 2 },
+  ], "significant-per-trigger");
+  assert.deepEqual([...ids].sort(), ["global-100", "oauth-2"]);
+});
+
+test("achievement reconciliation retries only known concurrency conflicts", () => {
+  assert.equal(isRetryableAchievementReconciliationError({ code: "P2002" }), true);
+  assert.equal(isRetryableAchievementReconciliationError({ code: "P2034" }), true);
+  assert.equal(isRetryableAchievementReconciliationError({ code: "P2025" }), false);
+  assert.equal(isRetryableAchievementReconciliationError(new Error("boom")), false);
+});
+
+test("activity-triggered automatic checks stay scoped while full catch-up dedupes notifications", () => {
+  const service = readFileSync("src/modules/progression/service.ts", "utf8");
+  const route = readFileSync("src/app/api/achievements/user/route.ts", "utf8");
+  assert.match(service, /AUTOMATIC_TRIGGERS_BY_SOURCE\[source\]/);
+  assert.doesNotMatch(service, /evaluateAutomaticAchievements\(userId, ACHIEVEMENT_TRIGGER_KEYS\)/);
+  assert.match(route, /ACHIEVEMENT_TRIGGER_KEYS, "significant-per-trigger"/);
+});
 
 test("production progression catalogue contains exactly 200 new durable milestones", () => {
   assert.equal(PRODUCTION_ACHIEVEMENT_COUNT, 200);

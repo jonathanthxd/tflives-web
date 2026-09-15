@@ -4,6 +4,14 @@ import { awardAchievementCoins } from "@/modules/economy/service";
 import { isProfileComplete } from "@/modules/profiles/completion";
 import type { AchievementTriggerKey } from "@/modules/achievements/triggers";
 
+export type AutomaticAchievementNotificationMode = "all" | "significant-per-trigger";
+
+interface AutomaticAchievementCandidate {
+  id: string;
+  trigger: AchievementTriggerKey;
+  triggerValue: number;
+}
+
 async function resolveTriggerValue(userId: string, trigger: AchievementTriggerKey): Promise<number> {
   switch (trigger) {
     case "GLOBAL_MESSAGES":
@@ -46,6 +54,27 @@ function isUniqueConstraintError(error: unknown) {
 }
 
 /**
+ * Catch-up can discover several thresholds from the same trigger at once. All
+ * qualifying rows/rewards are still persisted, but only the highest threshold
+ * in each trigger family needs to surface as a notification.
+ */
+export function selectAutomaticAchievementNotificationIds(
+  candidates: readonly AutomaticAchievementCandidate[],
+  mode: AutomaticAchievementNotificationMode,
+) {
+  if (mode === "all") return new Set(candidates.map((candidate) => candidate.id));
+
+  const highestByTrigger = new Map<AchievementTriggerKey, AutomaticAchievementCandidate>();
+  for (const candidate of candidates) {
+    const current = highestByTrigger.get(candidate.trigger);
+    if (!current || candidate.triggerValue > current.triggerValue) {
+      highestByTrigger.set(candidate.trigger, candidate);
+    }
+  }
+  return new Set([...highestByTrigger.values()].map((candidate) => candidate.id));
+}
+
+/**
  * Evaluates the active automatic catalogue after real server-side activity.
  * Only trigger families actually used by the catalogue are queried. Achievement
  * amounts and recipients never come from the browser.
@@ -53,6 +82,7 @@ function isUniqueConstraintError(error: unknown) {
 export async function evaluateAutomaticAchievements(
   userId: string,
   triggers: readonly AchievementTriggerKey[],
+  notificationMode: AutomaticAchievementNotificationMode = "all",
 ) {
   const uniqueTriggers = [...new Set(triggers)];
   if (!uniqueTriggers.length) return [];
@@ -88,12 +118,16 @@ export async function evaluateAutomaticAchievements(
     }),
   );
 
-  const unlocked: string[] = [];
-  for (const achievement of achievements) {
-    if (alreadyEarned.has(achievement.id) || !achievement.trigger || achievement.triggerValue == null) continue;
+  const candidates = achievements.flatMap((achievement) => {
+    if (alreadyEarned.has(achievement.id) || !achievement.trigger || achievement.triggerValue == null) return [];
     const trigger = achievement.trigger as AchievementTriggerKey;
-    if ((values.get(trigger) ?? 0) < achievement.triggerValue) continue;
+    if ((values.get(trigger) ?? 0) < achievement.triggerValue) return [];
+    return [{ ...achievement, trigger, triggerValue: achievement.triggerValue }];
+  });
+  const notificationIds = selectAutomaticAchievementNotificationIds(candidates, notificationMode);
 
+  const unlocked: string[] = [];
+  for (const achievement of candidates) {
     try {
       await prisma.$transaction(async (tx) => {
         await tx.userAchievement.create({
@@ -105,12 +139,14 @@ export async function evaluateAutomaticAchievements(
           },
         });
         await awardAchievementCoins(tx, userId, achievement.id, achievement.coinReward);
-        await createNotification({
-          userId,
-          type: "ACHIEVEMENT",
-          entityType: "Achievement",
-          entityId: achievement.id,
-        }, tx);
+        if (notificationIds.has(achievement.id)) {
+          await createNotification({
+            userId,
+            type: "ACHIEVEMENT",
+            entityType: "Achievement",
+            entityId: achievement.id,
+          }, tx);
+        }
       });
       unlocked.push(achievement.id);
     } catch (error) {

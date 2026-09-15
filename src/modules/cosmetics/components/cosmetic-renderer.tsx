@@ -83,7 +83,7 @@ export function CosmeticPreviewScene({ type, preset }: { type: CosmeticTypeKey; 
     <div className="cosmetic-preview-scene group relative grid h-28 place-items-center overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-muted/90 via-card to-primary/10" style={styleFor(preset)}>
       <span aria-hidden className="cosmetic-preview-glow" />
       {type === "AVATAR_FRAME" && (
-        <CosmeticAvatarFrame preset={preset}>
+        <CosmeticAvatarFrame preset={preset} className="translate-y-1">
           <span className="grid size-14 place-items-center rounded-full border-2 border-card bg-card text-lg font-bold text-foreground shadow-lg">T</span>
         </CosmeticAvatarFrame>
       )}

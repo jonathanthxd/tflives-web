@@ -35,7 +35,7 @@ export async function GET(request: Request) {
     // links, verified email, profile completion, messages, friendships, XP, and
     // levels count even if they happened before a particular achievement shipped.
     await reconcileProgressionAchievements(target.id);
-    await evaluateAutomaticAchievements(target.id, ACHIEVEMENT_TRIGGER_KEYS);
+    await evaluateAutomaticAchievements(target.id, ACHIEVEMENT_TRIGGER_KEYS, "significant-per-trigger");
 
     const [achievements, obtainableAchievements, progression] = await Promise.all([
       listUserAchievements(username),

@@ -13,7 +13,7 @@ import {
 import { getProgressSummary, levelForXp, type PublicProgress } from "@/modules/progression/level";
 import { isProfileComplete } from "@/modules/profiles/completion";
 import { evaluateAutomaticAchievements } from "@/modules/achievements/automatic";
-import { ACHIEVEMENT_TRIGGER_KEYS } from "@/modules/achievements/triggers";
+import type { AchievementTriggerKey } from "@/modules/achievements/triggers";
 import { awardAchievementCoins, awardLevelCoins } from "@/modules/economy/service";
 
 type ProgressionSource =
@@ -38,6 +38,17 @@ const XP_SOURCES: Record<ProgressionSource, XpSourceConfig> = {
   DIRECT_MESSAGE: { xp: 3, dailyCap: 8, cooldownMs: 60_000 },
   FRIENDSHIP: { xp: 20 },
 };
+
+const AUTOMATIC_TRIGGERS_BY_SOURCE: Record<ProgressionSource, readonly AchievementTriggerKey[]> = {
+  PROFILE_COMPLETE: ["PROFILE_COMPLETE", "XP", "LEVEL"],
+  EMAIL_VERIFIED: ["EMAIL_VERIFIED", "XP", "LEVEL"],
+  OAUTH_CONNECTED: ["OAUTH_CONNECTIONS", "XP", "LEVEL"],
+  GLOBAL_MESSAGE: ["GLOBAL_MESSAGES", "XP", "LEVEL"],
+  DIRECT_MESSAGE: ["DIRECT_MESSAGES", "XP", "LEVEL"],
+  FRIENDSHIP: ["FRIENDSHIPS", "XP", "LEVEL"],
+};
+
+const RECONCILIATION_MAX_ATTEMPTS = 3;
 
 type ProgressionTransaction = Prisma.TransactionClient;
 
@@ -274,7 +285,22 @@ async function sourceReachedProductionCheckpoint(userId: string, source: Progres
   return PRODUCTION_CHECKPOINTS.get(metric)?.has(value) ?? false;
 }
 
-export async function reconcileProgressionAchievements(userId: string) {
+function isPrismaErrorCode(error: unknown, codes: readonly string[]) {
+  return Boolean(
+    error &&
+    typeof error === "object" &&
+    "code" in error &&
+    codes.includes(String((error as { code?: unknown }).code)),
+  );
+}
+
+export function isRetryableAchievementReconciliationError(error: unknown) {
+  // P2002 can occur when another reconciliation wins the same unique unlock.
+  // P2034 is Prisma's transaction write-conflict/deadlock code.
+  return isPrismaErrorCode(error, ["P2002", "P2034"]);
+}
+
+async function reconcileProgressionAchievementsAttempt(userId: string) {
   return prisma.$transaction(async (tx) => {
     const progress = await tx.userProgress.upsert({
       where: { userId },
@@ -340,11 +366,9 @@ export async function reconcileProgressionAchievements(userId: string) {
         const achievement = PROGRESSION_ACHIEVEMENTS_BY_CODE.get(code);
         if (achievement) notifyByCategory.set(achievement.category, code);
       }
-      await Promise.all(
-        [...notifyByCategory.values()].map((code) =>
-          createProgressNotification(tx, userId, "ACHIEVEMENT", "ProgressAchievement", code),
-        ),
-      );
+      for (const code of notifyByCategory.values()) {
+        await createProgressNotification(tx, userId, "ACHIEVEMENT", "ProgressAchievement", code);
+      }
     }
 
     if (workingLevel > initialLevel) {
@@ -353,6 +377,20 @@ export async function reconcileProgressionAchievements(userId: string) {
 
     return newlyUnlocked;
   }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+}
+
+export async function reconcileProgressionAchievements(userId: string) {
+  for (let attempt = 1; attempt <= RECONCILIATION_MAX_ATTEMPTS; attempt += 1) {
+    try {
+      return await reconcileProgressionAchievementsAttempt(userId);
+    } catch (error) {
+      if (attempt === RECONCILIATION_MAX_ATTEMPTS || !isRetryableAchievementReconciliationError(error)) {
+        throw error;
+      }
+    }
+  }
+
+  return [];
 }
 
 async function createProgressNotification(
@@ -468,7 +506,7 @@ async function awardSource(
 
   // Admin-created obtainable achievements continue using their independent
   // database-backed catalogue and real application counters.
-  await evaluateAutomaticAchievements(userId, ACHIEVEMENT_TRIGGER_KEYS);
+  await evaluateAutomaticAchievements(userId, AUTOMATIC_TRIGGERS_BY_SOURCE[source]);
   return result;
 }
 
