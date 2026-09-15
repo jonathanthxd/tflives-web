@@ -179,20 +179,44 @@ export async function getWalletSummary(userId: string, limit = 20) {
     select: {
       balance: true,
       transactions: {
-        select: { type: true, amount: true, balanceAfter: true, createdAt: true },
+        select: { type: true, amount: true, balanceAfter: true, sourceKey: true, description: true, createdAt: true },
         orderBy: { createdAt: "desc" },
         take,
       },
     },
   });
+
+  const transactions = wallet?.transactions ?? [];
+  const cosmeticPrefix = `cosmetic-purchase:${userId}:`;
+  const cosmeticIds = Array.from(new Set(
+    transactions
+      .map((transaction) => transaction.sourceKey.startsWith(cosmeticPrefix) ? transaction.sourceKey.slice(cosmeticPrefix.length) : null)
+      .filter((value): value is string => Boolean(value)),
+  ));
+  const cosmetics = cosmeticIds.length > 0
+    ? await prisma.cosmetic.findMany({
+        where: { id: { in: cosmeticIds } },
+        select: { id: true, name: true, nameEn: true },
+      })
+    : [];
+  const cosmeticById = new Map(cosmetics.map((cosmetic) => [cosmetic.id, cosmetic]));
+
   return {
     balance: wallet?.balance ?? 0,
-    recentTransactions: (wallet?.transactions ?? []).map((transaction) => ({
-      type: transaction.type,
-      amount: transaction.amount,
-      balanceAfter: transaction.balanceAfter,
-      createdAt: transaction.createdAt.toISOString(),
-    })),
+    recentTransactions: transactions.map((transaction) => {
+      const cosmeticId = transaction.sourceKey.startsWith(cosmeticPrefix)
+        ? transaction.sourceKey.slice(cosmeticPrefix.length)
+        : null;
+      const cosmetic = cosmeticId ? cosmeticById.get(cosmeticId) : undefined;
+      return {
+        type: transaction.type,
+        amount: transaction.amount,
+        balanceAfter: transaction.balanceAfter,
+        description: transaction.description,
+        cosmetic: cosmetic ? { name: cosmetic.name, nameEn: cosmetic.nameEn } : null,
+        createdAt: transaction.createdAt.toISOString(),
+      };
+    }),
   };
 }
 

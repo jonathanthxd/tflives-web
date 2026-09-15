@@ -1,7 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/infrastructure/database/prisma";
 import { applyWalletTransaction, WalletError } from "@/modules/economy/service";
-import { createNotification } from "@/modules/notifications/service";
 import { recordAnalyticsEvent } from "@/modules/analytics/service";
 import {
   COSMETIC_PRESETS,
@@ -215,14 +214,6 @@ export async function purchaseCosmetic(userId: string, cosmeticId: string) {
         create: { userId, cosmeticId, source: "PURCHASE" },
         update: {},
       });
-      if (walletMutation.applied) {
-        await createNotification({
-          userId,
-          type: "COSMETIC",
-          entityType: "Cosmetic",
-          entityId: cosmetic.id,
-        }, tx);
-      }
       return { alreadyOwned: !walletMutation.applied, balance: walletMutation.balance, cosmetic: publicCosmetic(cosmetic) };
     });
   } catch (error) {

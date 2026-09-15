@@ -85,8 +85,8 @@ export default function ProfileView({
             <div className="absolute inset-x-0 bottom-0 z-[3] h-24 bg-gradient-to-t from-card/95 to-transparent" />
           </div>
 
-          <div className="relative px-5 pb-6 sm:px-8 sm:pb-8">
-            <CosmeticAvatarFrame preset={cosmetics.AVATAR_FRAME?.visualPreset} className="-mt-14 sm:-mt-16">
+          <div className="relative z-10 px-5 pb-6 sm:px-8 sm:pb-8">
+            <CosmeticAvatarFrame preset={cosmetics.AVATAR_FRAME?.visualPreset} className="z-20 -mt-14 sm:-mt-16">
               <UserAvatar
                 identity={profile}
                 alt={displayName}

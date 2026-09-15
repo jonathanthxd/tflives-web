@@ -10,6 +10,8 @@ interface WalletTransactionView {
   type: "LEVEL_REWARD" | "ACHIEVEMENT_REWARD" | "ADMIN_GRANT" | "ADMIN_DEDUCT" | "SPEND";
   amount: number;
   balanceAfter: number;
+  description?: string | null;
+  cosmetic?: { name: string; nameEn: string } | null;
   createdAt: string;
 }
 
@@ -94,6 +96,11 @@ export function WalletSettings() {
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-foreground">{t(`transactionTypes.${transaction.type}`)}</p>
+                    {transaction.cosmetic && (
+                      <p className="mt-0.5 truncate text-xs font-medium text-primary/90">
+                        {t("cosmeticPurchase", { name: locale === "en" ? transaction.cosmetic.nameEn : transaction.cosmetic.name })}
+                      </p>
+                    )}
                     <p className="mt-0.5 text-xs text-muted-foreground">{formatUserDateTime(transaction.createdAt, locale)}</p>
                   </div>
                   <div className="shrink-0 text-right">

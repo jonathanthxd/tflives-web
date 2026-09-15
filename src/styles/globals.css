@@ -1215,6 +1215,8 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
   display: inline-flex;
   align-items: center;
   max-width: 100%;
+  overflow: hidden;
+  isolation: isolate;
   padding: .16em .42em .2em;
   border: 1px solid color-mix(in srgb, var(--cosmetic-1) 38%, transparent);
   border-radius: .42em;
@@ -1222,26 +1224,288 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
   box-shadow: 0 .16em .65em -.25em var(--nameplate-shadow), inset 0 1px 0 color-mix(in srgb, white 18%, transparent);
   color: color-mix(in srgb, var(--cosmetic-1) 45%, white);
   line-height: 1.08;
-  isolation: isolate;
 }
 
-.cosmetic-nameplate[data-variant="solid"] { background: color-mix(in srgb, var(--cosmetic-2) 22%, hsl(var(--card))); color: color-mix(in srgb, var(--cosmetic-1) 60%, white); }
-.cosmetic-nameplate[data-variant="neon"] { background: color-mix(in srgb, var(--cosmetic-3) 82%, black); color: var(--cosmetic-1); text-shadow: 0 0 .35em var(--cosmetic-1), 0 0 .8em var(--cosmetic-2); box-shadow: 0 0 .7em color-mix(in srgb, var(--cosmetic-1) 35%, transparent), inset 0 0 .7em color-mix(in srgb, var(--cosmetic-2) 18%, transparent); }
-.cosmetic-nameplate[data-variant="soft"] { border-radius: 999px; background: linear-gradient(135deg, color-mix(in srgb, var(--cosmetic-1) 24%, hsl(var(--card))), color-mix(in srgb, var(--cosmetic-2) 16%, hsl(var(--card)))); }
-.cosmetic-nameplate[data-variant="glass"] { background: linear-gradient(135deg, color-mix(in srgb, var(--cosmetic-1) 12%, hsl(var(--card) / .55)), color-mix(in srgb, var(--cosmetic-2) 18%, hsl(var(--card) / .38))); backdrop-filter: blur(10px) saturate(1.25); }
-.cosmetic-nameplate[data-variant="frost"] { color: #f8fafc; background: linear-gradient(135deg, color-mix(in srgb, var(--cosmetic-1) 30%, transparent), color-mix(in srgb, var(--cosmetic-3) 55%, transparent)); box-shadow: inset 0 1px 0 #fff8, 0 0 .8em color-mix(in srgb, var(--cosmetic-2) 35%, transparent); }
-.cosmetic-nameplate[data-variant="flame"] { color: #fff7ed; background: linear-gradient(100deg, var(--cosmetic-3), var(--cosmetic-2), var(--cosmetic-1), var(--cosmetic-2), var(--cosmetic-3)); background-size: 260% 100%; animation: cosmetic-nameplate-shimmer 4s linear infinite; }
-.cosmetic-nameplate[data-variant="matrix"] { border-radius: .2em; color: var(--cosmetic-1); background: color-mix(in srgb, var(--cosmetic-3) 88%, black); font-family: var(--font-mono); text-shadow: 0 0 .45em var(--cosmetic-2); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cosmetic-1) 16%, transparent); }
-.cosmetic-nameplate[data-variant="pixel"] { border-radius: 2px; border-width: 2px; box-shadow: 4px 4px 0 color-mix(in srgb, var(--cosmetic-3) 80%, black); text-shadow: 2px 2px 0 color-mix(in srgb, var(--cosmetic-2) 45%, transparent); }
-.cosmetic-nameplate[data-variant="molten"] { color: #fff7ed; background: linear-gradient(110deg, var(--cosmetic-3), var(--cosmetic-2), var(--cosmetic-1), var(--cosmetic-2), var(--cosmetic-3)); background-size: 300% 100%; animation: cosmetic-nameplate-shimmer 5s linear infinite; box-shadow: 0 0 .9em color-mix(in srgb, var(--cosmetic-2) 38%, transparent); }
+.cosmetic-nameplate__label {
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+  max-width: 100%;
+}
+
+.cosmetic-nameplate__microfx {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: .78;
+}
+
+.cosmetic-nameplate__microfx::before,
+.cosmetic-nameplate__microfx::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.cosmetic-nameplate[data-variant="solid"] {
+  background: color-mix(in srgb, var(--cosmetic-2) 22%, hsl(var(--card)));
+  color: color-mix(in srgb, var(--cosmetic-1) 60%, white);
+}
+.cosmetic-nameplate[data-variant="solid"] .cosmetic-nameplate__microfx::before {
+  inset: -60% auto -60% -35%;
+  width: 24%;
+  rotate: 18deg;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--cosmetic-1) 34%, white), transparent);
+  animation: cosmetic-nameplate-sweep 5.8s ease-in-out infinite;
+}
+
+.cosmetic-nameplate[data-variant="neon"] {
+  background: color-mix(in srgb, var(--cosmetic-3) 82%, black);
+  color: var(--cosmetic-1);
+  text-shadow: 0 0 .35em var(--cosmetic-1), 0 0 .8em var(--cosmetic-2);
+  box-shadow: 0 0 .7em color-mix(in srgb, var(--cosmetic-1) 35%, transparent), inset 0 0 .7em color-mix(in srgb, var(--cosmetic-2) 18%, transparent);
+}
+.cosmetic-nameplate[data-variant="neon"] .cosmetic-nameplate__microfx::before {
+  inset: -30% 0 auto;
+  height: 35%;
+  background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--cosmetic-1) 32%, transparent), transparent);
+  animation: cosmetic-nameplate-scan 2.9s linear infinite;
+}
+.cosmetic-nameplate[data-variant="neon"] .cosmetic-nameplate__microfx::after {
+  right: .25em;
+  top: .2em;
+  width: .18em;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: white;
+  box-shadow: 0 0 .45em var(--cosmetic-1), 0 0 .9em var(--cosmetic-2);
+  animation: cosmetic-nameplate-blink 1.9s ease-in-out infinite;
+}
+
+.cosmetic-nameplate[data-variant="soft"] {
+  border-radius: 999px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--cosmetic-1) 24%, hsl(var(--card))), color-mix(in srgb, var(--cosmetic-2) 16%, hsl(var(--card))));
+}
+.cosmetic-nameplate[data-variant="soft"] .cosmetic-nameplate__microfx::before,
+.cosmetic-nameplate[data-variant="soft"] .cosmetic-nameplate__microfx::after {
+  width: .22em;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--cosmetic-1) 72%, white);
+  box-shadow: .8em .18em 0 color-mix(in srgb, var(--cosmetic-2) 40%, transparent), 1.65em -.08em 0 color-mix(in srgb, var(--cosmetic-1) 32%, transparent);
+  opacity: .45;
+  animation: cosmetic-nameplate-float 4.8s ease-in-out infinite alternate;
+}
+.cosmetic-nameplate[data-variant="soft"] .cosmetic-nameplate__microfx::before { left: 6%; bottom: -.08em; }
+.cosmetic-nameplate[data-variant="soft"] .cosmetic-nameplate__microfx::after { right: 12%; top: -.08em; animation-delay: -2.1s; }
+
+.cosmetic-nameplate[data-variant="glass"] {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--cosmetic-1) 12%, hsl(var(--card) / .55)), color-mix(in srgb, var(--cosmetic-2) 18%, hsl(var(--card) / .38)));
+  backdrop-filter: blur(10px) saturate(1.25);
+}
+.cosmetic-nameplate[data-variant="glass"] .cosmetic-nameplate__microfx::before {
+  inset: -55% auto -55% -25%;
+  width: 19%;
+  rotate: 14deg;
+  background: linear-gradient(90deg, transparent, #fff7, transparent);
+  animation: cosmetic-nameplate-sweep 4.7s ease-in-out infinite;
+}
+
+.cosmetic-nameplate[data-variant="frost"] {
+  color: #f8fafc;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--cosmetic-1) 30%, transparent), color-mix(in srgb, var(--cosmetic-3) 55%, transparent));
+  box-shadow: inset 0 1px 0 #fff8, 0 0 .8em color-mix(in srgb, var(--cosmetic-2) 35%, transparent);
+}
+.cosmetic-nameplate[data-variant="frost"] .cosmetic-nameplate__microfx::before {
+  inset: -20%;
+  background: repeating-linear-gradient(135deg, transparent 0 .46em, #fff2 .48em .51em, transparent .53em .95em);
+  animation: cosmetic-nameplate-frost-drift 8s linear infinite;
+}
+.cosmetic-nameplate[data-variant="frost"] .cosmetic-nameplate__microfx::after {
+  right: 8%; top: 18%; width: .16em; aspect-ratio: 1; rotate: 45deg; background: white;
+  box-shadow: 0 0 .4em #fff, -2.1em .4em 0 #fff8;
+  animation: cosmetic-nameplate-blink 2.6s ease-in-out infinite;
+}
+
+.cosmetic-nameplate[data-variant="flame"] {
+  color: #fff7ed;
+  background: linear-gradient(100deg, var(--cosmetic-3), var(--cosmetic-2), var(--cosmetic-1), var(--cosmetic-2), var(--cosmetic-3));
+  background-size: 260% 100%;
+  animation: cosmetic-nameplate-shimmer 4s linear infinite;
+}
+.cosmetic-nameplate[data-variant="flame"] .cosmetic-nameplate__microfx::before {
+  left: 8%; right: 8%; bottom: -.28em; height: .8em;
+  background:
+    radial-gradient(circle at 12% 90%, #fff8 0 .06em, transparent .075em),
+    radial-gradient(circle at 34% 72%, var(--cosmetic-1) 0 .07em, transparent .085em),
+    radial-gradient(circle at 58% 94%, #fff7 0 .055em, transparent .07em),
+    radial-gradient(circle at 78% 68%, var(--cosmetic-1) 0 .07em, transparent .085em),
+    radial-gradient(circle at 93% 88%, #fff6 0 .05em, transparent .065em);
+  animation: cosmetic-nameplate-embers 2.4s linear infinite;
+}
+
+.cosmetic-nameplate[data-variant="matrix"] {
+  border-radius: .2em;
+  color: var(--cosmetic-1);
+  background: color-mix(in srgb, var(--cosmetic-3) 88%, black);
+  font-family: var(--font-mono);
+  text-shadow: 0 0 .45em var(--cosmetic-2);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cosmetic-1) 16%, transparent);
+}
+.cosmetic-nameplate[data-variant="matrix"] .cosmetic-nameplate__microfx {
+  opacity: .5;
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 18%, #000 82%, transparent 100%);
+}
+.cosmetic-nameplate[data-variant="matrix"] .cosmetic-nameplate__microfx::before,
+.cosmetic-nameplate[data-variant="matrix"] .cosmetic-nameplate__microfx::after {
+  content: "1 0 1 1 0 0 1 0\A0 1 0 1 1 0 0 1\A1 1 0 0 1 0 1 0\A0 0 1 0 1 1 0 1";
+  white-space: pre;
+  top: -190%;
+  color: color-mix(in srgb, var(--cosmetic-1) 78%, white);
+  font-family: var(--font-mono);
+  font-size: .24em;
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: .16em;
+  text-shadow: 0 0 .4em var(--cosmetic-1);
+  animation: cosmetic-nameplate-matrix-rain 3.3s linear infinite;
+}
+.cosmetic-nameplate[data-variant="matrix"] .cosmetic-nameplate__microfx::before { left: 2%; }
+.cosmetic-nameplate[data-variant="matrix"] .cosmetic-nameplate__microfx::after { right: 2%; animation-duration: 2.6s; animation-delay: -1.4s; opacity: .7; }
+
+.cosmetic-nameplate[data-variant="pixel"] {
+  border-radius: 2px;
+  border-width: 2px;
+  box-shadow: 4px 4px 0 color-mix(in srgb, var(--cosmetic-3) 80%, black);
+  text-shadow: 2px 2px 0 color-mix(in srgb, var(--cosmetic-2) 45%, transparent);
+}
+.cosmetic-nameplate[data-variant="pixel"] .cosmetic-nameplate__microfx::before {
+  inset: 0;
+  background: repeating-linear-gradient(90deg, transparent 0 .28em, color-mix(in srgb, var(--cosmetic-1) 14%, transparent) .28em .42em, transparent .42em .7em);
+  animation: cosmetic-nameplate-pixel-shift 2.8s steps(6, end) infinite;
+}
+
+.cosmetic-nameplate[data-variant="molten"] {
+  color: #fff7ed;
+  background: linear-gradient(110deg, var(--cosmetic-3), var(--cosmetic-2), var(--cosmetic-1), var(--cosmetic-2), var(--cosmetic-3));
+  background-size: 300% 100%;
+  animation: cosmetic-nameplate-shimmer 5s linear infinite;
+  box-shadow: 0 0 .9em color-mix(in srgb, var(--cosmetic-2) 38%, transparent);
+}
+.cosmetic-nameplate[data-variant="molten"] .cosmetic-nameplate__microfx::before,
+.cosmetic-nameplate[data-variant="molten"] .cosmetic-nameplate__microfx::after {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--cosmetic-1) 45%, white);
+  filter: blur(.02em);
+  animation: cosmetic-nameplate-molten-bubble 3.4s ease-in-out infinite;
+}
+.cosmetic-nameplate[data-variant="molten"] .cosmetic-nameplate__microfx::before { width: .26em; height: .26em; left: 18%; bottom: -.1em; }
+.cosmetic-nameplate[data-variant="molten"] .cosmetic-nameplate__microfx::after { width: .18em; height: .18em; right: 21%; bottom: -.08em; animation-delay: -1.6s; }
+
 .cosmetic-nameplate[data-variant="aurora"],
 .cosmetic-nameplate[data-variant="sunset"],
-.cosmetic-nameplate[data-variant="galaxy"] { color: white; background: linear-gradient(100deg, var(--cosmetic-1), var(--cosmetic-2), var(--cosmetic-3), var(--cosmetic-1)); background-size: 260% 100%; animation: cosmetic-nameplate-shimmer 7s ease-in-out infinite; }
-.cosmetic-nameplate[data-variant="chrome"] { color: #0f172a; background: linear-gradient(180deg, #fff 0%, var(--cosmetic-1) 24%, var(--cosmetic-2) 48%, #fff 59%, var(--cosmetic-3) 100%); border-color: #fff8; text-shadow: 0 1px 0 #fff8; }
+.cosmetic-nameplate[data-variant="galaxy"] {
+  color: white;
+  background: linear-gradient(100deg, var(--cosmetic-1), var(--cosmetic-2), var(--cosmetic-3), var(--cosmetic-1));
+  background-size: 260% 100%;
+  animation: cosmetic-nameplate-shimmer 7s ease-in-out infinite;
+}
+.cosmetic-nameplate[data-variant="aurora"] .cosmetic-nameplate__microfx::before {
+  inset: -70% -20%;
+  background: conic-gradient(from 100deg, transparent, #fff5, transparent 38%, color-mix(in srgb, var(--cosmetic-1) 44%, transparent), transparent 70%);
+  filter: blur(.2em);
+  animation: cosmetic-nameplate-ribbon 5.5s ease-in-out infinite alternate;
+}
+
+.cosmetic-nameplate[data-variant="chrome"] {
+  color: #0f172a;
+  background: linear-gradient(180deg, #fff 0%, var(--cosmetic-1) 24%, var(--cosmetic-2) 48%, #fff 59%, var(--cosmetic-3) 100%);
+  border-color: #fff8;
+  text-shadow: 0 1px 0 #fff8;
+}
 .dark .cosmetic-nameplate[data-variant="chrome"] { color: #020617; }
-.cosmetic-nameplate[data-variant="royal"] { color: #fff7c2; border-color: color-mix(in srgb, var(--cosmetic-1) 72%, white); background: linear-gradient(135deg, color-mix(in srgb, var(--cosmetic-3) 90%, black), color-mix(in srgb, var(--cosmetic-2) 72%, black)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cosmetic-1) 35%, transparent), 0 0 .8em color-mix(in srgb, var(--cosmetic-2) 32%, transparent); }
-.cosmetic-nameplate[data-variant="void"] { color: color-mix(in srgb, var(--cosmetic-1) 78%, white); background: #020617e6; border-color: var(--cosmetic-2); text-shadow: 0 0 .5em var(--cosmetic-2); }
-.cosmetic-nameplate[data-variant="holo"] { color: transparent; background: linear-gradient(100deg, var(--cosmetic-1), var(--cosmetic-2), var(--cosmetic-3), var(--cosmetic-1)); background-size: 240% 100%; -webkit-background-clip: text; background-clip: text; border-color: color-mix(in srgb, var(--cosmetic-2) 50%, transparent); box-shadow: inset 0 0 0 999px color-mix(in srgb, hsl(var(--card)) 84%, transparent), 0 0 .7em color-mix(in srgb, var(--cosmetic-2) 26%, transparent); animation: cosmetic-nameplate-shimmer 5s linear infinite; }
+.cosmetic-nameplate[data-variant="chrome"] .cosmetic-nameplate__microfx::before {
+  inset: -60% auto -60% -35%; width: 18%; rotate: 17deg;
+  background: linear-gradient(90deg, transparent, #fff9, transparent);
+  animation: cosmetic-nameplate-sweep 3.9s ease-in-out infinite;
+}
+
+.cosmetic-nameplate[data-variant="sunset"] .cosmetic-nameplate__microfx::before {
+  width: .5em;
+  aspect-ratio: 1;
+  left: -12%;
+  top: 50%;
+  translate: 0 -50%;
+  border-radius: 999px;
+  background: #fff7;
+  box-shadow: 0 0 .9em #fff8, 0 0 1.5em color-mix(in srgb, var(--cosmetic-1) 70%, transparent);
+  animation: cosmetic-nameplate-sun-cross 6.8s ease-in-out infinite;
+}
+
+.cosmetic-nameplate[data-variant="royal"] {
+  color: #fff7c2;
+  border-color: color-mix(in srgb, var(--cosmetic-1) 72%, white);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--cosmetic-3) 90%, black), color-mix(in srgb, var(--cosmetic-2) 72%, black));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cosmetic-1) 35%, transparent), 0 0 .8em color-mix(in srgb, var(--cosmetic-2) 32%, transparent);
+}
+.cosmetic-nameplate[data-variant="royal"] .cosmetic-nameplate__microfx::before {
+  left: 50%; top: .08em; width: .13em; aspect-ratio: 1; translate: -50% 0; rotate: 45deg;
+  background: #fff3bd;
+  box-shadow: 0 0 .5em var(--cosmetic-1);
+  animation: cosmetic-nameplate-blink 2s ease-in-out infinite;
+}
+
+.cosmetic-nameplate[data-variant="void"] {
+  color: color-mix(in srgb, var(--cosmetic-1) 78%, white);
+  background: #020617e6;
+  border-color: var(--cosmetic-2);
+  text-shadow: 0 0 .5em var(--cosmetic-2);
+}
+.cosmetic-nameplate[data-variant="void"] .cosmetic-nameplate__microfx::before,
+.cosmetic-nameplate[data-variant="galaxy"] .cosmetic-nameplate__microfx::before {
+  inset: -30%;
+  background-image:
+    radial-gradient(circle, #fff 0 .045em, transparent .06em),
+    radial-gradient(circle, color-mix(in srgb, var(--cosmetic-1) 78%, white) 0 .04em, transparent .055em);
+  background-size: .8em .65em, 1.2em .95em;
+  opacity: .5;
+  animation: cosmetic-nameplate-stars 8s linear infinite;
+}
+.cosmetic-nameplate[data-variant="void"] .cosmetic-nameplate__microfx::after {
+  inset: -80% 20%;
+  background: radial-gradient(ellipse, color-mix(in srgb, var(--cosmetic-2) 28%, transparent), transparent 65%);
+  filter: blur(.35em);
+  animation: cosmetic-nameplate-ribbon 6s ease-in-out infinite alternate;
+}
+
+.cosmetic-nameplate[data-variant="holo"] {
+  color: inherit;
+  background: color-mix(in srgb, hsl(var(--card)) 82%, transparent);
+  border-color: color-mix(in srgb, var(--cosmetic-2) 50%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, white 10%, transparent), 0 0 .7em color-mix(in srgb, var(--cosmetic-2) 26%, transparent);
+}
+.cosmetic-nameplate[data-variant="holo"] .cosmetic-nameplate__label {
+  color: transparent;
+  background: linear-gradient(100deg, var(--cosmetic-1), var(--cosmetic-2), var(--cosmetic-3), var(--cosmetic-1));
+  background-size: 240% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: cosmetic-nameplate-shimmer 4.2s linear infinite;
+}
+.cosmetic-nameplate[data-variant="holo"] .cosmetic-nameplate__microfx::before {
+  inset: -55% auto -55% -30%; width: 22%; rotate: 16deg;
+  background: linear-gradient(90deg, transparent, #fff7, transparent);
+  animation: cosmetic-nameplate-sweep 3.8s ease-in-out infinite;
+}
+
+.cosmetic-nameplate[data-variant="galaxy"] .cosmetic-nameplate__microfx::after {
+  width: .32em; aspect-ratio: 1; right: 9%; top: 18%; border-radius: 999px;
+  background: white; box-shadow: 0 0 .55em white, -2.4em .35em 0 color-mix(in srgb, var(--cosmetic-1) 70%, white);
+  animation: cosmetic-nameplate-blink 2.4s ease-in-out infinite;
+}
 
 /* Profile badges ----------------------------------------------------------- */
 
@@ -1328,6 +1592,36 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
 .cosmetic-banner-layer[data-variant="royal"]::after { left: 50%; top: 10%; width: 8px; height: 8px; translate: -50% -50%; rotate: 45deg; background: var(--cosmetic-1); box-shadow: 0 0 14px var(--cosmetic-1); }
 .cosmetic-banner-layer[data-variant="void"] { mix-blend-mode: normal; background: radial-gradient(ellipse at 50% 45%, transparent 0 16%, color-mix(in srgb, var(--cosmetic-2) 25%, transparent) 31%, color-mix(in srgb, var(--cosmetic-3) 78%, transparent) 67%); }
 
+
+/* Cosmetics catalogue shelves --------------------------------------------- */
+
+.cosmetics-shelf {
+  position: relative;
+  contain: paint;
+}
+
+.cosmetics-shelf-track {
+  scrollbar-width: none;
+  overscroll-behavior-inline: contain;
+  scroll-padding-inline: 1.25rem;
+  -webkit-overflow-scrolling: touch;
+}
+.cosmetics-shelf-track::-webkit-scrollbar { display: none; }
+
+.cosmetics-shelf-item {
+  transition: border-color 180ms ease, box-shadow 180ms ease, translate 180ms ease;
+}
+.cosmetics-shelf-item:hover,
+.cosmetics-shelf-item:focus-within {
+  border-color: color-mix(in srgb, hsl(var(--primary)) 38%, hsl(var(--border)));
+  box-shadow: 0 22px 54px -38px hsl(var(--primary) / .55);
+  translate: 0 -2px;
+}
+
+.cosmetics-inline-toast {
+  animation: cosmetics-toast-lifecycle 3.4s ease both;
+}
+
 /* Cosmetic motion ---------------------------------------------------------- */
 
 @keyframes cosmetic-frame-spin { to { transform: rotate(360deg); } }
@@ -1342,3 +1636,16 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
 @keyframes cosmetic-liquid { from { transform: translate3d(-3%, 0, 0) rotate(-6deg); } to { transform: translate3d(8%, 5%, 0) rotate(7deg); } }
 @keyframes cosmetic-banner-aurora { from { transform: translate3d(-4%, -3%, 0) rotate(-7deg) scale(.98); } to { transform: translate3d(5%, 5%, 0) rotate(5deg) scale(1.04); } }
 @keyframes cosmetic-crt-sweep { 0%,100% { transform: translateX(-30%); opacity: .2; } 50% { transform: translateX(30%); opacity: .8; } }
+@keyframes cosmetic-nameplate-sweep { 0%, 12% { left: -35%; opacity: 0; } 28% { opacity: .75; } 52% { left: 115%; opacity: 0; } 100% { left: 115%; opacity: 0; } }
+@keyframes cosmetic-nameplate-scan { 0% { top: -35%; opacity: 0; } 16% { opacity: .7; } 80% { opacity: .45; } 100% { top: 115%; opacity: 0; } }
+@keyframes cosmetic-nameplate-blink { 0%, 58%, 100% { opacity: .18; scale: .65; } 66% { opacity: 1; scale: 1.15; } 74% { opacity: .4; scale: .85; } 82% { opacity: .92; scale: 1; } }
+@keyframes cosmetic-nameplate-float { from { translate: 0 .12em; scale: .85; } to { translate: .35em -.18em; scale: 1.15; } }
+@keyframes cosmetic-nameplate-frost-drift { to { background-position: 1.9em -1.9em; } }
+@keyframes cosmetic-nameplate-embers { from { transform: translateY(.18em); opacity: .15; } 35% { opacity: .8; } to { transform: translateY(-.75em); opacity: 0; } }
+@keyframes cosmetic-nameplate-matrix-rain { from { transform: translateY(0); } to { transform: translateY(245%); } }
+@keyframes cosmetic-nameplate-pixel-shift { 0%,100% { translate: -.22em 0; } 50% { translate: .22em 0; } }
+@keyframes cosmetic-nameplate-molten-bubble { 0% { translate: 0 .15em; scale: .7; opacity: 0; } 30% { opacity: .65; } 100% { translate: .22em -.9em; scale: 1.15; opacity: 0; } }
+@keyframes cosmetic-nameplate-ribbon { from { transform: translate3d(-10%, -3%, 0) rotate(-8deg); } to { transform: translate3d(12%, 8%, 0) rotate(7deg); } }
+@keyframes cosmetic-nameplate-sun-cross { 0%, 12% { left: -12%; opacity: 0; } 28% { opacity: .85; } 72% { opacity: .65; } 100% { left: 108%; opacity: 0; } }
+@keyframes cosmetic-nameplate-stars { to { background-position: 1.6em .9em, -2.1em 1.3em; } }
+@keyframes cosmetics-toast-lifecycle { 0% { opacity: 0; scale: .96; } 8%, 78% { opacity: 1; scale: 1; } 100% { opacity: 0; scale: .98; } }

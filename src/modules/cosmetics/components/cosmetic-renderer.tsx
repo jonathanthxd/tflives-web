@@ -26,7 +26,12 @@ export function CosmeticAvatarFrame({ preset, className, children }: { preset?: 
 export function CosmeticNameplate({ preset, children, className }: { preset?: CosmeticVisualPresetKey; children: ReactNode; className?: string }) {
   const definition = preset ? COSMETIC_PRESETS[preset] : null;
   if (!definition || definition.type !== "NAMEPLATE") return <span className={className}>{children}</span>;
-  return <span className={cn("cosmetic-nameplate", className)} data-variant={definition.variant} style={styleFor(preset)}>{children}</span>;
+  return (
+    <span className={cn("cosmetic-nameplate", className)} data-variant={definition.variant} style={styleFor(preset)}>
+      <span aria-hidden className="cosmetic-nameplate__microfx" />
+      <span className="cosmetic-nameplate__label">{children}</span>
+    </span>
+  );
 }
 
 export function CosmeticBadge({ preset, label }: { preset?: CosmeticVisualPresetKey; label: string }) {

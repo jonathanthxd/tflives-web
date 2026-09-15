@@ -107,9 +107,10 @@ test("premium expiry, entitlement revocation, authorization, and safe profile pr
   });
 });
 
-test("purchase API ignores client price and service gates inactive, Premium, ownership, and ledger source server-side", () => {
+test("purchase API ignores client price, avoids persistent purchase notifications, and keeps the ledger authoritative", () => {
   const purchaseRoute = readFileSync("src/app/api/account/cosmetics/purchase/route.ts", "utf8");
   const service = readFileSync("src/modules/cosmetics/service.ts", "utf8");
+  const cleanupMigration = readFileSync("prisma/migrations/20260919003000_cosmetic_store_experience/migration.sql", "utf8");
   assert.doesNotMatch(purchaseRoute, /body\.price/);
   assert.match(service, /!cosmetic\.active/);
   assert.match(service, /cosmetic\.premiumOnly/);
@@ -117,6 +118,9 @@ test("purchase API ignores client price and service gates inactive, Premium, own
   assert.match(service, /applyWalletTransaction/);
   assert.match(service, /cosmetic-purchase:\$\{userId\}:\$\{cosmetic\.id\}/);
   assert.match(service, /isPresetForType/);
+  assert.doesNotMatch(service, /createNotification/);
+  assert.match(cleanupMigration, /DELETE FROM "Notification"/);
+  assert.match(cleanupMigration, /type = 'COSMETIC'/);
 });
 
 
@@ -211,6 +215,18 @@ test("final production cosmetic reconciliation removes test rows and normalizes 
   } finally {
     await db.close();
   }
+});
+
+test("cosmetic storefront uses horizontal category shelves and nameplates expose dedicated micro-effects", () => {
+  const catalog = readFileSync("src/modules/cosmetics/components/cosmetics-catalog.tsx", "utf8");
+  const renderer = readFileSync("src/modules/cosmetics/components/cosmetic-renderer.tsx", "utf8");
+  const css = readFileSync("src/styles/globals.css", "utf8");
+  assert.match(catalog, /cosmetics-shelf-track/);
+  assert.match(catalog, /scrollBy/);
+  assert.doesNotMatch(catalog, /setType\(/);
+  assert.match(renderer, /cosmetic-nameplate__microfx/);
+  assert.match(css, /cosmetic-nameplate-matrix-rain/);
+  assert.match(css, /data-variant="matrix"/);
 });
 
 test("production cosmetic fixture contains one finalized bilingual commercial entry per visual preset", () => {

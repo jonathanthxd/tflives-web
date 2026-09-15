@@ -59,7 +59,8 @@
       "ADMIN_GRANT": "Administrative adjustment",
       "ADMIN_DEDUCT": "Administrative adjustment",
       "SPEND": "TFL Coins use"
-    }
+    },
+    "cosmeticPurchase": "Cosmetic: {name}"
   },
   "WalletAdmin": {
     "title": "TFL Coins",
@@ -957,6 +958,18 @@
       "STARFIELD_BANNER": "Starfield",
       "ROYAL_BANNER": "Royal",
       "VOID_BANNER": "Void"
+    },
+    "back": "Back",
+    "browseHint": "Swipe each collection horizontally to explore its cosmetics.",
+    "previousItems": "View previous cosmetics",
+    "nextItems": "View more cosmetics",
+    "collectionCount": "{count} cosmetics",
+    "collectionDescriptions": {
+      "AVATAR_FRAME": "Frames that surround your avatar with their own layers, orbits, glow, and motion.",
+      "PROFILE_ACCENT": "Full-profile atmospheres that transform color, depth, and visual identity.",
+      "PROFILE_BADGE": "Compact badges that sit beside your name and role as part of your identity.",
+      "NAMEPLATE": "Animated plates that turn your name into a visual centerpiece of the profile.",
+      "BANNER_STYLE": "Effects and overlays that integrate with your banner without hiding your image."
     }
   },
   "AdminCosmetics": {

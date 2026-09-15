@@ -59,7 +59,8 @@
       "ADMIN_GRANT": "Ajuste administrativo",
       "ADMIN_DEDUCT": "Ajuste administrativo",
       "SPEND": "Uso de TFL Coins"
-    }
+    },
+    "cosmeticPurchase": "Cosmético: {name}"
   },
   "WalletAdmin": {
     "title": "TFL Coins",
@@ -957,6 +958,18 @@
       "STARFIELD_BANNER": "Starfield",
       "ROYAL_BANNER": "Royal",
       "VOID_BANNER": "Void"
+    },
+    "back": "Volver",
+    "browseHint": "Deslizá cada colección horizontalmente para explorar sus cosméticos.",
+    "previousItems": "Ver cosméticos anteriores",
+    "nextItems": "Ver más cosméticos",
+    "collectionCount": "{count} cosméticos",
+    "collectionDescriptions": {
+      "AVATAR_FRAME": "Marcos que rodean tu avatar con capas, órbitas, brillo y movimiento propios.",
+      "PROFILE_ACCENT": "Ambientes completos que transforman el color, la profundidad y la atmósfera de tu perfil.",
+      "PROFILE_BADGE": "Insignias compactas que acompañan tu identidad junto al nombre y el rol.",
+      "NAMEPLATE": "Placas animadas que convierten tu nombre en una pieza visual del perfil.",
+      "BANNER_STYLE": "Capas y efectos que se integran sobre tu banner sin ocultar tu imagen."
     }
   },
   "AdminCosmetics": {
