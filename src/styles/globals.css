@@ -2928,3 +2928,336 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
 @keyframes cosmetic-nameplate-sun-cross { 0%, 12% { left: -12%; opacity: 0; } 28% { opacity: .85; } 72% { opacity: .65; } 100% { left: 108%; opacity: 0; } }
 @keyframes cosmetic-nameplate-stars { to { background-position: 1.6em .9em, -2.1em 1.3em; } }
 @keyframes cosmetics-toast-lifecycle { 0% { opacity: 0; scale: .96; } 8%, 78% { opacity: 1; scale: 1; } 100% { opacity: 0; scale: .98; } }
+
+/* Home team constellation: every member stays visible without turning the landing into a long card grid. */
+.team-constellation {
+  position: relative;
+}
+
+.team-constellation__arena {
+  position: relative;
+  min-height: 34rem;
+  overflow: hidden;
+  border: 1px solid hsl(var(--primary) / .14);
+  border-radius: 2.25rem;
+  background:
+    radial-gradient(circle at 50% 50%, hsl(var(--primary) / .09), transparent 29%),
+    linear-gradient(145deg, hsl(var(--card) / .58), hsl(var(--background) / .4));
+  box-shadow: 0 30px 90px -62px hsl(var(--primary) / .65);
+  isolation: isolate;
+}
+
+.team-constellation__field,
+.team-constellation__field::before,
+.team-constellation__field::after {
+  position: absolute;
+  content: "";
+  pointer-events: none;
+}
+
+.team-constellation__field {
+  inset: 0;
+  z-index: -2;
+  background-image:
+    radial-gradient(circle, hsl(var(--primary) / .2) 0 1px, transparent 1.5px),
+    radial-gradient(circle, hsl(var(--foreground) / .12) 0 1px, transparent 1.5px);
+  background-position: 0 0, 22px 28px;
+  background-size: 58px 58px, 74px 74px;
+  mask-image: radial-gradient(ellipse at center, black 16%, transparent 82%);
+  opacity: .42;
+}
+
+.team-constellation__field::before {
+  inset: 8% 13%;
+  border: 1px solid hsl(var(--primary) / .1);
+  border-radius: 50%;
+  transform: rotate(-5deg);
+}
+
+.team-constellation__field::after {
+  inset: 16% 7%;
+  border: 1px dashed hsl(var(--primary) / .08);
+  border-radius: 50%;
+  transform: rotate(8deg);
+}
+
+.team-constellation__links {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.team-constellation__links line {
+  stroke: hsl(var(--primary) / .08);
+  stroke-width: .12;
+  vector-effect: non-scaling-stroke;
+  transition: stroke .24s ease, stroke-width .24s ease, opacity .24s ease;
+}
+
+.team-constellation__links line.is-active {
+  stroke: hsl(var(--primary) / .34);
+  stroke-width: .25;
+}
+
+.team-constellation__spotlight {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 5;
+  width: min(29rem, 48%);
+  min-height: 18rem;
+  transform: translate(-50%, -50%);
+  overflow: visible;
+  border: 1px solid hsl(var(--primary) / .18);
+  border-radius: 2rem;
+  background: hsl(var(--card) / .72);
+  box-shadow:
+    0 28px 90px -48px hsl(var(--primary) / .72),
+    inset 0 1px 0 hsl(var(--foreground) / .06);
+  backdrop-filter: blur(18px) saturate(125%);
+}
+
+.team-constellation__spotlight-surface {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.team-constellation__spotlight-banner {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 7.25rem;
+  overflow: hidden;
+  border-radius: 2rem 2rem 1.35rem 1.35rem;
+  border-bottom: 1px solid hsl(var(--foreground) / .05);
+  background: linear-gradient(135deg, hsl(var(--primary) / .16), hsl(var(--card) / .82) 56%, hsl(var(--background) / .82));
+  pointer-events: none;
+}
+
+.team-constellation__spotlight-banner > span:first-child {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 22% 12%, hsl(var(--primary) / .2), transparent 45%);
+}
+
+.team-constellation__identity {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  min-height: 18rem;
+  align-items: center;
+  gap: 1.8rem;
+  padding: 5.7rem 2rem 1.65rem;
+}
+
+.team-constellation__profile-link {
+  margin-top: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  border-radius: 999px;
+  border: 1px solid hsl(var(--primary) / .22);
+  background: hsl(var(--primary) / .07);
+  padding: .55rem .9rem;
+  font-size: .75rem;
+  font-weight: 700;
+  color: hsl(var(--primary));
+  transition: transform .2s ease, border-color .2s ease, background .2s ease;
+}
+
+.team-constellation__profile-link:hover {
+  transform: translateY(-1px);
+  border-color: hsl(var(--primary) / .42);
+  background: hsl(var(--primary) / .12);
+}
+
+.team-constellation__nodes {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+}
+
+.team-constellation__node {
+  position: absolute;
+  display: grid;
+  width: 4.25rem;
+  height: 4.25rem;
+  place-items: center;
+  transform: translate(-50%, -50%);
+  border-radius: 1.35rem;
+  outline: none;
+  transition: transform .22s ease, filter .22s ease;
+}
+
+.team-constellation__node::before {
+  position: absolute;
+  inset: 5px;
+  content: "";
+  border: 1px solid hsl(var(--primary) / .15);
+  border-radius: 1rem;
+  background: hsl(var(--card) / .65);
+  box-shadow: 0 12px 34px -24px hsl(var(--primary) / .9);
+  backdrop-filter: blur(12px);
+  transition: border-color .22s ease, background .22s ease, box-shadow .22s ease;
+}
+
+.team-constellation__node:hover,
+.team-constellation__node:focus-visible,
+.team-constellation__node[data-active="true"] {
+  z-index: 3;
+  transform: translate(-50%, -50%) scale(1.09);
+  filter: brightness(1.05);
+}
+
+.team-constellation__node:hover::before,
+.team-constellation__node:focus-visible::before,
+.team-constellation__node[data-active="true"]::before {
+  border-color: hsl(var(--primary) / .42);
+  background: hsl(var(--card) / .88);
+  box-shadow: 0 16px 42px -22px hsl(var(--primary) / .9);
+}
+
+.team-constellation__node-pulse {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border: 1px solid hsl(var(--primary) / .28);
+  border-radius: 1.35rem;
+  opacity: 0;
+  transform: scale(.72);
+}
+
+.team-constellation__node[data-active="true"] .team-constellation__node-pulse {
+  animation: team-constellation-pulse 2.25s ease-out infinite;
+}
+
+.team-constellation__node-lens {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: 3.5rem;
+  height: 3.5rem;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 1rem;
+}
+
+.team-constellation__node-frame {
+  transform: scale(.82);
+  transform-origin: center;
+}
+
+.team-constellation__node-frame .cosmetic-avatar-frame__aura,
+.team-constellation__node-frame .cosmetic-avatar-frame__ambient,
+.team-constellation__node-frame .cosmetic-avatar-frame__orbit,
+.team-constellation__node-frame .cosmetic-avatar-frame__particles,
+.team-constellation__node-frame .cosmetic-avatar-frame__ornament,
+.team-constellation__node-frame .cosmetic-avatar-frame__details {
+  opacity: .72;
+}
+
+.team-constellation__node-frame *,
+.team-constellation__node-frame::before,
+.team-constellation__node-frame::after {
+  animation-play-state: paused !important;
+}
+
+.team-constellation__node:hover .team-constellation__node-frame *,
+.team-constellation__node:hover .team-constellation__node-frame::before,
+.team-constellation__node:hover .team-constellation__node-frame::after,
+.team-constellation__node:focus-visible .team-constellation__node-frame *,
+.team-constellation__node:focus-visible .team-constellation__node-frame::before,
+.team-constellation__node:focus-visible .team-constellation__node-frame::after,
+.team-constellation__node[data-active="true"] .team-constellation__node-frame *,
+.team-constellation__node[data-active="true"] .team-constellation__node-frame::before,
+.team-constellation__node[data-active="true"] .team-constellation__node-frame::after {
+  animation-play-state: running !important;
+}
+
+.team-constellation__mobile-nodes {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .team-constellation__arena {
+    min-height: auto;
+    overflow: visible;
+    border-radius: 1.75rem;
+  }
+
+  .team-constellation__field,
+  .team-constellation__links,
+  .team-constellation__nodes {
+    display: none;
+  }
+
+  .team-constellation__spotlight {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    min-height: 0;
+    transform: none;
+    border: 0;
+    border-radius: 1.75rem;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .team-constellation__spotlight-banner {
+    height: 6.3rem;
+    border-radius: 1.75rem 1.75rem 1.2rem 1.2rem;
+  }
+
+  .team-constellation__identity {
+    min-height: 0;
+    flex-direction: column;
+    gap: 1.15rem;
+    padding: 4.85rem 1.25rem 1.4rem;
+  }
+
+  .team-constellation__mobile-nodes {
+    margin-top: .8rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .6rem;
+  }
+
+  .team-constellation__mobile-node {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: .65rem;
+    border: 1px solid hsl(var(--primary) / .12);
+    border-radius: 1rem;
+    background: hsl(var(--card) / .5);
+    padding: .45rem .55rem;
+    transition: border-color .2s ease, background .2s ease, transform .2s ease;
+  }
+
+  .team-constellation__mobile-node[data-active="true"],
+  .team-constellation__mobile-node:focus-visible {
+    border-color: hsl(var(--primary) / .35);
+    background: hsl(var(--primary) / .07);
+    transform: translateY(-1px);
+    outline: none;
+  }
+
+  .team-constellation__mobile-node .team-constellation__node-lens {
+    width: 3rem;
+    height: 3rem;
+    flex: 0 0 3rem;
+    border-radius: .85rem;
+  }
+}
+
+@keyframes team-constellation-pulse {
+  0% { opacity: .55; transform: scale(.76); }
+  72%, 100% { opacity: 0; transform: scale(1.28); }
+}
