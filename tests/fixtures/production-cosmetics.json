@@ -1,0 +1,1522 @@
+[
+  {
+    "key": "BRONZE_FRAME",
+    "slug": "bronze-frame",
+    "type": "AVATAR_FRAME",
+    "name_es": "Bronce Forjado",
+    "name_en": "Forged Bronze",
+    "colors": [
+      "#d97706",
+      "#fbbf24",
+      "#78350f"
+    ],
+    "variant": "metal",
+    "badge": null,
+    "desc_es": "Un marco metálico de doble aro con reflejos cálidos y profundidad forjada.",
+    "desc_en": "A double-ring metal frame with warm reflections and forged depth.",
+    "rarity": "COMMON",
+    "price": 150,
+    "premium": false
+  },
+  {
+    "key": "MONOCHROME_FRAME",
+    "slug": "monochrome-frame",
+    "type": "AVATAR_FRAME",
+    "name_es": "Monocromo",
+    "name_en": "Monochrome",
+    "colors": [
+      "#f8fafc",
+      "#94a3b8",
+      "#0f172a"
+    ],
+    "variant": "mono",
+    "badge": null,
+    "desc_es": "Un marco limpio de alto contraste con doble línea y acabado editorial.",
+    "desc_en": "A clean high-contrast frame with double lines and an editorial finish.",
+    "rarity": "COMMON",
+    "price": 200,
+    "premium": false
+  },
+  {
+    "key": "OCEAN_FRAME",
+    "slug": "ocean-frame",
+    "type": "AVATAR_FRAME",
+    "name_es": "Marea Azul",
+    "name_en": "Blue Tide",
+    "colors": [
+      "#22d3ee",
+      "#2563eb",
+      "#082f49"
+    ],
+    "variant": "wave",
+    "badge": null,
+    "desc_es": "Dos ondas luminosas rodean el avatar con una sensación acuática continua.",
+    "desc_en": "Two luminous waves surround the avatar with a continuous aquatic feel.",
+    "rarity": "COMMON",
+    "price": 260,
+    "premium": false
+  },
+  {
+    "key": "ROSE_PULSE_FRAME",
+    "slug": "rose-pulse-frame",
+    "type": "AVATAR_FRAME",
+    "name_es": "Pulso Rosa",
+    "name_en": "Rose Pulse",
+    "colors": [
+      "#fb7185",
+      "#ec4899",
+      "#881337"
+    ],
+    "variant": "pulse",
+    "badge": null,
+    "desc_es": "Un halo rose respira alrededor del avatar con pulsos suaves y definidos.",
+    "desc_en": "A rose halo breathes around the avatar with soft, defined pulses.",
+    "rarity": "COMMON",
+    "price": 320,
+    "premium": false
+  },
+  {
+    "key": "FROST_FRAME",
+    "slug": "frost-frame",
+    "type": "AVATAR_FRAME",
+    "name_es": "Cristal Ártico",
+    "name_en": "Arctic Crystal",
+    "colors": [
+      "#e0f2fe",
+      "#7dd3fc",
+      "#0369a1"
+    ],
+    "variant": "frost",
+    "badge": null,
+    "desc_es": "Bordes cristalinos y destellos fríos construyen una silueta helada.",
+    "desc_en": "Crystalline edges and cold highlights build an icy silhouette.",
+    "rarity": "RARE",
+    "price": 480,
+    "premium": false
+  },
+  {
+    "key": "EMERALD_CIRCUIT_FRAME",
+    "slug": "emerald-circuit-frame",
+    "type": "AVATAR_FRAME",
+    "name_es": "Circuito Esmeralda",
+    "name_en": "Emerald Circuit",
+    "colors": [
+      "#34d399",
+      "#10b981",
+      "#064e3b"
+    ],
+    "variant": "circuit",
+    "badge": null,
+    "desc_es": "Esquinas técnicas y trazos luminosos convierten el avatar en una pieza de circuito.",
+    "desc_en": "Technical corners and luminous traces turn the avatar into a circuit piece.",
+    "rarity": "RARE",
+    "price": 560,
+    "premium": false
+  },
+  {
+    "key": "INFERNO_FRAME",
+    "slug": "inferno-frame",
+    "type": "AVATAR_FRAME",
+    "name_es": "Infierno",
+    "name_en": "Inferno",
+    "colors": [
+      "#fb923c",
+      "#ef4444",
+      "#7f1d1d"
+    ],
+    "variant": "flame",
+    "badge": null,
+    "desc_es": "Arcos incandescentes recorren el borde con una energía de llama contenida.",
+    "desc_en": "Incandescent arcs travel the edge with contained flame energy.",
+    "rarity": "RARE",
+    "price": 650,
+    "premium": false
+  },
+  {
+    "key": "TOXIC_FRAME",
+    "slug": "toxic-frame",
+    "type": "AVATAR_FRAME",
+    "name_es": "Tóxico",
+    "name_en": "Toxic",
+    "colors": [
+      "#a3e635",
+      "#22c55e",
+      "#14532d"
+    ],
+    "variant": "toxic",
+    "badge": null,
+    "desc_es": "Un resplandor ácido con puntos reactivos da al marco una presencia venenosa.",
+    "desc_en": "An acidic glow with reactive dots gives the frame a toxic presence.",
+    "rarity": "RARE",
+    "price": 740,
+    "premium": false
+  },
+  {
+    "key": "PRISM_FRAME",
+    "slug": "prism-frame",
+    "type": "AVATAR_FRAME",
+    "name_es": "Prisma",
+    "name_en": "Prism",
+    "colors": [
+      "#22d3ee",
+      "#a78bfa",
+      "#f472b6"
+    ],
+    "variant": "prism",
+    "badge": null,
+    "desc_es": "Un aro prismático animado recorre varios tonos sin perder legibilidad.",
+    "desc_en": "An animated prismatic ring travels through several tones without losing readability.",
+    "rarity": "EPIC",
+    "price": 950,
+    "premium": false
+  },
+  {
+    "key": "CYBERGRID_FRAME",
+    "slug": "cybergrid-frame",
+    "type": "AVATAR_FRAME",
+    "name_es": "Rejilla Cibernética",
+    "name_en": "Cyber Grid",
+    "colors": [
+      "#67e8f9",
+      "#3b82f6",
+      "#1e1b4b"
+    ],
+    "variant": "grid",
+    "badge": null,
+    "desc_es": "Segmentos digitales y marcas orbitales crean un marco de interfaz futurista.",
+    "desc_en": "Digital segments and orbital marks create a futuristic interface frame.",
+    "rarity": "EPIC",
+    "price": 1100,
+    "premium": false
+  },
+  {
+    "key": "SAKURA_FRAME",
+    "slug": "sakura-frame",
+    "type": "AVATAR_FRAME",
+    "name_es": "Sakura",
+    "name_en": "Sakura",
+    "colors": [
+      "#fda4af",
+      "#f9a8d4",
+      "#831843"
+    ],
+    "variant": "petal",
+    "badge": null,
+    "desc_es": "Pequeños pétalos luminosos orbitan un aro rosado de acabado suave.",
+    "desc_en": "Small luminous petals orbit a soft pink ring.",
+    "rarity": "EPIC",
+    "price": 1300,
+    "premium": false
+  },
+  {
+    "key": "VOID_FRAME",
+    "slug": "void-frame",
+    "type": "AVATAR_FRAME",
+    "name_es": "Vacío",
+    "name_en": "Void",
+    "colors": [
+      "#312e81",
+      "#7c3aed",
+      "#020617"
+    ],
+    "variant": "void",
+    "badge": null,
+    "desc_es": "Un eclipse oscuro absorbe el borde y deja un filo violeta de alta energía.",
+    "desc_en": "A dark eclipse absorbs the edge and leaves a high-energy violet rim.",
+    "rarity": "EPIC",
+    "price": 1500,
+    "premium": true
+  },
+  {
+    "key": "SOLAR_FLARE_FRAME",
+    "slug": "solar-flare-frame",
+    "type": "AVATAR_FRAME",
+    "name_es": "Erupción Solar",
+    "name_en": "Solar Flare",
+    "colors": [
+      "#fde047",
+      "#f97316",
+      "#991b1b"
+    ],
+    "variant": "flare",
+    "badge": null,
+    "desc_es": "Rayos cortos y un núcleo dorado convierten el avatar en un pequeño sol.",
+    "desc_en": "Short rays and a golden core turn the avatar into a small sun.",
+    "rarity": "LEGENDARY",
+    "price": 1900,
+    "premium": false
+  },
+  {
+    "key": "ROYAL_GOLD_FRAME",
+    "slug": "royal-gold-frame",
+    "type": "AVATAR_FRAME",
+    "name_es": "Oro Real",
+    "name_en": "Royal Gold",
+    "colors": [
+      "#facc15",
+      "#f59e0b",
+      "#6b21a8"
+    ],
+    "variant": "royal",
+    "badge": null,
+    "desc_es": "Doble borde dorado, joya superior y glow púrpura para una presencia de élite.",
+    "desc_en": "A double gold edge, top jewel and purple glow create an elite presence.",
+    "rarity": "LEGENDARY",
+    "price": 2300,
+    "premium": false
+  },
+  {
+    "key": "NEBULA_FRAME",
+    "slug": "nebula-frame",
+    "type": "AVATAR_FRAME",
+    "name_es": "Nebulosa",
+    "name_en": "Nebula",
+    "colors": [
+      "#818cf8",
+      "#c084fc",
+      "#22d3ee"
+    ],
+    "variant": "nebula",
+    "badge": null,
+    "desc_es": "Nubes de luz y partículas orbitales rodean el avatar como una nebulosa compacta.",
+    "desc_en": "Light clouds and orbital particles surround the avatar like a compact nebula.",
+    "rarity": "LEGENDARY",
+    "price": 2800,
+    "premium": false
+  },
+  {
+    "key": "GALAXY_FRAME",
+    "slug": "galaxy-frame",
+    "type": "AVATAR_FRAME",
+    "name_es": "Galaxia",
+    "name_en": "Galaxy",
+    "colors": [
+      "#60a5fa",
+      "#a78bfa",
+      "#f472b6"
+    ],
+    "variant": "galaxy",
+    "badge": null,
+    "desc_es": "Órbitas, estrellas y un aro cromático forman el marco más profundo del catálogo.",
+    "desc_en": "Orbits, stars and a chromatic ring form the deepest frame in the catalogue.",
+    "rarity": "LEGENDARY",
+    "price": 3400,
+    "premium": true
+  },
+  {
+    "key": "AURORA_ACCENT",
+    "slug": "aurora-accent",
+    "type": "PROFILE_ACCENT",
+    "name_es": "Aurora",
+    "name_en": "Aurora",
+    "colors": [
+      "#22d3ee",
+      "#818cf8",
+      "#ec4899"
+    ],
+    "variant": "aurora",
+    "badge": null,
+    "desc_es": "Auroras suaves atraviesan el perfil y conectan las superficies con luz fría.",
+    "desc_en": "Soft auroras cross the profile and connect surfaces with cool light.",
+    "rarity": "COMMON",
+    "price": 120,
+    "premium": false
+  },
+  {
+    "key": "AMBER_ACCENT",
+    "slug": "amber-accent",
+    "type": "PROFILE_ACCENT",
+    "name_es": "Ámbar",
+    "name_en": "Amber",
+    "colors": [
+      "#fbbf24",
+      "#f97316",
+      "#7c2d12"
+    ],
+    "variant": "halo",
+    "badge": null,
+    "desc_es": "Un halo cálido refuerza bordes, tarjetas y detalles importantes del perfil.",
+    "desc_en": "A warm halo reinforces borders, cards and important profile details.",
+    "rarity": "COMMON",
+    "price": 170,
+    "premium": false
+  },
+  {
+    "key": "MONOCHROME_ACCENT",
+    "slug": "monochrome-accent",
+    "type": "PROFILE_ACCENT",
+    "name_es": "Monocromo",
+    "name_en": "Monochrome",
+    "colors": [
+      "#f8fafc",
+      "#94a3b8",
+      "#334155"
+    ],
+    "variant": "edge",
+    "badge": null,
+    "desc_es": "Contraste limpio, líneas claras y sombras neutras para un perfil editorial.",
+    "desc_en": "Clean contrast, crisp lines and neutral shadows for an editorial profile.",
+    "rarity": "COMMON",
+    "price": 220,
+    "premium": false
+  },
+  {
+    "key": "COBALT_ACCENT",
+    "slug": "cobalt-accent",
+    "type": "PROFILE_ACCENT",
+    "name_es": "Cobalto",
+    "name_en": "Cobalt",
+    "colors": [
+      "#60a5fa",
+      "#2563eb",
+      "#1e3a8a"
+    ],
+    "variant": "beam",
+    "badge": null,
+    "desc_es": "Haces azules recorren el fondo del perfil y marcan sus secciones principales.",
+    "desc_en": "Blue beams travel across the profile background and mark its main sections.",
+    "rarity": "COMMON",
+    "price": 280,
+    "premium": false
+  },
+  {
+    "key": "EMERALD_ACCENT",
+    "slug": "emerald-accent",
+    "type": "PROFILE_ACCENT",
+    "name_es": "Esmeralda",
+    "name_en": "Emerald",
+    "colors": [
+      "#34d399",
+      "#10b981",
+      "#064e3b"
+    ],
+    "variant": "grid",
+    "badge": null,
+    "desc_es": "Una retícula esmeralda muy sutil refuerza la profundidad de cada superficie.",
+    "desc_en": "A very subtle emerald grid reinforces the depth of every surface.",
+    "rarity": "RARE",
+    "price": 400,
+    "premium": false
+  },
+  {
+    "key": "ROSE_ACCENT",
+    "slug": "rose-accent",
+    "type": "PROFILE_ACCENT",
+    "name_es": "Rosa Intenso",
+    "name_en": "Rose Intense",
+    "colors": [
+      "#fb7185",
+      "#ec4899",
+      "#9f1239"
+    ],
+    "variant": "bloom",
+    "badge": null,
+    "desc_es": "Bloom rose concentrado alrededor del encabezado y las tarjetas clave.",
+    "desc_en": "Concentrated rose bloom around the header and key cards.",
+    "rarity": "RARE",
+    "price": 480,
+    "premium": false
+  },
+  {
+    "key": "CRIMSON_ACCENT",
+    "slug": "crimson-accent",
+    "type": "PROFILE_ACCENT",
+    "name_es": "Carmesí",
+    "name_en": "Crimson",
+    "colors": [
+      "#f87171",
+      "#dc2626",
+      "#7f1d1d"
+    ],
+    "variant": "slash",
+    "badge": null,
+    "desc_es": "Trazos diagonales carmesí añaden energía sin tapar el contenido.",
+    "desc_en": "Crimson diagonal strokes add energy without covering content.",
+    "rarity": "RARE",
+    "price": 560,
+    "premium": false
+  },
+  {
+    "key": "FROST_ACCENT",
+    "slug": "frost-accent",
+    "type": "PROFILE_ACCENT",
+    "name_es": "Escarcha",
+    "name_en": "Frost",
+    "colors": [
+      "#e0f2fe",
+      "#38bdf8",
+      "#0c4a6e"
+    ],
+    "variant": "frost",
+    "badge": null,
+    "desc_es": "Luz blanca fría y bordes cristalinos hacen que el perfil se sienta helado.",
+    "desc_en": "Cold white light and crystalline edges make the profile feel frozen.",
+    "rarity": "RARE",
+    "price": 650,
+    "premium": false
+  },
+  {
+    "key": "SUNSET_ACCENT",
+    "slug": "sunset-accent",
+    "type": "PROFILE_ACCENT",
+    "name_es": "Atardecer",
+    "name_en": "Sunset",
+    "colors": [
+      "#fb923c",
+      "#ec4899",
+      "#7c3aed"
+    ],
+    "variant": "sunset",
+    "badge": null,
+    "desc_es": "Tres tonos cálidos recorren la página como un atardecer extendido.",
+    "desc_en": "Three warm tones travel across the page like an extended sunset.",
+    "rarity": "EPIC",
+    "price": 850,
+    "premium": false
+  },
+  {
+    "key": "CYBER_ACCENT",
+    "slug": "cyber-accent",
+    "type": "PROFILE_ACCENT",
+    "name_es": "Cibernético",
+    "name_en": "Cyber",
+    "colors": [
+      "#22d3ee",
+      "#3b82f6",
+      "#8b5cf6"
+    ],
+    "variant": "circuit",
+    "badge": null,
+    "desc_es": "Líneas técnicas y nodos suaves convierten el perfil en una interfaz futurista.",
+    "desc_en": "Technical lines and soft nodes turn the profile into a futuristic interface.",
+    "rarity": "EPIC",
+    "price": 1000,
+    "premium": false
+  },
+  {
+    "key": "TOXIC_ACCENT",
+    "slug": "toxic-accent",
+    "type": "PROFILE_ACCENT",
+    "name_es": "Tóxico",
+    "name_en": "Toxic",
+    "colors": [
+      "#bef264",
+      "#22c55e",
+      "#14532d"
+    ],
+    "variant": "toxic",
+    "badge": null,
+    "desc_es": "Brillos verdes ácidos aparecen en bordes y puntos de profundidad del perfil.",
+    "desc_en": "Acid green highlights appear on profile edges and depth points.",
+    "rarity": "EPIC",
+    "price": 1180,
+    "premium": false
+  },
+  {
+    "key": "OBSIDIAN_ACCENT",
+    "slug": "obsidian-accent",
+    "type": "PROFILE_ACCENT",
+    "name_es": "Obsidiana",
+    "name_en": "Obsidian",
+    "colors": [
+      "#64748b",
+      "#312e81",
+      "#020617"
+    ],
+    "variant": "void",
+    "badge": null,
+    "desc_es": "Una atmósfera oscura con reflejos índigo da al perfil un acabado profundo.",
+    "desc_en": "A dark atmosphere with indigo reflections gives the profile a deep finish.",
+    "rarity": "EPIC",
+    "price": 1380,
+    "premium": true
+  },
+  {
+    "key": "SAKURA_ACCENT",
+    "slug": "sakura-accent",
+    "type": "PROFILE_ACCENT",
+    "name_es": "Sakura",
+    "name_en": "Sakura",
+    "colors": [
+      "#fda4af",
+      "#f9a8d4",
+      "#be185d"
+    ],
+    "variant": "petal",
+    "badge": null,
+    "desc_es": "Puntos y pétalos luminosos suavizan el perfil con un ambiente rosado.",
+    "desc_en": "Luminous dots and petals soften the profile with a pink atmosphere.",
+    "rarity": "LEGENDARY",
+    "price": 1750,
+    "premium": false
+  },
+  {
+    "key": "ROYAL_ACCENT",
+    "slug": "royal-accent",
+    "type": "PROFILE_ACCENT",
+    "name_es": "Regio",
+    "name_en": "Royal",
+    "colors": [
+      "#facc15",
+      "#a855f7",
+      "#4c1d95"
+    ],
+    "variant": "royal",
+    "badge": null,
+    "desc_es": "Oro y púrpura se combinan en líneas de lujo y halos controlados.",
+    "desc_en": "Gold and purple combine in luxury lines and controlled halos.",
+    "rarity": "LEGENDARY",
+    "price": 2150,
+    "premium": false
+  },
+  {
+    "key": "PLASMA_ACCENT",
+    "slug": "plasma-accent",
+    "type": "PROFILE_ACCENT",
+    "name_es": "Plasma",
+    "name_en": "Plasma",
+    "colors": [
+      "#22d3ee",
+      "#a855f7",
+      "#f43f5e"
+    ],
+    "variant": "plasma",
+    "badge": null,
+    "desc_es": "Campos cromáticos de alto contraste recorren el perfil con energía eléctrica.",
+    "desc_en": "High-contrast chromatic fields travel across the profile with electric energy.",
+    "rarity": "LEGENDARY",
+    "price": 2600,
+    "premium": false
+  },
+  {
+    "key": "COSMIC_ACCENT",
+    "slug": "cosmic-accent",
+    "type": "PROFILE_ACCENT",
+    "name_es": "Cósmico",
+    "name_en": "Cosmic",
+    "colors": [
+      "#60a5fa",
+      "#a78bfa",
+      "#f472b6"
+    ],
+    "variant": "cosmic",
+    "badge": null,
+    "desc_es": "Estrellas, halos y profundidad multicolor convierten el perfil en un espacio propio.",
+    "desc_en": "Stars, halos and multicolor depth turn the profile into its own space.",
+    "rarity": "LEGENDARY",
+    "price": 3200,
+    "premium": true
+  },
+  {
+    "key": "STAR_BADGE",
+    "slug": "star-badge",
+    "type": "PROFILE_BADGE",
+    "name_es": "Estrella",
+    "name_en": "Star",
+    "colors": [
+      "#38bdf8",
+      "#2563eb",
+      "#0c4a6e"
+    ],
+    "variant": "orb",
+    "badge": "✦",
+    "desc_es": "Una estrella luminosa para perfiles que quieren destacar sin exagerar.",
+    "desc_en": "A luminous star for profiles that want to stand out without overdoing it.",
+    "rarity": "COMMON",
+    "price": 100,
+    "premium": false
+  },
+  {
+    "key": "HEART_BADGE",
+    "slug": "heart-badge",
+    "type": "PROFILE_BADGE",
+    "name_es": "Corazón",
+    "name_en": "Heart",
+    "colors": [
+      "#fb7185",
+      "#e11d48",
+      "#881337"
+    ],
+    "variant": "soft",
+    "badge": "♥",
+    "desc_es": "Un corazón compacto con glow rose y acabado brillante.",
+    "desc_en": "A compact heart with rose glow and a glossy finish.",
+    "rarity": "COMMON",
+    "price": 140,
+    "premium": false
+  },
+  {
+    "key": "BOLT_BADGE",
+    "slug": "bolt-badge",
+    "type": "PROFILE_BADGE",
+    "name_es": "Rayo",
+    "name_en": "Bolt",
+    "colors": [
+      "#fde047",
+      "#f59e0b",
+      "#78350f"
+    ],
+    "variant": "energy",
+    "badge": "ϟ",
+    "desc_es": "Un rayo eléctrico con borde energético y contraste alto.",
+    "desc_en": "An electric bolt with an energetic edge and high contrast.",
+    "rarity": "COMMON",
+    "price": 180,
+    "premium": false
+  },
+  {
+    "key": "MOON_BADGE",
+    "slug": "moon-badge",
+    "type": "PROFILE_BADGE",
+    "name_es": "Luna",
+    "name_en": "Moon",
+    "colors": [
+      "#c4b5fd",
+      "#6366f1",
+      "#312e81"
+    ],
+    "variant": "night",
+    "badge": "☾",
+    "desc_es": "Una media luna fría con halo nocturno y profundidad violeta.",
+    "desc_en": "A cool crescent moon with a nocturnal halo and violet depth.",
+    "rarity": "COMMON",
+    "price": 240,
+    "premium": false
+  },
+  {
+    "key": "GEM_BADGE",
+    "slug": "gem-badge",
+    "type": "PROFILE_BADGE",
+    "name_es": "Gema",
+    "name_en": "Gem",
+    "colors": [
+      "#67e8f9",
+      "#8b5cf6",
+      "#312e81"
+    ],
+    "variant": "gem",
+    "badge": "◆",
+    "desc_es": "Una gema facetada con brillo interno y borde prismático.",
+    "desc_en": "A faceted gem with inner glow and a prismatic edge.",
+    "rarity": "RARE",
+    "price": 340,
+    "premium": false
+  },
+  {
+    "key": "FLAME_BADGE",
+    "slug": "flame-badge",
+    "type": "PROFILE_BADGE",
+    "name_es": "Llama",
+    "name_en": "Flame",
+    "colors": [
+      "#fb923c",
+      "#ef4444",
+      "#7f1d1d"
+    ],
+    "variant": "energy",
+    "badge": "♨",
+    "desc_es": "Una insignia incandescente para perfiles con energía intensa.",
+    "desc_en": "An incandescent badge for profiles with intense energy.",
+    "rarity": "RARE",
+    "price": 420,
+    "premium": false
+  },
+  {
+    "key": "SNOW_BADGE",
+    "slug": "snow-badge",
+    "type": "PROFILE_BADGE",
+    "name_es": "Copo de Nieve",
+    "name_en": "Snowflake",
+    "colors": [
+      "#e0f2fe",
+      "#38bdf8",
+      "#0369a1"
+    ],
+    "variant": "frost",
+    "badge": "✣",
+    "desc_es": "Un copo cristalino con reflejos blancos y azules.",
+    "desc_en": "A crystalline snowflake with white and blue reflections.",
+    "rarity": "RARE",
+    "price": 500,
+    "premium": false
+  },
+  {
+    "key": "SUN_BADGE",
+    "slug": "sun-badge",
+    "type": "PROFILE_BADGE",
+    "name_es": "Sol",
+    "name_en": "Sun",
+    "colors": [
+      "#fde047",
+      "#f97316",
+      "#9a3412"
+    ],
+    "variant": "sun",
+    "badge": "☼",
+    "desc_es": "Un sol compacto con corona cálida y centro luminoso.",
+    "desc_en": "A compact sun with a warm corona and luminous center.",
+    "rarity": "RARE",
+    "price": 580,
+    "premium": false
+  },
+  {
+    "key": "GHOST_BADGE",
+    "slug": "ghost-badge",
+    "type": "PROFILE_BADGE",
+    "name_es": "Espectro",
+    "name_en": "Specter",
+    "colors": [
+      "#e2e8f0",
+      "#8b5cf6",
+      "#312e81"
+    ],
+    "variant": "ghost",
+    "badge": "◉",
+    "desc_es": "Un emblema espectral con borde difuso y núcleo violeta.",
+    "desc_en": "A spectral emblem with a diffuse edge and violet core.",
+    "rarity": "EPIC",
+    "price": 720,
+    "premium": false
+  },
+  {
+    "key": "SWORD_BADGE",
+    "slug": "sword-badge",
+    "type": "PROFILE_BADGE",
+    "name_es": "Espada",
+    "name_en": "Sword",
+    "colors": [
+      "#cbd5e1",
+      "#64748b",
+      "#0f172a"
+    ],
+    "variant": "metal",
+    "badge": "†",
+    "desc_es": "Metal frío y destello vertical para una insignia de combate.",
+    "desc_en": "Cold metal and a vertical highlight for a combat badge.",
+    "rarity": "EPIC",
+    "price": 850,
+    "premium": false
+  },
+  {
+    "key": "SHIELD_BADGE",
+    "slug": "shield-badge",
+    "type": "PROFILE_BADGE",
+    "name_es": "Escudo",
+    "name_en": "Shield",
+    "colors": [
+      "#93c5fd",
+      "#2563eb",
+      "#1e3a8a"
+    ],
+    "variant": "metal",
+    "badge": "⬙",
+    "desc_es": "Un escudo azul con borde doble y brillo de protección.",
+    "desc_en": "A blue shield with a double edge and protective glow.",
+    "rarity": "EPIC",
+    "price": 1000,
+    "premium": false
+  },
+  {
+    "key": "SPARK_BADGE",
+    "slug": "spark-badge",
+    "type": "PROFILE_BADGE",
+    "name_es": "Chispa",
+    "name_en": "Spark",
+    "colors": [
+      "#f0abfc",
+      "#ec4899",
+      "#701a75"
+    ],
+    "variant": "spark",
+    "badge": "✧",
+    "desc_es": "Una chispa fina con bloom magenta y pulso corto.",
+    "desc_en": "A fine spark with magenta bloom and a short pulse.",
+    "rarity": "EPIC",
+    "price": 1200,
+    "premium": true
+  },
+  {
+    "key": "ORBIT_BADGE",
+    "slug": "orbit-badge",
+    "type": "PROFILE_BADGE",
+    "name_es": "Órbita",
+    "name_en": "Orbit",
+    "colors": [
+      "#22d3ee",
+      "#6366f1",
+      "#312e81"
+    ],
+    "variant": "orbit",
+    "badge": "⊙",
+    "desc_es": "Un núcleo central rodeado por una órbita luminosa.",
+    "desc_en": "A central core surrounded by a luminous orbit.",
+    "rarity": "LEGENDARY",
+    "price": 1500,
+    "premium": false
+  },
+  {
+    "key": "PIXEL_BADGE",
+    "slug": "pixel-badge",
+    "type": "PROFILE_BADGE",
+    "name_es": "Pixel",
+    "name_en": "Pixel",
+    "colors": [
+      "#a3e635",
+      "#22c55e",
+      "#052e16"
+    ],
+    "variant": "pixel",
+    "badge": "▣",
+    "desc_es": "Una insignia pixelada con borde escalonado y brillo digital.",
+    "desc_en": "A pixel badge with stepped edges and digital glow.",
+    "rarity": "LEGENDARY",
+    "price": 1850,
+    "premium": false
+  },
+  {
+    "key": "DIAMOND_BADGE",
+    "slug": "diamond-badge",
+    "type": "PROFILE_BADGE",
+    "name_es": "Diamante",
+    "name_en": "Diamond",
+    "colors": [
+      "#f8fafc",
+      "#67e8f9",
+      "#7c3aed"
+    ],
+    "variant": "gem",
+    "badge": "◇",
+    "desc_es": "Un diamante limpio con halo prismático y reflejo blanco.",
+    "desc_en": "A clean diamond with a prismatic halo and white reflection.",
+    "rarity": "LEGENDARY",
+    "price": 2250,
+    "premium": false
+  },
+  {
+    "key": "CROWN_BADGE",
+    "slug": "crown-badge",
+    "type": "PROFILE_BADGE",
+    "name_es": "Corona",
+    "name_en": "Crown",
+    "colors": [
+      "#fde047",
+      "#f59e0b",
+      "#6b21a8"
+    ],
+    "variant": "royal",
+    "badge": "♛",
+    "desc_es": "Corona dorada con halo real y acabado de máxima presencia.",
+    "desc_en": "A golden crown with royal halo and maximum-presence finish.",
+    "rarity": "LEGENDARY",
+    "price": 2800,
+    "premium": true
+  },
+  {
+    "key": "VIOLET_NAMEPLATE",
+    "slug": "violet-nameplate",
+    "type": "NAMEPLATE",
+    "name_es": "Violeta",
+    "name_en": "Violet",
+    "colors": [
+      "#a78bfa",
+      "#7c3aed",
+      "#4c1d95"
+    ],
+    "variant": "solid",
+    "badge": null,
+    "desc_es": "Una placa violeta profunda con borde luminoso y buen contraste.",
+    "desc_en": "A deep violet plate with a luminous edge and strong contrast.",
+    "rarity": "COMMON",
+    "price": 130,
+    "premium": false
+  },
+  {
+    "key": "NEON_CYAN_NAMEPLATE",
+    "slug": "neon-cyan-nameplate",
+    "type": "NAMEPLATE",
+    "name_es": "Neón Cian",
+    "name_en": "Neon Cyan",
+    "colors": [
+      "#67e8f9",
+      "#06b6d4",
+      "#164e63"
+    ],
+    "variant": "neon",
+    "badge": null,
+    "desc_es": "Texto luminoso cyan con tubo neón y halo controlado.",
+    "desc_en": "Luminous cyan text with a neon-tube edge and controlled halo.",
+    "rarity": "COMMON",
+    "price": 180,
+    "premium": false
+  },
+  {
+    "key": "ROSE_NAMEPLATE",
+    "slug": "rose-nameplate",
+    "type": "NAMEPLATE",
+    "name_es": "Rosa",
+    "name_en": "Rose",
+    "colors": [
+      "#fda4af",
+      "#ec4899",
+      "#881337"
+    ],
+    "variant": "soft",
+    "badge": null,
+    "desc_es": "Una placa rose suave con glow interior y borde brillante.",
+    "desc_en": "A soft rose plate with inner glow and bright edge.",
+    "rarity": "COMMON",
+    "price": 240,
+    "premium": false
+  },
+  {
+    "key": "EMERALD_NAMEPLATE",
+    "slug": "emerald-nameplate",
+    "type": "NAMEPLATE",
+    "name_es": "Esmeralda",
+    "name_en": "Emerald",
+    "colors": [
+      "#6ee7b7",
+      "#10b981",
+      "#064e3b"
+    ],
+    "variant": "glass",
+    "badge": null,
+    "desc_es": "Cristal verde con borde esmeralda y profundidad translúcida.",
+    "desc_en": "Green glass with an emerald edge and translucent depth.",
+    "rarity": "COMMON",
+    "price": 300,
+    "premium": false
+  },
+  {
+    "key": "FROST_NAMEPLATE",
+    "slug": "frost-nameplate",
+    "type": "NAMEPLATE",
+    "name_es": "Escarcha",
+    "name_en": "Frost",
+    "colors": [
+      "#f0f9ff",
+      "#7dd3fc",
+      "#075985"
+    ],
+    "variant": "frost",
+    "badge": null,
+    "desc_es": "Placa helada con acabado translúcido y reflejos blancos.",
+    "desc_en": "An icy plate with a translucent finish and white reflections.",
+    "rarity": "RARE",
+    "price": 420,
+    "premium": false
+  },
+  {
+    "key": "INFERNO_NAMEPLATE",
+    "slug": "inferno-nameplate",
+    "type": "NAMEPLATE",
+    "name_es": "Infierno",
+    "name_en": "Inferno",
+    "colors": [
+      "#fdba74",
+      "#ef4444",
+      "#7f1d1d"
+    ],
+    "variant": "flame",
+    "badge": null,
+    "desc_es": "Borde cálido y resplandor rojo para un nombre de alta energía.",
+    "desc_en": "A warm edge and red glow for a high-energy name.",
+    "rarity": "RARE",
+    "price": 500,
+    "premium": false
+  },
+  {
+    "key": "MATRIX_NAMEPLATE",
+    "slug": "matrix-nameplate",
+    "type": "NAMEPLATE",
+    "name_es": "Matriz",
+    "name_en": "Matrix",
+    "colors": [
+      "#bef264",
+      "#22c55e",
+      "#052e16"
+    ],
+    "variant": "matrix",
+    "badge": null,
+    "desc_es": "Tipografía técnica y barrido digital verde inspirado en terminales.",
+    "desc_en": "Technical typography and a green digital sweep inspired by terminals.",
+    "rarity": "RARE",
+    "price": 600,
+    "premium": false
+  },
+  {
+    "key": "PIXEL_NAMEPLATE",
+    "slug": "pixel-nameplate",
+    "type": "NAMEPLATE",
+    "name_es": "Pixel",
+    "name_en": "Pixel",
+    "colors": [
+      "#f8fafc",
+      "#38bdf8",
+      "#0f172a"
+    ],
+    "variant": "pixel",
+    "badge": null,
+    "desc_es": "Bordes cuadrados, sombra escalonada y lectura retro digital.",
+    "desc_en": "Square edges, stepped shadow and retro-digital readability.",
+    "rarity": "RARE",
+    "price": 700,
+    "premium": false
+  },
+  {
+    "key": "MOLTEN_NAMEPLATE",
+    "slug": "molten-nameplate",
+    "type": "NAMEPLATE",
+    "name_es": "Fundido",
+    "name_en": "Molten",
+    "colors": [
+      "#fde047",
+      "#f97316",
+      "#991b1b"
+    ],
+    "variant": "molten",
+    "badge": null,
+    "desc_es": "Gradiente metálico caliente que se mueve lentamente a través del nombre.",
+    "desc_en": "A hot metallic gradient that moves slowly across the name.",
+    "rarity": "EPIC",
+    "price": 880,
+    "premium": false
+  },
+  {
+    "key": "AURORA_NAMEPLATE",
+    "slug": "aurora-nameplate",
+    "type": "NAMEPLATE",
+    "name_es": "Aurora",
+    "name_en": "Aurora",
+    "colors": [
+      "#22d3ee",
+      "#8b5cf6",
+      "#ec4899"
+    ],
+    "variant": "aurora",
+    "badge": null,
+    "desc_es": "Tres tonos recorren la placa con un brillo aurora elegante.",
+    "desc_en": "Three tones travel across the plate with an elegant aurora glow.",
+    "rarity": "EPIC",
+    "price": 1050,
+    "premium": false
+  },
+  {
+    "key": "CHROME_NAMEPLATE",
+    "slug": "chrome-nameplate",
+    "type": "NAMEPLATE",
+    "name_es": "Cromo",
+    "name_en": "Chrome",
+    "colors": [
+      "#ffffff",
+      "#94a3b8",
+      "#0f172a"
+    ],
+    "variant": "chrome",
+    "badge": null,
+    "desc_es": "Reflejo metálico blanco, gris y oscuro para un acabado cromado real.",
+    "desc_en": "White, gray and dark metallic reflections create a true chrome finish.",
+    "rarity": "EPIC",
+    "price": 1250,
+    "premium": false
+  },
+  {
+    "key": "SUNSET_NAMEPLATE",
+    "slug": "sunset-nameplate",
+    "type": "NAMEPLATE",
+    "name_es": "Atardecer",
+    "name_en": "Sunset",
+    "colors": [
+      "#fdba74",
+      "#f472b6",
+      "#7c3aed"
+    ],
+    "variant": "sunset",
+    "badge": null,
+    "desc_es": "Atardecer naranja, rose y violeta con brillo lateral.",
+    "desc_en": "Orange, rose and violet sunset tones with a side glow.",
+    "rarity": "EPIC",
+    "price": 1450,
+    "premium": true
+  },
+  {
+    "key": "ROYAL_NAMEPLATE",
+    "slug": "royal-nameplate",
+    "type": "NAMEPLATE",
+    "name_es": "Regio",
+    "name_en": "Royal",
+    "colors": [
+      "#fde047",
+      "#a855f7",
+      "#4c1d95"
+    ],
+    "variant": "royal",
+    "badge": null,
+    "desc_es": "Oro y púrpura en una placa con borde doble y acabado de élite.",
+    "desc_en": "Gold and purple in a plate with a double edge and elite finish.",
+    "rarity": "LEGENDARY",
+    "price": 1850,
+    "premium": false
+  },
+  {
+    "key": "VOID_NAMEPLATE",
+    "slug": "void-nameplate",
+    "type": "NAMEPLATE",
+    "name_es": "Vacío",
+    "name_en": "Void",
+    "colors": [
+      "#94a3b8",
+      "#7c3aed",
+      "#020617"
+    ],
+    "variant": "void",
+    "badge": null,
+    "desc_es": "Oscuridad profunda con filo violeta y brillo concentrado.",
+    "desc_en": "Deep darkness with a violet rim and concentrated glow.",
+    "rarity": "LEGENDARY",
+    "price": 2250,
+    "premium": false
+  },
+  {
+    "key": "HOLOGRAPHIC_NAMEPLATE",
+    "slug": "holographic-nameplate",
+    "type": "NAMEPLATE",
+    "name_es": "Holográfica",
+    "name_en": "Holographic",
+    "colors": [
+      "#67e8f9",
+      "#f0abfc",
+      "#fde68a"
+    ],
+    "variant": "holo",
+    "badge": null,
+    "desc_es": "Color iridiscente que recorre el texto como una lámina holográfica.",
+    "desc_en": "Iridescent color travels across the text like a holographic foil.",
+    "rarity": "LEGENDARY",
+    "price": 2750,
+    "premium": false
+  },
+  {
+    "key": "GALAXY_NAMEPLATE",
+    "slug": "galaxy-nameplate",
+    "type": "NAMEPLATE",
+    "name_es": "Galaxia",
+    "name_en": "Galaxy",
+    "colors": [
+      "#60a5fa",
+      "#a78bfa",
+      "#f472b6"
+    ],
+    "variant": "galaxy",
+    "badge": null,
+    "desc_es": "Estrellas diminutas y gradiente cósmico convierten el nombre en una pieza central.",
+    "desc_en": "Tiny stars and a cosmic gradient turn the name into a centerpiece.",
+    "rarity": "LEGENDARY",
+    "price": 3300,
+    "premium": true
+  },
+  {
+    "key": "SUNSET_BANNER",
+    "slug": "sunset-banner",
+    "type": "BANNER_STYLE",
+    "name_es": "Atardecer",
+    "name_en": "Sunset",
+    "colors": [
+      "#fb923c",
+      "#ec4899",
+      "#4f46e5"
+    ],
+    "variant": "sunset",
+    "badge": null,
+    "desc_es": "Un velo de atardecer mezcla naranja, rose y violeta sobre cualquier banner.",
+    "desc_en": "A sunset veil blends orange, rose and violet over any banner.",
+    "rarity": "COMMON",
+    "price": 160,
+    "premium": false
+  },
+  {
+    "key": "GLASS_BANNER",
+    "slug": "glass-banner",
+    "type": "BANNER_STYLE",
+    "name_es": "Cristal",
+    "name_en": "Glass",
+    "colors": [
+      "#e2e8f0",
+      "#94a3b8",
+      "#475569"
+    ],
+    "variant": "glass",
+    "badge": null,
+    "desc_es": "Reflejos de cristal y pequeñas líneas de luz añaden profundidad sin ocultar la imagen.",
+    "desc_en": "Glass reflections and small light lines add depth without hiding the image.",
+    "rarity": "COMMON",
+    "price": 220,
+    "premium": false
+  },
+  {
+    "key": "OCEAN_BANNER",
+    "slug": "ocean-banner",
+    "type": "BANNER_STYLE",
+    "name_es": "Océano",
+    "name_en": "Ocean",
+    "colors": [
+      "#22d3ee",
+      "#2563eb",
+      "#082f49"
+    ],
+    "variant": "ocean",
+    "badge": null,
+    "desc_es": "Ondas suaves y caústicas azules recorren la superficie del banner.",
+    "desc_en": "Soft waves and blue caustics travel across the banner surface.",
+    "rarity": "COMMON",
+    "price": 280,
+    "premium": false
+  },
+  {
+    "key": "SAKURA_BANNER",
+    "slug": "sakura-banner",
+    "type": "BANNER_STYLE",
+    "name_es": "Sakura",
+    "name_en": "Sakura",
+    "colors": [
+      "#fda4af",
+      "#f9a8d4",
+      "#831843"
+    ],
+    "variant": "sakura",
+    "badge": null,
+    "desc_es": "Pétalos y luz rose flotan sobre el banner con una estética suave.",
+    "desc_en": "Petals and rose light float over the banner with a soft aesthetic.",
+    "rarity": "COMMON",
+    "price": 340,
+    "premium": false
+  },
+  {
+    "key": "GRID_BANNER",
+    "slug": "grid-banner",
+    "type": "BANNER_STYLE",
+    "name_es": "Retícula",
+    "name_en": "Grid",
+    "colors": [
+      "#67e8f9",
+      "#3b82f6",
+      "#172554"
+    ],
+    "variant": "grid",
+    "badge": null,
+    "desc_es": "Retícula técnica y glow de horizonte para una portada digital.",
+    "desc_en": "A technical grid and horizon glow create a digital cover.",
+    "rarity": "RARE",
+    "price": 460,
+    "premium": false
+  },
+  {
+    "key": "FROST_BANNER",
+    "slug": "frost-banner",
+    "type": "BANNER_STYLE",
+    "name_es": "Escarcha",
+    "name_en": "Frost",
+    "colors": [
+      "#e0f2fe",
+      "#7dd3fc",
+      "#075985"
+    ],
+    "variant": "frost",
+    "badge": null,
+    "desc_es": "Cristales geométricos y neblina fría se superponen a la imagen.",
+    "desc_en": "Geometric crystals and cold mist overlay the image.",
+    "rarity": "RARE",
+    "price": 560,
+    "premium": false
+  },
+  {
+    "key": "LIQUID_BANNER",
+    "slug": "liquid-banner",
+    "type": "BANNER_STYLE",
+    "name_es": "Líquido",
+    "name_en": "Liquid",
+    "colors": [
+      "#22d3ee",
+      "#8b5cf6",
+      "#ec4899"
+    ],
+    "variant": "liquid",
+    "badge": null,
+    "desc_es": "Manchas fluidas y refracción cromática generan una capa líquida.",
+    "desc_en": "Fluid shapes and chromatic refraction generate a liquid layer.",
+    "rarity": "RARE",
+    "price": 680,
+    "premium": false
+  },
+  {
+    "key": "CYBER_BANNER",
+    "slug": "cyber-banner",
+    "type": "BANNER_STYLE",
+    "name_es": "Cibernético",
+    "name_en": "Cyber",
+    "colors": [
+      "#22d3ee",
+      "#2563eb",
+      "#7c3aed"
+    ],
+    "variant": "cyber",
+    "badge": null,
+    "desc_es": "Líneas HUD, nodos y barridos horizontales crean una interfaz futurista.",
+    "desc_en": "HUD lines, nodes and horizontal sweeps create a futuristic interface.",
+    "rarity": "RARE",
+    "price": 800,
+    "premium": false
+  },
+  {
+    "key": "AURORA_BANNER",
+    "slug": "aurora-banner",
+    "type": "BANNER_STYLE",
+    "name_es": "Aurora",
+    "name_en": "Aurora",
+    "colors": [
+      "#22d3ee",
+      "#8b5cf6",
+      "#ec4899"
+    ],
+    "variant": "aurora",
+    "badge": null,
+    "desc_es": "Cintas aurora se mueven lentamente sobre la imagen sin cubrirla por completo.",
+    "desc_en": "Aurora ribbons move slowly over the image without fully covering it.",
+    "rarity": "EPIC",
+    "price": 980,
+    "premium": false
+  },
+  {
+    "key": "NEBULA_BANNER",
+    "slug": "nebula-banner",
+    "type": "BANNER_STYLE",
+    "name_es": "Nebulosa",
+    "name_en": "Nebula",
+    "colors": [
+      "#60a5fa",
+      "#a78bfa",
+      "#f472b6"
+    ],
+    "variant": "nebula",
+    "badge": null,
+    "desc_es": "Nubes cósmicas y puntos estelares añaden profundidad espacial.",
+    "desc_en": "Cosmic clouds and star points add spatial depth.",
+    "rarity": "EPIC",
+    "price": 1180,
+    "premium": false
+  },
+  {
+    "key": "CRT_BANNER",
+    "slug": "crt-banner",
+    "type": "BANNER_STYLE",
+    "name_es": "CRT",
+    "name_en": "CRT",
+    "colors": [
+      "#c084fc",
+      "#22d3ee",
+      "#09090b"
+    ],
+    "variant": "crt",
+    "badge": null,
+    "desc_es": "Scanlines, aberración cromática y glow convierten el banner en una pantalla CRT.",
+    "desc_en": "Scanlines, chromatic aberration and glow turn the banner into a CRT display.",
+    "rarity": "EPIC",
+    "price": 1400,
+    "premium": false
+  },
+  {
+    "key": "MOLTEN_BANNER",
+    "slug": "molten-banner",
+    "type": "BANNER_STYLE",
+    "name_es": "Fundido",
+    "name_en": "Molten",
+    "colors": [
+      "#fde047",
+      "#f97316",
+      "#991b1b"
+    ],
+    "variant": "molten",
+    "badge": null,
+    "desc_es": "Vetado incandescente y reflejos metálicos calientes recorren la portada.",
+    "desc_en": "Incandescent veining and hot metallic reflections travel across the cover.",
+    "rarity": "EPIC",
+    "price": 1650,
+    "premium": true
+  },
+  {
+    "key": "PRISMATIC_BANNER",
+    "slug": "prismatic-banner",
+    "type": "BANNER_STYLE",
+    "name_es": "Prismático",
+    "name_en": "Prismatic",
+    "colors": [
+      "#22d3ee",
+      "#a78bfa",
+      "#f472b6"
+    ],
+    "variant": "prism",
+    "badge": null,
+    "desc_es": "Un espectro prismático diagonal cambia la lectura de la portada con luz multicolor.",
+    "desc_en": "A diagonal prismatic spectrum reshapes the cover with multicolor light.",
+    "rarity": "LEGENDARY",
+    "price": 2100,
+    "premium": false
+  },
+  {
+    "key": "STARFIELD_BANNER",
+    "slug": "starfield-banner",
+    "type": "BANNER_STYLE",
+    "name_es": "Campo Estelar",
+    "name_en": "Starfield",
+    "colors": [
+      "#e2e8f0",
+      "#60a5fa",
+      "#312e81"
+    ],
+    "variant": "stars",
+    "badge": null,
+    "desc_es": "Un campo de estrellas de distintas intensidades añade profundidad nocturna.",
+    "desc_en": "A field of stars at different intensities adds nocturnal depth.",
+    "rarity": "LEGENDARY",
+    "price": 2500,
+    "premium": false
+  },
+  {
+    "key": "ROYAL_BANNER",
+    "slug": "royal-banner",
+    "type": "BANNER_STYLE",
+    "name_es": "Regio",
+    "name_en": "Royal",
+    "colors": [
+      "#fde047",
+      "#a855f7",
+      "#3b0764"
+    ],
+    "variant": "royal",
+    "badge": null,
+    "desc_es": "Marcos dorados y halo púrpura convierten la portada en una pieza real.",
+    "desc_en": "Golden frames and a purple halo turn the cover into a royal piece.",
+    "rarity": "LEGENDARY",
+    "price": 3000,
+    "premium": false
+  },
+  {
+    "key": "VOID_BANNER",
+    "slug": "void-banner",
+    "type": "BANNER_STYLE",
+    "name_es": "Vacío",
+    "name_en": "Void",
+    "colors": [
+      "#64748b",
+      "#7c3aed",
+      "#020617"
+    ],
+    "variant": "void",
+    "badge": null,
+    "desc_es": "Sombras profundas, eclipse central y filo violeta dominan la portada.",
+    "desc_en": "Deep shadows, a central eclipse and violet rim dominate the cover.",
+    "rarity": "LEGENDARY",
+    "price": 3600,
+    "premium": true
+  }
+]

@@ -154,3 +154,76 @@ test("production catalogue migrations safely add enum values before seeding eigh
     await db.close();
   }
 });
+
+test("final production cosmetic reconciliation removes test rows and normalizes all eighty purchasable items", async () => {
+  const db = await migratedDatabase();
+  try {
+    await db.exec(readFileSync("prisma/migrations/20260916000000_cosmetics_premium/migration.sql", "utf8"));
+    await db.exec(readFileSync("prisma/migrations/20260919000000_cosmetics_visual_system/migration.sql", "utf8"));
+    await db.exec(readFileSync("prisma/migrations/20260919001000_production_cosmetics_catalog/migration.sql", "utf8"));
+
+    await db.exec(`
+      INSERT INTO "User" (id,email,name,"updatedAt") VALUES ('legacy-owner','legacy-owner@example.test','Legacy Owner',now());
+      UPDATE "Cosmetic" SET name = 'xd random', name_en = 'random xd', price = 1, active = false WHERE slug = 'bronze-frame';
+      INSERT INTO "Cosmetic" (id,slug,type,rarity,name,description,name_en,description_en,price,"visualPreset","updatedAt")
+      VALUES ('legacy-random-cosmetic','lo-que-sea-xd','AVATAR_FRAME','COMMON','jaja','test','lol','test',1,'BRONZE_FRAME',now());
+      INSERT INTO "UserCosmetic" (user_id,cosmetic_id,source) VALUES ('legacy-owner','legacy-random-cosmetic','ADMIN_GRANT');
+      INSERT INTO "EquippedCosmetic" (user_id,type,cosmetic_id,updated_at) VALUES ('legacy-owner','AVATAR_FRAME','legacy-random-cosmetic',now());
+    `);
+
+    await db.exec(readFileSync("prisma/migrations/20260919002000_cosmetics_catalog_finalization/migration.sql", "utf8"));
+
+    const [summary, rarities, types, normalized, legacy, ownership, equipped] = await Promise.all([
+      db.query<{ count: number; active: number; positive: number; bilingual: number; presets: number }>(`
+        SELECT
+          count(*)::int AS count,
+          count(*) FILTER (WHERE active)::int AS active,
+          count(*) FILTER (WHERE price > 0)::int AS positive,
+          count(*) FILTER (WHERE length(trim(name)) > 0 AND length(trim(name_en)) > 0 AND length(trim(description)) > 0 AND length(trim(description_en)) > 0)::int AS bilingual,
+          count(DISTINCT "visualPreset")::int AS presets
+        FROM "Cosmetic"
+      `),
+      db.query<{ rarity: string; count: number }>(`SELECT rarity::text AS rarity, count(*)::int AS count FROM "Cosmetic" GROUP BY rarity ORDER BY rarity`),
+      db.query<{ type: string; count: number }>(`SELECT type::text AS type, count(*)::int AS count FROM "Cosmetic" GROUP BY type ORDER BY type`),
+      db.query<{ name: string; name_en: string; price: number; active: boolean }>(`SELECT name,name_en,price,active FROM "Cosmetic" WHERE slug = 'bronze-frame'`),
+      db.query<{ count: number }>(`SELECT count(*)::int AS count FROM "Cosmetic" WHERE slug = 'lo-que-sea-xd'`),
+      db.query<{ cosmetic_id: string; source: string }>(`
+        SELECT uc.cosmetic_id, uc.source::text AS source
+        FROM "UserCosmetic" uc
+        JOIN "Cosmetic" c ON c.id = uc.cosmetic_id
+        WHERE uc.user_id = 'legacy-owner' AND c.slug = 'bronze-frame'
+      `),
+      db.query<{ slug: string }>(`
+        SELECT c.slug
+        FROM "EquippedCosmetic" e
+        JOIN "Cosmetic" c ON c.id = e.cosmetic_id
+        WHERE e.user_id = 'legacy-owner' AND e.type = 'AVATAR_FRAME'
+      `),
+    ]);
+
+    assert.deepEqual(summary.rows[0], { count: 80, active: 80, positive: 80, bilingual: 80, presets: 80 });
+    assert.deepEqual(rarities.rows.map((row) => row.count).sort((a, b) => a - b), [20, 20, 20, 20]);
+    assert.deepEqual(types.rows.map((row) => row.count).sort((a, b) => a - b), [16, 16, 16, 16, 16]);
+    assert.deepEqual(normalized.rows[0], { name: "Bronce Forjado", name_en: "Forged Bronze", price: 150, active: true });
+    assert.equal(legacy.rows[0]?.count, 0);
+    assert.equal(ownership.rows[0]?.source, "ADMIN_GRANT");
+    assert.equal(equipped.rows[0]?.slug, "bronze-frame");
+  } finally {
+    await db.close();
+  }
+});
+
+test("production cosmetic fixture contains one finalized bilingual commercial entry per visual preset", () => {
+  const catalogue = JSON.parse(readFileSync("tests/fixtures/production-cosmetics.json", "utf8")) as Array<{
+    key: string; slug: string; type: string; rarity: string; name_es: string; name_en: string; price: number; premium: boolean;
+  }>;
+  assert.equal(catalogue.length, 80);
+  assert.equal(new Set(catalogue.map((item) => item.key)).size, 80);
+  assert.equal(new Set(catalogue.map((item) => item.slug)).size, 80);
+  assert.equal(catalogue.filter((item) => item.premium).length, 10);
+  for (const item of catalogue) {
+    assert.ok(item.name_es.trim().length > 0);
+    assert.ok(item.name_en.trim().length > 0);
+    assert.ok(item.price > 0);
+  }
+});
