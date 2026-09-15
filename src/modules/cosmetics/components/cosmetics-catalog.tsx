@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { Button } from "@/shared/ui/button";
 import { Card } from "@/shared/ui/card";
 import { COSMETIC_PRESETS, COSMETIC_TYPES, type CosmeticTypeKey } from "@/modules/cosmetics/visuals";
+import { CosmeticPreviewScene } from "@/modules/cosmetics/components/cosmetic-renderer";
 
 export interface CosmeticView {
   id: string;
@@ -43,17 +44,7 @@ function rarityClass(rarity: CosmeticView["rarity"]) {
 }
 
 function CosmeticPreview({ cosmetic }: { cosmetic: CosmeticView }) {
-  const preset = COSMETIC_PRESETS[cosmetic.visualPreset];
-  return (
-    <div className="relative grid h-28 place-items-center overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-muted/90 via-card to-primary/10">
-      <div className={`absolute -right-7 -top-7 size-24 rounded-full opacity-50 blur-2xl ${preset.preview}`} />
-      {cosmetic.type === "AVATAR_FRAME" && <span className={`grid size-14 place-items-center rounded-full bg-card text-lg font-bold ring-4 ${preset.preview}`}>T</span>}
-      {cosmetic.type === "PROFILE_BADGE" && <span className="grid size-12 place-items-center rounded-full border border-primary/30 bg-card text-2xl text-primary">{preset.badge}</span>}
-      {cosmetic.type === "NAMEPLATE" && <span className="rounded-lg bg-violet-500/15 px-3 py-1.5 text-sm font-semibold text-violet-800 dark:text-violet-100">TFLives</span>}
-      {cosmetic.type === "BANNER_STYLE" && <span className="h-12 w-24 rounded-lg bg-[linear-gradient(135deg,rgba(249,115,22,.7),rgba(236,72,153,.5),rgba(79,70,229,.65))]" />}
-      {cosmetic.type === "PROFILE_ACCENT" && <span className={`size-12 rounded-full border-4 border-card shadow-lg ${preset.preview}`} />}
-    </div>
-  );
+  return <CosmeticPreviewScene type={cosmetic.type} preset={cosmetic.visualPreset} />;
 }
 
 export default function CosmeticsCatalog({ initialData, authenticated }: { initialData: AccountCosmeticsView; authenticated: boolean }) {

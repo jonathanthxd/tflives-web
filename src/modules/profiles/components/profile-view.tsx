@@ -10,14 +10,15 @@ import RecentActivity from "@/modules/community/components/recent-activity";
 import { UserAvatar } from "@/modules/profiles/components/user-identity";
 import { identityName, type PublicProfile } from "@/modules/profiles/types";
 import SocialCard from "@/modules/social/components/social-card";
+import { cosmeticVisualsByType } from "@/modules/cosmetics/visuals";
 import {
-  COSMETIC_PRESETS,
-  accentClass,
-  avatarFrameClass,
-  bannerClass,
-  cosmeticVisualsByType,
-  nameplateClass,
-} from "@/modules/cosmetics/visuals";
+  CosmeticAccentLayer,
+  CosmeticAvatarFrame,
+  CosmeticBadge,
+  CosmeticBannerLayer,
+  CosmeticNameplate,
+  cosmeticAccentProps,
+} from "@/modules/cosmetics/components/cosmetic-renderer";
 import { Card } from "@/shared/ui/card";
 import Reveal from "@/shared/ui/reveal";
 
@@ -60,17 +61,17 @@ export default function ProfileView({
   }).format(new Date(profile.createdAt));
   const role = roleLabel(profile.role, t);
   const cosmetics = cosmeticVisualsByType(profile.cosmetics);
-  const badge = cosmetics.PROFILE_BADGE ? COSMETIC_PRESETS[cosmetics.PROFILE_BADGE.visualPreset].badge : null;
 
   return (
-    <main className="relative min-h-screen overflow-hidden px-4 pb-12 pt-24">
+    <main className="profile-cosmetic-scope relative min-h-screen overflow-hidden px-4 pb-12 pt-24" {...cosmeticAccentProps(cosmetics.PROFILE_ACCENT?.visualPreset)}>
+      <CosmeticAccentLayer preset={cosmetics.PROFILE_ACCENT?.visualPreset} />
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[560px] overflow-hidden">
         <div className="absolute left-1/2 top-[-180px] size-[520px] -translate-x-1/2 rounded-full bg-primary/10 blur-[140px]" />
       </div>
 
       <Reveal className="mx-auto max-w-6xl">
-        <section className={`overflow-hidden rounded-3xl border border-primary/10 bg-card/40 shadow-[0_20px_60px_-30px_hsl(var(--primary)/0.35)] ${accentClass(cosmetics.PROFILE_ACCENT?.visualPreset)}`}>
-          <div className={`relative h-44 sm:h-60 ${bannerClass(cosmetics.BANNER_STYLE?.visualPreset)}`}>
+        <section data-profile-hero className="overflow-hidden rounded-3xl border border-primary/10 bg-card/40 shadow-[0_20px_60px_-30px_hsl(var(--primary)/0.35)]">
+          <div className="relative h-44 sm:h-60">
             {profile.bannerUrl ? (
               <img src={profile.bannerUrl} alt="" referrerPolicy="no-referrer" className="absolute inset-0 size-full object-cover" />
             ) : (
@@ -80,20 +81,25 @@ export default function ProfileView({
                 <div className="absolute bottom-[-40px] left-1/3 size-48 rounded-full bg-primary/20 blur-[70px] animate-aurora-drift" />
               </div>
             )}
-            <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-card/95 to-transparent" />
+            <CosmeticBannerLayer preset={cosmetics.BANNER_STYLE?.visualPreset} />
+            <div className="absolute inset-x-0 bottom-0 z-[3] h-24 bg-gradient-to-t from-card/95 to-transparent" />
           </div>
 
           <div className="relative px-5 pb-6 sm:px-8 sm:pb-8">
-            <UserAvatar
-              identity={profile}
-              alt={displayName}
-              className={`-mt-14 size-28 border-4 border-card text-4xl shadow-xl shadow-black/20 sm:-mt-16 sm:size-32 ${avatarFrameClass(cosmetics.AVATAR_FRAME?.visualPreset)}`}
-            />
+            <CosmeticAvatarFrame preset={cosmetics.AVATAR_FRAME?.visualPreset} className="-mt-14 sm:-mt-16">
+              <UserAvatar
+                identity={profile}
+                alt={displayName}
+                className="size-28 border-4 border-card text-4xl shadow-xl shadow-black/20 sm:size-32"
+              />
+            </CosmeticAvatarFrame>
             <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h1 className={`break-words font-display text-2xl font-bold text-foreground sm:text-3xl ${nameplateClass(cosmetics.NAMEPLATE?.visualPreset)}`}>{displayName}</h1>
-                  {badge && <span className="inline-flex size-7 items-center justify-center rounded-full border border-primary/30 bg-primary/10 text-sm text-primary" aria-label={t("cosmeticBadge")} title={t("cosmeticBadge")}>{badge}</span>}
+                  <h1 className="break-words font-display text-2xl font-bold text-foreground sm:text-3xl">
+                    <CosmeticNameplate preset={cosmetics.NAMEPLATE?.visualPreset}>{displayName}</CosmeticNameplate>
+                  </h1>
+                  <CosmeticBadge preset={cosmetics.PROFILE_BADGE?.visualPreset} label={t("cosmeticBadge")} />
                   {role && (
                     <span className="inline-flex items-center gap-1 rounded-full border border-primary/25 bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
                       {profile.role === "ADMIN" ? <ShieldCheck className="size-3.5" aria-hidden="true" /> : <ShieldAlert className="size-3.5" aria-hidden="true" />}

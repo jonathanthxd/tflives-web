@@ -5,7 +5,7 @@ import { PGlite } from "@electric-sql/pglite";
 import { balanceAfterMutation } from "../../src/modules/economy/service";
 import { canAccessSection } from "../../src/modules/administration/permissions";
 import { isEntitlementActive } from "../../src/modules/cosmetics/service";
-import { cosmeticVisualsByType, isPresetForType } from "../../src/modules/cosmetics/visuals";
+import { COSMETIC_PRESETS, cosmeticVisualsByType, isPresetForType } from "../../src/modules/cosmetics/visuals";
 
 const MIGRATIONS = [
   "20260909000000_baseline",
@@ -117,4 +117,40 @@ test("purchase API ignores client price and service gates inactive, Premium, own
   assert.match(service, /applyWalletTransaction/);
   assert.match(service, /cosmetic-purchase:\$\{userId\}:\$\{cosmetic\.id\}/);
   assert.match(service, /isPresetForType/);
+});
+
+
+test("production cosmetics expose eighty safe recipes across all five visual types", () => {
+  const entries = Object.entries(COSMETIC_PRESETS);
+  assert.equal(entries.length, 80);
+  const counts = entries.reduce<Record<string, number>>((result, [, preset]) => {
+    result[preset.type] = (result[preset.type] || 0) + 1;
+    return result;
+  }, {});
+  assert.deepEqual(counts, {
+    AVATAR_FRAME: 16,
+    PROFILE_ACCENT: 16,
+    PROFILE_BADGE: 16,
+    NAMEPLATE: 16,
+    BANNER_STYLE: 16,
+  });
+  for (const [key, preset] of entries) {
+    assert.equal(isPresetForType(preset.type, key), true);
+    assert.equal(preset.colors.length, 3);
+    assert.ok(preset.preview.startsWith("linear-gradient"));
+  }
+});
+
+test("production catalogue migrations safely add enum values before seeding eighty official cosmetics", async () => {
+  const db = await migratedDatabase();
+  try {
+    await db.exec(readFileSync("prisma/migrations/20260916000000_cosmetics_premium/migration.sql", "utf8"));
+    await db.exec(readFileSync("prisma/migrations/20260919000000_cosmetics_visual_system/migration.sql", "utf8"));
+    await db.exec(readFileSync("prisma/migrations/20260919001000_production_cosmetics_catalog/migration.sql", "utf8"));
+    const result = await db.query<{ count: number; types: number }>(`SELECT count(*)::int AS count, count(DISTINCT type)::int AS types FROM "Cosmetic" WHERE id LIKE 'official-cosmetic-%'`);
+    assert.equal(result.rows[0]?.count, 80);
+    assert.equal(result.rows[0]?.types, 5);
+  } finally {
+    await db.close();
+  }
 });
