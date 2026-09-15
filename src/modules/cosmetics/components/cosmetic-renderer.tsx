@@ -12,22 +12,22 @@ function styleFor(preset?: CosmeticVisualPresetKey): CSSProperties {
 }
 
 const FRAME_DETAIL_COUNTS: Record<string, number> = {
-  metal: 5,
-  mono: 5,
-  wave: 7,
-  pulse: 5,
-  frost: 7,
-  circuit: 8,
-  flame: 9,
-  toxic: 8,
-  prism: 8,
-  grid: 7,
-  petal: 8,
-  void: 7,
-  flare: 8,
-  royal: 7,
-  nebula: 8,
-  galaxy: 8,
+  metal: 6,
+  mono: 6,
+  wave: 9,
+  pulse: 6,
+  frost: 9,
+  circuit: 10,
+  flame: 10,
+  toxic: 10,
+  prism: 10,
+  grid: 9,
+  petal: 12,
+  void: 9,
+  flare: 10,
+  royal: 10,
+  nebula: 10,
+  galaxy: 10,
 };
 
 /**
@@ -55,8 +55,10 @@ export function CosmeticAvatarFrame({ preset, className, children }: { preset?: 
     <span className={cn("cosmetic-avatar-frame relative inline-grid shrink-0 place-items-center", className)} data-variant={definition.variant} style={styleFor(preset)}>
       <span aria-hidden className="cosmetic-avatar-frame__aura" />
       <span aria-hidden className="cosmetic-avatar-frame__motif" />
+      <span aria-hidden className="cosmetic-avatar-frame__signature" />
       <span aria-hidden className="cosmetic-avatar-frame__orbit" />
       <span aria-hidden className="cosmetic-avatar-frame__particles" />
+      <span aria-hidden className="cosmetic-avatar-frame__ambient" />
       <span aria-hidden className="cosmetic-avatar-frame__ornament" />
       <AvatarFrameDetails variant={definition.variant} />
       <span className="relative z-[4] inline-grid place-items-center">{children}</span>
@@ -118,11 +120,11 @@ export function CosmeticPreviewScene({ type, preset }: { type: CosmeticTypeKey; 
   const isType = definition.type === type;
   if (!isType) return null;
   return (
-    <div className="cosmetic-preview-scene group relative grid h-28 place-items-center overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-muted/90 via-card to-primary/10" style={styleFor(preset)}>
+    <div className="cosmetic-preview-scene group relative grid h-32 place-items-center overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-muted/90 via-card to-primary/10" style={styleFor(preset)}>
       <span aria-hidden className="cosmetic-preview-glow" />
       {type === "AVATAR_FRAME" && (
-        <CosmeticAvatarFrame preset={preset} className="translate-y-1">
-          <span className="grid size-14 place-items-center rounded-full border-2 border-card bg-card text-lg font-bold text-foreground shadow-lg">T</span>
+        <CosmeticAvatarFrame preset={preset} className="translate-y-1 scale-[1.06]">
+          <span className="grid size-16 place-items-center rounded-full border-2 border-card bg-card text-lg font-bold text-foreground shadow-lg">T</span>
         </CosmeticAvatarFrame>
       )}
       {type === "PROFILE_BADGE" && <CosmeticBadge preset={preset} label="" />}

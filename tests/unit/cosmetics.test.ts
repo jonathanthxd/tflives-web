@@ -128,7 +128,7 @@ test("purchase API ignores client price, avoids persistent purchase notification
 });
 
 
-test("avatar frames 3.0 keep sixteen semantic recipes without full-frame vinyl rotation", () => {
+test("avatar frames 4.0 keep sixteen semantic recipes without full-frame vinyl rotation", () => {
   const css = readFileSync("src/styles/globals.css", "utf8");
   const renderer = readFileSync("src/modules/cosmetics/components/cosmetic-renderer.tsx", "utf8");
   const frameVariants = Object.values(COSMETIC_PRESETS)
@@ -147,13 +147,21 @@ test("avatar frames 3.0 keep sixteen semantic recipes without full-frame vinyl r
   assert.doesNotMatch(avatarCss, /cosmetic-frame-spin|cosmetic-frame-petals|cosmetic-frame-orbit|cosmetic-frame-solar/);
   assert.match(renderer, /FRAME_DETAIL_COUNTS/);
   assert.match(renderer, /AvatarFrameDetails/);
+  assert.match(renderer, /cosmetic-avatar-frame__signature/);
+  assert.match(renderer, /cosmetic-avatar-frame__ambient/);
+  assert.match(renderer, /h-32/);
+  assert.match(renderer, /size-16/);
   assert.match(renderer, /cosmetic-avatar-frame__piece--/);
   assert.match(css, /tfl-frame-petal-fall-a/);
   assert.match(css, /tfl-frame-flame-tongue/);
   assert.match(css, /tfl-frame-circuit-node/);
   assert.match(css, /tfl-frame-toxic-drip/);
   assert.match(css, /tfl-frame-galaxy-planet/);
-  assert.match(renderer, /CosmeticAvatarFrame preset=\{preset\} className="translate-y-1"/);
+  assert.match(css, /tfl-frame-branch-sway/);
+  assert.match(css, /tfl-frame-prism-shard/);
+  assert.match(css, /tfl-frame-galaxy-satellite/);
+  assert.match(css, /Avatar Frames 4\.0: next-level silhouette/);
+  assert.match(renderer, /CosmeticAvatarFrame preset=\{preset\} className="translate-y-1 scale=\[1\.06\]"/);
 });
 
 test("production cosmetics expose eighty safe recipes across all five visual types", () => {
