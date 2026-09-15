@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import { StudioProvider } from "@/providers/studio-provider";
 import Navbar from "@/shared/ui/layout/navbar";
 import Footer from "@/shared/ui/layout/footer";
+import ScrollReset from "@/shared/ui/layout/scroll-reset";
 import AmbientBackground from "@/shared/ui/effects/ambient-background";
 import DiscordWidget from "@/shared/ui/effects/discord-widget";
 import OAuthErrorNotice from "@/shared/ui/oauth-error-notice";
@@ -96,6 +97,7 @@ export default async function RootLayout({
             <StudioProvider>
               <AmbientBackground />
 
+              <ScrollReset />
               <SkipLink />
               <Navbar />
               <OAuthErrorNotice />

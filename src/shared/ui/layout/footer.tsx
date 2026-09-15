@@ -7,7 +7,10 @@ export default function Footer() {
   const t = useTranslations("Footer");
   const pathname = usePathname();
 
-  if (pathname === "/admin" || pathname.startsWith("/admin/")) return null;
+  const isAdminRoute = pathname === "/admin" || pathname.startsWith("/admin/");
+  const isMessagingRoute = pathname === "/mensajes" || pathname.startsWith("/mensajes/");
+
+  if (isAdminRoute || isMessagingRoute) return null;
 
   return (
     <footer className="relative mt-14 border-t border-border">

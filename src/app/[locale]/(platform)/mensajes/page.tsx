@@ -635,15 +635,15 @@ export default function MessagesPage() {
     : active;
 
   return (
-    <main className="min-h-screen px-3 pb-3 pt-20 sm:px-5 sm:pb-5 sm:pt-24">
-      <div className="mx-auto h-[calc(100dvh-6rem)] min-h-[560px] max-w-[1440px] sm:h-[calc(100dvh-7rem)]">
+    <main className="h-[100dvh] overflow-hidden px-3 pb-3 pt-20 sm:px-5 sm:pb-5 sm:pt-24">
+      <div className="mx-auto flex h-full min-h-0 w-full max-w-[1440px] flex-col">
         {error && (
           <div role="alert" className="mb-3 rounded-xl border border-destructive/20 bg-destructive/10 px-4 py-2.5 text-sm text-destructive">
             {error}
           </div>
         )}
 
-        <Card className="tfl-messages-shell grid h-full min-h-0 grid-cols-1 overflow-hidden rounded-2xl border-border/80 bg-card/85 p-0 shadow-2xl sm:grid-cols-[300px_minmax(0,1fr)]">
+        <Card className="tfl-messages-shell grid min-h-0 flex-1 grid-cols-1 overflow-hidden rounded-2xl border-border/80 bg-card/85 p-0 shadow-2xl sm:grid-cols-[300px_minmax(0,1fr)]">
           <aside className={`${mobileConversationOpen ? "hidden sm:flex" : "flex"} min-h-0 flex-col border-border bg-muted/20 sm:border-r`}>
             <div className="flex h-14 shrink-0 items-center justify-between border-b border-border/80 px-3">
               <h1 className="truncate px-2 font-display text-base font-semibold text-foreground">{t("titulo")}</h1>
