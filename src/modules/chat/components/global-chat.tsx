@@ -41,9 +41,14 @@ function personName(person: Person) {
 function ChatAvatar({ person }: { person: Person }) {
   const cosmetics = cosmeticVisualsByType(person.cosmetics);
   return (
-    <CosmeticAvatarFrame preset={cosmetics.AVATAR_FRAME?.visualPreset} className="mt-1 self-start scale-[0.82]">
-      <UserAvatar identity={person} className="size-10 text-xs" />
-    </CosmeticAvatarFrame>
+    <span className="relative mt-0.5 grid size-8 shrink-0 place-items-center self-start">
+      <CosmeticAvatarFrame
+        preset={cosmetics.AVATAR_FRAME?.visualPreset}
+        className="cosmetic-avatar-frame--global-chat absolute scale-[0.68]"
+      >
+        <UserAvatar identity={person} className="size-11 text-[10px]" />
+      </CosmeticAvatarFrame>
+    </span>
   );
 }
 
@@ -407,7 +412,7 @@ export default function GlobalChat({ userId }: { userId: string }) {
           <div ref={scrollRef} onScroll={handleScroll} className="min-h-0 flex-1 overflow-y-auto px-3 py-3" aria-live="polite">
             {nextCursor && <button type="button" onClick={loadOlder} disabled={loadingOlder} className="mb-3 w-full rounded-lg border border-border px-2 py-1.5 text-xs text-muted-foreground hover:bg-primary/5 disabled:opacity-50">{loadingOlder ? <Loader2 className="mx-auto h-3.5 w-3.5 animate-spin" /> : t("cargarAnteriores")}</button>}
             {loading && !messages.length ? <div className="flex h-full items-center justify-center text-sm text-muted-foreground"><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t("cargando")}</div> : messages.length === 0 ? <p className="py-10 text-center text-sm text-muted-foreground">{t("sinMensajes")}</p> : <div className="space-y-3">
-              {messages.map((message) => <article id={`global-message-${message.id}`} key={message.id} className="group flex gap-3 py-1">
+              {messages.map((message) => <article id={`global-message-${message.id}`} key={message.id} className="group flex gap-2.5 py-1">
                 <ChatAvatar person={message.author} />
                 <div className="min-w-0 flex-1"><div className="flex items-baseline gap-1.5"><span className="truncate text-xs font-semibold text-foreground">{personName(message.author)}</span>{message.author.username && <span className="truncate text-[10px] text-muted-foreground">@{message.author.username}</span>}<time className="ml-auto shrink-0 text-[10px] text-muted-foreground">{formatUserTime(message.createdAt, locale)}</time></div>
                   {message.replyTo && <button type="button" onClick={() => document.getElementById(`global-message-${message.replyTo?.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" })} className="mt-1 block max-w-full truncate border-l-2 border-primary/50 pl-2 text-left text-[11px] text-muted-foreground hover:text-primary">{personName(message.replyTo.author)}: {textPreview(message.replyTo)}</button>}

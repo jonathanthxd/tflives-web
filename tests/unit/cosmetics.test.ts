@@ -350,7 +350,7 @@ test("light mode keeps pale cosmetics legible without changing the dark recipes"
   assert.doesNotMatch(lightSection, /prefers-reduced-motion|motion-reduce|deviceMemory|hardwareConcurrency|saveData|low-power/i);
 });
 
-test("chat surfaces reuse equipped cosmetic renderers and keep DM banner styling inside the shared cosmetic renderer", () => {
+test("chat surfaces keep avatar cosmetics compact while direct messages use Discord-like flat rows", () => {
   const profiles = readFileSync("src/modules/profiles/service.ts", "utf8");
   const globalService = readFileSync("src/modules/chat/service.ts", "utf8");
   const globalChat = readFileSync("src/modules/chat/components/global-chat.tsx", "utf8");
@@ -364,16 +364,20 @@ test("chat surfaces reuse equipped cosmetic renderers and keep DM banner styling
   assert.match(profiles, /isEntitlementActive/);
   assert.match(globalService, /toPublicIdentityWithCosmetics/);
   assert.match(globalChat, /CosmeticAvatarFrame/);
+  assert.match(globalChat, /cosmetic-avatar-frame--global-chat/);
+  assert.match(globalChat, /size-8/);
   assert.match(globalChat, /cosmeticVisualsByType/);
   assert.match(messagingService, /publicIdentityWithCosmeticsSelect/);
   assert.match(messagingService, /toPublicIdentityWithCosmetics/);
   assert.match(messagesPage, /CosmeticAvatarFrame/);
-  assert.match(messagesPage, /CosmeticMessageFrame/);
-  assert.match(messagesPage, /messageBannerPreset/);
+  assert.match(messagesPage, /tfl-messaging-avatar/);
+  assert.match(messagesPage, /tfl-message-row/);
+  assert.doesNotMatch(messagesPage, /CosmeticMessageFrame|messageBannerPreset/);
   assert.match(messagesPage, /grid-cols-\[300px_minmax\(0,1fr\)\]/);
-  assert.match(renderer, /export function CosmeticMessageFrame/);
-  assert.match(renderer, /CosmeticBannerLayer preset=\{preset\}/);
-  assert.match(css, /\.cosmetic-message-frame__edge/);
+  assert.doesNotMatch(renderer, /export function CosmeticMessageFrame/);
+  assert.match(css, /\.tfl-messaging-avatar/);
+  assert.match(css, /animation-play-state: paused/);
+  assert.match(css, /\.tfl-message-row/);
   assert.match(css, /\.tfl-messages-shell/);
   assert.doesNotMatch(css.slice(css.indexOf("\/\* Messaging cosmetics"), css.indexOf("\/\* Light-mode cosmetic contrast")), /prefers-reduced-motion|motion-reduce|deviceMemory|hardwareConcurrency|saveData|low-power/i);
 });

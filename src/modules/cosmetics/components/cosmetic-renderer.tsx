@@ -100,34 +100,6 @@ export function CosmeticBannerLayer({ preset }: { preset?: CosmeticVisualPresetK
   return <span aria-hidden className="cosmetic-banner-layer" data-variant={definition.variant} style={styleFor(preset)}><span /></span>;
 }
 
-export function CosmeticMessageFrame({
-  preset,
-  className,
-  children,
-}: {
-  preset?: CosmeticVisualPresetKey;
-  className?: string;
-  children: ReactNode;
-}) {
-  const definition = preset ? COSMETIC_PRESETS[preset] : null;
-  if (!definition || definition.type !== "BANNER_STYLE") {
-    return <div className={cn("cosmetic-message-frame", className)}>{children}</div>;
-  }
-  return (
-    <div
-      className={cn("cosmetic-message-frame cosmetic-message-frame--equipped", className)}
-      data-variant={definition.variant}
-      style={styleFor(preset)}
-    >
-      <span aria-hidden className="cosmetic-message-frame__edge">
-        <CosmeticBannerLayer preset={preset} />
-      </span>
-      <span aria-hidden className="cosmetic-message-frame__ambient" />
-      <div className="relative z-[1]">{children}</div>
-    </div>
-  );
-}
-
 export function CosmeticAccentLayer({ preset }: { preset?: CosmeticVisualPresetKey }) {
   const definition = preset ? COSMETIC_PRESETS[preset] : null;
   if (!definition || definition.type !== "PROFILE_ACCENT") return null;

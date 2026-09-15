@@ -2415,53 +2415,37 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
 
 /* Messaging cosmetics ----------------------------------------------------- */
 
-.cosmetic-message-frame {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  border: 1px solid color-mix(in srgb, hsl(var(--border)) 82%, transparent);
-  border-radius: 12px;
-  background: color-mix(in srgb, hsl(var(--card)) 68%, transparent);
-  box-shadow: 0 7px 20px -18px hsl(var(--foreground) / .28);
+/* Compact global-chat avatars keep the portrait readable without letting
+   large frame ornaments dominate the narrow floating panel. */
+.cosmetic-avatar-frame--global-chat .cosmetic-avatar-frame__aura {
+  opacity: .46;
 }
 
-.cosmetic-message-frame--equipped {
-  border-color: color-mix(in srgb, var(--cosmetic-2) 34%, hsl(var(--border)));
-  background:
-    linear-gradient(145deg, color-mix(in srgb, var(--cosmetic-1) 5%, hsl(var(--card))), color-mix(in srgb, var(--cosmetic-3) 4%, hsl(var(--card))));
-  box-shadow:
-    0 9px 26px -20px color-mix(in srgb, var(--cosmetic-2) 44%, transparent),
-    inset 0 0 0 1px color-mix(in srgb, var(--cosmetic-1) 5%, transparent);
+/* Avatar decorations stay visually present in messaging, but do not animate
+   continuously away from profile surfaces. Hover/focus deliberately wakes
+   the exact same cosmetic recipe instead of substituting a static fake. */
+.tfl-messaging-avatar,
+.tfl-messaging-avatar::before,
+.tfl-messaging-avatar::after,
+.tfl-messaging-avatar *,
+.tfl-messaging-avatar *::before,
+.tfl-messaging-avatar *::after {
+  animation-play-state: paused !important;
 }
 
-.cosmetic-message-frame__edge,
-.cosmetic-message-frame__ambient {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.cosmetic-message-frame__edge {
-  z-index: 3;
-  border-radius: inherit;
-  padding: 1.5px;
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-}
-
-.cosmetic-message-frame__edge .cosmetic-banner-layer {
-  inset: -1px;
-  border-radius: inherit;
-  opacity: 1;
-}
-
-.cosmetic-message-frame__ambient {
-  z-index: 0;
-  background:
-    radial-gradient(circle at 8% 20%, color-mix(in srgb, var(--cosmetic-1) 10%, transparent), transparent 38%),
-    radial-gradient(circle at 92% 80%, color-mix(in srgb, var(--cosmetic-2) 8%, transparent), transparent 42%);
-  opacity: .9;
+.tfl-messaging-avatar:hover,
+.tfl-messaging-avatar:hover::before,
+.tfl-messaging-avatar:hover::after,
+.tfl-messaging-avatar:hover *,
+.tfl-messaging-avatar:hover *::before,
+.tfl-messaging-avatar:hover *::after,
+.tfl-messaging-avatar:focus-within,
+.tfl-messaging-avatar:focus-within::before,
+.tfl-messaging-avatar:focus-within::after,
+.tfl-messaging-avatar:focus-within *,
+.tfl-messaging-avatar:focus-within *::before,
+.tfl-messaging-avatar:focus-within *::after {
+  animation-play-state: running !important;
 }
 
 .tfl-messages-shell {
@@ -2472,6 +2456,24 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
 .tfl-direct-message-viewport {
   scrollbar-gutter: stable;
   overscroll-behavior: contain;
+}
+
+/* Discord-like message rows use the conversation surface itself. The hover
+   state spans the complete timeline width; individual messages are not cards. */
+.tfl-message-row {
+  margin-inline: -.5rem;
+  padding-inline: .5rem;
+}
+
+.tfl-message-actions {
+  pointer-events: auto;
+}
+
+@media (min-width: 640px) {
+  .tfl-message-row {
+    margin-inline: -1rem;
+    padding-inline: 1rem;
+  }
 }
 
 .tfl-direct-message-viewport::-webkit-scrollbar {
@@ -2485,22 +2487,9 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
   background-clip: padding-box;
 }
 
-:root:not(.dark) .cosmetic-message-frame {
-  border-color: color-mix(in srgb, hsl(var(--border)) 88%, hsl(var(--foreground)) 7%);
-  background: color-mix(in srgb, hsl(var(--card)) 94%, hsl(var(--muted)) 6%);
-  box-shadow: 0 8px 22px -18px hsl(var(--foreground) / .34);
+:root:not(.dark) .tfl-message-row:hover {
+  background: hsl(var(--foreground) / .055);
 }
-
-:root:not(.dark) .cosmetic-message-frame--equipped {
-  border-color: color-mix(in srgb, var(--cosmetic-3) 34%, hsl(var(--border)));
-  background:
-    linear-gradient(145deg, color-mix(in srgb, var(--cosmetic-1) 7%, white), color-mix(in srgb, var(--cosmetic-2) 5%, hsl(var(--card))));
-}
-
-:root:not(.dark) .cosmetic-message-frame__edge {
-  filter: saturate(1.15) contrast(1.08);
-}
-
 
 /* Light-mode cosmetic contrast ---------------------------------------------
    Cosmetics are authored from their preset palette, not a second light-theme

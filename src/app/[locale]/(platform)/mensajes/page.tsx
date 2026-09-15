@@ -10,7 +10,7 @@ import { Input } from "@/shared/ui/input";
 import ConfirmDialog from "@/shared/ui/confirm-dialog";
 import { AnchoredEmojiStickerPicker, type PickerAnchorRect } from "@/modules/chat/components/emoji-sticker-picker";
 import { getQuickReactions, recordReactionUse } from "@/modules/chat/reaction-preferences";
-import { CosmeticAvatarFrame, CosmeticMessageFrame } from "@/modules/cosmetics/components/cosmetic-renderer";
+import { CosmeticAvatarFrame } from "@/modules/cosmetics/components/cosmetic-renderer";
 import { cosmeticVisualsByType, type SafeCosmeticVisual } from "@/modules/cosmetics/visuals";
 import { UserAvatar } from "@/modules/profiles/components/user-identity";
 import { formatUserTime } from "@/shared/lib/date-time";
@@ -62,17 +62,18 @@ function displayNameOf(person: PersonSummary) {
   return person.displayName || person.name || person.username || "Usuario";
 }
 
-function Avatar({ person }: { person: PersonSummary }) {
+function Avatar({ person, compact = false }: { person: PersonSummary; compact?: boolean }) {
   const cosmetics = cosmeticVisualsByType(person.cosmetics);
   return (
-    <CosmeticAvatarFrame preset={cosmetics.AVATAR_FRAME?.visualPreset} className="shrink-0 scale-[0.84]">
-      <UserAvatar identity={person} className="size-12 shrink-0 text-sm" />
-    </CosmeticAvatarFrame>
+    <span className={`relative grid shrink-0 place-items-center ${compact ? "size-10" : "size-11"}`}>
+      <CosmeticAvatarFrame
+        preset={cosmetics.AVATAR_FRAME?.visualPreset}
+        className={`tfl-messaging-avatar absolute ${compact ? "scale-[0.70]" : "scale-[0.78]"}`}
+      >
+        <UserAvatar identity={person} className="size-14 shrink-0 text-sm" />
+      </CosmeticAvatarFrame>
+    </span>
   );
-}
-
-function messageBannerPreset(person: PersonSummary) {
-  return cosmeticVisualsByType(person.cosmetics).BANNER_STYLE?.visualPreset;
 }
 
 function conversationTitle(entry: { isGroup: boolean; name: string | null; otherParticipants: PersonSummary[] }) {
@@ -827,11 +828,10 @@ export default function MessagesPage() {
                         const grouped = !!previous && previous.senderId === m.senderId && !m.replyTo && new Date(m.createdAt).getTime() - new Date(previous.createdAt).getTime() < 5 * 60_000;
                         const isEditing = editingMessageId === m.id;
                         const canEdit = mine && !m.deletedAt && !!m.content.trim() && messageClock > 0 && messageClock - new Date(m.createdAt).getTime() <= 15 * 60_000;
-                        const bannerPreset = messageBannerPreset(m.sender);
                         return (
-                          <article id={`message-${m.id}`} key={m.id} className={`group relative grid grid-cols-[48px_minmax(0,1fr)] gap-2 rounded-lg px-1.5 py-0.5 transition-colors hover:bg-foreground/[0.035] sm:px-2 ${grouped ? "mt-0" : "mt-3"}`}>
+                          <article id={`message-${m.id}`} key={m.id} className={`tfl-message-row group relative grid grid-cols-[48px_minmax(0,1fr)] gap-2 py-0.5 transition-colors hover:bg-foreground/[0.045] ${grouped ? "mt-0" : "mt-3"}`}>
                             <div className="flex justify-center pt-1">
-                              {grouped ? <time className="mt-1 hidden text-[9px] text-muted-foreground/70 group-hover:block">{formatUserTime(m.createdAt, locale)}</time> : <Avatar person={m.sender} />}
+                              {grouped ? <time className="mt-1 hidden text-[9px] text-muted-foreground/70 group-hover:block">{formatUserTime(m.createdAt, locale)}</time> : <Avatar person={m.sender} compact />}
                             </div>
                             <div className="min-w-0 pr-1">
                               {!grouped && (
@@ -842,8 +842,7 @@ export default function MessagesPage() {
                                 </div>
                               )}
 
-                              <CosmeticMessageFrame preset={bannerPreset} className="max-w-[min(100%,760px)]">
-                                <div className="px-3 py-2 text-sm text-foreground">
+                              <div className="max-w-[min(100%,760px)] text-sm text-foreground">
                                   {m.replyTo && (
                                     <button type="button" onClick={() => document.getElementById(`message-${m.replyTo?.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" })} className="mb-1.5 block max-w-full truncate border-l-2 border-primary/55 pl-2 text-left text-[11px] text-muted-foreground hover:text-primary">
                                       <span className="font-medium text-foreground/80">{displayNameOf(m.replyTo.sender)}</span>: {m.replyTo.deletedAt ? t("mensajeEliminado") : m.replyTo.content}
@@ -867,22 +866,24 @@ export default function MessagesPage() {
                                     </>
                                   )}
                                   {m.editedAt && <p className="mt-0.5 text-[10px] text-muted-foreground">{t("editado")}</p>}
-                                </div>
-                              </CosmeticMessageFrame>
+                              </div>
 
-                              {!m.deletedAt && !isEditing && (
-                                <div className="mt-1 flex min-h-7 flex-wrap items-center gap-1 pl-1">
+                              {!m.deletedAt && !isEditing && m.reactions.length > 0 && (
+                                <div className="mt-1 flex min-h-7 flex-wrap items-center gap-1">
                                   {m.reactions.map((reaction) => <button key={reaction.emoji} type="button" onClick={() => void reactToMessage(m, reaction.emoji)} className={`rounded-full border px-2 py-0.5 text-[11px] ${reaction.mine ? "border-primary/35 bg-primary/10 text-primary" : "border-border bg-card/60 text-foreground"}`}>{reaction.emoji} {reaction.count}</button>)}
-                                  <div className="flex items-center rounded-lg border border-border/70 bg-card/90 px-0.5 opacity-100 shadow-sm sm:opacity-0 sm:group-hover:opacity-100 focus-within:opacity-100">
-                                    {quickReactions.filter((emoji) => !m.reactions.some((reaction) => reaction.emoji === emoji)).slice(0, 2).map((emoji) => <button key={emoji} type="button" onClick={() => void reactToMessage(m, emoji)} aria-label={`${t("reaccionar")} ${emoji}`} className="grid size-7 place-items-center rounded-md text-xs hover:bg-primary/10">{emoji}</button>)}
-                                    <button type="button" onPointerDown={(event) => { event.preventDefault(); event.stopPropagation(); const rect = event.currentTarget.getBoundingClientRect(); setReactionPicker((current) => current?.messageId === m.id ? null : { messageId: m.id, anchorRect: { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, width: rect.width, height: rect.height } }); }} aria-label={t("masReacciones")} aria-expanded={reactionPicker?.messageId === m.id} className="grid size-7 place-items-center rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary"><Smile className="size-3.5" aria-hidden="true" /></button>
-                                    <button type="button" onClick={() => setReplyToMessage(m)} className="grid h-7 place-items-center rounded-md px-2 text-[10px] text-muted-foreground hover:bg-primary/10 hover:text-primary">{t("responder")}</button>
-                                    {mine && canEdit && <button type="button" onClick={() => startEditingMessage(m)} className="grid h-7 place-items-center rounded-md px-2 text-[10px] text-muted-foreground hover:bg-primary/10 hover:text-primary">{t("editarMensaje")}</button>}
-                                    {mine ? <button type="button" onClick={() => setDeleteTarget(m)} className="grid h-7 place-items-center rounded-md px-2 text-[10px] text-muted-foreground hover:bg-destructive/10 hover:text-destructive">{t("eliminarMensaje")}</button> : <button type="button" aria-label={t("reportar")} onClick={() => { setReportTarget({ targetType: "DIRECT_MESSAGE", targetId: m.id }); setShowReport(true); }} className="grid h-7 place-items-center rounded-md px-2 text-[10px] text-muted-foreground hover:bg-destructive/10 hover:text-destructive">⚑</button>}
-                                  </div>
                                 </div>
                               )}
                             </div>
+
+                            {!m.deletedAt && !isEditing && (
+                              <div className="tfl-message-actions absolute right-3 top-0 z-10 flex -translate-y-1/2 items-center rounded-lg border border-border/70 bg-card/95 px-0.5 opacity-100 shadow-md backdrop-blur-sm transition-opacity sm:opacity-0 sm:group-hover:opacity-100 focus-within:opacity-100">
+                                {quickReactions.filter((emoji) => !m.reactions.some((reaction) => reaction.emoji === emoji)).slice(0, 2).map((emoji) => <button key={emoji} type="button" onClick={() => void reactToMessage(m, emoji)} aria-label={`${t("reaccionar")} ${emoji}`} className="grid size-7 place-items-center rounded-md text-xs hover:bg-primary/10">{emoji}</button>)}
+                                <button type="button" onPointerDown={(event) => { event.preventDefault(); event.stopPropagation(); const rect = event.currentTarget.getBoundingClientRect(); setReactionPicker((current) => current?.messageId === m.id ? null : { messageId: m.id, anchorRect: { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, width: rect.width, height: rect.height } }); }} aria-label={t("masReacciones")} aria-expanded={reactionPicker?.messageId === m.id} className="grid size-7 place-items-center rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary"><Smile className="size-3.5" aria-hidden="true" /></button>
+                                <button type="button" onClick={() => setReplyToMessage(m)} className="grid h-7 place-items-center rounded-md px-2 text-[10px] text-muted-foreground hover:bg-primary/10 hover:text-primary">{t("responder")}</button>
+                                {mine && canEdit && <button type="button" onClick={() => startEditingMessage(m)} className="grid h-7 place-items-center rounded-md px-2 text-[10px] text-muted-foreground hover:bg-primary/10 hover:text-primary">{t("editarMensaje")}</button>}
+                                {mine ? <button type="button" onClick={() => setDeleteTarget(m)} className="grid h-7 place-items-center rounded-md px-2 text-[10px] text-muted-foreground hover:bg-destructive/10 hover:text-destructive">{t("eliminarMensaje")}</button> : <button type="button" aria-label={t("reportar")} onClick={() => { setReportTarget({ targetType: "DIRECT_MESSAGE", targetId: m.id }); setShowReport(true); }} className="grid h-7 place-items-center rounded-md px-2 text-[10px] text-muted-foreground hover:bg-destructive/10 hover:text-destructive">⚑</button>}
+                              </div>
+                            )}
                           </article>
                         );
                       })}
