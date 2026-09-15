@@ -15,6 +15,16 @@ import {
 import PostCard from "@/modules/editorial/components/post-card";
 import { UserAvatar } from "@/modules/profiles/components/user-identity";
 import { identityName } from "@/modules/profiles/types";
+import { cosmeticVisualsByType, toSafeCosmeticVisual } from "@/modules/cosmetics/visuals";
+import {
+  CosmeticAccentLayer,
+  CosmeticAvatarFrame,
+  CosmeticBadge,
+  CosmeticBannerLayer,
+  CosmeticNameplate,
+  cosmeticAccentProps,
+} from "@/modules/cosmetics/components/cosmetic-renderer";
+import { isEntitlementActive } from "@/modules/cosmetics/service";
 
 export const panel = "rounded-2xl border border-primary/15 bg-card/50 p-6";
 export const grid = "grid gap-6 sm:grid-cols-2 lg:grid-cols-3";
@@ -213,6 +223,24 @@ export async function TeamCards({ limit }: { limit?: number }) {
             name: true,
             image: true,
             role: true,
+            equippedCosmetics: {
+              select: {
+                type: true,
+                cosmetic: {
+                  select: {
+                    visualPreset: true,
+                    premiumOnly: true,
+                  },
+                },
+              },
+            },
+            premiumEntitlements: {
+              select: {
+                startsAt: true,
+                expiresAt: true,
+                revokedAt: true,
+              },
+            },
           },
         },
       },
@@ -228,42 +256,71 @@ export async function TeamCards({ limit }: { limit?: number }) {
         const member = translated(raw, locale);
         const user = raw.user;
         if (!user?.username) return null;
+        const hasActivePremium = user.premiumEntitlements.some((entitlement) => isEntitlementActive(entitlement));
+        const cosmetics = cosmeticVisualsByType(
+          user.equippedCosmetics
+            .filter((equipped) => !equipped.cosmetic.premiumOnly || hasActivePremium)
+            .map((equipped) => toSafeCosmeticVisual({ type: equipped.type, visualPreset: equipped.cosmetic.visualPreset })),
+        );
+        const displayName = identityName(user);
         return (
-          <article key={member.id} className={`${panel} text-center`}>
-            <Link
-              href={`/perfil/${user.username}`}
-              className="group mx-auto block w-fit rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
-              aria-label={`${t("viewProfile")} @${user.username}`}
-            >
-              <UserAvatar
-                identity={user}
-                className="mx-auto mb-4 size-24 border-2 border-primary/20 text-3xl transition-transform duration-200 group-hover:scale-[1.03]"
-              />
-              <h3 className="font-display text-xl font-semibold transition-colors group-hover:text-primary">
-                {identityName(user)}
-              </h3>
-              <p className="mt-1 text-sm text-muted-foreground">@{user.username}</p>
-            </Link>
-            <p className="mt-3 text-sm font-medium text-primary">{member.roleTitle}</p>
-            {member.bio && (
-              <p className="mt-4 whitespace-pre-line text-sm text-muted-foreground">
-                {member.bio}
-              </p>
-            )}
-            <div className="mt-4 flex flex-wrap justify-center gap-3">
-              {member.socialLinks
-                .filter((url) => /^https:\/\//.test(url) && URL.canParse(url))
-                .map((url) => (
-                  <a
-                    key={url}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-primary underline"
-                  >
-                    {new URL(url).hostname}
-                  </a>
-                ))}
+          <article
+            key={member.id}
+            className="team-cosmetic-card relative isolate overflow-visible rounded-3xl border border-primary/15 bg-card/50 text-center shadow-[0_18px_54px_-42px_hsl(var(--primary)/0.42)]"
+            {...cosmeticAccentProps(cosmetics.PROFILE_ACCENT?.visualPreset)}
+          >
+            <div aria-hidden className="team-cosmetic-card__surface absolute inset-0 overflow-hidden rounded-3xl">
+              <CosmeticAccentLayer preset={cosmetics.PROFILE_ACCENT?.visualPreset} />
+            </div>
+
+            <div aria-hidden className="team-cosmetic-card__banner relative h-28 overflow-hidden rounded-t-3xl border-b border-white/5 bg-gradient-to-br from-primary/20 via-card/70 to-background/90">
+              <span className="absolute inset-0 bg-[radial-gradient(circle_at_28%_20%,hsl(var(--primary)/0.18),transparent_48%)]" />
+              <CosmeticBannerLayer preset={cosmetics.BANNER_STYLE?.visualPreset} />
+            </div>
+
+            <div className="relative z-[2] px-6 pb-6">
+              <Link
+                href={`/perfil/${user.username}`}
+                className="group mx-auto -mt-12 block w-fit rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+                aria-label={`${t("viewProfile")} @${user.username}`}
+              >
+                <CosmeticAvatarFrame preset={cosmetics.AVATAR_FRAME?.visualPreset} className="z-[3]">
+                  <UserAvatar
+                    identity={user}
+                    alt={displayName}
+                    className="size-24 border-4 border-card text-3xl shadow-xl shadow-black/20 transition-transform duration-200 group-hover:scale-[1.025]"
+                  />
+                </CosmeticAvatarFrame>
+                <div className="mt-5 flex max-w-[17rem] items-center justify-center gap-2">
+                  <h3 className="min-w-0 font-display text-xl font-semibold transition-colors group-hover:text-primary">
+                    <CosmeticNameplate preset={cosmetics.NAMEPLATE?.visualPreset}>{displayName}</CosmeticNameplate>
+                  </h3>
+                  <CosmeticBadge preset={cosmetics.PROFILE_BADGE?.visualPreset} label="" />
+                </div>
+                <p className="mt-1 text-sm text-muted-foreground">@{user.username}</p>
+              </Link>
+
+              <p className="mt-3 text-sm font-medium text-primary">{member.roleTitle}</p>
+              {member.bio && (
+                <p className="mt-4 whitespace-pre-line text-sm leading-6 text-muted-foreground">
+                  {member.bio}
+                </p>
+              )}
+              <div className="mt-4 flex flex-wrap justify-center gap-3">
+                {member.socialLinks
+                  .filter((url) => /^https:\/\//.test(url) && URL.canParse(url))
+                  .map((url) => (
+                    <a
+                      key={url}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-primary underline decoration-primary/35 underline-offset-4 transition hover:decoration-primary"
+                    >
+                      {new URL(url).hostname}
+                    </a>
+                  ))}
+              </div>
             </div>
           </article>
         );

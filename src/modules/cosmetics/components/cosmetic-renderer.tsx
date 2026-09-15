@@ -22,7 +22,7 @@ const FRAME_DETAIL_COUNTS: Record<string, number> = {
   toxic: 10,
   prism: 10,
   grid: 9,
-  petal: 12,
+  petal: 18,
   void: 9,
   flare: 10,
   royal: 10,

@@ -1289,15 +1289,15 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
 }
 .cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__motif { display: none; }
 .cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__piece--1 {
-  left: 7px; top: 13px; width: 43px; height: 21px; border-top: 3px solid #9f5f55; border-radius: 75% 25% 0 0; rotate: -28deg;
+  left: 4px; top: 10px; width: 52px; height: 25px; border-top: 3px solid #9f5f55; border-radius: 82% 18% 0 0; rotate: -30deg;
   filter: drop-shadow(0 0 4px color-mix(in srgb, var(--cosmetic-2) 35%, transparent));
 }
 .cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__piece--1::before,
 .cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__piece--1::after {
-  width: 12px; height: 7px; border-top: 2px solid #9f5f55; border-radius: 80% 20% 0 0;
+  width: 16px; height: 9px; border-top: 2px solid #9f5f55; border-radius: 82% 18% 0 0;
 }
-.cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__piece--1::before { left: 8px; top: -6px; rotate: -34deg; }
-.cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__piece--1::after { right: 3px; top: 2px; rotate: 42deg; }
+.cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__piece--1::before { left: 9px; top: -7px; rotate: -38deg; }
+.cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__piece--1::after { right: 2px; top: 3px; rotate: 46deg; }
 .cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__piece:nth-child(n+2) {
   width: 10px; height: 7px; border-radius: 80% 18% 72% 24%;
   background: radial-gradient(circle at 72% 28%, #fff8 0 15%, transparent 18%), linear-gradient(135deg, #fff1f2, var(--cosmetic-1) 58%, var(--cosmetic-2));
@@ -1623,10 +1623,20 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
   inset: -22px; opacity: 1;
 }
 .cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__signature::before {
-  left: 3px; top: 7px; width: 44px; height: 26px; border-left: 3px solid color-mix(in srgb, #713f12 62%, transparent); border-bottom: 3px solid color-mix(in srgb, #713f12 48%, transparent); border-radius: 0 0 0 24px; rotate: -17deg; transform-origin: left center; animation: tfl-frame-branch-sway 5.8s ease-in-out infinite;
+  left: -1px; top: 4px; width: 52px; height: 31px; border-left: 3px solid color-mix(in srgb, #713f12 66%, transparent); border-bottom: 3px solid color-mix(in srgb, #713f12 50%, transparent); border-radius: 0 0 0 28px; rotate: -17deg; transform-origin: left center; animation: tfl-frame-branch-sway 5.8s ease-in-out infinite;
 }
 .cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__signature::after {
-  left: 26px; top: 2px; width: 18px; height: 18px; border-radius: 50%; background: radial-gradient(circle at 45% 45%, #fff5, #fbcfe8 15%, transparent 16%), radial-gradient(circle at 28% 40%, color-mix(in srgb, var(--cosmetic-1) 86%, white) 0 24%, transparent 25%), radial-gradient(circle at 63% 43%, color-mix(in srgb, var(--cosmetic-2) 82%, white) 0 22%, transparent 23%), radial-gradient(circle at 45% 68%, color-mix(in srgb, var(--cosmetic-1) 78%, white) 0 22%, transparent 23%); filter: drop-shadow(0 0 6px color-mix(in srgb, var(--cosmetic-2) 42%, transparent)); animation: tfl-frame-branch-sway 5.8s ease-in-out infinite reverse;
+  left: 29px; top: -1px; width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle at 45% 45%, #fff6, #fbcfe8 14%, transparent 16%), radial-gradient(circle at 27% 38%, color-mix(in srgb, var(--cosmetic-1) 88%, white) 0 24%, transparent 25%), radial-gradient(circle at 66% 39%, color-mix(in srgb, var(--cosmetic-2) 84%, white) 0 22%, transparent 23%), radial-gradient(circle at 47% 70%, color-mix(in srgb, var(--cosmetic-1) 82%, white) 0 22%, transparent 23%), radial-gradient(circle at 17% 69%, color-mix(in srgb, var(--cosmetic-2) 72%, white) 0 15%, transparent 17%); filter: drop-shadow(0 0 7px color-mix(in srgb, var(--cosmetic-2) 46%, transparent)); animation: tfl-frame-branch-sway 5.8s ease-in-out infinite reverse;
+}
+.cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__ornament {
+  left: auto; top: auto; right: -23px; bottom: -18px; width: 58px; height: 38px; translate: 0 0; opacity: 1;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--cosmetic-2) 34%, transparent));
+}
+.cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__ornament::before {
+  right: 3px; bottom: 6px; width: 50px; height: 29px; border-right: 3px solid color-mix(in srgb, #713f12 66%, transparent); border-top: 3px solid color-mix(in srgb, #713f12 50%, transparent); border-radius: 0 28px 0 0; rotate: -13deg; transform-origin: right bottom; animation: tfl-frame-branch-sway-lower 6.4s ease-in-out infinite;
+}
+.cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__ornament::after {
+  left: 0; top: -1px; width: 23px; height: 23px; border-radius: 50%; background: radial-gradient(circle at 48% 44%, #fff7, #fbcfe8 13%, transparent 15%), radial-gradient(circle at 28% 35%, color-mix(in srgb, var(--cosmetic-1) 90%, white) 0 23%, transparent 24%), radial-gradient(circle at 67% 37%, color-mix(in srgb, var(--cosmetic-2) 84%, white) 0 21%, transparent 22%), radial-gradient(circle at 47% 72%, color-mix(in srgb, var(--cosmetic-1) 84%, white) 0 21%, transparent 22%), radial-gradient(circle at 16% 70%, color-mix(in srgb, var(--cosmetic-2) 74%, white) 0 15%, transparent 17%); filter: drop-shadow(0 0 7px color-mix(in srgb, var(--cosmetic-2) 48%, transparent)); animation: tfl-frame-branch-sway-lower 6.4s ease-in-out infinite reverse;
 }
 .cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__ambient {
   inset: -30px; opacity: .95;
@@ -1641,6 +1651,18 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
 .cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__piece--10 { left: 40px; top: 10px; scale: .68; animation: tfl-frame-petal-fall-a 6.1s ease-in-out 1.2s infinite; }
 .cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__piece--11 { right: 12px; top: 31px; scale: .52; animation: tfl-frame-petal-fall-b 5.2s ease-in-out 2.1s infinite; }
 .cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__piece--12 { left: 20px; top: 2px; scale: .58; animation: tfl-frame-petal-fall-c 6.5s ease-in-out 3.25s infinite; }
+.cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__piece--13,
+.cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__piece--14,
+.cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__piece--15,
+.cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__piece--16,
+.cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__piece--17,
+.cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__piece--18 { z-index: 7; }
+.cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__piece--13 { left: 3px; top: -4px; scale: .72; animation: tfl-frame-petal-cross-a 5.7s ease-in-out .25s infinite; }
+.cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__piece--14 { right: 9px; top: -6px; scale: .58; animation: tfl-frame-petal-cross-b 6.4s ease-in-out 1.15s infinite; }
+.cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__piece--15 { left: 29px; top: -12px; scale: .48; animation: tfl-frame-petal-cross-c 6.8s ease-in-out 2.4s infinite; }
+.cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__piece--16 { right: 27px; top: 0; scale: .64; animation: tfl-frame-petal-cross-a 6.2s ease-in-out 3.35s infinite; }
+.cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__piece--17 { left: -1px; top: 20px; scale: .52; animation: tfl-frame-petal-cross-c 5.9s ease-in-out 4.15s infinite; }
+.cosmetic-avatar-frame[data-variant="petal"] .cosmetic-avatar-frame__piece--18 { right: 1px; top: 28px; scale: .44; animation: tfl-frame-petal-cross-b 6.9s ease-in-out 4.85s infinite; }
 
 .cosmetic-avatar-frame[data-variant="void"] .cosmetic-avatar-frame__signature {
   inset: -18px; opacity: .88;
@@ -1788,6 +1810,10 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
   0%, 100% { transform: rotate(-2deg) translateY(0); }
   50% { transform: rotate(2deg) translateY(1px); }
 }
+@keyframes tfl-frame-branch-sway-lower {
+  0%, 100% { transform: rotate(1.5deg) translateY(0); }
+  50% { transform: rotate(-2.5deg) translate(-1px, -1px); }
+}
 @keyframes tfl-frame-petal-drift {
   0% { transform: translate3d(0, 0, 0) rotate(0deg); opacity: 0; }
   18% { opacity: .8; }
@@ -1814,6 +1840,57 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
   to { offset-distance: 100%; }
 }
 /* Profile accents ---------------------------------------------------------- */
+
+.team-cosmetic-card {
+  transition: border-color 220ms ease, box-shadow 220ms ease, transform 220ms ease;
+}
+
+.team-cosmetic-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--cosmetic-1, hsl(var(--primary))) 34%, hsl(var(--border)));
+  box-shadow: 0 24px 64px -42px color-mix(in srgb, var(--cosmetic-2, hsl(var(--primary))) 48%, transparent);
+}
+
+.team-cosmetic-card[data-accent-variant] {
+  border-color: color-mix(in srgb, var(--cosmetic-1) 26%, hsl(var(--border)));
+  box-shadow: 0 20px 58px -44px color-mix(in srgb, var(--cosmetic-2) 44%, transparent);
+}
+
+.team-cosmetic-card__surface {
+  z-index: 0;
+  pointer-events: none;
+}
+
+.team-cosmetic-card__surface .cosmetic-profile-atmosphere {
+  z-index: 0;
+  opacity: .78;
+}
+
+.team-cosmetic-card__surface .cosmetic-profile-atmosphere::before {
+  width: 18rem;
+  left: -7rem;
+  top: -8rem;
+  filter: blur(38px);
+}
+
+.team-cosmetic-card__surface .cosmetic-profile-atmosphere::after {
+  width: 16rem;
+  right: -6rem;
+  top: 6rem;
+  filter: blur(42px);
+}
+
+.team-cosmetic-card__surface .cosmetic-profile-atmosphere > span {
+  opacity: .72;
+}
+
+.team-cosmetic-card__banner {
+  z-index: 1;
+}
+
+.team-cosmetic-card__banner .cosmetic-banner-layer {
+  opacity: .78;
+}
 
 .profile-cosmetic-scope {
   isolation: isolate;
@@ -2414,6 +2491,9 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
 @keyframes tfl-frame-petal-fall-a { 0% { translate: -2px -12px; rotate: -22deg; opacity: 0; } 12% { opacity: 1; } 45% { translate: 7px 12px; rotate: 45deg; } 74% { translate: 1px 30px; rotate: 96deg; opacity: .82; } 100% { translate: 10px 46px; rotate: 154deg; opacity: 0; } }
 @keyframes tfl-frame-petal-fall-b { 0% { translate: 5px -14px; rotate: 35deg; opacity: 0; } 18% { opacity: .9; } 48% { translate: -6px 11px; rotate: -18deg; } 78% { translate: 5px 29px; rotate: 67deg; opacity: .72; } 100% { translate: -4px 47px; rotate: 118deg; opacity: 0; } }
 @keyframes tfl-frame-petal-fall-c { 0% { translate: -5px -10px; rotate: -50deg; opacity: 0; } 16% { opacity: .85; } 42% { translate: 4px 9px; rotate: 12deg; } 70% { translate: -4px 27px; rotate: 84deg; } 100% { translate: 8px 45px; rotate: 142deg; opacity: 0; } }
+@keyframes tfl-frame-petal-cross-a { 0% { translate: -8px -8px; rotate: -30deg; opacity: 0; } 13% { opacity: .96; } 46% { translate: 28px 30px; rotate: 38deg; opacity: .98; } 74% { translate: 58px 57px; rotate: 104deg; opacity: .78; } 100% { translate: 78px 82px; rotate: 162deg; opacity: 0; } }
+@keyframes tfl-frame-petal-cross-b { 0% { translate: 8px -10px; rotate: 38deg; opacity: 0; } 16% { opacity: .9; } 45% { translate: -24px 29px; rotate: -18deg; opacity: .96; } 76% { translate: -52px 58px; rotate: 54deg; opacity: .74; } 100% { translate: -72px 84px; rotate: 124deg; opacity: 0; } }
+@keyframes tfl-frame-petal-cross-c { 0% { translate: -3px -7px; rotate: -52deg; opacity: 0; } 14% { opacity: .88; } 42% { translate: 12px 31px; rotate: 7deg; opacity: .94; } 72% { translate: -6px 62px; rotate: 76deg; opacity: .7; } 100% { translate: 19px 88px; rotate: 148deg; opacity: 0; } }
 @keyframes tfl-frame-void-pull { 0% { translate: 0 0; opacity: 0; scale: 1.25; } 18% { opacity: .9; } 72% { opacity: .7; } 100% { translate: var(--pull-x) var(--pull-y); opacity: 0; scale: .12; } }
 @keyframes tfl-frame-void-rift { 0%, 100% { scale: .72 1; opacity: .38; filter: blur(1px); } 50% { scale: 1.18 1.6; opacity: .95; filter: blur(.2px); } }
 @keyframes tfl-frame-solar-ray { 0%, 100% { scale: .72 1; opacity: .45; } 42% { scale: 1 1.18; opacity: 1; } 68% { scale: .82 .94; opacity: .65; } }

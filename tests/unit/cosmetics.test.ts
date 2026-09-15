@@ -152,6 +152,7 @@ test("avatar frames 4.0 keep sixteen semantic recipes without full-frame vinyl r
   assert.match(renderer, /h-32/);
   assert.match(renderer, /size-16/);
   assert.match(renderer, /cosmetic-avatar-frame__piece--/);
+  assert.match(renderer, /petal: 18/);
   assert.match(css, /tfl-frame-petal-fall-a/);
   assert.match(css, /tfl-frame-flame-tongue/);
   assert.match(css, /tfl-frame-circuit-node/);
@@ -287,6 +288,7 @@ test("production cosmetic fixture contains one finalized bilingual commercial en
 
 test("sakura ornaments are free from circular clipping and profile hero allows frame overflow", () => {
   const css = readFileSync("src/styles/globals.css", "utf8");
+  const renderer = readFileSync("src/modules/cosmetics/components/cosmetic-renderer.tsx", "utf8");
   const profile = readFileSync("src/modules/profiles/components/profile-view.tsx", "utf8");
   const sakuraStart = css.indexOf('/* 11 — Sakura:');
   const sakuraEnd = css.indexOf('/* 12 — Void:', sakuraStart);
@@ -299,7 +301,32 @@ test("sakura ornaments are free from circular clipping and profile hero allows f
   assert.match(sakuraCss, /tfl-frame-petal-fall-a/);
   assert.match(sakuraCss, /tfl-frame-petal-fall-b/);
   assert.match(sakuraCss, /tfl-frame-petal-fall-c/);
+  assert.match(renderer, /petal: 18/);
+  assert.match(css, /data-variant="petal"\] \.cosmetic-avatar-frame__ornament/);
+  assert.match(css, /cosmetic-avatar-frame__piece--18/);
+  assert.match(css, /tfl-frame-petal-cross-a/);
+  assert.match(css, /tfl-frame-petal-cross-b/);
+  assert.match(css, /tfl-frame-petal-cross-c/);
+  assert.match(css, /tfl-frame-branch-sway-lower/);
   assert.doesNotMatch(sakuraCss, /animation:\s*cosmetic-frame-spin|animation:\s*cosmetic-frame-petals/);
   assert.match(profile, /data-profile-hero className="overflow-visible/);
   assert.match(profile, /relative h-44 overflow-hidden rounded-t-3xl/);
+});
+
+test("public team cards reuse equipped cosmetic renderers instead of duplicating visuals", () => {
+  const team = readFileSync("src/modules/network/components/public-content.tsx", "utf8");
+  const css = readFileSync("src/styles/globals.css", "utf8");
+
+  assert.match(team, /equippedCosmetics/);
+  assert.match(team, /premiumEntitlements/);
+  assert.match(team, /isEntitlementActive/);
+  assert.match(team, /cosmeticVisualsByType/);
+  assert.match(team, /CosmeticAvatarFrame/);
+  assert.match(team, /CosmeticNameplate/);
+  assert.match(team, /CosmeticBadge/);
+  assert.match(team, /CosmeticBannerLayer/);
+  assert.match(team, /CosmeticAccentLayer/);
+  assert.match(team, /cosmeticAccentProps/);
+  assert.match(css, /\.team-cosmetic-card/);
+  assert.match(css, /\.team-cosmetic-card__surface \.cosmetic-profile-atmosphere/);
 });
