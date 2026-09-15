@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "@/infrastructure/database/prisma";
 import { applyWalletTransaction, WalletError } from "@/modules/economy/service";
 import { recordAnalyticsEvent } from "@/modules/analytics/service";
+import { createNotification } from "@/modules/notifications/service";
 import {
   COSMETIC_PRESETS,
   isCosmeticRarity,
