@@ -1,7 +1,8 @@
-﻿import SettingsPageClient from "./settings-page-client";
+
+import SettingsPageShell from "./settings-page-shell";
 
 export const instant = false;
 
 export default function SettingsPage() {
-  return <SettingsPageClient />;
+  return <SettingsPageShell />;
 }
