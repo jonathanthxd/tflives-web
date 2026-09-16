@@ -142,7 +142,7 @@ test("avatar frames 4.0 keep sixteen semantic recipes without full-frame vinyl r
   assert.equal(frameVariants.length, 16);
   assert.equal(new Set(frameVariants).size, 16);
   for (const variant of frameVariants) {
-    assert.match(avatarCss, new RegExp(`\.cosmetic-avatar-frame\[data-variant="${variant}"\]`));
+    assert.match(avatarCss, new RegExp(`\\.cosmetic-avatar-frame\\[data-variant="${variant}"\\]`));
   }
   assert.doesNotMatch(avatarCss, /cosmetic-frame-spin|cosmetic-frame-petals|cosmetic-frame-orbit|cosmetic-frame-solar/);
   assert.match(renderer, /FRAME_DETAIL_COUNTS/);
@@ -162,7 +162,7 @@ test("avatar frames 4.0 keep sixteen semantic recipes without full-frame vinyl r
   assert.match(css, /tfl-frame-prism-shard/);
   assert.match(css, /tfl-frame-galaxy-satellite/);
   assert.match(css, /Avatar Frames 4\.0: next-level silhouette/);
-  assert.match(renderer, /CosmeticAvatarFrame preset=\{preset\} className="translate-y-1 scale=\[1\.06\]"/);
+  assert.match(renderer, /CosmeticAvatarFrame preset=\{preset\} className="translate-y-1 scale-\[1\.06\]"/);
 });
 
 test("production cosmetics expose eighty safe recipes across all five visual types", () => {

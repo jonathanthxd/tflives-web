@@ -189,6 +189,7 @@ const GradientWaves: React.FC<GradientWavesProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const enableMouseRef = useRef<boolean>(mouseInteraction);
+  const pausedRef = useRef<boolean>(paused);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -276,7 +277,7 @@ const GradientWaves: React.FC<GradientWavesProps> = ({
     let raf = 0;
     let isVisible = true;
     let isPageVisible = !document.hidden;
-    let isPaused = paused;
+    let isPaused = pausedRef.current;
     const t0 = performance.now();
     const render = () => renderer.render({ scene: mesh });
 
@@ -306,7 +307,8 @@ const GradientWaves: React.FC<GradientWavesProps> = ({
     const io = new IntersectionObserver(
       ([entry]) => {
         isVisible = entry.isIntersecting;
-        isVisible ? tryStart() : tryStop();
+        if (isVisible) tryStart();
+        else tryStop();
       },
       { threshold: 0 }
     );
@@ -314,7 +316,8 @@ const GradientWaves: React.FC<GradientWavesProps> = ({
 
     const onVisibility = () => {
       isPageVisible = !document.hidden;
-      isPageVisible ? tryStart() : tryStop();
+      if (isPageVisible) tryStart();
+      else tryStop();
     };
     document.addEventListener('visibilitychange', onVisibility);
 
@@ -358,9 +361,10 @@ const GradientWaves: React.FC<GradientWavesProps> = ({
     const ctx = ctxMap.get(container);
     if (!ctx) return;
     const { program } = ctx;
-    const u = program.uniforms as Record<string, { value: any }>;
+    const u = program.uniforms as Record<string, { value: number | boolean | Float32Array }>;
 
     enableMouseRef.current = mouseInteraction;
+    pausedRef.current = paused;
 
     u.uSpeed.value = speed;
     u.uAmplitude.value = amplitude;

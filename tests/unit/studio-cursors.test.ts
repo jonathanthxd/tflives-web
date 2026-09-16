@@ -60,6 +60,7 @@ test("Windows cursor importer parses ANI RIFF frames without a runtime dependenc
   const importer = readFileSync("scripts/cursors/import-windows-pack.mjs", "utf8");
   assert.match(importer, /RIFF/);
   assert.match(importer, /ACON/);
-  assert.match(importer, /\.ani/);
+  assert.match(importer, /cur\|ani/);
+  assert.match(importer, /parseAni/);
   assert.match(importer, /manifest\.json/);
 });

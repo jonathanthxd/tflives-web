@@ -151,7 +151,7 @@ export default function Navbar() {
     >
       <motion.div
         initial={false}
-        className={`tfl-glass pointer-events-auto relative isolate border transition-[width,border-radius,margin] duration-500 ease-[cubic-bezier(.2,.8,.2,1)] will-change-[width,border-radius] ${
+        className={`tfl-glass pointer-events-auto relative isolate border transition-[width,border-radius,margin] duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] will-change-[width,border-radius] ${
           compact
             ? "mt-2 w-[min(96%,74rem)] rounded-full"
             : "mt-1 w-full rounded-[22px] md:mt-2"
@@ -184,7 +184,7 @@ export default function Navbar() {
         </div>
 
         <div
-          className={`relative grid grid-cols-[1fr_auto_1fr] items-center transition-[height,padding] duration-500 ease-[cubic-bezier(.2,.8,.2,1)] ${
+          className={`relative grid grid-cols-[1fr_auto_1fr] items-center transition-[height,padding] duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${
             compact
               ? "h-14 px-2 sm:px-3 md:h-[60px] lg:px-4"
               : "h-[60px] px-2.5 sm:px-4 md:h-[72px] lg:px-5"

@@ -20,7 +20,7 @@ function splitLocale(pathname: string): { locale: string; rest: string } {
  * La sesión y los permisos reales SIEMPRE se validan de nuevo server-side en
  * los layouts/route handlers con Better Auth + Prisma.
  */
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const intlResponse = intlMiddleware(request);
 
   // Si next-intl agrega/corrige el prefijo de idioma, no pisamos su redirect.
