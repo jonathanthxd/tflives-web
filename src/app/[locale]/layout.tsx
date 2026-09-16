@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
@@ -101,7 +102,9 @@ export default async function RootLayout({
 
               <ScrollReset />
               <SkipLink />
-              <Navbar />
+              <Suspense fallback={null}>
+                <Navbar />
+              </Suspense>
               <OAuthErrorNotice />
               <div id="page-content" tabIndex={-1}>{children}</div>
               <Footer />
