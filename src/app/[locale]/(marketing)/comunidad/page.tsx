@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { getLocale, getTranslations } from "next-intl/server";
+import { connection } from "next/server";
 import { listPublicActivity } from "@/modules/community/activity";
 import { translated } from "@/modules/editorial/publication";
 import {
@@ -16,6 +17,9 @@ export const instant = false;
 export const generateMetadata = () =>
   contentMetadata("community", "communityDescription", "/comunidad");
 export default async function CommunityPage() {
+  // The activity visibility query compares scheduled posts with the current
+  // time, so it must run for the current request rather than at build time.
+  await connection();
   const [t, locale, activity] = await Promise.all([
     getTranslations("Content"),
     getLocale(),
