@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter, Link as IntlLink } from "@/i18n/navigation";
 import { useSearchParams as useNextSearchParams } from "next/navigation";
@@ -114,6 +114,14 @@ function MessageDialog({
 }
 
 export default function MessagesPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen" aria-busy="true" />}>
+      <MessagesPageContent />
+    </Suspense>
+  );
+}
+
+function MessagesPageContent() {
   const t = useTranslations("MessagesPage");
   const locale = useLocale();
   const router = useRouter();
