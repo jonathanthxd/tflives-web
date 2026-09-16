@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { NotificationType } from "@prisma/client";
 import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { prisma } from "@/infrastructure/database/prisma";
-import { NOTIFICATION_CATEGORIES } from "@/modules/notifications/service";
+import { NOTIFICATION_CATEGORIES } from "@/modules/notifications/categories";
 
 export async function GET() {
   const authUser = await getCurrentAuthUser();

@@ -1,27 +1,7 @@
+import "server-only";
 import { NotificationType, Prisma } from "@prisma/client";
 import { prisma } from "@/infrastructure/database/prisma";
-
-export const NOTIFICATION_CATEGORIES: NotificationType[] = [
-  "FRIEND_REQUEST",
-  "FRIEND_ACCEPTED",
-  "REPLY",
-  "REACTION",
-  "MENTION",
-  "MESSAGE",
-  "ACHIEVEMENT",
-  "POST_PUBLISHED",
-  "ANNOUNCEMENT",
-  "SECURITY_ALERT",
-  "LEVEL_UP",
-  "TFL_COINS",
-  "COSMETIC",
-  "PREMIUM",
-  "CREATOR_APPLICATION",
-  "CREATOR_APPROVED",
-  "CREATOR_REJECTED",
-  "CREATOR_STATUS",
-  "CREATOR_FEATURED",
-];
+export { NOTIFICATION_CATEGORIES } from "@/modules/notifications/categories";
 
 interface CreateNotificationInput {
   userId: string;

@@ -5,7 +5,7 @@ import { Bell, Coins, ShieldCheck, UserRound, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Card } from "@/shared/ui/card";
-import { NOTIFICATION_CATEGORIES } from "@/modules/notifications/service";
+import { NOTIFICATION_CATEGORIES } from "@/modules/notifications/categories";
 import MySanctionsCard from "@/modules/administration/components/my-sanctions-card";
 import { SecuritySettings } from "@/modules/authentication/components/security-settings";
 import { ProfileSettings, type EditableProfile } from "@/modules/profiles/components/profile-settings";
