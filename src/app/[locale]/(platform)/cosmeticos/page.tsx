@@ -2,7 +2,7 @@ import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import CosmeticsCatalog, { type AccountCosmeticsView } from "@/modules/cosmetics/components/cosmetics-catalog";
 import { listCosmeticsForAccount, listPublicCosmetics } from "@/modules/cosmetics/service";
 
-export const dynamic = "force-dynamic";
+export const instant = false;
 
 export default async function CosmeticsPage() {
   const user = await getCurrentAuthUser();

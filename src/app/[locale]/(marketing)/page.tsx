@@ -5,36 +5,47 @@ import {
   PostsFeed,
   ModalityCards,
   TimelineCards,
-  Empty,
+  PublicSectionSkeleton,
 } from "@/modules/network/components/public-content";
 import {
   NetworkStatusPanel,
   DiscordPanel,
 } from "@/modules/network/components/status-panel";
 import { Link } from "@/i18n/navigation";
+import type { Locale } from "@/i18n/routing";
 import OwnersSection from "@/modules/administration/components/owners-section";
 import HeroGlow from "@/shared/ui/effects/hero-glow";
 import Reveal from "@/shared/ui/reveal";
 
-export const dynamic = "force-dynamic";
-export async function generateMetadata() {
-  const t = await getTranslations("Content");
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Content" });
   return {
     title: "TFLives — Time For Lives",
     description: t("homeDescription"),
   };
 }
-export default async function Home() {
-  const t = await getTranslations("Home");
-  const c = await getTranslations("Content");
+
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}) {
+  const { locale } = await params;
+  const [t, c] = await Promise.all([
+    getTranslations({ locale, namespace: "Home" }),
+    getTranslations({ locale, namespace: "Content" }),
+  ]);
 
   return (
     <main className="relative overflow-hidden pt-16 md:pt-20">
-      {/* Hero Section: fills exactly the visible viewport below the fixed navbar. */}
       <section className="relative min-h-[calc(100svh-4rem)] md:min-h-[calc(100svh-5rem)] flex flex-col items-center justify-center">
         <HeroGlow />
 
-        {/* Content */}
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
           <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6">
             <span className="text-foreground">TFL</span>
@@ -55,7 +66,6 @@ export default async function Home() {
           </div>
         </div>
 
-        {/* Scroll indicator */}
         <div className="absolute bottom-10 left-0 right-0 flex flex-col items-center gap-2 text-muted-foreground/50 animate-bounce md:bottom-12">
           <span className="text-xs uppercase tracking-widest">
             {t("scroll")}
@@ -77,29 +87,37 @@ export default async function Home() {
       </section>
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 space-y-10 py-12">
-        <h2 className="font-display text-3xl font-semibold">
-          {c("ecosystem")}
-        </h2>
-        <AreaLinks />
-        <Suspense fallback={<Empty>{c("unavailable")}</Empty>}>
+        <h2 className="font-display text-3xl font-semibold">{c("ecosystem")}</h2>
+        <AreaLinks locale={locale} />
+
+        <Suspense fallback={<PublicSectionSkeleton rows={4} />}>
           <NetworkStatusPanel />
         </Suspense>
-        <Suspense fallback={<Empty>{c("unavailable")}</Empty>}>
+        <Suspense fallback={<PublicSectionSkeleton rows={3} />}>
           <DiscordPanel />
         </Suspense>
+
         <h2 className="font-display text-3xl font-semibold">{c("latest")}</h2>
-        <PostsFeed limit={3} />
-        <h2 className="font-display text-3xl font-semibold">
-          {c("modalities")}
-        </h2>
-        <ModalityCards limit={3} />
+        <Suspense fallback={<PublicSectionSkeleton rows={3} />}>
+          <PostsFeed locale={locale} limit={3} />
+        </Suspense>
+
+        <h2 className="font-display text-3xl font-semibold">{c("modalities")}</h2>
+        <Suspense fallback={<PublicSectionSkeleton rows={3} />}>
+          <ModalityCards locale={locale} limit={3} />
+        </Suspense>
+
         <h2 className="font-display text-3xl font-semibold">{c("timeline")}</h2>
-        <TimelineCards limit={3} />
+        <Suspense fallback={<PublicSectionSkeleton rows={3} />}>
+          <TimelineCards locale={locale} limit={3} />
+        </Suspense>
       </div>
-      {/* Owners Section */}
-      <Reveal>
-        <OwnersSection />
-      </Reveal>
+
+      <Suspense fallback={null}>
+        <Reveal>
+          <OwnersSection />
+        </Reveal>
+      </Suspense>
     </main>
   );
 }

@@ -5,7 +5,7 @@ import ChatStickersManager from "@/modules/administration/components/chat-sticke
 import { PageHeader } from "@/modules/administration/components/ui/page-header";
 import { SECTION_ICONS } from "@/modules/administration/components/ui/icons";
 
-export const dynamic = "force-dynamic";
+export const instant = false;
 
 export default async function AdminChatPage({
   params,

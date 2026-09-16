@@ -9,7 +9,7 @@ import { StatCard } from "@/modules/administration/components/ui/stat-card";
 import { EmptyState } from "@/modules/administration/components/ui/empty-state";
 import { SECTION_ICONS } from "@/modules/administration/components/ui/icons";
 
-export const dynamic = "force-dynamic";
+export const instant = false;
 
 function actorLabel(actor: { username: string | null; displayName: string | null; name: string | null } | null) {
   return actor?.displayName || actor?.name || actor?.username || "—";

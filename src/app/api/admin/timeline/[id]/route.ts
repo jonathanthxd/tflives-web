@@ -1,3 +1,5 @@
+import { revalidateTag } from "next/cache";
+import { PUBLIC_CONTENT_TAGS } from "@/modules/network/cache/public-content-cache";
 import { prisma } from "@/infrastructure/database/prisma";
 import { requireAdminSection } from "@/modules/administration/api-guard";
 import { contentError } from "@/modules/administration/content-error";
@@ -19,6 +21,7 @@ export async function PATCH(request: Request, { params }: Context) {
       targetId: id,
       targetType: "timelineMilestone",
     });
+    revalidateTag(PUBLIC_CONTENT_TAGS.timeline, "max");
     return Response.json({ item });
   } catch (error) {
     return contentError(error);
@@ -35,6 +38,7 @@ export async function DELETE(_request: Request, { params }: Context) {
       targetId: id,
       targetType: "timelineMilestone",
     });
+    revalidateTag(PUBLIC_CONTENT_TAGS.timeline, "max");
     return Response.json({ success: true });
   } catch (error) {
     return contentError(error);

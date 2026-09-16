@@ -31,7 +31,7 @@ import {
   type AnalyticsMetric,
 } from "@/modules/analytics/components/analytics-visuals";
 
-export const dynamic = "force-dynamic";
+export const instant = false;
 
 type Metric = AnalyticsMetric;
 

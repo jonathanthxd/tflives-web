@@ -4,7 +4,7 @@ import { prisma } from "@/infrastructure/database/prisma";
 import { requireSectionPage } from "@/modules/administration/page-guard";
 import ContentManager from "@/modules/administration/components/content-manager";
 
-export const dynamic = "force-dynamic";
+export const instant = false;
 export default async function Page({ params }: { params: Promise<{ locale: string; id: string }> }) {
   const { locale, id } = await params;
   await requireSectionPage("wiki", locale);

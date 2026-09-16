@@ -8,6 +8,8 @@ import ProfileView from "@/modules/profiles/components/profile-view";
 import { publicProfileSelect, toPublicProfile } from "@/modules/profiles/service";
 import { identityName } from "@/modules/profiles/types";
 
+export const instant = false;
+
 interface ProfilePageProps {
   params: Promise<{ locale: string; username: string }>;
 }

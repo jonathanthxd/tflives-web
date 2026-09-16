@@ -3,6 +3,8 @@ import { getTranslations } from "next-intl/server";
 import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import CreatorApplicationForm from "@/modules/creators/components/creator-application-form";
 
+export const instant = false;
+
 export default async function CreatorApplicationPage({ params }: { params: Promise<{ locale: string }> }) {
   const [{ locale }, authUser, t] = await Promise.all([params, getCurrentAuthUser(), getTranslations("Creators")]);
   if (!authUser) redirect(`/${locale}/login`);

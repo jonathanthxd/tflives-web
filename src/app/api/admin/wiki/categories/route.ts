@@ -1,3 +1,5 @@
+import { revalidateTag } from "next/cache";
+import { PUBLIC_CONTENT_TAGS } from "@/modules/network/cache/public-content-cache";
 import { prisma } from "@/infrastructure/database/prisma";
 import { requireAdminSection } from "@/modules/administration/api-guard";
 import { contentError } from "@/modules/administration/content-error";
@@ -25,6 +27,7 @@ export async function POST(request: Request) {
       targetId: item.id,
       targetType: "wikiCategory",
     });
+    revalidateTag(PUBLIC_CONTENT_TAGS.wiki, "max");
     return Response.json({ item }, { status: 201 });
   } catch (error) {
     return contentError(error);

@@ -8,6 +8,8 @@ import { UserAvatar } from "@/modules/profiles/components/user-identity";
 import { identityName } from "@/modules/profiles/types";
 import SocialCard from "@/modules/social/components/social-card";
 
+export const instant = false;
+
 interface CreatorPageProps { params: Promise<{ locale: string; username: string }> }
 
 export async function generateMetadata({ params }: CreatorPageProps): Promise<Metadata> {

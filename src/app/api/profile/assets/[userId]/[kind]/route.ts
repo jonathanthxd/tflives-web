@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { ProfileAssetKind } from "@prisma/client";
 import { prisma } from "@/infrastructure/database/prisma";
 
-export const runtime = "nodejs";
 
 function parseKind(value: string): ProfileAssetKind | null {
   if (value === "avatar") return ProfileAssetKind.AVATAR;

@@ -5,7 +5,7 @@ import { requireSectionPage } from "@/modules/administration/page-guard";
 import { AdminPlatformError, getAdminUserOverview } from "@/modules/administration/platform-service";
 import { PageHeader } from "@/modules/administration/components/ui/page-header";
 
-export const dynamic = "force-dynamic";
+export const instant = false;
 
 function accountState(user: { emailVerified: boolean; twoFactorEnabled: boolean }) {
   if (!user.emailVerified) return "unverified";

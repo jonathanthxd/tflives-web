@@ -11,7 +11,7 @@ import ArticleBody from "@/modules/wiki/components/article-body";
 import { articleHeadings } from "@/modules/wiki/headings";
 import { Link } from "@/i18n/navigation";
 type Props = { params: Promise<{ slug: string; locale: string }> };
-export const dynamic = "force-dynamic";
+export const instant = false;
 export async function generateMetadata({ params }: Props) {
   const { slug, locale } = await params;
   const row = await prisma.wikiArticle.findFirst({

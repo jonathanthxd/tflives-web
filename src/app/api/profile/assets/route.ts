@@ -5,7 +5,6 @@ import { prisma } from "@/infrastructure/database/prisma";
 import { ProfileMediaError, validateProfileImage } from "@/modules/profiles/media";
 import { publicProfileSelect, toPublicProfile } from "@/modules/profiles/service";
 
-export const runtime = "nodejs";
 
 const MAX_PROFILE_ASSET_BYTES = 2 * 1024 * 1024;
 const ALLOWED_TYPES = new Set(["image/png", "image/jpeg", "image/webp"]);

@@ -7,7 +7,7 @@ import {
 } from "@/modules/network/components/public-content";
 import { contentMetadata } from "@/modules/editorial/metadata";
 
-export const dynamic = "force-dynamic";
+export const instant = false;
 export const generateMetadata = () =>
   contentMetadata("timeline", "timelineDescription", "/trayectoria");
 export default async function Page() {

@@ -1,56 +1,61 @@
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
-import { prisma } from "@/infrastructure/database/prisma";
 import {
   PublicShell,
   AreaLinks,
   ModalityCards,
   PostsFeed,
   StaffLink,
-  Empty,
+  PublicSectionSkeleton,
 } from "@/modules/network/components/public-content";
 import { NetworkStatusPanel } from "@/modules/network/components/status-panel";
-import { publicModalities } from "@/modules/editorial/publication";
 import { contentMetadata } from "@/modules/editorial/metadata";
-export const dynamic = "force-dynamic";
-export const runtime = "nodejs";
-export const generateMetadata = () =>
-  contentMetadata("modalities", "networkDescription", "/network");
-export default async function NetworkPage({
-  searchParams,
+import { getCachedPublicModalities } from "@/modules/network/cache/public-content-cache";
+import type { Locale } from "@/i18n/routing";
+
+export async function generateMetadata({
+  params,
 }: {
-  searchParams: Promise<{ modality?: string }>;
+  params: Promise<{ locale: Locale }>;
 }) {
-  const [t, query, modes] = await Promise.all([
-    getTranslations("Content"),
+  const { locale } = await params;
+  return contentMetadata("modalities", "networkDescription", "/network", locale);
+}
+
+type NetworkSearchParams = Promise<{ modality?: string }>;
+
+async function NetworkEditorialFeed({
+  searchParams,
+  locale,
+}: {
+  searchParams: NetworkSearchParams;
+  locale: Locale;
+}) {
+  const [query, modes, t] = await Promise.all([
     searchParams,
-    prisma.modality.findMany({
-      where: publicModalities,
-      orderBy: { order: "asc" },
-    }),
+    getCachedPublicModalities(),
+    getTranslations({ locale, namespace: "Content" }),
   ]);
+  const requestedModalityId =
+    typeof query.modality === "string" ? query.modality : undefined;
+  const modalityId = modes.some((mode) => mode.id === requestedModalityId)
+    ? requestedModalityId
+    : undefined;
+
   return (
-    <PublicShell title="TFL Network" description={t("networkDescription")}>
-      <AreaLinks />
-      <Suspense fallback={<Empty>{t("unavailable")}</Empty>}>
-        <NetworkStatusPanel />
-      </Suspense>
-      <h2 className="font-display text-2xl font-semibold">{t("modalities")}</h2>
-      <ModalityCards />
-      <StaffLink section="modalities" href="/admin/modalities" />
-      <h2 className="font-display text-2xl font-semibold">{t("latest")}</h2>
+    <>
       <form className="flex flex-wrap gap-3 items-end">
         <label>
           {t("modalityId")}
           <select
             name="modality"
-            defaultValue={typeof query.modality === "string" ? query.modality : ""}
+            defaultValue={modalityId ?? ""}
             className="ml-3 rounded-xl border border-border bg-background p-3"
           >
             <option value="">{t("all")}</option>
-            {modes.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.name}
+            {modes.map((mode) => (
+              <option key={mode.id} value={mode.id}>
+                {mode.name}
               </option>
             ))}
           </select>
@@ -59,8 +64,44 @@ export default async function NetworkPage({
           {t("filter")}
         </button>
       </form>
-      <PostsFeed modalityId={typeof query.modality === "string" ? query.modality : undefined} />
-      <StaffLink section="posts" href="/admin/posts" />
+      <PostsFeed locale={locale} modalityId={modalityId} />
+    </>
+  );
+}
+
+export default async function NetworkPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: Locale }>;
+  searchParams: NetworkSearchParams;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Content" });
+
+  return (
+    <PublicShell title="TFL Network" description={t("networkDescription")}>
+      <AreaLinks locale={locale} />
+
+      <Suspense fallback={<PublicSectionSkeleton rows={4} />}>
+        <NetworkStatusPanel />
+      </Suspense>
+
+      <h2 className="font-display text-2xl font-semibold">{t("modalities")}</h2>
+      <Suspense fallback={<PublicSectionSkeleton rows={3} />}>
+        <ModalityCards locale={locale} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <StaffLink section="modalities" href="/admin/modalities" />
+      </Suspense>
+
+      <h2 className="font-display text-2xl font-semibold">{t("latest")}</h2>
+      <Suspense fallback={<PublicSectionSkeleton rows={5} />}>
+        <NetworkEditorialFeed searchParams={searchParams} locale={locale} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <StaffLink section="posts" href="/admin/posts" />
+      </Suspense>
     </PublicShell>
   );
 }

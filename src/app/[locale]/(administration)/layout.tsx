@@ -4,6 +4,8 @@ import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { prisma } from "@/infrastructure/database/prisma";
 import { canAccessAdminPanel } from "@/modules/administration/permissions";
 
+export const instant = false;
+
 export default async function AdminLayout({
   children,
   params,

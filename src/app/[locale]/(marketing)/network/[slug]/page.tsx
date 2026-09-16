@@ -8,7 +8,7 @@ import remarkGfm from "remark-gfm";
 import LikeButton from "@/modules/community/components/like-button";
 import CommentsSection from "@/modules/community/components/comments-section";
 
-export const dynamic = "force-dynamic";
+export const instant = false;
 export async function generateMetadata({
   params,
 }: {

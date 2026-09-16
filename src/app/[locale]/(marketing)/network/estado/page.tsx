@@ -9,8 +9,7 @@ import {
 import { contentMetadata } from "@/modules/editorial/metadata";
 import { Suspense } from "react";
 import { NetworkStatusPanel } from "@/modules/network/components/status-panel";
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+export const instant = false;
 export const generateMetadata = () =>
   contentMetadata("statusPage", "statusDescription", "/network/estado");
 export default async function Page() {

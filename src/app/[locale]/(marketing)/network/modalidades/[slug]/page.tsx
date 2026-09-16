@@ -9,7 +9,7 @@ import {
   StaffLink,
 } from "@/modules/network/components/public-content";
 import ArticleBody from "@/modules/wiki/components/article-body";
-export const dynamic = "force-dynamic";
+export const instant = false;
 type Props = { params: Promise<{ slug: string; locale: string }> };
 export async function generateMetadata({ params }: Props) {
   const { slug, locale } = await params;

@@ -1,17 +1,14 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
+import type { Locale } from "@/i18n/routing";
 import { prisma } from "@/infrastructure/database/prisma";
 import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import {
   canAccessSection,
   type AdminSection,
 } from "@/modules/administration/permissions";
-import {
-  publicPosts,
-  publicModalities,
-  translated,
-} from "@/modules/editorial/publication";
+import { translated } from "@/modules/editorial/publication";
 import PostCard from "@/modules/editorial/components/post-card";
 import { UserAvatar } from "@/modules/profiles/components/user-identity";
 import { identityName } from "@/modules/profiles/types";
@@ -25,6 +22,11 @@ import {
   cosmeticAccentProps,
 } from "@/modules/cosmetics/components/cosmetic-renderer";
 import { isEntitlementActive } from "@/modules/cosmetics/service";
+import {
+  getCachedPublicModalities,
+  getCachedPublicPosts,
+  getCachedPublicTimeline,
+} from "@/modules/network/cache/public-content-cache";
 
 export const panel = "rounded-2xl border border-primary/15 bg-card/50 p-6";
 export const grid = "grid gap-6 sm:grid-cols-2 lg:grid-cols-3";
@@ -65,6 +67,22 @@ export function Empty({ children }: { children: ReactNode }) {
     </div>
   );
 }
+export function PublicSectionSkeleton({ rows = 3 }: { rows?: number }) {
+  return (
+    <div
+      aria-hidden
+      className={`${panel} grid gap-4`}
+      data-public-section-skeleton
+    >
+      {Array.from({ length: rows }, (_, index) => (
+        <span
+          key={index}
+          className={`block h-4 rounded-full bg-muted/70 ${index === 0 ? "w-2/5" : index === rows - 1 ? "w-3/5" : "w-full"}`}
+        />
+      ))}
+    </div>
+  );
+}
 export async function StaffLink({
   section,
   href,
@@ -89,8 +107,10 @@ export async function StaffLink({
     </Link>
   );
 }
-export async function AreaLinks() {
-  const t = await getTranslations("Content");
+export async function AreaLinks({ locale }: { locale?: Locale } = {}) {
+  const t = locale
+    ? await getTranslations({ locale, namespace: "Content" })
+    : await getTranslations("Content");
   return (
     <nav className="flex flex-wrap gap-3">
       {[
@@ -117,24 +137,19 @@ export async function PostsFeed({
   modalityId,
   type,
   limit = 12,
+  locale: requestedLocale,
 }: {
   modalityId?: string;
   type?: "MAINTENANCE";
   limit?: number;
+  locale?: Locale;
 }) {
   const [t, locale, posts] = await Promise.all([
-    getTranslations("Content"),
-    getLocale(),
-    prisma.post.findMany({
-      where: {
-        ...publicPosts(),
-        ...(modalityId ? { modalityId } : {}),
-        ...(type ? { type } : {}),
-      },
-      include: { modality: true },
-      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
-      take: limit,
-    }),
+    requestedLocale
+      ? getTranslations({ locale: requestedLocale, namespace: "Content" })
+      : getTranslations("Content"),
+    requestedLocale ? Promise.resolve(requestedLocale) : getLocale(),
+    getCachedPublicPosts({ modalityId, type, limit }),
   ]);
   if (!posts.length) return <Empty>{t("postsEmpty")}</Empty>;
   return (
@@ -161,15 +176,19 @@ export async function PostsFeed({
     </div>
   );
 }
-export async function ModalityCards({ limit }: { limit?: number }) {
+export async function ModalityCards({
+  limit,
+  locale: requestedLocale,
+}: {
+  limit?: number;
+  locale?: Locale;
+}) {
   const [t, locale, modes] = await Promise.all([
-    getTranslations("Content"),
-    getLocale(),
-    prisma.modality.findMany({
-      where: publicModalities,
-      orderBy: { order: "asc" },
-      take: limit,
-    }),
+    requestedLocale
+      ? getTranslations({ locale: requestedLocale, namespace: "Content" })
+      : getTranslations("Content"),
+    requestedLocale ? Promise.resolve(requestedLocale) : getLocale(),
+    getCachedPublicModalities(limit),
   ]);
   if (!modes.length) return <Empty>{t("modalitiesEmpty")}</Empty>;
   return (
@@ -328,15 +347,19 @@ export async function TeamCards({ limit }: { limit?: number }) {
     </div>
   );
 }
-export async function TimelineCards({ limit }: { limit?: number }) {
+export async function TimelineCards({
+  limit,
+  locale: requestedLocale,
+}: {
+  limit?: number;
+  locale?: Locale;
+}) {
   const [t, locale, items] = await Promise.all([
-    getTranslations("Content"),
-    getLocale(),
-    prisma.timelineMilestone.findMany({
-      where: { published: true, archived: false },
-      orderBy: [{ order: "asc" }, { createdAt: "asc" }],
-      take: limit,
-    }),
+    requestedLocale
+      ? getTranslations({ locale: requestedLocale, namespace: "Content" })
+      : getTranslations("Content"),
+    requestedLocale ? Promise.resolve(requestedLocale) : getLocale(),
+    getCachedPublicTimeline(limit),
   ]);
   if (!items.length) return <Empty>{t("timelineEmpty")}</Empty>;
   return (

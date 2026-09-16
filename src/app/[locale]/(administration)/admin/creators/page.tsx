@@ -5,7 +5,7 @@ import { listCreatorAdminData } from "@/modules/creators/service";
 import CreatorAdminManager from "@/modules/creators/components/creator-admin-manager";
 import { PageHeader } from "@/modules/administration/components/ui/page-header";
 
-export const dynamic = "force-dynamic";
+export const instant = false;
 
 export default async function AdminCreatorsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

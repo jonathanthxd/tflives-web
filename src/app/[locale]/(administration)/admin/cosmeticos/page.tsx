@@ -5,7 +5,7 @@ import { SECTION_ICONS } from "@/modules/administration/components/ui/icons";
 import AdminCosmeticsManager from "@/modules/cosmetics/components/admin-cosmetics-manager";
 import { listAllCosmetics } from "@/modules/cosmetics/service";
 
-export const dynamic = "force-dynamic";
+export const instant = false;
 
 export default async function CosmeticsAdminPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

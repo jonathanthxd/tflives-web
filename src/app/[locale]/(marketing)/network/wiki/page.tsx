@@ -1,10 +1,7 @@
-import { getLocale, getTranslations } from "next-intl/server";
+import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
+import { publicWiki, translated } from "@/modules/editorial/publication";
 import { prisma } from "@/infrastructure/database/prisma";
-import {
-  publicWiki,
-  publicModalities,
-  translated,
-} from "@/modules/editorial/publication";
 import {
   PublicShell,
   Empty,
@@ -12,32 +9,48 @@ import {
   StaffLink,
   panel,
   grid,
+  PublicSectionSkeleton,
 } from "@/modules/network/components/public-content";
 import { contentMetadata } from "@/modules/editorial/metadata";
 import { Link } from "@/i18n/navigation";
-export const dynamic = "force-dynamic";
-export const generateMetadata = () =>
-  contentMetadata("wiki", "wikiDescription", "/network/wiki");
-export default async function WikiIndex({
-  searchParams,
+import type { Locale } from "@/i18n/routing";
+import { getCachedWikiFilters } from "@/modules/network/cache/public-content-cache";
+
+export async function generateMetadata({
+  params,
 }: {
-  searchParams: Promise<{
-    q?: string;
-    category?: string;
-    modality?: string;
-    tag?: string;
-  }>;
+  params: Promise<{ locale: Locale }>;
 }) {
-  const [query, locale, t] = await Promise.all([
+  const { locale } = await params;
+  return contentMetadata("wiki", "wikiDescription", "/network/wiki", locale);
+}
+
+type WikiSearchParams = Promise<{
+  q?: string;
+  category?: string;
+  modality?: string;
+  tag?: string;
+}>;
+
+async function WikiExplorer({
+  searchParams,
+  locale,
+}: {
+  searchParams: WikiSearchParams;
+  locale: Locale;
+}) {
+  const [query, t] = await Promise.all([
     searchParams,
-    getLocale(),
-    getTranslations("Content"),
+    getTranslations({ locale, namespace: "Content" }),
   ]);
   const q = typeof query.q === "string" ? query.q.trim().slice(0, 200) : "";
-  const categoryFilter = typeof query.category === "string" ? query.category : undefined;
-  const modalityFilter = typeof query.modality === "string" ? query.modality : undefined;
+  const categoryFilter =
+    typeof query.category === "string" ? query.category : undefined;
+  const modalityFilter =
+    typeof query.modality === "string" ? query.modality : undefined;
   const tagFilter = typeof query.tag === "string" ? query.tag : undefined;
-  const [articles, categories, modes] = await Promise.all([
+  const [{ categories, modes }, articles] = await Promise.all([
+    getCachedWikiFilters(),
     prisma.wikiArticle.findMany({
       where: {
         AND: [
@@ -74,21 +87,12 @@ export default async function WikiIndex({
       orderBy: { updatedAt: "desc" },
       take: 60,
     }),
-    prisma.wikiCategory.findMany({
-      where: { articles: { some: publicWiki() } },
-      orderBy: { order: "asc" },
-    }),
-    prisma.modality.findMany({
-      where: publicModalities,
-      orderBy: { order: "asc" },
-    }),
   ]);
   const input =
     "block mt-2 w-full rounded-xl border border-border bg-background p-3";
+
   return (
-    <PublicShell title={t("wiki")} description={t("wikiDescription")}>
-      <AreaLinks />
-      <StaffLink section="wiki" href="/admin/wiki" />
+    <>
       <form className={`${panel} grid gap-4 sm:grid-cols-2 lg:grid-cols-4`}>
         <label>
           {t("search")}
@@ -102,9 +106,9 @@ export default async function WikiIndex({
             defaultValue={categoryFilter ?? ""}
           >
             <option value="">{t("all")}</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {translated(c, locale).name}
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {translated(category, locale).name}
               </option>
             ))}
           </select>
@@ -117,9 +121,9 @@ export default async function WikiIndex({
             defaultValue={modalityFilter ?? ""}
           >
             <option value="">{t("all")}</option>
-            {modes.map((m) => (
-              <option key={m.id} value={m.id}>
-                {translated(m, locale).name}
+            {modes.map((mode) => (
+              <option key={mode.id} value={mode.id}>
+                {translated(mode, locale).name}
               </option>
             ))}
           </select>
@@ -128,6 +132,7 @@ export default async function WikiIndex({
           {t("search")}
         </button>
       </form>
+
       {articles.length ? (
         <div className={grid}>
           {articles.map((raw) => {
@@ -167,6 +172,29 @@ export default async function WikiIndex({
       ) : (
         <Empty>{t("wikiEmpty")}</Empty>
       )}
+    </>
+  );
+}
+
+export default async function WikiIndex({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: Locale }>;
+  searchParams: WikiSearchParams;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Content" });
+
+  return (
+    <PublicShell title={t("wiki")} description={t("wikiDescription")}>
+      <AreaLinks locale={locale} />
+      <Suspense fallback={null}>
+        <StaffLink section="wiki" href="/admin/wiki" />
+      </Suspense>
+      <Suspense fallback={<PublicSectionSkeleton rows={6} />}>
+        <WikiExplorer searchParams={searchParams} locale={locale} />
+      </Suspense>
     </PublicShell>
   );
 }

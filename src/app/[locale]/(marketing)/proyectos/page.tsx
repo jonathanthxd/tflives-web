@@ -2,6 +2,8 @@ import { ArrowUpRight, Blocks, RadioTower, UsersRound } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 
+export const instant = false;
+
 export async function generateMetadata() {
   const t = await getTranslations("Projects");
   return {

@@ -4,7 +4,7 @@ import { requireSectionPage } from "@/modules/administration/page-guard";
 import ContentManager from "@/modules/administration/components/content-manager";
 import { PageHeader } from "@/modules/administration/components/ui/page-header";
 import { SECTION_ICONS } from "@/modules/administration/components/ui/icons";
-export const dynamic = "force-dynamic";
+export const instant = false;
 export default async function Page({
   params,
 }: {

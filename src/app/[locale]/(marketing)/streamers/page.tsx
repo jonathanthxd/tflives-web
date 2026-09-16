@@ -3,6 +3,8 @@ import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import CreatorDirectory from "@/modules/creators/components/creator-directory";
 import { listFeaturedCreators, listPublicCreators } from "@/modules/creators/service";
 
+export const instant = false;
+
 export const metadata: Metadata = {
   title: "Streamers & creators | TFLives",
   description: "Discover active TFLives creators and their official channels.",

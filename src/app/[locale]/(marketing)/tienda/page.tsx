@@ -5,7 +5,7 @@ import {
 } from "@/modules/network/components/public-content";
 import { contentMetadata } from "@/modules/editorial/metadata";
 
-export const dynamic = "force-dynamic";
+export const instant = false;
 export const generateMetadata = () =>
   contentMetadata("shop", "shopDescription", "/tienda");
 export default async function Page() {

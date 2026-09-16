@@ -1,3 +1,5 @@
+import { revalidateTag } from "next/cache";
+import { PUBLIC_CONTENT_TAGS } from "@/modules/network/cache/public-content-cache";
 import { contentError } from "@/modules/administration/content-error";
 import { isPublicPost } from "@/modules/editorial/publication";
 import { NextResponse } from "next/server";
@@ -52,6 +54,7 @@ export async function POST(request: Request) {
       );
     }
 
+    revalidateTag(PUBLIC_CONTENT_TAGS.posts, "max");
     return NextResponse.json({ success: true, post }, { status: 201 });
   } catch (error) {
     if (error instanceof AdminGuardError) {

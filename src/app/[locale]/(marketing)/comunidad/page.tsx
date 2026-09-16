@@ -12,7 +12,7 @@ import {
 import { DiscordPanel } from "@/modules/network/components/status-panel";
 import { contentMetadata } from "@/modules/editorial/metadata";
 import { Link } from "@/i18n/navigation";
-export const dynamic = "force-dynamic";
+export const instant = false;
 export const generateMetadata = () =>
   contentMetadata("community", "communityDescription", "/comunidad");
 export default async function CommunityPage() {

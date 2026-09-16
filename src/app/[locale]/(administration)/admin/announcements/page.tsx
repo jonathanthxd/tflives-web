@@ -4,7 +4,7 @@ import AnnouncementsManager from "@/modules/administration/components/announceme
 import { PageHeader } from "@/modules/administration/components/ui/page-header";
 import { SECTION_ICONS } from "@/modules/administration/components/ui/icons";
 
-export const dynamic = "force-dynamic";
+export const instant = false;
 
 export default async function AnnouncementsPage({
   params,
