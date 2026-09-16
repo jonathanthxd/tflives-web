@@ -96,7 +96,13 @@ export default async function OwnersSection() {
         </Link>
       </div>
 
-      <TeamConstellation members={constellation} viewProfileLabel={t("viewProfile")} teamLabel={t("team")} />
+      <TeamConstellation
+        members={constellation}
+        viewProfileLabel={t("viewProfile")}
+        teamLabel={t("team")}
+        previousMemberLabel={t("previousMember")}
+        nextMemberLabel={t("nextMember")}
+      />
     </section>
   );
 }

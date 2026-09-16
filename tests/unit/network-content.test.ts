@@ -218,7 +218,7 @@ test("new UI messages have matching ES/EN keys", () => {
   assert.deepEqual(Object.keys(es).sort(), Object.keys(en).sort());
 });
 
-test("home team neural constellation keeps every active linked member visible in one compact interactive stage", () => {
+test("home team constellation keeps every active linked member addressable in one compact 3D navigator", () => {
   const section = readFileSync("src/modules/administration/components/owners-section.tsx", "utf8");
   const constellation = readFileSync("src/modules/administration/components/team-constellation.tsx", "utf8");
   const neuralField = readFileSync("src/modules/administration/components/team-neural-field.tsx", "utf8");
@@ -231,17 +231,27 @@ test("home team neural constellation keeps every active linked member visible in
   assert.match(section, /equippedCosmetics/);
   assert.match(constellation, /TeamNeuralField/);
   assert.match(constellation, /AnimatePresence/);
-  assert.match(constellation, /motion\.path/);
+  assert.match(constellation, /transitionVector/);
+  assert.match(constellation, /ArrowLeft/);
+  assert.match(constellation, /ArrowRight/);
+  assert.match(constellation, /previousMemberLabel/);
+  assert.match(constellation, /nextMemberLabel/);
   assert.match(constellation, /CosmeticAvatarFrame/);
   assert.match(constellation, /CosmeticNameplate/);
   assert.match(constellation, /CosmeticBannerLayer/);
   assert.match(constellation, /CosmeticAccentLayer/);
   assert.match(constellation, /team-neural__spotlight/);
-  assert.match(constellation, /team-neural__mobile-deck/);
+  assert.match(constellation, /team-neural__navigator/);
   assert.match(neuralField, /@react-three\/fiber/);
+  assert.match(neuralField, /@react-three\/drei/);
+  assert.match(neuralField, /teamSpacePosition/);
+  assert.match(neuralField, /CameraRig/);
   assert.match(neuralField, /<Canvas/);
+  assert.match(neuralField, /<Stars/);
+  assert.match(neuralField, /<Html/);
   assert.match(neuralField, /<lineSegments/);
   assert.match(css, /\.team-neural__arena/);
-  assert.match(css, /\.team-neural__node-frame \*/);
+  assert.match(css, /\.team-neural-space-node__frame \*/);
+  assert.match(css, /\.team-neural__navigator/);
   assert.match(css, /animation-play-state: paused !important/);
 });

@@ -2929,8 +2929,9 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
 @keyframes cosmetic-nameplate-stars { to { background-position: 1.6em .9em, -2.1em 1.3em; } }
 @keyframes cosmetics-toast-lifecycle { 0% { opacity: 0; scale: .96; } 8%, 78% { opacity: 1; scale: 1; } 100% { opacity: 0; scale: .98; } }
 
-/* Home team neural constellation ------------------------------------------------
-   React + Three.js provide the living network; CSS only skins the DOM controls. */
+/* Home team constellation navigator ---------------------------------------------
+   A real 3D navigable graph lives in React Three Fiber. CSS only composes the
+   glass spotlight, navigation controls and HTML avatar billboards. */
 .team-constellation,
 .team-neural {
   position: relative;
@@ -2938,25 +2939,25 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
 
 .team-neural__arena {
   position: relative;
-  min-height: 37rem;
+  min-height: 39rem;
   overflow: hidden;
   border: 1px solid hsl(var(--primary) / .16);
-  border-radius: 2.35rem;
+  border-radius: 2.4rem;
   background:
-    radial-gradient(circle at 50% 45%, hsl(var(--primary) / .13), transparent 24%),
-    linear-gradient(145deg, hsl(var(--card) / .62), hsl(var(--background) / .52));
+    radial-gradient(circle at 50% 45%, hsl(var(--primary) / .13), transparent 23%),
+    radial-gradient(circle at 18% 82%, hsl(var(--primary) / .055), transparent 28%),
+    linear-gradient(145deg, hsl(var(--card) / .58), hsl(var(--background) / .58));
   box-shadow:
-    0 42px 120px -78px hsl(var(--primary) / .82),
+    0 46px 130px -82px hsl(var(--primary) / .88),
     inset 0 1px 0 hsl(var(--foreground) / .055);
   isolation: isolate;
 }
 
 .team-neural-field {
   position: absolute;
-  inset: -12% -7%;
-  z-index: 0;
-  pointer-events: none;
-  opacity: .92;
+  inset: -14% -9%;
+  z-index: 1;
+  opacity: .98;
   filter: saturate(1.08);
 }
 
@@ -2967,108 +2968,89 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
 }
 
 .team-neural__vignette,
-.team-neural__grid {
+.team-neural__grid,
+.team-neural__safe-zone {
   position: absolute;
   inset: 0;
-  z-index: 1;
   pointer-events: none;
 }
 
 .team-neural__vignette {
+  z-index: 2;
   background:
-    radial-gradient(circle at 50% 50%, transparent 8%, hsl(var(--background) / .09) 55%, hsl(var(--background) / .52) 100%),
-    linear-gradient(180deg, hsl(var(--background) / .18), transparent 22%, transparent 74%, hsl(var(--background) / .28));
+    radial-gradient(circle at 50% 48%, transparent 11%, hsl(var(--background) / .08) 52%, hsl(var(--background) / .58) 100%),
+    linear-gradient(180deg, hsl(var(--background) / .24), transparent 18%, transparent 75%, hsl(var(--background) / .42));
 }
 
 .team-neural__grid {
-  opacity: .16;
+  z-index: 2;
+  opacity: .12;
   background-image:
     linear-gradient(hsl(var(--primary) / .12) 1px, transparent 1px),
     linear-gradient(90deg, hsl(var(--primary) / .12) 1px, transparent 1px);
-  background-size: 46px 46px;
-  mask-image: radial-gradient(ellipse at center, black 8%, transparent 76%);
+  background-size: 52px 52px;
+  mask-image: radial-gradient(ellipse at center, black 6%, transparent 76%);
 }
 
-.team-neural__links {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  pointer-events: none;
-}
-
-.team-neural__link {
-  fill: none;
-  vector-effect: non-scaling-stroke;
-  transition: stroke .24s ease, opacity .24s ease, stroke-width .24s ease;
-}
-
-.team-neural__link--core {
-  stroke: hsl(var(--primary) / .22);
-  stroke-width: 1.05;
-  stroke-linecap: round;
-  stroke-dasharray: 2 6;
-}
-
-.team-neural__link--peer {
-  stroke: hsl(var(--foreground) / .14);
-  stroke-width: .7;
-  stroke-linecap: round;
-  stroke-dasharray: 1 8;
-}
-
-.team-neural__link[data-active="true"] {
-  stroke: hsl(var(--primary) / .68);
-  stroke-width: 1.55;
-  stroke-dasharray: 4 5;
-  animation: team-neural-signal 1.6s linear infinite;
+/* A protected visual well: stars and member nodes remain in the world, but the
+   selected profile always wins the hierarchy and never visually collides. */
+.team-neural__safe-zone {
+  z-index: 4;
+  left: 50%;
+  top: 50%;
+  width: min(37rem, 59%);
+  height: 29rem;
+  inset: auto;
+  translate: -50% -50%;
+  border-radius: 44%;
+  background:
+    radial-gradient(ellipse at center, hsl(var(--background) / .66) 0 36%, hsl(var(--background) / .32) 58%, transparent 76%);
+  filter: blur(9px);
 }
 
 .team-neural__core-halo {
   position: absolute;
   left: 50%;
   top: 50%;
-  z-index: 3;
-  width: 34rem;
-  height: 23rem;
+  z-index: 4;
+  width: 36rem;
+  height: 25rem;
   pointer-events: none;
-  transform: translate(-50%, -50%);
+  translate: -50% -50%;
 }
 
 .team-neural__core-halo > span {
   position: absolute;
   inset: 0;
-  border: 1px solid hsl(var(--primary) / .12);
+  border: 1px solid hsl(var(--primary) / .11);
   border-radius: 45% 55% 51% 49% / 51% 44% 56% 49%;
-  animation: team-neural-orbit 14s linear infinite;
+  animation: team-neural-orbit 18s linear infinite;
 }
 
 .team-neural__core-halo > span:nth-child(2) {
-  inset: 1.6rem -1.4rem;
+  inset: 1.8rem -1.6rem;
   border-style: dashed;
-  border-color: hsl(var(--primary) / .085);
+  border-color: hsl(var(--primary) / .075);
   animation-direction: reverse;
-  animation-duration: 19s;
+  animation-duration: 25s;
 }
 
 .team-neural__spotlight {
   position: absolute;
   left: 50%;
-  top: 50%;
-  z-index: 5;
-  width: min(31.5rem, 49%);
+  top: 48.5%;
+  z-index: 7;
+  width: min(31.25rem, 48%);
   translate: -50% -50%;
   overflow: visible;
-  border: 1px solid hsl(var(--primary) / .19);
+  border: 1px solid hsl(var(--primary) / .2);
   border-radius: 2rem;
-  background: hsl(var(--card) / .82);
+  background: hsl(var(--card) / .84);
   box-shadow:
-    0 36px 100px -56px hsl(var(--primary) / .82),
-    0 16px 45px -32px rgb(0 0 0 / .4),
-    inset 0 1px 0 hsl(var(--foreground) / .07);
-  backdrop-filter: blur(22px) saturate(132%);
+    0 38px 105px -58px hsl(var(--primary) / .88),
+    0 18px 48px -34px rgb(0 0 0 / .5),
+    inset 0 1px 0 hsl(var(--foreground) / .075);
+  backdrop-filter: blur(24px) saturate(136%);
 }
 
 .team-neural__accent-surface {
@@ -3097,7 +3079,7 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
   inset: auto 0 0;
   height: 3rem;
   content: "";
-  background: linear-gradient(180deg, transparent, hsl(var(--card) / .62));
+  background: linear-gradient(180deg, transparent, hsl(var(--card) / .64));
   pointer-events: none;
 }
 
@@ -3154,13 +3136,13 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
   gap: .38rem;
   border: 1px solid hsl(var(--foreground) / .1);
   border-radius: 999px;
-  background: hsl(var(--background) / .38);
+  background: hsl(var(--background) / .42);
   padding: .36rem .55rem;
+  color: hsl(var(--foreground) / .72);
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: .64rem;
   font-weight: 700;
   letter-spacing: .08em;
-  color: hsl(var(--foreground) / .72);
   backdrop-filter: blur(10px);
 }
 
@@ -3303,11 +3285,11 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
   display: inline-flex;
   align-items: center;
   gap: .42rem;
+  color: hsl(var(--muted-foreground) / .58);
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: .58rem;
   font-weight: 700;
   letter-spacing: .14em;
-  color: hsl(var(--muted-foreground) / .58);
 }
 
 .team-neural__active-caption > span {
@@ -3319,187 +3301,311 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
   animation: team-neural-core-pulse 1.8s ease-in-out infinite;
 }
 
-.team-neural__nodes {
-  position: absolute;
-  inset: 0;
-  z-index: 7;
-}
-
-.team-neural__node {
-  position: absolute;
+/* HTML billboards are projected by drei from actual 3D member coordinates. */
+.team-neural-space-node {
+  position: relative;
   display: grid;
-  width: 4.7rem;
-  height: 4.7rem;
+  width: 4.4rem;
+  height: 4.4rem;
   place-items: center;
-  translate: -50% -50%;
+  border: 0;
   border-radius: 50%;
   outline: none;
-  filter: drop-shadow(0 12px 18px rgb(0 0 0 / .15));
+  background: transparent;
+  filter: drop-shadow(0 14px 20px rgb(0 0 0 / .18));
+  cursor: pointer;
 }
 
-.team-neural__node::before {
+.team-neural-space-node::before {
   position: absolute;
   inset: .38rem;
   content: "";
-  border: 1px solid hsl(var(--primary) / .2);
+  border: 1px solid hsl(var(--primary) / .21);
   border-radius: 50%;
   background:
-    radial-gradient(circle at 30% 25%, hsl(var(--foreground) / .08), transparent 36%),
-    hsl(var(--card) / .72);
+    radial-gradient(circle at 28% 24%, hsl(var(--foreground) / .1), transparent 37%),
+    hsl(var(--card) / .76);
   box-shadow:
-    inset 0 1px 0 hsl(var(--foreground) / .08),
+    inset 0 1px 0 hsl(var(--foreground) / .09),
     0 0 0 5px hsl(var(--primary) / .025),
-    0 14px 34px -24px hsl(var(--primary) / .9);
+    0 16px 38px -25px hsl(var(--primary) / .95);
   backdrop-filter: blur(14px) saturate(120%);
-  transition: border-color .22s ease, background .22s ease, box-shadow .22s ease;
+  transition: border-color .2s ease, background .2s ease, box-shadow .2s ease, transform .2s ease;
 }
 
-.team-neural__node[data-active="true"]::before,
-.team-neural__node:hover::before,
-.team-neural__node:focus-visible::before {
-  border-color: hsl(var(--primary) / .56);
-  background: hsl(var(--card) / .88);
+.team-neural-space-node:hover::before,
+.team-neural-space-node:focus-visible::before {
+  transform: scale(1.06);
+  border-color: hsl(var(--primary) / .58);
+  background: hsl(var(--card) / .9);
   box-shadow:
-    inset 0 1px 0 hsl(var(--foreground) / .1),
-    0 0 0 6px hsl(var(--primary) / .055),
-    0 0 26px hsl(var(--primary) / .2),
-    0 16px 40px -24px hsl(var(--primary) / .9);
+    inset 0 1px 0 hsl(var(--foreground) / .12),
+    0 0 0 6px hsl(var(--primary) / .065),
+    0 0 28px hsl(var(--primary) / .22),
+    0 18px 42px -24px hsl(var(--primary) / .95);
 }
 
-.team-neural__node-orbit {
+.team-neural-space-node:focus-visible {
+  outline: 2px solid hsl(var(--primary) / .72);
+  outline-offset: 5px;
+}
+
+.team-neural-space-node__orbit {
   position: absolute;
-  inset: -.22rem;
+  inset: -.15rem;
   z-index: 0;
-  border: 1px dashed hsl(var(--primary) / .24);
+  border: 1px dashed hsl(var(--primary) / .3);
   border-radius: 50%;
-  opacity: .32;
-  animation: team-neural-orbit 9s linear infinite;
+  opacity: .45;
+  animation: team-neural-orbit 11s linear infinite;
 }
 
-.team-neural__node[data-active="true"] .team-neural__node-orbit,
-.team-neural__node:hover .team-neural__node-orbit,
-.team-neural__node:focus-visible .team-neural__node-orbit {
-  opacity: .9;
-  border-color: hsl(var(--primary) / .6);
-  animation-duration: 4.5s;
+.team-neural-space-node:hover .team-neural-space-node__orbit,
+.team-neural-space-node:focus-visible .team-neural-space-node__orbit {
+  opacity: 1;
+  border-color: hsl(var(--primary) / .7);
+  animation-duration: 5s;
 }
 
-.team-neural__node-lens {
+.team-neural-space-node__avatar {
   position: relative;
   z-index: 2;
   display: grid;
-  width: 3.4rem;
-  height: 3.4rem;
+  width: 3.3rem;
+  height: 3.3rem;
   place-items: center;
   overflow: visible;
   border-radius: 50%;
 }
 
-.team-neural__node-frame {
-  transform: scale(.72);
+.team-neural-space-node__frame {
+  transform: scale(.68);
   transform-origin: center;
 }
 
-.team-neural__node-frame .cosmetic-avatar-frame__aura,
-.team-neural__node-frame .cosmetic-avatar-frame__ambient,
-.team-neural__node-frame .cosmetic-avatar-frame__orbit,
-.team-neural__node-frame .cosmetic-avatar-frame__particles,
-.team-neural__node-frame .cosmetic-avatar-frame__ornament,
-.team-neural__node-frame .cosmetic-avatar-frame__details {
-  opacity: .5;
-  scale: .84;
+.team-neural-space-node__frame .cosmetic-avatar-frame__aura,
+.team-neural-space-node__frame .cosmetic-avatar-frame__ambient,
+.team-neural-space-node__frame .cosmetic-avatar-frame__orbit,
+.team-neural-space-node__frame .cosmetic-avatar-frame__particles,
+.team-neural-space-node__frame .cosmetic-avatar-frame__ornament,
+.team-neural-space-node__frame .cosmetic-avatar-frame__details {
+  opacity: .48;
+  scale: .82;
 }
 
-.team-neural__node-frame *,
-.team-neural__node-frame::before,
-.team-neural__node-frame::after {
+.team-neural-space-node__frame *,
+.team-neural-space-node__frame::before,
+.team-neural-space-node__frame::after {
   animation-play-state: paused !important;
 }
 
-.team-neural__node:hover .team-neural__node-frame *,
-.team-neural__node:hover .team-neural__node-frame::before,
-.team-neural__node:hover .team-neural__node-frame::after,
-.team-neural__node:focus-visible .team-neural__node-frame *,
-.team-neural__node:focus-visible .team-neural__node-frame::before,
-.team-neural__node:focus-visible .team-neural__node-frame::after {
+.team-neural-space-node:hover .team-neural-space-node__frame *,
+.team-neural-space-node:hover .team-neural-space-node__frame::before,
+.team-neural-space-node:hover .team-neural-space-node__frame::after,
+.team-neural-space-node:focus-visible .team-neural-space-node__frame *,
+.team-neural-space-node:focus-visible .team-neural-space-node__frame::before,
+.team-neural-space-node:focus-visible .team-neural-space-node__frame::after {
   animation-play-state: running !important;
 }
 
-.team-neural__node-label {
+.team-neural-space-node__label {
   position: absolute;
   left: 50%;
-  top: calc(100% + .15rem);
-  z-index: 10;
+  top: calc(100% + .25rem);
+  z-index: 12;
   min-width: max-content;
   max-width: 10rem;
   transform: translate(-50%, 5px) scale(.96);
   opacity: 0;
   border: 1px solid hsl(var(--primary) / .16);
-  border-radius: .75rem;
-  background: hsl(var(--card) / .92);
-  padding: .38rem .55rem;
+  border-radius: .8rem;
+  background: hsl(var(--card) / .94);
+  padding: .4rem .58rem;
   pointer-events: none;
   box-shadow: 0 14px 34px -24px rgb(0 0 0 / .55);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(14px);
   transition: opacity .18s ease, transform .18s ease;
 }
 
-.team-neural__node-label strong,
-.team-neural__node-label small {
+.team-neural-space-node__label strong,
+.team-neural-space-node__label small {
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.team-neural__node-label strong {
+.team-neural-space-node__label strong {
   color: hsl(var(--foreground));
   font-size: .68rem;
-  font-weight: 750;
+  font-weight: 760;
 }
 
-.team-neural__node-label small {
+.team-neural-space-node__label small {
   margin-top: .1rem;
   color: hsl(var(--muted-foreground));
-  font-size: .59rem;
+  font-size: .58rem;
 }
 
-.team-neural__node:hover .team-neural__node-label,
-.team-neural__node:focus-visible .team-neural__node-label {
+.team-neural-space-node:hover .team-neural-space-node__label,
+.team-neural-space-node:focus-visible .team-neural-space-node__label {
   transform: translate(-50%, 0) scale(1);
   opacity: 1;
 }
 
-.team-neural__mobile-deck {
-  display: none;
+/* Bottom navigator is semantic previous/next, while the R3F camera is free to
+   travel in any spatial direction dictated by the selected node coordinates. */
+.team-neural__navigator {
+  position: absolute;
+  left: 50%;
+  bottom: 1rem;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 2.7rem minmax(9.5rem, 13rem) 2.7rem;
+  align-items: center;
+  gap: .55rem;
+  translate: -50% 0;
+  border: 1px solid hsl(var(--foreground) / .1);
+  border-radius: 999px;
+  background: hsl(var(--background) / .62);
+  padding: .34rem;
+  box-shadow:
+    0 18px 46px -30px rgb(0 0 0 / .62),
+    inset 0 1px 0 hsl(var(--foreground) / .065);
+  backdrop-filter: blur(18px) saturate(132%);
+}
+
+.team-neural__nav-button {
+  display: grid;
+  width: 2.7rem;
+  height: 2.7rem;
+  place-items: center;
+  border: 1px solid hsl(var(--primary) / .15);
+  border-radius: 50%;
+  background: hsl(var(--primary) / .06);
+  color: hsl(var(--foreground) / .78);
+  transition: transform .18s ease, border-color .18s ease, color .18s ease, background .18s ease, box-shadow .18s ease;
+}
+
+.team-neural__nav-button:hover,
+.team-neural__nav-button:focus-visible {
+  transform: scale(1.06);
+  border-color: hsl(var(--primary) / .48);
+  background: hsl(var(--primary) / .13);
+  color: hsl(var(--primary));
+  box-shadow: 0 0 24px hsl(var(--primary) / .15);
+  outline: none;
+}
+
+.team-neural__nav-status {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  gap: .65rem;
+}
+
+.team-neural__nav-route {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: .22rem;
+}
+
+.team-neural__nav-route::before {
+  position: absolute;
+  left: .24rem;
+  right: .24rem;
+  top: 50%;
+  height: 1px;
+  content: "";
+  background: hsl(var(--primary) / .28);
+}
+
+.team-neural__nav-route i {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: .32rem;
+  height: .32rem;
+  border-radius: 50%;
+  background: hsl(var(--primary) / .42);
+  box-shadow: 0 0 8px hsl(var(--primary) / .32);
+}
+
+.team-neural__nav-route i:nth-child(2) {
+  width: .46rem;
+  height: .46rem;
+  background: hsl(var(--primary));
+  box-shadow: 0 0 12px hsl(var(--primary) / .58);
+}
+
+.team-neural__nav-copy {
+  display: block;
+  min-width: 0;
+  text-align: left;
+}
+
+.team-neural__nav-copy strong,
+.team-neural__nav-copy small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.team-neural__nav-copy strong {
+  max-width: 8.5rem;
+  color: hsl(var(--foreground) / .9);
+  font-size: .69rem;
+  font-weight: 760;
+}
+
+.team-neural__nav-copy small {
+  margin-top: .05rem;
+  color: hsl(var(--muted-foreground) / .72);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: .56rem;
+  font-weight: 700;
+  letter-spacing: .09em;
 }
 
 :root:not(.dark) .team-neural__arena {
   background:
-    radial-gradient(circle at 50% 45%, hsl(var(--primary) / .1), transparent 25%),
-    linear-gradient(145deg, hsl(var(--card) / .88), hsl(var(--background) / .72));
+    radial-gradient(circle at 50% 45%, hsl(var(--primary) / .1), transparent 24%),
+    radial-gradient(circle at 18% 82%, hsl(var(--primary) / .04), transparent 28%),
+    linear-gradient(145deg, hsl(var(--card) / .9), hsl(var(--background) / .75));
   box-shadow: 0 42px 100px -78px hsl(var(--primary) / .46);
 }
 
 :root:not(.dark) .team-neural-field {
   opacity: .62;
-  filter: saturate(.95) contrast(.96);
+  filter: saturate(.92) contrast(.97);
+}
+
+:root:not(.dark) .team-neural__safe-zone {
+  background: radial-gradient(ellipse at center, hsl(var(--background) / .88) 0 38%, hsl(var(--background) / .55) 58%, transparent 76%);
 }
 
 :root:not(.dark) .team-neural__spotlight,
-:root:not(.dark) .team-neural__node::before {
+:root:not(.dark) .team-neural-space-node::before,
+:root:not(.dark) .team-neural__navigator {
   box-shadow:
     0 24px 70px -50px hsl(var(--primary) / .45),
-    inset 0 1px 0 rgb(255 255 255 / .8);
+    inset 0 1px 0 rgb(255 255 255 / .82);
 }
 
 @media (max-width: 900px) {
   .team-neural__arena {
-    min-height: 34rem;
+    min-height: 37rem;
   }
 
   .team-neural__spotlight {
     width: min(29rem, 58%);
+  }
+
+  .team-neural__safe-zone {
+    width: min(34rem, 67%);
   }
 
   .team-neural__display-name {
@@ -3509,29 +3615,36 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
 
 @media (max-width: 767px) {
   .team-neural__arena {
-    min-height: auto;
-    overflow: hidden;
+    min-height: 38rem;
     border-radius: 1.8rem;
-    padding: 1rem;
   }
 
   .team-neural-field {
-    inset: -22% -36%;
-    opacity: .5;
+    inset: -16% -52%;
+    opacity: .72;
+    pointer-events: none;
   }
 
-  .team-neural__links,
-  .team-neural__core-halo,
-  .team-neural__nodes {
-    display: none;
+  .team-neural__grid {
+    opacity: .075;
+  }
+
+  .team-neural__safe-zone {
+    width: 116%;
+    height: 28rem;
+    background: radial-gradient(ellipse at center, hsl(var(--background) / .72) 0 38%, hsl(var(--background) / .34) 64%, transparent 80%);
+  }
+
+  .team-neural__core-halo {
+    width: 31rem;
+    height: 24rem;
+    opacity: .64;
   }
 
   .team-neural__spotlight {
-    position: relative;
-    left: auto;
-    top: auto;
-    width: 100%;
-    translate: 0 0;
+    top: 46.5%;
+    width: calc(100% - 2rem);
+    max-width: 31rem;
     border-radius: 1.55rem;
   }
 
@@ -3572,71 +3685,36 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
     display: none;
   }
 
-  .team-neural__mobile-deck {
-    position: relative;
-    z-index: 5;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: .55rem;
-    margin-top: .75rem;
+  .team-neural__navigator {
+    bottom: .72rem;
+    grid-template-columns: 2.6rem minmax(8.3rem, 1fr) 2.6rem;
+    width: min(calc(100% - 1rem), 20rem);
+    gap: .35rem;
+    padding: .3rem;
   }
 
-  .team-neural__mobile-node {
-    position: relative;
-    display: grid;
-    min-width: 0;
-    grid-template-columns: auto auto minmax(0, 1fr);
-    align-items: center;
-    gap: .5rem;
-    overflow: hidden;
-    border: 1px solid hsl(var(--primary) / .12);
-    border-radius: 1rem;
-    background: hsl(var(--card) / .66);
-    padding: .45rem .55rem .45rem .42rem;
-    box-shadow: inset 0 1px 0 hsl(var(--foreground) / .04);
-    backdrop-filter: blur(12px);
+  .team-neural__nav-button {
+    width: 2.6rem;
+    height: 2.6rem;
   }
 
-  .team-neural__mobile-node[data-active="true"] {
-    border-color: hsl(var(--primary) / .42);
-    background: hsl(var(--primary) / .085);
-    box-shadow: 0 12px 32px -26px hsl(var(--primary) / .9);
-  }
-
-  .team-neural__mobile-index {
-    display: grid;
-    width: 1.45rem;
-    height: 1.45rem;
-    place-items: center;
-    border-radius: .5rem;
-    background: hsl(var(--primary) / .08);
-    color: hsl(var(--primary) / .72);
-    font-family: var(--font-mono, ui-monospace, monospace);
-    font-size: .55rem;
-    font-weight: 800;
-  }
-
-  .team-neural__mobile-avatar {
-    display: grid;
-    width: 2.7rem;
-    height: 2.7rem;
-    place-items: center;
-    overflow: visible;
+  .team-neural__nav-copy strong {
+    max-width: 7.2rem;
   }
 }
 
 @media (max-width: 440px) {
-  .team-neural__mobile-deck {
-    grid-template-columns: 1fr;
+  .team-neural__arena {
+    min-height: 39.5rem;
   }
 
   .team-neural__actions {
     align-items: flex-start;
   }
-}
 
-@keyframes team-neural-signal {
-  to { stroke-dashoffset: -18; }
+  .team-neural__nav-route {
+    display: none;
+  }
 }
 
 @keyframes team-neural-orbit {

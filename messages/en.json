@@ -786,7 +786,9 @@
     "teamUserHelp": "Enter the @username of an existing TFLives account. Their picture, display name, and profile link will be pulled automatically from that account.",
     "teamUserMissing": "No TFLives user exists with that @username.",
     "teamUserDuplicate": "That user is already part of the team.",
-    "viewProfile": "View profile"
+    "viewProfile": "View profile",
+    "previousMember": "Previous member",
+    "nextMember": "Next member"
   },
   "GlobalChat": {
     "titulo": "Global chat",
