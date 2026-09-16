@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
+import { setRequestLocale } from "next-intl/server";
 import { Chakra_Petch, Fredoka, Inter, JetBrains_Mono, Nunito, Outfit, Pixelify_Sans, Quicksand, Rubik, Space_Grotesk, VT323 } from "next/font/google";
 import { GeistSans } from "geist/font/sans";
 import { routing } from "@/i18n/routing";
@@ -86,6 +87,7 @@ export default async function RootLayout({
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
+  setRequestLocale(locale);
 
   return (
     <html lang={locale} suppressHydrationWarning>
