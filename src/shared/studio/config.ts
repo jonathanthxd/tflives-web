@@ -1,3 +1,5 @@
+import type { StudioCursorId } from "@/shared/studio/cursors";
+
 export type StudioAccentId =
   | "blue"
   | "slate"
@@ -45,12 +47,14 @@ export type StudioPreferences = {
   accent: StudioAccentId;
   font: StudioFontId;
   background: StudioBackgroundId;
+  cursor: StudioCursorId;
 };
 
 export const DEFAULT_STUDIO_PREFERENCES: StudioPreferences = {
   accent: "blue",
   font: "tfl",
   background: "dot",
+  cursor: "system",
 };
 
 export const STUDIO_STORAGE_KEY = "tflives-studio-v1";

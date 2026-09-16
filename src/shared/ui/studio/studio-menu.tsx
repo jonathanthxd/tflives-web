@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Check, LockKeyhole, Moon, Palette, RotateCcw, Sun, X } from "lucide-react";
+import { Check, LockKeyhole, Moon, MousePointer2, Palette, RotateCcw, Sun, X } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useStudio } from "@/providers/studio-provider";
 import {
@@ -15,6 +15,8 @@ import {
   type StudioBackgroundId,
 } from "@/shared/studio/config";
 import { StudioBackground } from "@/shared/ui/studio/studio-background";
+import { CursorPackPreview } from "@/shared/ui/studio/cursor-pack-preview";
+import { STUDIO_CURSOR_PACKS } from "@/shared/studio/cursors";
 
 function AnimatedPreview({
   background,
@@ -72,9 +74,11 @@ export default function StudioMenu({ compact = false }: { compact?: boolean }) {
     accent,
     font,
     background,
+    cursor,
     setAccent,
     setFont,
     setBackground,
+    setCursor,
     resetStudio,
   } = useStudio();
   const [open, setOpen] = useState(false);
@@ -332,6 +336,58 @@ export default function StudioMenu({ compact = false }: { compact?: boolean }) {
                       aria-hidden="true"
                     >
                       TFLives
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </section>
+
+            <section className="mt-6" aria-labelledby="studio-cursor-title">
+              <div className="mb-3">
+                <div className="flex items-center gap-2">
+                  <MousePointer2 className="size-3.5 text-primary" aria-hidden="true" />
+                  <h3 id="studio-cursor-title" className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                    {t("cursor")}
+                  </h3>
+                </div>
+                <p className="mt-1 text-xs leading-5 text-muted-foreground/75">{t("cursorHint")}</p>
+              </div>
+
+              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2" role="radiogroup" aria-label={t("cursor")}>
+                {STUDIO_CURSOR_PACKS.map((pack) => (
+                  <button
+                    key={pack.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={cursor === pack.id}
+                    onClick={() => setCursor(pack.id)}
+                    className={`group min-w-0 overflow-hidden rounded-2xl border text-left transition ${
+                      cursor === pack.id
+                        ? "border-primary bg-primary/[0.06] ring-1 ring-primary/[0.16]"
+                        : "border-border bg-card/[0.5] hover:border-primary/[0.35] hover:bg-primary/[0.035]"
+                    }`}
+                  >
+                    <CursorPackPreview
+                      pack={pack}
+                      animatedLabel={t("cursorAnimated")}
+                      roleLabels={{
+                        default: t("cursorPreview.default"),
+                        pointer: t("cursorPreview.pointer"),
+                        text: t("cursorPreview.text"),
+                      }}
+                    />
+                    <span className="flex items-start justify-between gap-3 border-t border-border/60 px-3.5 py-2.5">
+                      <span className="min-w-0">
+                        <span className="block text-xs font-semibold text-foreground">{pack.label}</span>
+                        <span className="mt-0.5 line-clamp-2 block text-[10px] leading-4 text-muted-foreground">
+                          {t(`cursorDescriptions.${pack.descriptionKey}`)}
+                        </span>
+                      </span>
+                      {cursor === pack.id && (
+                        <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground">
+                          <Check className="size-3" aria-hidden="true" />
+                        </span>
+                      )}
                     </span>
                   </button>
                 ))}

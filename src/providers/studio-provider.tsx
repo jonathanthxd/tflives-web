@@ -20,12 +20,20 @@ import {
   type StudioFontId,
   type StudioPreferences,
 } from "@/shared/studio/config";
+import {
+  STUDIO_CURSOR_ROLES,
+  getCursorCssValue,
+  getStudioCursorPack,
+  isStudioCursor,
+  type StudioCursorId,
+} from "@/shared/studio/cursors";
 
 type StudioContextValue = StudioPreferences & {
   ready: boolean;
   setAccent: (accent: StudioAccentId) => void;
   setFont: (font: StudioFontId) => void;
   setBackground: (background: StudioBackgroundId) => void;
+  setCursor: (cursor: StudioCursorId) => void;
   resetStudio: () => void;
 };
 
@@ -45,6 +53,9 @@ function sanitizePreferences(value: unknown): StudioPreferences {
     background: isStudioBackground(candidate.background)
       ? candidate.background
       : DEFAULT_STUDIO_PREFERENCES.background,
+    cursor: isStudioCursor(candidate.cursor)
+      ? candidate.cursor
+      : DEFAULT_STUDIO_PREFERENCES.cursor,
   };
 }
 
@@ -52,6 +63,7 @@ function applyPreferences(preferences: StudioPreferences) {
   const root = document.documentElement;
   root.dataset.tflAccent = preferences.accent;
   root.dataset.tflBackground = preferences.background;
+  root.dataset.tflCursor = preferences.cursor;
   document.body.dataset.tflFont = preferences.font;
 }
 
@@ -87,6 +99,75 @@ export function StudioProvider({ children }: { children: ReactNode }) {
     }
   }, [preferences, ready]);
 
+  useEffect(() => {
+    if (!ready) return;
+
+    const root = document.documentElement;
+    const pack = getStudioCursorPack(preferences.cursor);
+    const variableNames = STUDIO_CURSOR_ROLES.map(
+      (role) => `--tfl-cursor-${role}`,
+    );
+
+    const clearCursorVariables = () => {
+      for (const variable of variableNames) root.style.removeProperty(variable);
+    };
+
+    if (pack.id === "system") {
+      clearCursorVariables();
+      return;
+    }
+
+    if (pack.animated) {
+      const preloadFrames = new Set(
+        (["default", "pointer", "text"] as const).flatMap(
+          (role) => pack.roles[role]?.frames ?? [],
+        ),
+      );
+      for (const frame of preloadFrames) {
+        void fetch(frame, { cache: "force-cache" }).catch(() => undefined);
+      }
+    }
+
+    const startedAt = performance.now();
+    const lastValues = new Map<string, string>();
+    let timer: number | null = null;
+
+    const paint = () => {
+      const elapsed = performance.now() - startedAt;
+      for (const role of STUDIO_CURSOR_ROLES) {
+        const value = getCursorCssValue(pack, role, elapsed);
+        if (lastValues.get(role) === value) continue;
+        lastValues.set(role, value);
+        root.style.setProperty(`--tfl-cursor-${role}`, value);
+      }
+    };
+
+    const resume = () => {
+      paint();
+      if (!pack.animated || timer !== null || document.hidden) return;
+      timer = window.setInterval(paint, 48);
+    };
+
+    const pause = () => {
+      if (timer !== null) window.clearInterval(timer);
+      timer = null;
+    };
+
+    const onVisibilityChange = () => {
+      if (document.hidden) pause();
+      else resume();
+    };
+
+    resume();
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    return () => {
+      pause();
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      clearCursorVariables();
+    };
+  }, [preferences.cursor, ready]);
+
   const setAccent = useCallback((accent: StudioAccentId) => {
     setPreferences((current) => ({ ...current, accent }));
   }, []);
@@ -97,6 +178,10 @@ export function StudioProvider({ children }: { children: ReactNode }) {
 
   const setBackground = useCallback((background: StudioBackgroundId) => {
     setPreferences((current) => ({ ...current, background }));
+  }, []);
+
+  const setCursor = useCallback((cursor: StudioCursorId) => {
+    setPreferences((current) => ({ ...current, cursor }));
   }, []);
 
   const resetStudio = useCallback(() => {
@@ -110,9 +195,10 @@ export function StudioProvider({ children }: { children: ReactNode }) {
       setAccent,
       setFont,
       setBackground,
+      setCursor,
       resetStudio,
     }),
-    [preferences, ready, setAccent, setBackground, setFont, resetStudio],
+    [preferences, ready, setAccent, setBackground, setCursor, setFont, resetStudio],
   );
 
   return <StudioContext.Provider value={value}>{children}</StudioContext.Provider>;

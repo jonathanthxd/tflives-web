@@ -1408,7 +1408,26 @@
       "rubik": "Contemporánea, compacta y versátil."
     },
     "darkOnly": "Solo tema oscuro",
-    "darkOnlyHint": "Cambia a Oscuro para usar fondos animados."
+    "darkOnlyHint": "Cambia a Oscuro para usar fondos animados.",
+    "cursor": "Cursor",
+    "cursorHint": "Cambia el cursor nativo de la web con packs completos. Pasa por las zonas de preview para probar selección, enlaces y texto.",
+    "cursorDescriptions": {
+      "system": "El cursor original de tu sistema y navegador.",
+      "prism-glass": "Cristal facetado con refracción prismática y brillo animado.",
+      "aurora-glass": "Vidrio turquesa con reflejos fríos y movimiento suave.",
+      "sakura-glass": "Cristal rosa con pequeños pétalos y detalles florales.",
+      "obsidian-glass": "Vidrio oscuro angular con filo violeta y presencia discreta.",
+      "frost-glass": "Cristal helado con facetas luminosas y destellos fríos.",
+      "ember-glass": "Vidrio cálido con brasas y reflejos de fuego.",
+      "cyber-glass": "Geometría tecnológica con nodos cyan, lima y azul.",
+      "mono-glass": "Vidrio neutral y minimalista para una apariencia limpia."
+    },
+    "cursorAnimated": "Animado",
+    "cursorPreview": {
+      "default": "Normal",
+      "pointer": "Enlace",
+      "text": "Texto"
+    }
   },
   "Projects": {
     "title": "Nuestros proyectos",

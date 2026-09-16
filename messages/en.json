@@ -1408,7 +1408,26 @@
       "rubik": "Contemporary, compact and versatile."
     },
     "darkOnly": "Dark mode only",
-    "darkOnlyHint": "Switch to Dark to use animated backgrounds."
+    "darkOnlyHint": "Switch to Dark to use animated backgrounds.",
+    "cursor": "Cursor",
+    "cursorHint": "Replace the native site cursor with complete cursor packs. Hover the preview zones to test selection, links and text.",
+    "cursorDescriptions": {
+      "system": "Your operating system and browser default cursor.",
+      "prism-glass": "Faceted glass with prism refraction and an animated sheen.",
+      "aurora-glass": "Turquoise glass with cool reflections and soft motion.",
+      "sakura-glass": "Pink glass with tiny petals and floral details.",
+      "obsidian-glass": "Angular dark glass with a violet edge and restrained presence.",
+      "frost-glass": "Icy crystal with luminous facets and cold sparkles.",
+      "ember-glass": "Warm glass with ember details and fire reflections.",
+      "cyber-glass": "Technical geometry with cyan, lime and blue nodes.",
+      "mono-glass": "Neutral minimalist glass for a clean appearance."
+    },
+    "cursorAnimated": "Animated",
+    "cursorPreview": {
+      "default": "Normal",
+      "pointer": "Link",
+      "text": "Text"
+    }
   },
   "Projects": {
     "title": "Our projects",

@@ -3729,3 +3729,154 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
   0%, 100% { opacity: .45; scale: .8; }
   50% { opacity: 1; scale: 1.18; }
 }
+
+/* TFL Studio Cursor Engine
+   Native cursor images are used instead of a DOM element following the pointer.
+   The active pack writes these variables from StudioProvider so animated packs
+   can cycle cached .cur frames without introducing pointer-lag. */
+@media (pointer: fine) {
+  html[data-tfl-cursor]:not([data-tfl-cursor="system"]) body,
+  html[data-tfl-cursor]:not([data-tfl-cursor="system"]) .cursor-default {
+    cursor: var(--tfl-cursor-default, default);
+  }
+
+  html[data-tfl-cursor]:not([data-tfl-cursor="system"]) :is(
+    a[href],
+    button:not(:disabled),
+    summary,
+    select:not(:disabled),
+    label[for],
+    [role="button"],
+    [role="link"],
+    [data-cursor-role="pointer"],
+    .cursor-pointer,
+    input[type="button"]:not(:disabled),
+    input[type="submit"]:not(:disabled),
+    input[type="reset"]:not(:disabled),
+    input[type="checkbox"]:not(:disabled),
+    input[type="radio"]:not(:disabled),
+    input[type="range"]:not(:disabled),
+    input[type="color"]:not(:disabled),
+    input[type="file"]:not(:disabled)
+  ) {
+    cursor: var(--tfl-cursor-pointer, pointer);
+  }
+
+  html[data-tfl-cursor]:not([data-tfl-cursor="system"]) :is(
+    textarea:not(:disabled),
+    [contenteditable="true"],
+    input:not(:disabled):not([type]),
+    input[type="text"]:not(:disabled),
+    input[type="email"]:not(:disabled),
+    input[type="password"]:not(:disabled),
+    input[type="search"]:not(:disabled),
+    input[type="tel"]:not(:disabled),
+    input[type="url"]:not(:disabled),
+    input[type="number"]:not(:disabled),
+    p,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    li,
+    dt,
+    dd,
+    blockquote,
+    code,
+    pre,
+    [data-cursor-role="text"],
+    .cursor-text
+  ) {
+    cursor: var(--tfl-cursor-text, text);
+  }
+
+  html[data-tfl-cursor]:not([data-tfl-cursor="system"]) :is(.cursor-help, [data-cursor-role="help"]) {
+    cursor: var(--tfl-cursor-help, help);
+  }
+
+  html[data-tfl-cursor]:not([data-tfl-cursor="system"]) :is(.cursor-wait, [data-cursor-role="wait"]) {
+    cursor: var(--tfl-cursor-wait, wait);
+  }
+
+  html[data-tfl-cursor]:not([data-tfl-cursor="system"]) :is(.cursor-progress, [aria-busy="true"], [data-cursor-role="progress"]) {
+    cursor: var(--tfl-cursor-progress, progress);
+  }
+
+  html[data-tfl-cursor]:not([data-tfl-cursor="system"]) :is(.cursor-grab, [draggable="true"], [data-cursor-role="grab"]) {
+    cursor: var(--tfl-cursor-grab, grab);
+  }
+
+  html[data-tfl-cursor]:not([data-tfl-cursor="system"]) :is(.cursor-grabbing, [data-cursor-role="grabbing"]) {
+    cursor: var(--tfl-cursor-grabbing, grabbing);
+  }
+
+  html[data-tfl-cursor]:not([data-tfl-cursor="system"]) :is(.cursor-move, [data-cursor-role="move"]) {
+    cursor: var(--tfl-cursor-move, move);
+  }
+
+  html[data-tfl-cursor]:not([data-tfl-cursor="system"]) :is(.cursor-crosshair, [data-cursor-role="precision"]) {
+    cursor: var(--tfl-cursor-precision, crosshair);
+  }
+
+  html[data-tfl-cursor]:not([data-tfl-cursor="system"]) :is(
+    :disabled,
+    [aria-disabled="true"],
+    .cursor-not-allowed,
+    [data-cursor-role="not-allowed"]
+  ) {
+    cursor: var(--tfl-cursor-not-allowed, not-allowed);
+  }
+
+  html[data-tfl-cursor]:not([data-tfl-cursor="system"]) :is(.cursor-ew-resize, [data-cursor-role="ew-resize"]) {
+    cursor: var(--tfl-cursor-ew-resize, ew-resize);
+  }
+
+  html[data-tfl-cursor]:not([data-tfl-cursor="system"]) :is(.cursor-ns-resize, [data-cursor-role="ns-resize"]) {
+    cursor: var(--tfl-cursor-ns-resize, ns-resize);
+  }
+
+  html[data-tfl-cursor]:not([data-tfl-cursor="system"]) :is(.cursor-nwse-resize, [data-cursor-role="nwse-resize"]) {
+    cursor: var(--tfl-cursor-nwse-resize, nwse-resize);
+  }
+
+  html[data-tfl-cursor]:not([data-tfl-cursor="system"]) :is(.cursor-nesw-resize, [data-cursor-role="nesw-resize"]) {
+    cursor: var(--tfl-cursor-nesw-resize, nesw-resize);
+  }
+}
+
+.studio-cursor-preview {
+  background:
+    radial-gradient(circle at 18% 25%, hsl(var(--primary) / 0.14), transparent 34%),
+    linear-gradient(135deg, hsl(var(--background) / 0.52), hsl(var(--card) / 0.86));
+}
+
+.studio-cursor-preview__ambient {
+  position: absolute;
+  inset: -35% -12%;
+  opacity: 0.62;
+  background:
+    conic-gradient(
+      from 210deg at 52% 48%,
+      transparent 0deg,
+      hsl(var(--primary) / 0.16) 48deg,
+      hsl(var(--studio-accent-2) / 0.13) 112deg,
+      transparent 190deg,
+      hsl(var(--studio-accent-3) / 0.12) 256deg,
+      transparent 360deg
+    );
+  filter: blur(20px);
+  transform: rotate(-8deg);
+  pointer-events: none;
+}
+
+.studio-cursor-preview__zone {
+  transition: border-color 180ms ease, background-color 180ms ease, color 180ms ease;
+}
+
+.studio-cursor-preview__zone:hover {
+  border-color: hsl(var(--primary) / 0.32);
+  background: hsl(var(--primary) / 0.07);
+  color: hsl(var(--foreground));
+}
