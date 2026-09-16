@@ -2929,335 +2929,725 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
 @keyframes cosmetic-nameplate-stars { to { background-position: 1.6em .9em, -2.1em 1.3em; } }
 @keyframes cosmetics-toast-lifecycle { 0% { opacity: 0; scale: .96; } 8%, 78% { opacity: 1; scale: 1; } 100% { opacity: 0; scale: .98; } }
 
-/* Home team constellation: every member stays visible without turning the landing into a long card grid. */
-.team-constellation {
+/* Home team neural constellation ------------------------------------------------
+   React + Three.js provide the living network; CSS only skins the DOM controls. */
+.team-constellation,
+.team-neural {
   position: relative;
 }
 
-.team-constellation__arena {
+.team-neural__arena {
   position: relative;
-  min-height: 34rem;
+  min-height: 37rem;
   overflow: hidden;
-  border: 1px solid hsl(var(--primary) / .14);
-  border-radius: 2.25rem;
+  border: 1px solid hsl(var(--primary) / .16);
+  border-radius: 2.35rem;
   background:
-    radial-gradient(circle at 50% 50%, hsl(var(--primary) / .09), transparent 29%),
-    linear-gradient(145deg, hsl(var(--card) / .58), hsl(var(--background) / .4));
-  box-shadow: 0 30px 90px -62px hsl(var(--primary) / .65);
+    radial-gradient(circle at 50% 45%, hsl(var(--primary) / .13), transparent 24%),
+    linear-gradient(145deg, hsl(var(--card) / .62), hsl(var(--background) / .52));
+  box-shadow:
+    0 42px 120px -78px hsl(var(--primary) / .82),
+    inset 0 1px 0 hsl(var(--foreground) / .055);
   isolation: isolate;
 }
 
-.team-constellation__field,
-.team-constellation__field::before,
-.team-constellation__field::after {
+.team-neural-field {
   position: absolute;
-  content: "";
+  inset: -12% -7%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .92;
+  filter: saturate(1.08);
+}
+
+.team-neural-field canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.team-neural__vignette,
+.team-neural__grid {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
   pointer-events: none;
 }
 
-.team-constellation__field {
-  inset: 0;
-  z-index: -2;
+.team-neural__vignette {
+  background:
+    radial-gradient(circle at 50% 50%, transparent 8%, hsl(var(--background) / .09) 55%, hsl(var(--background) / .52) 100%),
+    linear-gradient(180deg, hsl(var(--background) / .18), transparent 22%, transparent 74%, hsl(var(--background) / .28));
+}
+
+.team-neural__grid {
+  opacity: .16;
   background-image:
-    radial-gradient(circle, hsl(var(--primary) / .2) 0 1px, transparent 1.5px),
-    radial-gradient(circle, hsl(var(--foreground) / .12) 0 1px, transparent 1.5px);
-  background-position: 0 0, 22px 28px;
-  background-size: 58px 58px, 74px 74px;
-  mask-image: radial-gradient(ellipse at center, black 16%, transparent 82%);
-  opacity: .42;
+    linear-gradient(hsl(var(--primary) / .12) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--primary) / .12) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: radial-gradient(ellipse at center, black 8%, transparent 76%);
 }
 
-.team-constellation__field::before {
-  inset: 8% 13%;
-  border: 1px solid hsl(var(--primary) / .1);
-  border-radius: 50%;
-  transform: rotate(-5deg);
-}
-
-.team-constellation__field::after {
-  inset: 16% 7%;
-  border: 1px dashed hsl(var(--primary) / .08);
-  border-radius: 50%;
-  transform: rotate(8deg);
-}
-
-.team-constellation__links {
+.team-neural__links {
   position: absolute;
   inset: 0;
-  z-index: -1;
+  z-index: 2;
   width: 100%;
   height: 100%;
   overflow: visible;
+  pointer-events: none;
 }
 
-.team-constellation__links line {
-  stroke: hsl(var(--primary) / .08);
-  stroke-width: .12;
+.team-neural__link {
+  fill: none;
   vector-effect: non-scaling-stroke;
-  transition: stroke .24s ease, stroke-width .24s ease, opacity .24s ease;
+  transition: stroke .24s ease, opacity .24s ease, stroke-width .24s ease;
 }
 
-.team-constellation__links line.is-active {
-  stroke: hsl(var(--primary) / .34);
-  stroke-width: .25;
+.team-neural__link--core {
+  stroke: hsl(var(--primary) / .22);
+  stroke-width: 1.05;
+  stroke-linecap: round;
+  stroke-dasharray: 2 6;
 }
 
-.team-constellation__spotlight {
+.team-neural__link--peer {
+  stroke: hsl(var(--foreground) / .14);
+  stroke-width: .7;
+  stroke-linecap: round;
+  stroke-dasharray: 1 8;
+}
+
+.team-neural__link[data-active="true"] {
+  stroke: hsl(var(--primary) / .68);
+  stroke-width: 1.55;
+  stroke-dasharray: 4 5;
+  animation: team-neural-signal 1.6s linear infinite;
+}
+
+.team-neural__core-halo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 3;
+  width: 34rem;
+  height: 23rem;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.team-neural__core-halo > span {
+  position: absolute;
+  inset: 0;
+  border: 1px solid hsl(var(--primary) / .12);
+  border-radius: 45% 55% 51% 49% / 51% 44% 56% 49%;
+  animation: team-neural-orbit 14s linear infinite;
+}
+
+.team-neural__core-halo > span:nth-child(2) {
+  inset: 1.6rem -1.4rem;
+  border-style: dashed;
+  border-color: hsl(var(--primary) / .085);
+  animation-direction: reverse;
+  animation-duration: 19s;
+}
+
+.team-neural__spotlight {
   position: absolute;
   left: 50%;
   top: 50%;
   z-index: 5;
-  width: min(29rem, 48%);
-  min-height: 18rem;
-  transform: translate(-50%, -50%);
+  width: min(31.5rem, 49%);
+  translate: -50% -50%;
   overflow: visible;
-  border: 1px solid hsl(var(--primary) / .18);
+  border: 1px solid hsl(var(--primary) / .19);
   border-radius: 2rem;
-  background: hsl(var(--card) / .72);
+  background: hsl(var(--card) / .82);
   box-shadow:
-    0 28px 90px -48px hsl(var(--primary) / .72),
-    inset 0 1px 0 hsl(var(--foreground) / .06);
-  backdrop-filter: blur(18px) saturate(125%);
+    0 36px 100px -56px hsl(var(--primary) / .82),
+    0 16px 45px -32px rgb(0 0 0 / .4),
+    inset 0 1px 0 hsl(var(--foreground) / .07);
+  backdrop-filter: blur(22px) saturate(132%);
 }
 
-.team-constellation__spotlight-surface {
+.team-neural__accent-surface {
   position: absolute;
   inset: 0;
+  z-index: 0;
   overflow: hidden;
   border-radius: inherit;
   pointer-events: none;
 }
 
-.team-constellation__spotlight-banner {
-  position: absolute;
-  inset: 0 0 auto;
-  height: 7.25rem;
+.team-neural__banner {
+  position: relative;
+  z-index: 1;
+  height: 8.35rem;
   overflow: hidden;
-  border-radius: 2rem 2rem 1.35rem 1.35rem;
-  border-bottom: 1px solid hsl(var(--foreground) / .05);
-  background: linear-gradient(135deg, hsl(var(--primary) / .16), hsl(var(--card) / .82) 56%, hsl(var(--background) / .82));
+  border-radius: 1.92rem 1.92rem 1.15rem 1.15rem;
+  border-bottom: 1px solid hsl(var(--foreground) / .06);
+  background:
+    radial-gradient(circle at 18% 0%, hsl(var(--primary) / .3), transparent 42%),
+    linear-gradient(128deg, hsl(var(--primary) / .12), hsl(var(--card) / .78) 52%, hsl(var(--background) / .88));
+}
+
+.team-neural__banner::after {
+  position: absolute;
+  inset: auto 0 0;
+  height: 3rem;
+  content: "";
+  background: linear-gradient(180deg, transparent, hsl(var(--card) / .62));
   pointer-events: none;
 }
 
-.team-constellation__spotlight-banner > span:first-child {
+.team-neural__banner-default {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 22% 12%, hsl(var(--primary) / .2), transparent 45%);
+  overflow: hidden;
+  pointer-events: none;
 }
 
-.team-constellation__identity {
-  position: relative;
+.team-neural__banner-default > span {
+  position: absolute;
+  border: 1px solid hsl(var(--primary) / .16);
+  border-radius: 999px;
+}
+
+.team-neural__banner-default > span:nth-child(1) {
+  width: 15rem;
+  height: 15rem;
+  left: -4rem;
+  top: -9rem;
+  animation: team-neural-banner-orbit 13s linear infinite;
+}
+
+.team-neural__banner-default > span:nth-child(2) {
+  width: 8rem;
+  height: 8rem;
+  right: 1.6rem;
+  top: -4.8rem;
+  border-style: dashed;
+  animation: team-neural-banner-orbit 9s linear infinite reverse;
+}
+
+.team-neural__banner-default > span:nth-child(3) {
+  width: 5px;
+  height: 5px;
+  right: 24%;
+  top: 43%;
+  border: 0;
+  background: hsl(var(--primary) / .72);
+  box-shadow:
+    30px 18px 0 hsl(var(--primary) / .42),
+    -42px 29px 0 hsl(var(--foreground) / .2),
+    62px -15px 0 hsl(var(--foreground) / .18);
+}
+
+.team-neural__signal-tag {
+  position: absolute;
+  right: 1rem;
+  top: .9rem;
   z-index: 4;
-  display: flex;
-  min-height: 18rem;
+  display: inline-flex;
   align-items: center;
-  gap: 1.8rem;
-  padding: 5.7rem 2rem 1.65rem;
+  gap: .38rem;
+  border: 1px solid hsl(var(--foreground) / .1);
+  border-radius: 999px;
+  background: hsl(var(--background) / .38);
+  padding: .36rem .55rem;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: .64rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: hsl(var(--foreground) / .72);
+  backdrop-filter: blur(10px);
 }
 
-.team-constellation__profile-link {
-  margin-top: 1rem;
+.team-neural__signal-divider {
+  width: 1px;
+  height: .7rem;
+  background: hsl(var(--foreground) / .16);
+}
+
+.team-neural__profile-body {
+  position: relative;
+  z-index: 3;
+  padding: 0 1.55rem 1.45rem;
+}
+
+.team-neural__avatar-row {
+  position: relative;
+  display: flex;
+  min-height: 3.55rem;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.team-neural__avatar-mount {
+  position: relative;
+  z-index: 3;
+  margin-top: -3.55rem;
+  margin-left: .2rem;
+}
+
+.team-neural__avatar-mount::after {
+  position: absolute;
+  inset: -9px;
+  z-index: -1;
+  content: "";
+  border: 1px solid hsl(var(--primary) / .16);
+  border-radius: 50%;
+  opacity: .8;
+}
+
+.team-neural__role-pill {
+  display: inline-flex;
+  max-width: 58%;
+  align-items: center;
+  gap: .42rem;
+  margin-bottom: .55rem;
+  border: 1px solid hsl(var(--primary) / .16);
+  border-radius: 999px;
+  background: hsl(var(--primary) / .07);
+  padding: .38rem .62rem;
+  color: hsl(var(--primary));
+  font-size: .69rem;
+  font-weight: 750;
+  letter-spacing: .035em;
+}
+
+.team-neural__role-pill span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.team-neural__profile-copy {
+  min-width: 0;
+  padding-top: .95rem;
+}
+
+.team-neural__name-row {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: .55rem;
+}
+
+.team-neural__display-name {
+  min-width: 0;
+  max-width: 100%;
+  font-family: var(--font-display, inherit);
+  font-size: clamp(1.55rem, 2.1vw, 2.15rem);
+  font-weight: 720;
+  line-height: 1.08;
+  letter-spacing: -.035em;
+}
+
+.team-neural__nameplate {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.team-neural__username {
+  margin-top: .38rem;
+  color: hsl(var(--muted-foreground));
+  font-size: .78rem;
+}
+
+.team-neural__bio {
+  display: -webkit-box;
+  min-height: 2.85rem;
+  margin-top: .8rem;
+  overflow: hidden;
+  color: hsl(var(--muted-foreground));
+  font-size: .83rem;
+  line-height: 1.58;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.team-neural__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.05rem;
+}
+
+.team-neural__profile-link {
   display: inline-flex;
   align-items: center;
   gap: .45rem;
+  border: 1px solid hsl(var(--primary) / .24);
   border-radius: 999px;
-  border: 1px solid hsl(var(--primary) / .22);
-  background: hsl(var(--primary) / .07);
-  padding: .55rem .9rem;
-  font-size: .75rem;
-  font-weight: 700;
+  background: hsl(var(--primary) / .09);
+  padding: .58rem .82rem;
   color: hsl(var(--primary));
-  transition: transform .2s ease, border-color .2s ease, background .2s ease;
+  font-size: .72rem;
+  font-weight: 760;
+  transition: transform .2s ease, border-color .2s ease, background .2s ease, box-shadow .2s ease;
 }
 
-.team-constellation__profile-link:hover {
-  transform: translateY(-1px);
-  border-color: hsl(var(--primary) / .42);
-  background: hsl(var(--primary) / .12);
+.team-neural__profile-link:hover {
+  transform: translateY(-2px);
+  border-color: hsl(var(--primary) / .48);
+  background: hsl(var(--primary) / .14);
+  box-shadow: 0 12px 30px -22px hsl(var(--primary) / .9);
 }
 
-.team-constellation__nodes {
+.team-neural__active-caption {
+  display: inline-flex;
+  align-items: center;
+  gap: .42rem;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  color: hsl(var(--muted-foreground) / .58);
+}
+
+.team-neural__active-caption > span {
+  width: .38rem;
+  height: .38rem;
+  border-radius: 999px;
+  background: hsl(var(--primary));
+  box-shadow: 0 0 10px hsl(var(--primary) / .7);
+  animation: team-neural-core-pulse 1.8s ease-in-out infinite;
+}
+
+.team-neural__nodes {
   position: absolute;
   inset: 0;
-  z-index: 8;
+  z-index: 7;
 }
 
-.team-constellation__node {
+.team-neural__node {
   position: absolute;
   display: grid;
-  width: 4.25rem;
-  height: 4.25rem;
+  width: 4.7rem;
+  height: 4.7rem;
   place-items: center;
-  transform: translate(-50%, -50%);
-  border-radius: 1.35rem;
+  translate: -50% -50%;
+  border-radius: 50%;
   outline: none;
-  transition: transform .22s ease, filter .22s ease;
+  filter: drop-shadow(0 12px 18px rgb(0 0 0 / .15));
 }
 
-.team-constellation__node::before {
+.team-neural__node::before {
   position: absolute;
-  inset: 5px;
+  inset: .38rem;
   content: "";
-  border: 1px solid hsl(var(--primary) / .15);
-  border-radius: 1rem;
-  background: hsl(var(--card) / .65);
-  box-shadow: 0 12px 34px -24px hsl(var(--primary) / .9);
-  backdrop-filter: blur(12px);
+  border: 1px solid hsl(var(--primary) / .2);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 25%, hsl(var(--foreground) / .08), transparent 36%),
+    hsl(var(--card) / .72);
+  box-shadow:
+    inset 0 1px 0 hsl(var(--foreground) / .08),
+    0 0 0 5px hsl(var(--primary) / .025),
+    0 14px 34px -24px hsl(var(--primary) / .9);
+  backdrop-filter: blur(14px) saturate(120%);
   transition: border-color .22s ease, background .22s ease, box-shadow .22s ease;
 }
 
-.team-constellation__node:hover,
-.team-constellation__node:focus-visible,
-.team-constellation__node[data-active="true"] {
-  z-index: 3;
-  transform: translate(-50%, -50%) scale(1.09);
-  filter: brightness(1.05);
-}
-
-.team-constellation__node:hover::before,
-.team-constellation__node:focus-visible::before,
-.team-constellation__node[data-active="true"]::before {
-  border-color: hsl(var(--primary) / .42);
+.team-neural__node[data-active="true"]::before,
+.team-neural__node:hover::before,
+.team-neural__node:focus-visible::before {
+  border-color: hsl(var(--primary) / .56);
   background: hsl(var(--card) / .88);
-  box-shadow: 0 16px 42px -22px hsl(var(--primary) / .9);
+  box-shadow:
+    inset 0 1px 0 hsl(var(--foreground) / .1),
+    0 0 0 6px hsl(var(--primary) / .055),
+    0 0 26px hsl(var(--primary) / .2),
+    0 16px 40px -24px hsl(var(--primary) / .9);
 }
 
-.team-constellation__node-pulse {
+.team-neural__node-orbit {
   position: absolute;
-  inset: 0;
-  z-index: -1;
-  border: 1px solid hsl(var(--primary) / .28);
-  border-radius: 1.35rem;
-  opacity: 0;
-  transform: scale(.72);
+  inset: -.22rem;
+  z-index: 0;
+  border: 1px dashed hsl(var(--primary) / .24);
+  border-radius: 50%;
+  opacity: .32;
+  animation: team-neural-orbit 9s linear infinite;
 }
 
-.team-constellation__node[data-active="true"] .team-constellation__node-pulse {
-  animation: team-constellation-pulse 2.25s ease-out infinite;
+.team-neural__node[data-active="true"] .team-neural__node-orbit,
+.team-neural__node:hover .team-neural__node-orbit,
+.team-neural__node:focus-visible .team-neural__node-orbit {
+  opacity: .9;
+  border-color: hsl(var(--primary) / .6);
+  animation-duration: 4.5s;
 }
 
-.team-constellation__node-lens {
+.team-neural__node-lens {
   position: relative;
   z-index: 2;
   display: grid;
-  width: 3.5rem;
-  height: 3.5rem;
+  width: 3.4rem;
+  height: 3.4rem;
   place-items: center;
-  overflow: hidden;
-  border-radius: 1rem;
+  overflow: visible;
+  border-radius: 50%;
 }
 
-.team-constellation__node-frame {
-  transform: scale(.82);
+.team-neural__node-frame {
+  transform: scale(.72);
   transform-origin: center;
 }
 
-.team-constellation__node-frame .cosmetic-avatar-frame__aura,
-.team-constellation__node-frame .cosmetic-avatar-frame__ambient,
-.team-constellation__node-frame .cosmetic-avatar-frame__orbit,
-.team-constellation__node-frame .cosmetic-avatar-frame__particles,
-.team-constellation__node-frame .cosmetic-avatar-frame__ornament,
-.team-constellation__node-frame .cosmetic-avatar-frame__details {
-  opacity: .72;
+.team-neural__node-frame .cosmetic-avatar-frame__aura,
+.team-neural__node-frame .cosmetic-avatar-frame__ambient,
+.team-neural__node-frame .cosmetic-avatar-frame__orbit,
+.team-neural__node-frame .cosmetic-avatar-frame__particles,
+.team-neural__node-frame .cosmetic-avatar-frame__ornament,
+.team-neural__node-frame .cosmetic-avatar-frame__details {
+  opacity: .5;
+  scale: .84;
 }
 
-.team-constellation__node-frame *,
-.team-constellation__node-frame::before,
-.team-constellation__node-frame::after {
+.team-neural__node-frame *,
+.team-neural__node-frame::before,
+.team-neural__node-frame::after {
   animation-play-state: paused !important;
 }
 
-.team-constellation__node:hover .team-constellation__node-frame *,
-.team-constellation__node:hover .team-constellation__node-frame::before,
-.team-constellation__node:hover .team-constellation__node-frame::after,
-.team-constellation__node:focus-visible .team-constellation__node-frame *,
-.team-constellation__node:focus-visible .team-constellation__node-frame::before,
-.team-constellation__node:focus-visible .team-constellation__node-frame::after,
-.team-constellation__node[data-active="true"] .team-constellation__node-frame *,
-.team-constellation__node[data-active="true"] .team-constellation__node-frame::before,
-.team-constellation__node[data-active="true"] .team-constellation__node-frame::after {
+.team-neural__node:hover .team-neural__node-frame *,
+.team-neural__node:hover .team-neural__node-frame::before,
+.team-neural__node:hover .team-neural__node-frame::after,
+.team-neural__node:focus-visible .team-neural__node-frame *,
+.team-neural__node:focus-visible .team-neural__node-frame::before,
+.team-neural__node:focus-visible .team-neural__node-frame::after {
   animation-play-state: running !important;
 }
 
-.team-constellation__mobile-nodes {
+.team-neural__node-label {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + .15rem);
+  z-index: 10;
+  min-width: max-content;
+  max-width: 10rem;
+  transform: translate(-50%, 5px) scale(.96);
+  opacity: 0;
+  border: 1px solid hsl(var(--primary) / .16);
+  border-radius: .75rem;
+  background: hsl(var(--card) / .92);
+  padding: .38rem .55rem;
+  pointer-events: none;
+  box-shadow: 0 14px 34px -24px rgb(0 0 0 / .55);
+  backdrop-filter: blur(12px);
+  transition: opacity .18s ease, transform .18s ease;
+}
+
+.team-neural__node-label strong,
+.team-neural__node-label small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.team-neural__node-label strong {
+  color: hsl(var(--foreground));
+  font-size: .68rem;
+  font-weight: 750;
+}
+
+.team-neural__node-label small {
+  margin-top: .1rem;
+  color: hsl(var(--muted-foreground));
+  font-size: .59rem;
+}
+
+.team-neural__node:hover .team-neural__node-label,
+.team-neural__node:focus-visible .team-neural__node-label {
+  transform: translate(-50%, 0) scale(1);
+  opacity: 1;
+}
+
+.team-neural__mobile-deck {
   display: none;
 }
 
-@media (max-width: 767px) {
-  .team-constellation__arena {
-    min-height: auto;
-    overflow: visible;
-    border-radius: 1.75rem;
+:root:not(.dark) .team-neural__arena {
+  background:
+    radial-gradient(circle at 50% 45%, hsl(var(--primary) / .1), transparent 25%),
+    linear-gradient(145deg, hsl(var(--card) / .88), hsl(var(--background) / .72));
+  box-shadow: 0 42px 100px -78px hsl(var(--primary) / .46);
+}
+
+:root:not(.dark) .team-neural-field {
+  opacity: .62;
+  filter: saturate(.95) contrast(.96);
+}
+
+:root:not(.dark) .team-neural__spotlight,
+:root:not(.dark) .team-neural__node::before {
+  box-shadow:
+    0 24px 70px -50px hsl(var(--primary) / .45),
+    inset 0 1px 0 rgb(255 255 255 / .8);
+}
+
+@media (max-width: 900px) {
+  .team-neural__arena {
+    min-height: 34rem;
   }
 
-  .team-constellation__field,
-  .team-constellation__links,
-  .team-constellation__nodes {
+  .team-neural__spotlight {
+    width: min(29rem, 58%);
+  }
+
+  .team-neural__display-name {
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+  }
+}
+
+@media (max-width: 767px) {
+  .team-neural__arena {
+    min-height: auto;
+    overflow: hidden;
+    border-radius: 1.8rem;
+    padding: 1rem;
+  }
+
+  .team-neural-field {
+    inset: -22% -36%;
+    opacity: .5;
+  }
+
+  .team-neural__links,
+  .team-neural__core-halo,
+  .team-neural__nodes {
     display: none;
   }
 
-  .team-constellation__spotlight {
+  .team-neural__spotlight {
     position: relative;
     left: auto;
     top: auto;
     width: 100%;
-    min-height: 0;
-    transform: none;
-    border: 0;
-    border-radius: 1.75rem;
-    background: transparent;
-    box-shadow: none;
-    backdrop-filter: none;
+    translate: 0 0;
+    border-radius: 1.55rem;
   }
 
-  .team-constellation__spotlight-banner {
-    height: 6.3rem;
-    border-radius: 1.75rem 1.75rem 1.2rem 1.2rem;
+  .team-neural__banner {
+    height: 7.35rem;
+    border-radius: 1.48rem 1.48rem 1rem 1rem;
   }
 
-  .team-constellation__identity {
-    min-height: 0;
-    flex-direction: column;
-    gap: 1.15rem;
-    padding: 4.85rem 1.25rem 1.4rem;
+  .team-neural__profile-body {
+    padding: 0 1rem 1.15rem;
   }
 
-  .team-constellation__mobile-nodes {
-    margin-top: .8rem;
+  .team-neural__avatar-mount {
+    margin-top: -2.8rem;
+    transform-origin: left bottom;
+    scale: .86;
+  }
+
+  .team-neural__role-pill {
+    max-width: 62%;
+    margin-bottom: .3rem;
+  }
+
+  .team-neural__profile-copy {
+    padding-top: .55rem;
+  }
+
+  .team-neural__display-name {
+    font-size: 1.45rem;
+  }
+
+  .team-neural__bio {
+    min-height: auto;
+    -webkit-line-clamp: 3;
+  }
+
+  .team-neural__active-caption {
+    display: none;
+  }
+
+  .team-neural__mobile-deck {
+    position: relative;
+    z-index: 5;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: .6rem;
+    gap: .55rem;
+    margin-top: .75rem;
   }
 
-  .team-constellation__mobile-node {
-    display: flex;
+  .team-neural__mobile-node {
+    position: relative;
+    display: grid;
     min-width: 0;
+    grid-template-columns: auto auto minmax(0, 1fr);
     align-items: center;
-    gap: .65rem;
+    gap: .5rem;
+    overflow: hidden;
     border: 1px solid hsl(var(--primary) / .12);
     border-radius: 1rem;
-    background: hsl(var(--card) / .5);
-    padding: .45rem .55rem;
-    transition: border-color .2s ease, background .2s ease, transform .2s ease;
+    background: hsl(var(--card) / .66);
+    padding: .45rem .55rem .45rem .42rem;
+    box-shadow: inset 0 1px 0 hsl(var(--foreground) / .04);
+    backdrop-filter: blur(12px);
   }
 
-  .team-constellation__mobile-node[data-active="true"],
-  .team-constellation__mobile-node:focus-visible {
-    border-color: hsl(var(--primary) / .35);
-    background: hsl(var(--primary) / .07);
-    transform: translateY(-1px);
-    outline: none;
+  .team-neural__mobile-node[data-active="true"] {
+    border-color: hsl(var(--primary) / .42);
+    background: hsl(var(--primary) / .085);
+    box-shadow: 0 12px 32px -26px hsl(var(--primary) / .9);
   }
 
-  .team-constellation__mobile-node .team-constellation__node-lens {
-    width: 3rem;
-    height: 3rem;
-    flex: 0 0 3rem;
-    border-radius: .85rem;
+  .team-neural__mobile-index {
+    display: grid;
+    width: 1.45rem;
+    height: 1.45rem;
+    place-items: center;
+    border-radius: .5rem;
+    background: hsl(var(--primary) / .08);
+    color: hsl(var(--primary) / .72);
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: .55rem;
+    font-weight: 800;
+  }
+
+  .team-neural__mobile-avatar {
+    display: grid;
+    width: 2.7rem;
+    height: 2.7rem;
+    place-items: center;
+    overflow: visible;
   }
 }
 
-@keyframes team-constellation-pulse {
-  0% { opacity: .55; transform: scale(.76); }
-  72%, 100% { opacity: 0; transform: scale(1.28); }
+@media (max-width: 440px) {
+  .team-neural__mobile-deck {
+    grid-template-columns: 1fr;
+  }
+
+  .team-neural__actions {
+    align-items: flex-start;
+  }
+}
+
+@keyframes team-neural-signal {
+  to { stroke-dashoffset: -18; }
+}
+
+@keyframes team-neural-orbit {
+  to { rotate: 360deg; }
+}
+
+@keyframes team-neural-banner-orbit {
+  to { rotate: 360deg; }
+}
+
+@keyframes team-neural-core-pulse {
+  0%, 100% { opacity: .45; scale: .8; }
+  50% { opacity: 1; scale: 1.18; }
 }
