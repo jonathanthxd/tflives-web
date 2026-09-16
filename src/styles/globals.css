@@ -68,6 +68,47 @@
     background-color: hsl(var(--background));
   }
 
+  /* Global scrollbar follows the active TFL Studio accent.
+     Studio updates --primary on the root element, so the scrollbar changes
+     immediately without extra client-side state or hydration work. */
+  html,
+  body,
+  * {
+    scrollbar-color: hsl(var(--primary) / 0.72) hsl(var(--background) / 0.28);
+    scrollbar-width: thin;
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: hsl(var(--background) / 0.28);
+  }
+
+  *::-webkit-scrollbar-thumb {
+    min-height: 36px;
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background: hsl(var(--primary) / 0.68);
+    background-clip: content-box;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.9);
+    background-clip: content-box;
+  }
+
+  *::-webkit-scrollbar-thumb:active {
+    background: hsl(var(--primary));
+    background-clip: content-box;
+  }
+
+  *::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
   body {
     --font-body-active: var(--font-inter);
     --font-display-active: var(--font-space-grotesk);
@@ -2558,7 +2599,7 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
 .tfl-direct-message-viewport::-webkit-scrollbar-thumb {
   border: 3px solid transparent;
   border-radius: 999px;
-  background: color-mix(in srgb, hsl(var(--foreground)) 20%, transparent);
+  background: hsl(var(--primary) / 0.58);
   background-clip: padding-box;
 }
 
