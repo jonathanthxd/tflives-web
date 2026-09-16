@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Search, Ban, Clock3, VolumeX, TriangleAlert, RotateCcw, ShieldOff, UserSearch, type LucideIcon } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import ConfirmDialog from "@/shared/ui/confirm-dialog";
@@ -41,10 +41,11 @@ const TYPE_ICONS: Record<SanctionType, LucideIcon> = {
   WARNING: TriangleAlert,
 };
 
-function isActive(s: Sanction) {
+function isActive(s: Sanction, now: number | null) {
   if (s.revokedAt) return false;
   if (!s.expiresAt) return true;
-  return new Date(s.expiresAt) > new Date();
+  if (now === null) return true;
+  return new Date(s.expiresAt).getTime() > now;
 }
 
 export default function ModerationManager() {
@@ -56,11 +57,16 @@ export default function ModerationManager() {
   const [loadingSanctions, setLoadingSanctions] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [now, setNow] = useState<number | null>(null);
 
   const [type, setType] = useState<SanctionType>("WARNING");
   const [reason, setReason] = useState("");
   const [duration, setDuration] = useState<"permanent" | "1d" | "7d" | "30d">("permanent");
   const [revoking, setRevoking] = useState<Sanction | null>(null);
+
+  useEffect(() => {
+    setNow(Date.now());
+  }, []);
 
   async function search(q: string) {
     setQuery(q);
@@ -256,7 +262,7 @@ export default function ModerationManager() {
           ) : (
             <div className="space-y-2">
               {sanctions.map((s) => {
-                const active = isActive(s);
+                const active = isActive(s, now);
                 const TypeIcon = TYPE_ICONS[s.type];
                 return (
                   <div

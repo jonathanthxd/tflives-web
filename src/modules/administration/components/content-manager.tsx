@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter, Link } from "@/i18n/navigation";
 import { Plus, Pencil, Trash2, BookOpen } from "lucide-react";
@@ -69,7 +69,12 @@ export default function ContentManager({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
+  const [now, setNow] = useState<number | null>(null);
   const [deleting, setDeleting] = useState<ContentRecord | null>(null);
+  useEffect(() => {
+    setNow(Date.now());
+  }, []);
+
   const fields = CONTENT_FIELDS[kind];
   const stateOf = (item: Record<string, unknown>) =>
     item.archived || item.status === "ARCHIVED" || item.state === "ARCHIVED"
@@ -78,7 +83,8 @@ export default function ContentManager({
         ? str(item.state)
         : item.published &&
             item.scheduledFor &&
-            new Date(str(item.scheduledFor)) > new Date()
+            now !== null &&
+            new Date(str(item.scheduledFor)).getTime() > now
           ? "SCHEDULED"
           : item.published || item.active
             ? "PUBLISHED"

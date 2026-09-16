@@ -1,11 +1,17 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 
 export default function Footer() {
   const t = useTranslations("Footer");
   const pathname = usePathname();
+  const [year, setYear] = useState(2026);
+
+  useEffect(() => {
+    setYear(new Date().getFullYear());
+  }, []);
 
   const isAdminRoute = pathname === "/admin" || pathname.startsWith("/admin/");
   const isMessagingRoute = pathname === "/mensajes" || pathname.startsWith("/mensajes/");
@@ -58,7 +64,7 @@ export default function Footer() {
         </div>
 
         <p className="mt-5 text-center text-xs text-muted-foreground/70 md:text-left">
-          {t("copyright", { year: new Date().getFullYear() })}
+          {t("copyright", { year })}
         </p>
       </div>
     </footer>
