@@ -3731,9 +3731,9 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
 }
 
 /* TFL Studio Cursor Engine
-   Native cursor images are used instead of a DOM element following the pointer.
-   The active pack writes these variables from StudioProvider so animated packs
-   can cycle cached .cur frames without introducing pointer-lag. */
+   Native cursor images stay attached to the browser pointer. Everyday cursor
+   roles are static glass assets; only wait/progress status roles cycle frames.
+   This avoids the repaint/flicker of animating every pointer state. */
 @media (pointer: fine) {
   html[data-tfl-cursor]:not([data-tfl-cursor="system"]) body,
   html[data-tfl-cursor]:not([data-tfl-cursor="system"]) .cursor-default {
@@ -3773,6 +3773,16 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
     input[type="tel"]:not(:disabled),
     input[type="url"]:not(:disabled),
     input[type="number"]:not(:disabled),
+    [data-cursor-role="text"],
+    .cursor-text
+  ) {
+    cursor: var(--tfl-cursor-text, text);
+  }
+
+  /* Selectable copy gets the I-beam unless it lives inside an interactive
+     control. This specifically prevents paragraph/headline children inside a
+     button from overriding the button's pointer cursor. */
+  html[data-tfl-cursor]:not([data-tfl-cursor="system"]) :is(
     p,
     h1,
     h2,
@@ -3785,10 +3795,8 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
     dd,
     blockquote,
     code,
-    pre,
-    [data-cursor-role="text"],
-    .cursor-text
-  ) {
+    pre
+  ):not(a *):not(button *):not(summary *):not(label[for] *):not([role="button"] *):not([role="link"] *) {
     cursor: var(--tfl-cursor-text, text);
   }
 
@@ -3847,36 +3855,55 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
 }
 
 .studio-cursor-preview {
+  isolation: isolate;
   background:
-    radial-gradient(circle at 18% 25%, hsl(var(--primary) / 0.14), transparent 34%),
-    linear-gradient(135deg, hsl(var(--background) / 0.52), hsl(var(--card) / 0.86));
+    linear-gradient(180deg, hsl(0 0% 100% / 0.035), transparent 46%),
+    hsl(var(--card) / 0.48);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+}
+
+.studio-cursor-preview::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 1px 0 hsl(0 0% 100% / 0.08),
+    inset 0 -1px 0 hsl(var(--foreground) / 0.025);
 }
 
 .studio-cursor-preview__ambient {
   position: absolute;
-  inset: -35% -12%;
-  opacity: 0.62;
+  inset: -55% -12%;
+  opacity: 0.48;
   background:
-    conic-gradient(
-      from 210deg at 52% 48%,
-      transparent 0deg,
-      hsl(var(--primary) / 0.16) 48deg,
-      hsl(var(--studio-accent-2) / 0.13) 112deg,
-      transparent 190deg,
-      hsl(var(--studio-accent-3) / 0.12) 256deg,
-      transparent 360deg
-    );
-  filter: blur(20px);
-  transform: rotate(-8deg);
+    radial-gradient(circle at 16% 35%, hsl(var(--primary) / 0.20), transparent 25%),
+    radial-gradient(circle at 84% 62%, hsl(var(--studio-accent-2) / 0.16), transparent 27%),
+    radial-gradient(circle at 55% 12%, hsl(var(--studio-accent-3) / 0.09), transparent 30%);
+  filter: blur(24px);
   pointer-events: none;
 }
 
+.studio-cursor-preview__hero {
+  box-shadow:
+    inset 0 1px 0 hsl(0 0% 100% / 0.13),
+    0 14px 30px -24px hsl(var(--foreground) / 0.46);
+}
+
 .studio-cursor-preview__zone {
-  transition: border-color 180ms ease, background-color 180ms ease, color 180ms ease;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .studio-cursor-preview__zone:hover {
-  border-color: hsl(var(--primary) / 0.32);
-  background: hsl(var(--primary) / 0.07);
+  border-color: hsl(var(--primary) / 0.34);
+  background: hsl(var(--primary) / 0.065);
   color: hsl(var(--foreground));
+  box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.08);
 }

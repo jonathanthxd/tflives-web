@@ -353,7 +353,7 @@ export default function StudioMenu({ compact = false }: { compact?: boolean }) {
                 <p className="mt-1 text-xs leading-5 text-muted-foreground/75">{t("cursorHint")}</p>
               </div>
 
-              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2" role="radiogroup" aria-label={t("cursor")}>
+              <div className="grid grid-cols-1 gap-2.5" role="radiogroup" aria-label={t("cursor")}>
                 {STUDIO_CURSOR_PACKS.map((pack) => (
                   <button
                     key={pack.id}
@@ -374,6 +374,7 @@ export default function StudioMenu({ compact = false }: { compact?: boolean }) {
                         default: t("cursorPreview.default"),
                         pointer: t("cursorPreview.pointer"),
                         text: t("cursorPreview.text"),
+                        wait: t("cursorPreview.wait"),
                       }}
                     />
                     <span className="flex items-start justify-between gap-3 border-t border-border/60 px-3.5 py-2.5">

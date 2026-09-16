@@ -2,12 +2,8 @@ export type StudioCursorId =
   | "system"
   | "prism-glass"
   | "aurora-glass"
-  | "sakura-glass"
   | "obsidian-glass"
-  | "frost-glass"
-  | "ember-glass"
-  | "cyber-glass"
-  | "mono-glass";
+  | "frost-glass";
 
 export type StudioCursorRole =
   | "default"
@@ -29,12 +25,13 @@ export type StudioCursorRole =
 type CursorRoleDefinition = {
   frames: string[];
   intervalMs?: number;
+  hotspot?: readonly [number, number];
 };
 
 export type StudioCursorPack = {
   id: StudioCursorId;
   label: string;
-  descriptionKey: Exclude<StudioCursorId, "system"> | "system";
+  descriptionKey: StudioCursorId;
   preview?: string;
   animated: boolean;
   roles: Partial<Record<StudioCursorRole, CursorRoleDefinition>>;
@@ -58,45 +55,80 @@ const CURSOR_FALLBACKS: Record<StudioCursorRole, string> = {
   "nesw-resize": "nesw-resize",
 };
 
+const CURSOR_HOTSPOTS: Record<StudioCursorRole, readonly [number, number]> = {
+  default: [4, 3],
+  pointer: [17, 5],
+  text: [20, 20],
+  help: [4, 3],
+  wait: [20, 20],
+  progress: [4, 3],
+  grab: [20, 20],
+  grabbing: [20, 20],
+  move: [20, 20],
+  precision: [20, 20],
+  "not-allowed": [20, 20],
+  "ew-resize": [20, 20],
+  "ns-resize": [20, 20],
+  "nwse-resize": [20, 20],
+  "nesw-resize": [20, 20],
+};
+
+const LEGACY_CURSOR_ALIASES: Record<string, StudioCursorId> = {
+  "sakura-glass": "prism-glass",
+  "ember-glass": "prism-glass",
+  "cyber-glass": "aurora-glass",
+  "mono-glass": "frost-glass",
+};
+
 const frameSequence = (pack: string, role: StudioCursorRole, count: number) =>
   Array.from({ length: count }, (_, index) =>
     `/cursors/tfl/${pack}/${role}-${String(index).padStart(2, "0")}.cur`,
   );
 
-function tflPack({
+function glassPack({
   id,
   label,
-  animated,
-  intervalMs,
 }: {
   id: Exclude<StudioCursorId, "system">;
   label: string;
-  animated: boolean;
-  intervalMs: number;
 }): StudioCursorPack {
-  const animatedFrames = animated ? 8 : 1;
+  const staticRole = (role: StudioCursorRole): CursorRoleDefinition => ({
+    frames: frameSequence(id, role, 1),
+    hotspot: CURSOR_HOTSPOTS[role],
+  });
+
   return {
     id,
     label,
     descriptionKey: id,
     preview: `/cursors/tfl/${id}/preview.png`,
-    animated,
+    // Everyday roles stay completely stable. Only genuine status cursors animate,
+    // matching desktop cursor behavior without repainting the pointer constantly.
+    animated: true,
     roles: {
-      default: { frames: frameSequence(id, "default", animatedFrames), intervalMs },
-      pointer: { frames: frameSequence(id, "pointer", animatedFrames), intervalMs },
-      text: { frames: frameSequence(id, "text", animatedFrames), intervalMs },
-      help: { frames: frameSequence(id, "help", 1) },
-      wait: { frames: frameSequence(id, "wait", animated ? 12 : 1), intervalMs: 72 },
-      progress: { frames: frameSequence(id, "progress", animated ? 12 : 1), intervalMs: 72 },
-      grab: { frames: frameSequence(id, "grab", 1) },
-      grabbing: { frames: frameSequence(id, "grabbing", 1) },
-      move: { frames: frameSequence(id, "move", 1) },
-      precision: { frames: frameSequence(id, "precision", 1) },
-      "not-allowed": { frames: frameSequence(id, "not-allowed", 1) },
-      "ew-resize": { frames: frameSequence(id, "ew-resize", 1) },
-      "ns-resize": { frames: frameSequence(id, "ns-resize", 1) },
-      "nwse-resize": { frames: frameSequence(id, "nwse-resize", 1) },
-      "nesw-resize": { frames: frameSequence(id, "nesw-resize", 1) },
+      default: staticRole("default"),
+      pointer: staticRole("pointer"),
+      text: staticRole("text"),
+      help: staticRole("help"),
+      wait: {
+        frames: frameSequence(id, "wait", 8),
+        intervalMs: 92,
+        hotspot: CURSOR_HOTSPOTS.wait,
+      },
+      progress: {
+        frames: frameSequence(id, "progress", 8),
+        intervalMs: 92,
+        hotspot: CURSOR_HOTSPOTS.progress,
+      },
+      grab: staticRole("grab"),
+      grabbing: staticRole("grabbing"),
+      move: staticRole("move"),
+      precision: staticRole("precision"),
+      "not-allowed": staticRole("not-allowed"),
+      "ew-resize": staticRole("ew-resize"),
+      "ns-resize": staticRole("ns-resize"),
+      "nwse-resize": staticRole("nwse-resize"),
+      "nesw-resize": staticRole("nesw-resize"),
     },
   };
 }
@@ -109,14 +141,10 @@ export const STUDIO_CURSOR_PACKS: StudioCursorPack[] = [
     animated: false,
     roles: {},
   },
-  tflPack({ id: "prism-glass", label: "TFL Prism Glass", animated: true, intervalMs: 90 }),
-  tflPack({ id: "aurora-glass", label: "Aurora Glass", animated: true, intervalMs: 110 }),
-  tflPack({ id: "sakura-glass", label: "Sakura Glass", animated: true, intervalMs: 125 }),
-  tflPack({ id: "obsidian-glass", label: "Obsidian Glass", animated: false, intervalMs: 0 }),
-  tflPack({ id: "frost-glass", label: "Frost Crystal", animated: true, intervalMs: 135 }),
-  tflPack({ id: "ember-glass", label: "Ember Glass", animated: true, intervalMs: 95 }),
-  tflPack({ id: "cyber-glass", label: "Cyber Glass", animated: true, intervalMs: 100 }),
-  tflPack({ id: "mono-glass", label: "Mono Glass", animated: false, intervalMs: 0 }),
+  glassPack({ id: "prism-glass", label: "TFL Prism Glass" }),
+  glassPack({ id: "frost-glass", label: "TFL Clear Glass" }),
+  glassPack({ id: "aurora-glass", label: "TFL Liquid Glass" }),
+  glassPack({ id: "obsidian-glass", label: "TFL Midnight Glass" }),
 ];
 
 export const STUDIO_CURSOR_ROLES: StudioCursorRole[] = [
@@ -141,8 +169,14 @@ export function getStudioCursorPack(id: StudioCursorId) {
   return STUDIO_CURSOR_PACKS.find((pack) => pack.id === id) ?? STUDIO_CURSOR_PACKS[0];
 }
 
+export function normalizeStudioCursor(value: unknown): StudioCursorId {
+  if (typeof value !== "string") return "system";
+  if (STUDIO_CURSOR_PACKS.some((pack) => pack.id === value)) return value as StudioCursorId;
+  return LEGACY_CURSOR_ALIASES[value] ?? "system";
+}
+
 export function isStudioCursor(value: unknown): value is StudioCursorId {
-  return STUDIO_CURSOR_PACKS.some((pack) => pack.id === value);
+  return typeof value === "string" && STUDIO_CURSOR_PACKS.some((pack) => pack.id === value);
 }
 
 export function getCursorFrame(
@@ -153,7 +187,7 @@ export function getCursorFrame(
   const definition = pack.roles[role] ?? pack.roles.default;
   if (!definition?.frames.length) return null;
   if (definition.frames.length === 1) return definition.frames[0];
-  const interval = Math.max(40, definition.intervalMs ?? 100);
+  const interval = Math.max(60, definition.intervalMs ?? 100);
   return definition.frames[Math.floor(elapsedMs / interval) % definition.frames.length];
 }
 
@@ -162,7 +196,21 @@ export function getCursorCssValue(
   role: StudioCursorRole,
   elapsedMs = 0,
 ) {
+  const definition = pack.roles[role] ?? pack.roles.default;
   const frame = getCursorFrame(pack, role, elapsedMs);
   const fallback = CURSOR_FALLBACKS[role];
-  return frame ? `url("${frame}"), ${fallback}` : fallback;
+  if (!frame) return fallback;
+
+  const hotspot = definition?.hotspot;
+  return hotspot
+    ? `url("${frame}") ${hotspot[0]} ${hotspot[1]}, ${fallback}`
+    : `url("${frame}"), ${fallback}`;
+}
+
+export function getCursorAnimationInterval(pack: StudioCursorPack) {
+  const intervals = Object.values(pack.roles)
+    .filter((definition): definition is CursorRoleDefinition => Boolean(definition?.frames.length && definition.frames.length > 1))
+    .map((definition) => Math.max(60, definition.intervalMs ?? 100));
+
+  return intervals.length ? Math.min(...intervals) : null;
 }

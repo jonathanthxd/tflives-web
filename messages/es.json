@@ -1410,23 +1410,20 @@
     "darkOnly": "Solo tema oscuro",
     "darkOnlyHint": "Cambia a Oscuro para usar fondos animados.",
     "cursor": "Cursor",
-    "cursorHint": "Cambia el cursor nativo de la web con packs completos. Pasa por las zonas de preview para probar selección, enlaces y texto.",
+    "cursorHint": "Cursores nativos con material de cristal real. Probá los estados directamente antes de elegir un pack.",
     "cursorDescriptions": {
       "system": "El cursor original de tu sistema y navegador.",
-      "prism-glass": "Cristal facetado con refracción prismática y brillo animado.",
-      "aurora-glass": "Vidrio turquesa con reflejos fríos y movimiento suave.",
-      "sakura-glass": "Cristal rosa con pequeños pétalos y detalles florales.",
-      "obsidian-glass": "Vidrio oscuro angular con filo violeta y presencia discreta.",
-      "frost-glass": "Cristal helado con facetas luminosas y destellos fríos.",
-      "ember-glass": "Vidrio cálido con brasas y reflejos de fuego.",
-      "cyber-glass": "Geometría tecnológica con nodos cyan, lima y azul.",
-      "mono-glass": "Vidrio neutral y minimalista para una apariencia limpia."
+      "prism-glass": "Cristal TFL translúcido con grosor óptico, reflejo blanco y refracción prismática sutil.",
+      "frost-glass": "Vidrio casi transparente y neutral, inspirado en el material TFL Glass de la interfaz.",
+      "aurora-glass": "Cristal líquido con refracción cyan/azul y profundidad fría, sin perder legibilidad.",
+      "obsidian-glass": "Vidrio ahumado oscuro con borde luminoso y contraste preparado para fondos claros y oscuros."
     },
-    "cursorAnimated": "Animado",
+    "cursorAnimated": "Estado animado",
     "cursorPreview": {
       "default": "Normal",
       "pointer": "Enlace",
-      "text": "Texto"
+      "text": "Texto",
+      "wait": "Espera"
     }
   },
   "Projects": {

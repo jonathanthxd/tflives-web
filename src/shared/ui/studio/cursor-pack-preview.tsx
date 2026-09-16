@@ -3,12 +3,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { MousePointer2, Sparkles } from "lucide-react";
 import {
+  getCursorAnimationInterval,
   getCursorCssValue,
   type StudioCursorPack,
   type StudioCursorRole,
 } from "@/shared/studio/cursors";
 
-const PREVIEW_ROLES = ["default", "pointer", "text"] as const satisfies readonly StudioCursorRole[];
+const PREVIEW_ROLES = ["default", "pointer", "text", "wait"] as const satisfies readonly StudioCursorRole[];
 
 export function CursorPackPreview({
   pack,
@@ -17,14 +18,15 @@ export function CursorPackPreview({
 }: {
   pack: StudioCursorPack;
   animatedLabel: string;
-  roleLabels: Record<"default" | "pointer" | "text", string>;
+  roleLabels: Record<"default" | "pointer" | "text" | "wait", string>;
 }) {
   const [active, setActive] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const startedAt = useRef(0);
+  const animationInterval = getCursorAnimationInterval(pack);
 
   useEffect(() => {
-    if (!active || !pack.animated) {
+    if (!active || !animationInterval) {
       setElapsed(0);
       return;
     }
@@ -32,9 +34,9 @@ export function CursorPackPreview({
     startedAt.current = performance.now();
     const timer = window.setInterval(() => {
       setElapsed(performance.now() - startedAt.current);
-    }, 48);
+    }, animationInterval);
     return () => window.clearInterval(timer);
-  }, [active, pack.animated]);
+  }, [active, animationInterval]);
 
   const roleCursors = useMemo(
     () =>
@@ -46,7 +48,9 @@ export function CursorPackPreview({
               ? "default"
               : role === "pointer"
                 ? "pointer"
-                : "text"
+                : role === "text"
+                  ? "text"
+                  : "wait"
             : getCursorCssValue(pack, role, elapsed),
         ]),
       ) as Partial<Record<StudioCursorRole, string | undefined>>,
@@ -60,27 +64,27 @@ export function CursorPackPreview({
       onPointerLeave={() => setActive(false)}
     >
       <div className="studio-cursor-preview__ambient" aria-hidden="true" />
-      <div className="relative flex min-h-20 items-center gap-2 px-2.5 py-2.5">
-        <div className="grid size-12 shrink-0 place-items-center rounded-xl border border-white/[0.10] bg-black/[0.15] shadow-inner">
+      <div className="relative flex min-h-[5.75rem] items-center gap-3 px-3 py-3">
+        <div className="studio-cursor-preview__hero grid size-16 shrink-0 place-items-center overflow-hidden rounded-2xl border border-white/[0.11] bg-black/[0.14] shadow-inner">
           {pack.preview ? (
             <img
               src={pack.preview}
               alt=""
-              width={48}
-              height={48}
-              className="size-9 object-contain [image-rendering:auto]"
+              width={112}
+              height={88}
+              className="h-full w-full object-cover [image-rendering:auto]"
               draggable={false}
             />
           ) : (
-            <MousePointer2 className="size-7 text-foreground/80" strokeWidth={1.45} aria-hidden="true" />
+            <MousePointer2 className="size-8 text-foreground/80" strokeWidth={1.35} aria-hidden="true" />
           )}
         </div>
 
-        <div className="grid min-w-0 flex-1 grid-cols-3 gap-1">
+        <div className="grid min-w-0 flex-1 grid-cols-2 gap-1.5">
           {PREVIEW_ROLES.map((role) => (
             <span
               key={role}
-              className="studio-cursor-preview__zone grid min-h-10 place-items-center rounded-lg border border-white/[0.08] bg-black/[0.10] px-0.5 text-center text-[8px] font-semibold uppercase tracking-[0.08em] text-muted-foreground"
+              className="studio-cursor-preview__zone grid min-h-9 place-items-center rounded-xl border border-white/[0.08] bg-black/[0.08] px-1 text-center text-[9px] font-semibold uppercase tracking-[0.08em] text-muted-foreground"
               style={{ cursor: roleCursors[role] }}
             >
               {roleLabels[role]}
@@ -88,8 +92,8 @@ export function CursorPackPreview({
           ))}
         </div>
 
-        {pack.animated && (
-          <span className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-full border border-white/[0.10] bg-black/[0.25] px-1.5 py-0.5 text-[8px] font-semibold uppercase tracking-[0.12em] text-white/75 backdrop-blur-sm">
+        {animationInterval && (
+          <span className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-full border border-white/[0.10] bg-black/[0.28] px-1.5 py-0.5 text-[8px] font-semibold uppercase tracking-[0.12em] text-white/78 backdrop-blur-md">
             <Sparkles className="size-2.5" aria-hidden="true" />
             {animatedLabel}
           </span>

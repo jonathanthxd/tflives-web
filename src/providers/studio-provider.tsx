@@ -22,9 +22,10 @@ import {
 } from "@/shared/studio/config";
 import {
   STUDIO_CURSOR_ROLES,
+  getCursorAnimationInterval,
   getCursorCssValue,
   getStudioCursorPack,
-  isStudioCursor,
+  normalizeStudioCursor,
   type StudioCursorId,
 } from "@/shared/studio/cursors";
 
@@ -53,9 +54,7 @@ function sanitizePreferences(value: unknown): StudioPreferences {
     background: isStudioBackground(candidate.background)
       ? candidate.background
       : DEFAULT_STUDIO_PREFERENCES.background,
-    cursor: isStudioCursor(candidate.cursor)
-      ? candidate.cursor
-      : DEFAULT_STUDIO_PREFERENCES.cursor,
+    cursor: normalizeStudioCursor(candidate.cursor),
   };
 }
 
@@ -117,16 +116,15 @@ export function StudioProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    if (pack.animated) {
-      const preloadFrames = new Set(
-        (["default", "pointer", "text"] as const).flatMap(
-          (role) => pack.roles[role]?.frames ?? [],
-        ),
-      );
-      for (const frame of preloadFrames) {
-        void fetch(frame, { cache: "force-cache" }).catch(() => undefined);
-      }
+    const preloadFrames = new Set(
+      STUDIO_CURSOR_ROLES.flatMap((role) => pack.roles[role]?.frames ?? []),
+    );
+    for (const frame of preloadFrames) {
+      const image = new Image();
+      image.src = frame;
     }
+
+    const animationInterval = getCursorAnimationInterval(pack);
 
     const startedAt = performance.now();
     const lastValues = new Map<string, string>();
@@ -144,8 +142,8 @@ export function StudioProvider({ children }: { children: ReactNode }) {
 
     const resume = () => {
       paint();
-      if (!pack.animated || timer !== null || document.hidden) return;
-      timer = window.setInterval(paint, 48);
+      if (!animationInterval || timer !== null || document.hidden) return;
+      timer = window.setInterval(paint, animationInterval);
     };
 
     const pause = () => {
