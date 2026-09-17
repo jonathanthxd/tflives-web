@@ -9,11 +9,14 @@ export async function PATCH(
   const { id } = await params;
   try {
     const { userId } = await requireAdminSection("achievements");
-    const body = await request.json();
+    const body = await request.json().catch(() => null);
+    if (!body || typeof body !== "object" || Array.isArray(body)) return NextResponse.json({ error: "invalid" }, { status: 400 });
 
     const achievement = await updateAchievement(userId, id, {
       name: typeof body.name === "string" ? body.name : undefined,
       description: typeof body.description === "string" ? body.description : undefined,
+      nameEn: typeof body.nameEn === "string" || body.nameEn === null ? body.nameEn : undefined,
+      descriptionEn: typeof body.descriptionEn === "string" || body.descriptionEn === null ? body.descriptionEn : undefined,
       iconKey: typeof body.iconKey === "string" ? body.iconKey : undefined,
       order: typeof body.order === "number" ? body.order : undefined,
       active: typeof body.active === "boolean" ? body.active : undefined,

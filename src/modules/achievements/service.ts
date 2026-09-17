@@ -30,6 +30,8 @@ export async function listAllAchievements() {
 }
 
 interface AchievementInput {
+  nameEn?: string | null;
+  descriptionEn?: string | null;
   name: string;
   description: string;
   iconKey: string;
@@ -39,6 +41,12 @@ interface AchievementInput {
   trigger?: string | null;
   triggerValue?: number | null;
   coinReward?: number;
+}
+
+function normalizeEnglish(value: string | null | undefined, limit: number) {
+  if (value == null || value.trim() === "") return null;
+  if (value.trim().length > limit) throw new AchievementError("La traducción es demasiado larga");
+  return value.trim();
 }
 
 function validateIconKey(iconKey: string) {
@@ -82,8 +90,10 @@ function normalizeCoinReward(value: unknown) {
 export async function createAchievement(createdById: string, input: AchievementInput) {
   const name = input.name.trim();
   const description = input.description.trim();
-  if (!name) throw new AchievementError("El nombre es obligatorio");
-  if (!description) throw new AchievementError("La descripción es obligatoria");
+  if (!name || name.length > 120) throw new AchievementError("El nombre debe tener entre 1 y 120 caracteres");
+  if (!description || description.length > 1000) throw new AchievementError("La descripción debe tener entre 1 y 1000 caracteres");
+  if (name.length > 120 || description.length > 1000) throw new AchievementError("El texto del logro es demasiado largo");
+  if (input.order !== undefined && !Number.isInteger(input.order)) throw new AchievementError("Orden inválido");
   validateIconKey(input.iconKey);
   const automation = normalizeAutomation({
     unlockMode: input.unlockMode ?? "MANUAL",
@@ -96,6 +106,8 @@ export async function createAchievement(createdById: string, input: AchievementI
     data: {
       name,
       description,
+      nameEn: normalizeEnglish(input.nameEn, 120),
+      descriptionEn: normalizeEnglish(input.descriptionEn, 1000),
       iconKey: input.iconKey,
       order: input.order ?? 0,
       active: input.active ?? true,
@@ -127,6 +139,8 @@ export async function updateAchievement(actorId: string, id: string, input: Part
   if (!existing) throw new AchievementError("Logro no encontrado", 404);
 
   const data: Record<string, unknown> = {};
+  if (input.nameEn !== undefined) data.nameEn = normalizeEnglish(input.nameEn, 120);
+  if (input.descriptionEn !== undefined) data.descriptionEn = normalizeEnglish(input.descriptionEn, 1000);
   if (input.name !== undefined) {
     const name = input.name.trim();
     if (!name) throw new AchievementError("El nombre es obligatorio");
@@ -141,7 +155,10 @@ export async function updateAchievement(actorId: string, id: string, input: Part
     validateIconKey(input.iconKey);
     data.iconKey = input.iconKey;
   }
-  if (input.order !== undefined) data.order = input.order;
+  if (input.order !== undefined) {
+    if (!Number.isInteger(input.order) || Math.abs(input.order) > 2147483647) throw new AchievementError("Orden inválido");
+    data.order = input.order;
+  }
   if (input.active !== undefined) data.active = input.active;
   if (input.coinReward !== undefined) data.coinReward = normalizeCoinReward(input.coinReward);
 
@@ -268,7 +285,7 @@ export async function listAchievementHolders(achievementId: string) {
 
 /** Manual/community badges only. Obtainable automatic achievements are exposed
  * separately so locked challenges can be shown without duplicating unlocked ones. */
-export async function listUserAchievements(username: string) {
+export async function listUserAchievements(username: string, locale = "es") {
   const user = await prisma.user.findUnique({ where: { username }, select: { id: true } });
   if (!user) throw new AchievementError("Usuario no encontrado", 404);
 
@@ -286,14 +303,14 @@ export async function listUserAchievements(username: string) {
     awardedAt: award.awardedAt,
     achievement: {
       id: award.achievement.id,
-      name: award.achievement.name,
-      description: award.achievement.description,
+      name: locale === "en" ? award.achievement.nameEn || award.achievement.name : award.achievement.name,
+      description: locale === "en" ? award.achievement.descriptionEn || award.achievement.description : award.achievement.description,
       iconKey: award.achievement.iconKey,
     },
   }));
 }
 
-export async function listUserObtainableAchievements(username: string) {
+export async function listUserObtainableAchievements(username: string, locale = "es") {
   const user = await prisma.user.findUnique({ where: { username }, select: { id: true } });
   if (!user) throw new AchievementError("Usuario no encontrado", 404);
 
@@ -304,6 +321,8 @@ export async function listUserObtainableAchievements(username: string) {
       id: true,
       name: true,
       description: true,
+      nameEn: true,
+      descriptionEn: true,
       iconKey: true,
       trigger: true,
       triggerValue: true,
@@ -317,8 +336,8 @@ export async function listUserObtainableAchievements(username: string) {
 
   return achievements.map((achievement) => ({
     id: achievement.id,
-    name: achievement.name,
-    description: achievement.description,
+    name: locale === "en" ? achievement.nameEn || achievement.name : achievement.name,
+    description: locale === "en" ? achievement.descriptionEn || achievement.description : achievement.description,
     iconKey: achievement.iconKey,
     trigger: achievement.trigger,
     triggerValue: achievement.triggerValue,

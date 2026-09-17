@@ -35,7 +35,8 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: "No autenticado" }, { status: 401 });
   }
 
-  const body = await request.json().catch(() => ({}));
+  const body = await request.json().catch(() => null);
+  if (!body || typeof body !== "object" || Array.isArray(body) || (body.inAppEnabled !== undefined && typeof body.inAppEnabled !== "boolean") || (body.browserEnabled !== undefined && typeof body.browserEnabled !== "boolean")) return NextResponse.json({ error: "invalid" }, { status: 400 });
   const { category, inAppEnabled, browserEnabled } = body as {
     category?: string;
     inAppEnabled?: boolean;

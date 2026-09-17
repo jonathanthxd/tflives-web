@@ -7,6 +7,7 @@ interface Sticker { id: string; name: string; assetUrl: string; enabled: boolean
 
 export default function ChatStickersManager({ initialStickers }: { initialStickers: Sticker[] }) {
   const t = useTranslations("AdminChat");
+  const tCompletion = useTranslations("Completion");
   const [stickers, setStickers] = useState(initialStickers);
   const [name, setName] = useState("");
   const [assetUrl, setAssetUrl] = useState("");
@@ -20,7 +21,7 @@ export default function ChatStickersManager({ initialStickers }: { initialSticke
       const data = await response.json();
       if (!response.ok) { setError(data.error || t("stickerError")); return null; }
       return data.sticker as Sticker;
-    } finally { setSaving(false); }
+    } catch { setError(tCompletion("networkError")); } finally { setSaving(false); }
   }
 
   async function create() {

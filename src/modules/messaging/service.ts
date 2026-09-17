@@ -1,3 +1,4 @@
+import { serializableTransaction, lockUserPair } from "@/infrastructure/database/transaction";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/infrastructure/database/prisma";
 import { createNotification } from "@/modules/notifications/service";
@@ -68,13 +69,13 @@ function serialiseDirectMessage(
 ) {
   return {
     id: message.id, conversationId: message.conversationId, senderId: message.senderId, sender: toPublicIdentityWithCosmetics(message.sender),
-    content: message.deletedAt ? "" : message.content, sticker: message.sticker,
+    content: message.deletedAt ? "" : message.content, sticker: message.deletedAt ? null : message.sticker,
     replyTo: message.replyTo ? {
       id: message.replyTo.id, sender: toPublicIdentityWithCosmetics(message.replyTo.sender),
       content: message.replyTo.deletedAt ? "" : message.replyTo.content,
-      sticker: message.replyTo.sticker, deletedAt: message.replyTo.deletedAt,
+      sticker: message.replyTo.deletedAt ? null : message.replyTo.sticker, deletedAt: message.replyTo.deletedAt,
     } : null,
-    reactions: summariseReactions(message.reactions, userId),
+    reactions: message.deletedAt ? [] : summariseReactions(message.reactions, userId),
     createdAt: message.createdAt, editedAt: message.editedAt, deletedAt: message.deletedAt,
   };
 }
@@ -113,29 +114,36 @@ export async function startOrGetDirectConversation(senderId: string, targetUsern
   if (target.id === senderId) throw new MessagingError("No podés escribirte a vos mismo");
   if (await getActiveBanOrSuspension(senderId)) throw new MessagingError("Tu cuenta está suspendida", 403);
   if (await isBlockedEitherWay(senderId, target.id)) throw new MessagingError("No podés iniciar esta conversación", 403);
-  const existing = await prisma.conversation.findFirst({
+  return serializableTransaction(async (tx) => {
+  await lockUserPair(tx, senderId, target.id);
+  const existing = await tx.conversation.findFirst({
     where: { isGroup: false, participants: { some: { userId: senderId } }, AND: { participants: { some: { userId: target.id } } } },
   });
-  if (existing) return existing;
+  if (existing) {
+    const mine = await tx.conversationParticipant.findUnique({ where: { conversationId_userId: { conversationId: existing.id, userId: senderId } } });
+    if (mine?.status === "LEFT") await tx.conversationParticipant.update({ where: { id: mine.id }, data: { status: "ACTIVE" } });
+    return existing;
+  }
   const requestSince = new Date(Date.now() - 15 * 60_000);
   try {
     await assertRecentActionLimit({
       since: requestSince,
       maximum: 5,
       message: "Estás iniciando conversaciones demasiado rápido. Esperá un momento.",
-      count: () => prisma.conversation.count({
+      count: () => tx.conversation.count({
         where: { createdById: senderId, isGroup: false, createdAt: { gte: requestSince } },
       }),
     });
   } catch (error) { asMessagingError(error); }
-  const friends = await areFriends(senderId, target.id);
-  return prisma.conversation.create({ data: {
+  const friends = !!await tx.friendship.findFirst({ where: { status: "ACCEPTED", OR: [{ requesterId: senderId, addresseeId: target.id }, { requesterId: target.id, addresseeId: senderId }] } });
+  return tx.conversation.create({ data: {
     isGroup: false, createdById: senderId,
     participants: { create: [
       { userId: senderId, role: "MEMBER", status: "ACTIVE" },
       { userId: target.id, role: "MEMBER", status: friends ? "ACTIVE" : "PENDING" },
     ] },
   } });
+  });
 }
 
 export async function createGroup(creatorId: string, name: string | null, memberUsernames: string[]) {
@@ -241,6 +249,8 @@ export async function editDirectMessage(messageId: string, userId: string, paylo
   try { input = normalizeChatPayload(payload, 4_000); } catch (error) { asMessagingError(error); }
   if (!input.content) throw new MessagingError("El mensaje no puede estar vacío");
 
+  await requireActiveParticipant(existing.conversationId, userId);
+  if (await getActiveBanOrSuspension(userId) || await isMuted(userId) || await directConversationIsBlocked(existing.conversationId, userId)) throw new MessagingError("No autorizado", 403);
   const previousMentions = new Set(parseMentions(existing.content));
   const addedMentions = parseMentions(input.content).filter((username) => !previousMentions.has(username));
   const updated = await prisma.directMessage.update({
@@ -280,6 +290,7 @@ export async function toggleDirectMessageReaction(userId: string, messageId: str
   const message = await prisma.directMessage.findFirst({ where: { id: messageId, deletedAt: null }, select: { id: true, conversationId: true, senderId: true } });
   if (!message) throw new MessagingError("Mensaje no encontrado", 404);
   await requireActiveParticipant(message.conversationId, userId);
+  if (await getActiveBanOrSuspension(userId) || await isMuted(userId) || await directConversationIsBlocked(message.conversationId, userId)) throw new MessagingError("No autorizado", 403);
   const since = new Date(Date.now() - 60_000);
   try { await assertRecentActionLimit({ since, maximum: 30, message: "Estás reaccionando demasiado rápido. Esperá un momento.", count: () => prisma.directMessageReaction.count({ where: { userId, createdAt: { gte: since } } }) }); } catch (error) { asMessagingError(error); }
   const existing = await prisma.directMessageReaction.findUnique({ where: { messageId_userId_emoji: { messageId, userId, emoji } } });
@@ -305,8 +316,15 @@ export async function declineConversationRequest(conversationId: string, userId:
 }
 
 export async function leaveConversation(conversationId: string, userId: string) {
-  await requireParticipant(conversationId, userId);
-  await prisma.conversationParticipant.update({ where: { conversationId_userId: { conversationId, userId } }, data: { status: "LEFT" } });
+  await serializableTransaction(async (tx) => {
+    const participant = await tx.conversationParticipant.findUnique({ where: { conversationId_userId: { conversationId, userId } } });
+    if (!participant || participant.status === "LEFT") throw new MessagingError("No formás parte de esta conversación", 403);
+    if (participant.role === "OWNER") {
+      const successor = await tx.conversationParticipant.findFirst({ where: { conversationId, userId: { not: userId }, status: "ACTIVE" }, orderBy: [{ joinedAt: "asc" }, { id: "asc" }] });
+      if (successor) await tx.conversationParticipant.update({ where: { id: successor.id }, data: { role: "OWNER" } });
+    }
+    await tx.conversationParticipant.update({ where: { id: participant.id }, data: { status: "LEFT", role: "MEMBER" } });
+  });
 }
 
 export async function closeGroup(conversationId: string, actingUserId: string) {
@@ -397,6 +415,7 @@ export async function getMessagingUnreadCount(userId: string) { return (await li
 
 export async function getConversation(conversationId: string, userId: string, options: { cursor?: string | null; after?: string | null; limit?: number } = {}) {
   const participant = await requireParticipant(conversationId, userId);
+  if (await directConversationIsBlocked(conversationId, userId)) throw new MessagingError("No podés abrir esta conversación", 403);
   const limit = Math.min(Math.max(options.limit ?? 50, 1), 50);
   const [cursor, after] = await Promise.all([
     options.cursor ? prisma.directMessage.findUnique({ where: { id: options.cursor }, select: { id: true, conversationId: true, createdAt: true } }) : null,

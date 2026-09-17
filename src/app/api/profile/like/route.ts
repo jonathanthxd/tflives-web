@@ -5,6 +5,10 @@ import { normalizeUsername } from "@/modules/authentication/validation";
 import { publicIdentitySelect, toPublicIdentity } from "@/modules/profiles/service";
 import { getBlockStatus } from "@/modules/social/service";
 
+import { targetInput } from "@/modules/social/validation";
+import { getActiveBanOrSuspension } from "@/modules/administration/sanctions";
+import { serializableTransaction, lockUserPair } from "@/infrastructure/database/transaction";
+
 async function resolveTarget(username: string | null) {
   if (!username) return null;
   return prisma.user.findFirst({
@@ -55,8 +59,10 @@ export async function POST(request: Request) {
   const authUser = await getCurrentAuthUser();
   if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
-  const body = await request.json().catch(() => ({}));
-  const target = await resolveTarget(typeof body.username === "string" ? body.username : null);
+  const parsed = targetInput.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
+  if (await getActiveBanOrSuspension(authUser.id)) return NextResponse.json({ error: "Acción no disponible" }, { status: 403 });
+  const target = await resolveTarget(parsed.data.username);
   if (!target) return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 });
   if (target.id === authUser.id) {
     return NextResponse.json({ error: "No podés indicar que te gusta tu propio perfil" }, { status: 400 });
@@ -74,16 +80,19 @@ export async function POST(request: Request) {
       targetId: target.id,
     },
   } as const;
-  const existing = await prisma.reaction.findUnique({ where: key, select: { id: true } });
+  return serializableTransaction(async (tx) => {
+  await lockUserPair(tx, authUser.id, target.id);
+  const existing = await tx.reaction.findUnique({ where: key, select: { id: true } });
 
   if (existing) {
-    await prisma.reaction.delete({ where: { id: existing.id } });
+    await tx.reaction.delete({ where: { id: existing.id } });
   } else {
-    await prisma.reaction.create({
+    await tx.reaction.create({
       data: { userId: authUser.id, targetType: "PROFILE", targetId: target.id },
     });
   }
 
-  const count = await prisma.reaction.count({ where: { targetType: "PROFILE", targetId: target.id } });
+  const count = await tx.reaction.count({ where: { targetType: "PROFILE", targetId: target.id } });
   return NextResponse.json({ liked: !existing, count });
+  });
 }

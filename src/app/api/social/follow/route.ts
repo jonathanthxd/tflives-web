@@ -3,9 +3,12 @@ import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { prisma } from "@/infrastructure/database/prisma";
 import { SocialError, follow, unfollow } from "@/modules/social/service";
 
+import { targetInput } from "@/modules/social/validation";
+
 async function resolveTarget(request: Request) {
-  const { username } = await request.json().catch(() => ({}));
-  if (!username) return null;
+  const parsed = targetInput.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return { invalid: true } as const;
+  const { username } = parsed.data;
   return prisma.user.findUnique({ where: { username }, select: { id: true } });
 }
 
@@ -14,6 +17,7 @@ export async function POST(request: Request) {
   if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
   const target = await resolveTarget(request.clone());
+  if (target && "invalid" in target) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
   if (!target) return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 });
 
   try {
@@ -32,6 +36,7 @@ export async function DELETE(request: Request) {
   if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
   const target = await resolveTarget(request.clone());
+  if (target && "invalid" in target) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
   if (!target) return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 });
 
   await unfollow(authUser.id, target.id);

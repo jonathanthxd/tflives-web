@@ -11,6 +11,8 @@ import {
   sendFriendRequest,
 } from "@/modules/social/service";
 
+import { targetInput, friendResponseInput, friendDeleteInput } from "@/modules/social/validation";
+
 async function requireUser() {
   const authUser = await getCurrentAuthUser();
   return authUser;
@@ -32,8 +34,9 @@ export async function POST(request: Request) {
   const authUser = await requireUser();
   if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
-  const { username } = await request.json().catch(() => ({}));
-  if (!username) return NextResponse.json({ error: "Falta username" }, { status: 400 });
+  const parsed = targetInput.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
+  const { username } = parsed.data;
 
   const target = await prisma.user.findUnique({ where: { username }, select: { id: true } });
   if (!target) return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 });
@@ -53,11 +56,12 @@ export async function PATCH(request: Request) {
   const authUser = await requireUser();
   if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
-  const { friendshipId, action } = await request.json().catch(() => ({}));
-  if (!friendshipId || (action !== "accept" && action !== "decline")) {
+  const parsed = friendResponseInput.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) {
     return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
   }
 
+  const { friendshipId, action } = parsed.data;
   try {
     const friendship = await respondToFriendRequest(friendshipId, authUser.id, action);
     return NextResponse.json({ friendship });
@@ -73,7 +77,10 @@ export async function DELETE(request: Request) {
   const authUser = await requireUser();
   if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
-  const { username, friendshipId } = await request.json().catch(() => ({}));
+  const parsed = friendDeleteInput.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
+  const username = "username" in parsed.data ? parsed.data.username : null;
+  const friendshipId = "friendshipId" in parsed.data ? parsed.data.friendshipId : null;
 
   try {
     if (friendshipId) {

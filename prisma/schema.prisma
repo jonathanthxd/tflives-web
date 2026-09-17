@@ -714,6 +714,8 @@ enum AchievementAwardSource {
 }
 
 model Achievement {
+  nameEn       String?
+  descriptionEn String?
   id           String                @id @default(cuid())
   name         String
   description  String

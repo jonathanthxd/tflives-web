@@ -4,6 +4,8 @@ export interface NotificationToast {
   actorName: string | null;
   entityType: string | null;
   entityId: string | null;
+  conversationId?: string | null;
+  recipientUsername?: string | null;
   announcementTitle?: string | null;
 }
 

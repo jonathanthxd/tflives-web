@@ -1,5 +1,6 @@
 "use client";
 
+import { readJsonResponse } from "@/shared/lib/http";
 import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { LockKeyhole, Sparkles, Trophy } from "lucide-react";
@@ -47,12 +48,7 @@ interface AchievementsResponse {
   progression: ProgressionData;
 }
 
-const EMPTY_DATA: AchievementsResponse = {
-  achievements: [],
-  obtainableAchievements: [],
-  progression: { achievements: [] },
-};
-
+ 
 function normalizedResponse(response: Partial<AchievementsResponse>): AchievementsResponse {
   return {
     achievements: response.achievements ?? [],
@@ -62,6 +58,9 @@ function normalizedResponse(response: Partial<AchievementsResponse>): Achievemen
 }
 
 export default function AchievementsCard({ username, embedded = false }: { username: string; embedded?: boolean }) {
+  const tCompletion = useTranslations("Completion");
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [reload, setReload] = useState(0);
   const t = useTranslations("Progression");
   const locale = useLocale();
   const [data, setData] = useState<AchievementsResponse | null>(null);
@@ -70,18 +69,18 @@ export default function AchievementsCard({ username, embedded = false }: { usern
   useEffect(() => {
     let cancelled = false;
     fetch(`/api/achievements/user?username=${encodeURIComponent(username)}&locale=${encodeURIComponent(locale)}`, { cache: "no-store" })
-      .then((res) => (res.ok ? res.json() : EMPTY_DATA))
+      .then(readJsonResponse)
       .then((response) => {
         if (!cancelled) setData(normalizedResponse(response));
       })
       .catch(() => {
-        if (!cancelled) setData(EMPTY_DATA);
+        if (!cancelled) setLoadFailed(true);
       });
 
     return () => {
       cancelled = true;
     };
-  }, [username, locale]);
+  }, [username, locale, reload]);
 
   const filteredProgression = useMemo(() => {
     if (!data) return [];
@@ -135,7 +134,8 @@ export default function AchievementsCard({ username, embedded = false }: { usern
         </div>
       )}
 
-      {data === null && (
+      {loadFailed && <p role="alert" className="my-3 text-sm text-destructive">{tCompletion("loadError")} <button onClick={() => { setLoadFailed(false); setReload((value) => value + 1); }} className="text-primary underline">{tCompletion("retry")}</button></p>}
+      {data === null && !loadFailed && (
         <div className="flex gap-2">
           {[0, 1, 2].map((i) => (
             <div key={i} className="h-10 w-10 animate-pulse rounded-full bg-primary/5" />

@@ -30,7 +30,8 @@ export async function POST(
   const { id } = await params;
   try {
     const { userId } = await requireAdminSection("moderation");
-    const body = await request.json();
+    const body = await request.json().catch(() => null);
+    if (!body || typeof body !== "object" || Array.isArray(body)) return NextResponse.json({ error: "invalid" }, { status: 400 });
 
     const type = body.type as SanctionType;
     if (!VALID_TYPES.includes(type)) {

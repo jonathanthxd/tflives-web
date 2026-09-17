@@ -15,6 +15,9 @@ interface Application {
 const initial = { primaryPlatform: "TWITCH" as CreatorPlatformValue, channelUrl: "", category: "MINECRAFT" as CreatorCategoryValue, description: "", motivation: "", activityFrequency: "" };
 
 export default function CreatorApplicationForm() {
+  const tCompletion = useTranslations("Completion");
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [reload, setReload] = useState(0);
   const t = useTranslations("Creators");
   const [application, setApplication] = useState<Application | null>(null);
   const [form, setForm] = useState(initial);
@@ -26,9 +29,10 @@ export default function CreatorApplicationForm() {
   useEffect(() => {
     fetch("/api/creators/application", { cache: "no-store" }).then(async (response) => {
       const data = await response.json().catch(() => ({}));
-      if (response.ok) setApplication(data.application);
-    }).catch(() => {}).finally(() => setLoading(false));
-  }, []);
+      if (!response.ok) throw new Error("request_failed");
+      setApplication(data.application);
+    }).catch(() => setLoadFailed(true)).finally(() => setLoading(false));
+  }, [reload]);
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
@@ -50,6 +54,7 @@ export default function CreatorApplicationForm() {
     }
   }
 
+  if (loadFailed) return <div role="alert" className="rounded-2xl border border-destructive/20 p-6 text-sm"><p>{tCompletion("loadError")}</p><button onClick={() => { setLoadFailed(false); setLoading(true); setReload((value) => value + 1); }} className="mt-3 text-primary underline">{tCompletion("retry")}</button></div>;
   if (loading) return <div aria-busy="true" className="rounded-2xl border border-border bg-card p-6"><div className="h-4 w-40 animate-pulse rounded bg-muted" /><div className="mt-3 h-4 w-2/3 animate-pulse rounded bg-muted" /></div>;
   if (application?.status === "APPROVED") return <div role="status" className="rounded-2xl border border-emerald-500/25 bg-emerald-500/5 p-6"><p className="text-sm text-emerald-700 dark:text-emerald-300">{t("applicationApproved")}</p><CreatorProfileEditor /></div>;
   if (application?.status === "PENDING") return <div role="status" className="rounded-2xl border border-primary/20 bg-card p-6 text-sm text-muted-foreground">{t("applicationPending")}</div>;

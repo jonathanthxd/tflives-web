@@ -1,3 +1,4 @@
+import { serializableTransaction, lockUserPair } from "@/infrastructure/database/transaction";
 import { prisma } from "@/infrastructure/database/prisma";
 import { createNotification } from "@/modules/notifications/service";
 import { getActiveBanOrSuspension } from "@/modules/administration/sanctions";
@@ -24,7 +25,7 @@ async function findFriendship(userAId: string, userBId: string) {
 }
 
 export async function getBlockStatus(viewerId: string, targetUserId: string) {
-  const block = await prisma.block.findFirst({
+  const blocks = await prisma.block.findMany({
     where: {
       OR: [
         { blockerId: viewerId, blockedId: targetUserId },
@@ -34,8 +35,8 @@ export async function getBlockStatus(viewerId: string, targetUserId: string) {
     select: { blockerId: true },
   });
   return {
-    blockedByViewer: block?.blockerId === viewerId,
-    blockedByTarget: block?.blockerId === targetUserId,
+    blockedByViewer: blocks.some((block) => block.blockerId === viewerId),
+    blockedByTarget: blocks.some((block) => block.blockerId === targetUserId),
   };
 }
 
@@ -71,24 +72,27 @@ export async function sendFriendRequest(requesterId: string, addresseeId: string
     throw new SocialError("Este usuario no acepta solicitudes de amistad", 403);
   }
 
-  const existing = await findFriendship(requesterId, addresseeId);
+  return serializableTransaction(async (tx) => {
+  await lockUserPair(tx, requesterId, addresseeId);
+  const existing = await tx.friendship.findFirst({ where: { OR: [{ requesterId, addresseeId }, { requesterId: addresseeId, addresseeId: requesterId }] } });
   if (existing) {
     if (existing.status === "ACCEPTED") throw new SocialError("Ya son amigos");
     if (existing.status === "PENDING") throw new SocialError("Ya existe una solicitud pendiente");
     // DECLINED — se permite reintentar, se actualiza en vez de duplicar.
-    const revived = await prisma.friendship.update({
+    const revived = await tx.friendship.update({
       where: { id: existing.id },
       data: { requesterId, addresseeId, status: "PENDING", respondedAt: null },
     });
-    await createNotification({ userId: addresseeId, type: "FRIEND_REQUEST", actorId: requesterId });
+    await createNotification({ userId: addresseeId, type: "FRIEND_REQUEST", actorId: requesterId }, tx);
     return revived;
   }
 
-  const friendship = await prisma.friendship.create({
+  const friendship = await tx.friendship.create({
     data: { requesterId, addresseeId, status: "PENDING" },
   });
-  await createNotification({ userId: addresseeId, type: "FRIEND_REQUEST", actorId: requesterId });
+  await createNotification({ userId: addresseeId, type: "FRIEND_REQUEST", actorId: requesterId }, tx);
   return friendship;
+  });
 }
 
 export async function respondToFriendRequest(
@@ -106,11 +110,12 @@ export async function respondToFriendRequest(
   }
   await requireNoBlock(friendship.requesterId, friendship.addresseeId);
 
-  const updated = await prisma.friendship.update({
-    where: { id: friendshipId },
+  const changed = await prisma.friendship.updateMany({
+    where: { id: friendshipId, status: "PENDING" },
     data: { status: action === "accept" ? "ACCEPTED" : "DECLINED", respondedAt: new Date() },
   });
 
+  if (!changed.count) throw new SocialError("Esta solicitud ya fue respondida", 409);
   if (action === "accept") {
     await Promise.all([
       createNotification({
@@ -123,7 +128,7 @@ export async function respondToFriendRequest(
     ]);
   }
 
-  return updated;
+  return prisma.friendship.findUniqueOrThrow({ where: { id: friendshipId } });
 }
 
 export async function removeFriendship(userId: string, otherUserId: string) {
@@ -191,6 +196,8 @@ export async function searchUsers(query: string, excludeUserId: string) {
 }
 
 export async function follow(followerId: string, followingId: string) {
+  if (await getActiveBanOrSuspension(followerId)) throw new SocialError("Tu cuenta está suspendida", 403);
+  if (!(await prisma.user.findUnique({ where: { id: followingId }, select: { id: true } }))) throw new SocialError("Usuario no encontrado", 404);
   if (followerId === followingId) {
     throw new SocialError("No podés seguirte a vos mismo");
   }

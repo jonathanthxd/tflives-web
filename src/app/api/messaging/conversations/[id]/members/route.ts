@@ -6,7 +6,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const authUser = await getCurrentAuthUser();
   if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
   const { id } = await params;
-  const { username } = await request.json().catch(() => ({}));
+  const { username } = (await request.json().catch(() => null)) ?? {};
   if (typeof username !== "string") return NextResponse.json({ error: "Falta username" }, { status: 400 });
   try {
     const participant = await addGroupMember(id, authUser.id, username);
@@ -21,7 +21,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const authUser = await getCurrentAuthUser();
   if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
   const { id } = await params;
-  const { action } = await request.json().catch(() => ({}));
+  const { action } = (await request.json().catch(() => null)) ?? {};
   if (action !== "close") return NextResponse.json({ error: "Acción inválida" }, { status: 400 });
   try {
     await closeGroup(id, authUser.id);
@@ -37,7 +37,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
   if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
   const { id } = await params;
-  const { targetUserId } = await request.json().catch(() => ({}));
+  const { targetUserId } = (await request.json().catch(() => null)) ?? {};
 
   try {
     if (targetUserId && targetUserId !== authUser.id) {

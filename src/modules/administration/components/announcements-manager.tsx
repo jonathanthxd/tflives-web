@@ -1,5 +1,7 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
+
 import { useState } from "react";
 import { Megaphone, Send, Users, ShieldCheck, Globe } from "lucide-react";
 import { Button } from "@/shared/ui/button";
@@ -25,11 +27,7 @@ interface AnnouncementRow {
   createdBy: PersonRef;
 }
 
-const SEGMENT_LABELS: Record<Segment, string> = {
-  ALL: "Toda la comunidad",
-  USERS: "Solo usuarios",
-  STAFF: "Solo staff (MOD/ADMIN)",
-};
+
 
 const SEGMENT_ICONS: Record<Segment, typeof Globe> = {
   ALL: Globe,
@@ -46,6 +44,14 @@ export default function AnnouncementsManager({
 }: {
   initialAnnouncements: AnnouncementRow[];
 }) {
+  const tCompletion = useTranslations("Completion");
+  const completionLocale = useLocale();
+const SEGMENT_LABELS: Record<Segment, string> = {
+  ALL: tCompletion("entireCommunity"),
+  USERS: tCompletion("usersOnly"),
+  STAFF: tCompletion("staffOnly"),
+};
+
   const [announcements, setAnnouncements] = useState(initialAnnouncements);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
@@ -67,7 +73,7 @@ export default function AnnouncementsManager({
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || "Error al enviar el anuncio");
+        setError(data.error || tCompletion("announcementError"));
         return;
       }
       setAnnouncements((prev) => [
@@ -77,7 +83,7 @@ export default function AnnouncementsManager({
           body: data.announcement.body,
           segment: data.announcement.segment,
           createdAt: data.announcement.createdAt,
-          createdBy: { id: "", username: null, displayName: "Vos", name: null },
+          createdBy: { id: "", username: null, displayName: tCompletion("you"), name: null },
         },
         ...prev,
       ]);
@@ -85,7 +91,7 @@ export default function AnnouncementsManager({
       setTitle("");
       setBody("");
       setConfirming(false);
-    } finally {
+    } catch { setError(tCompletion("networkError")); } finally {
       setBusy(false);
     }
   }
@@ -99,26 +105,27 @@ export default function AnnouncementsManager({
       )}
       {lastSent && (
         <div className="mb-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 dark:text-emerald-400">
-          Anuncio enviado a {lastSent.recipientCount} usuario{lastSent.recipientCount === 1 ? "" : "s"}.
+          {tCompletion("announcementSent", { count: lastSent.recipientCount })}
         </div>
       )}
 
       <div className="mb-8 rounded-2xl border border-primary/10 bg-card/20 p-6">
         <h2 className="mb-4 flex items-center gap-2 font-medium text-foreground">
           <Megaphone className="h-4 w-4 text-muted-foreground" strokeWidth={1.75} />
-          Nuevo anuncio
-        </h2>
+          {tCompletion("newAnnouncement")}</h2>
         <div className="space-y-3">
           <input
             className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary/40"
-            placeholder="Título"
+            placeholder={tCompletion("title")}
+            maxLength={200}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
           <textarea
             className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary/40"
-            placeholder="Mensaje"
+            placeholder={tCompletion("message")}
             rows={4}
+            maxLength={2000}
             value={body}
             onChange={(e) => setBody(e.target.value)}
           />
@@ -141,26 +148,25 @@ export default function AnnouncementsManager({
             disabled={busy || !title.trim() || !body.trim()}
           >
             <Send className="h-4 w-4" strokeWidth={2} data-icon="inline-start" />
-            Enviar anuncio
-          </Button>
+            {tCompletion("sendAnnouncement")}</Button>
         </div>
       </div>
 
-      <h3 className="mb-3 font-medium text-foreground">Historial</h3>
+      <h3 className="mb-3 font-medium text-foreground">{tCompletion("history")}</h3>
       {announcements.length === 0 ? (
-        <EmptyState icon={Megaphone} title="Todavía no se envió ningún anuncio" />
+        <EmptyState icon={Megaphone} title={tCompletion("noAnnouncements")} />
       ) : (
         <div className="space-y-3">
           {announcements.map((a) => {
             const SegmentIcon = SEGMENT_ICONS[a.segment];
             return (
               <div key={a.id} className="rounded-2xl border border-primary/10 bg-card/20 p-5">
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div className="min-w-0">
                     <div className="font-medium text-foreground">{a.title}</div>
                     <p className="mt-1 text-sm text-muted-foreground">{a.body}</p>
                     <p className="mt-2 font-mono text-[11px] text-muted-foreground/50">
-                      {personLabel(a.createdBy)} · {new Date(a.createdAt).toLocaleString("es-ES")}
+                      {personLabel(a.createdBy)} · {new Date(a.createdAt).toLocaleString(completionLocale)}
                     </p>
                   </div>
                   <StatusBadge tone="primary" dot={false}>
@@ -176,10 +182,10 @@ export default function AnnouncementsManager({
 
       <ConfirmDialog
         open={confirming}
-        title="Enviar anuncio"
-        description={`Esto va a notificar a: ${SEGMENT_LABELS[segment]}. No se puede deshacer.`}
-        confirmLabel="Enviar"
-        cancelLabel="Cancelar"
+        title={tCompletion("sendAnnouncement")}
+        description={tCompletion("announcementConfirm", { segment: SEGMENT_LABELS[segment] })}
+        confirmLabel={tCompletion("send")}
+        cancelLabel={tCompletion("cancel")}
         busy={busy}
         onConfirm={send}
         onCancel={() => setConfirming(false)}

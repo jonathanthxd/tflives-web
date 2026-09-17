@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { spawn } from "node:child_process";
 import { once } from "node:events";
 import { PGlite } from "@electric-sql/pglite";
@@ -9,7 +9,7 @@ import { PGLiteSocketServer } from "@electric-sql/pglite-socket";
 /** In-memory PostgreSQL only. Never reads DATABASE_URL or writes the configured Neon database. */
 test(
   "populated migration and production HTTP acceptance",
-  { timeout: process.env.TFL_TEST_PREVIEW ? 900000 : 240000 },
+  { timeout: process.env.TFL_TEST_PREVIEW ? 1200000 : 600000 },
   async (t) => {
     const db = await PGlite.create();
     await db.exec(
@@ -83,6 +83,10 @@ test(
         "utf8",
       ),
     );
+    for (const migration of readdirSync("prisma/migrations").filter((name) => name > "20260917000000_creator_ecosystem").sort()) {
+      if (migration === "migration_lock.toml") continue;
+      await db.exec(readFileSync(`prisma/migrations/${migration}/migration.sql`, "utf8"));
+    }
     assert.equal((await db.query(`SELECT id FROM "Comment"`)).rows.length, 1);
     assert.equal((await db.query(`SELECT id FROM "Reaction"`)).rows.length, 1);
     const preserved = await db.query<{ slug: string; published: boolean }>(
@@ -609,6 +613,97 @@ test(
         200,
       );
     assert.equal((await request("/es/network/legacy-publication")).status, 200);
+
+    // Feature Completion II: real HTTP writes against the isolated migrated database.
+    for (const path of ["/api/social/friends", "/api/social/follow", "/api/profile/like", "/api/messaging/conversations", "/api/messaging/groups", "/api/admin/cosmetics"]) {
+      assert.equal((await request(path, "POST", null, cookie)).status, 400, path);
+    }
+    assert.equal((await request("/api/social/privacy", "PATCH", { allowFriendRequests: "false" }, cookie)).status, 400);
+    assert.equal((await request("/api/notifications", "PATCH", { markAllRead: "true" }, cookie)).status, 400);
+    assert.equal((await request("/api/notifications?limit=NaN", "GET", undefined, cookie)).status, 200);
+    assert.equal((await request("/api/admin/moderation/search?q=Creator", "GET", undefined, creatorCookie)).status, 403);
+    assert.equal((await request("/api/admin/moderation/search?q=Creator", "GET", undefined, moderatorCookie)).status, 200);
+    assert.equal((await request("/api/admin/users/" + user.user.id + "/sanctions", "POST", { type: "WARNING", reason: "Cannot sanction an administrator" }, moderatorCookie)).status, 403);
+    assert.equal((await request("/api/admin/users/" + moderator.user.id + "/sanctions", "POST", { type: "MUTE", reason: "Invalid expiration", expiresAt: "not-a-date" }, cookie)).status, 400);
+
+    response = await request("/api/admin/cosmetics", "POST", { slug: "free-acceptance-frame", type: "AVATAR_FRAME", rarity: "COMMON", name: "Marco de prueba", nameEn: "Test frame", description: "Gratis", descriptionEn: "Free", price: 0, visualPreset: "BRONZE_FRAME", active: true, premiumOnly: false }, cookie);
+    assert.equal(response.status, 201, await response.clone().text());
+    const freeItem = (await response.json()).cosmetic;
+    const beforeFree = await (await request("/api/account/wallet", "GET", undefined, creatorCookie)).json();
+    for (const owned of [false, true]) {
+      response = await request("/api/account/cosmetics/purchase", "POST", { cosmeticId: freeItem.id, price: -100000 }, creatorCookie);
+      assert.equal(response.status, 200, await response.clone().text());
+      const purchase = await response.json();
+      assert.equal(purchase.alreadyOwned, owned); assert.equal(purchase.balance, beforeFree.balance);
+    }
+    const freeWallet = await (await request("/api/account/wallet", "GET", undefined, creatorCookie)).json();
+    assert.equal(freeWallet.balance, beforeFree.balance);
+    assert.equal(freeWallet.recentTransactions.length, beforeFree.recentTransactions.length);
+    const freeOwners = await db.query<{ count: number }>('SELECT count(*)::int AS count FROM "UserCosmetic" WHERE cosmetic_id=$1', [freeItem.id]);
+    assert.equal(freeOwners.rows[0].count, 1);
+
+    const friendshipResults = await Promise.all([
+      request("/api/social/friends", "POST", { username: "creator_member" }, cookie),
+      request("/api/social/friends", "POST", { username: "profile_member_v2" }, creatorCookie),
+    ]);
+    assert.deepEqual(friendshipResults.map((result) => result.status).sort(), [201, 400]);
+    const friendship = (await db.query<{ id: string; addresseeId: string }>('SELECT id,"addresseeId" FROM "Friendship" WHERE "requesterId"=$1 OR "addresseeId"=$1', [user.user.id])).rows[0];
+    assert.ok(friendship);
+    response = await request("/api/social/friends", "PATCH", { friendshipId: friendship.id, action: "accept" }, friendship.addresseeId === user.user.id ? cookie : creatorCookie);
+    assert.equal(response.status, 200, await response.clone().text());
+    const directResults = await Promise.all([request("/api/messaging/conversations", "POST", { username: "creator_member" }, cookie), request("/api/messaging/conversations", "POST", { username: "creator_member" }, cookie)]);
+    for (const result of directResults) assert.equal(result.status, 201, await result.clone().text());
+    const directIds = await Promise.all(directResults.map(async (result) => (await result.json()).conversation.id));
+    assert.equal(directIds[0], directIds[1]);
+    response = await request("/api/messaging/conversations/" + directIds[0], "POST", { content: "Feature Completion II conversation" }, cookie);
+    assert.equal(response.status, 201, await response.clone().text());
+    const directMessage = (await response.json()).message;
+    response = await request("/api/notifications", "GET", undefined, creatorCookie);
+    assert.equal(response.status, 200);
+    assert.ok((await response.json()).notifications.some((n: { entityId: string; conversationId: string }) => n.entityId === directMessage.id && n.conversationId === directIds[0]));
+    response = await request("/api/messaging/groups", "POST", { name: "Handoff group", usernames: ["creator_member"] }, cookie);
+    assert.equal(response.status, 201, await response.clone().text());
+    const group = (await response.json()).conversation;
+    assert.equal((await request("/api/messaging/conversations/" + group.id + "/members", "DELETE", {}, cookie)).status, 200);
+    const owner = (await db.query<{ status: string; role: string }>('SELECT status,role FROM "ConversationParticipant" WHERE "conversationId"=$1 AND "userId"<>$2', [group.id, user.user.id])).rows[0];
+    assert.deepEqual(owner, { status: "ACTIVE", role: "OWNER" });
+    assert.equal((await request("/api/messaging/block", "POST", { username: "profile_member_v2" }, creatorCookie)).status, 201);
+    assert.equal((await request("/api/messaging/messages/" + directMessage.id, "PATCH", { content: "Blocked edit" }, cookie)).status, 403);
+    assert.equal((await request("/api/messaging/conversations/" + directIds[0], "GET", undefined, cookie)).status, 403);
+    assert.equal((await request("/api/messaging/block", "DELETE", { username: "profile_member_v2" }, creatorCookie)).status, 200);
+
+    response = await request("/api/community/comments", "POST", { postId: "old-post", content: "Parent to delete" }, cookie);
+    assert.equal(response.status, 201, await response.clone().text());
+    const parentComment = (await response.json()).comment;
+    response = await request("/api/community/comments", "POST", { postId: "old-post", content: "Reply remains visible", parentId: parentComment.id }, creatorCookie);
+    assert.equal(response.status, 201, await response.clone().text());
+    const childComment = (await response.json()).comment;
+    assert.equal((await request("/api/community/comments/" + parentComment.id, "DELETE", undefined, cookie)).status, 200);
+    const visibleComments = await (await request("/api/community/comments?postId=old-post")).json();
+    assert.ok(visibleComments.comments.some((comment: { id: string }) => comment.id === childComment.id));
+
+    response = await request("/api/admin/achievements", "POST", { name: "Logro bilingüe", description: "Descripción española", nameEn: "Bilingual achievement", descriptionEn: "English description", iconKey: "trophy", coinReward: 0 }, cookie);
+    assert.equal(response.status, 201, await response.clone().text());
+    const customAchievement = (await response.json()).achievement;
+    assert.equal((await request("/api/admin/achievements/award", "POST", { username: "creator_member", achievementId: customAchievement.id }, cookie)).status, 201);
+    const englishAchievements = await (await request("/api/achievements/user?username=creator_member&locale=en", "GET", undefined, creatorCookie)).json();
+    assert.ok(englishAchievements.achievements.some((achievement: { name: string }) => achievement.name === "Bilingual achievement"));
+
+    assert.equal((await request("/api/notifications/preferences", "PATCH", { category: "ANNOUNCEMENT", inAppEnabled: false }, creatorCookie)).status, 200);
+    response = await request("/api/admin/announcements", "POST", { title: "Acceptance announcement", body: "Full persisted body", segment: "ALL" }, cookie);
+    assert.equal(response.status, 201, await response.clone().text());
+    const announcementResult = await response.json();
+    const delivered = await db.query<{ count: number }>('SELECT count(*)::int AS count FROM "Notification" WHERE "entityId"=$1 AND "entityType"=$2', [announcementResult.announcement.id, "Announcement"]);
+    assert.equal(announcementResult.recipientCount, delivered.rows[0].count);
+    const optedOut = await (await request("/api/notifications", "GET", undefined, creatorCookie)).json();
+    assert.equal(optedOut.notifications.some((n: { entityId: string }) => n.entityId === announcementResult.announcement.id), false);
+    assert.equal((await request("/api/posts?limit=1&offset=0&locale=en")).status, 200);
+    assert.equal((await request("/api/posts?limit=1000")).status, 400);
+    response = await request("/api/admin/users/" + moderator.user.id + "/sanctions", "POST", { type: "SUSPEND", reason: "Test staff suspension" }, cookie);
+    assert.equal(response.status, 201, await response.clone().text());
+    assert.equal((await request("/api/admin/moderation/search?q=Creator", "GET", undefined, moderatorCookie)).status, 403);
+    console.log("Feature Completion II HTTP regressions passed.");
+
     // The test-only socket adapter closes its connection after a SQL constraint error.
     // Keep the duplicate-key case last; Neon uses normal PostgreSQL connections.
     assert.equal(

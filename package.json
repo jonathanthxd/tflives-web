@@ -13,7 +13,7 @@
     "db:generate": "prisma generate",
     "db:studio": "prisma studio",
     "cursor:import": "node scripts/cursors/import-windows-pack.mjs",
-    "test": "tsx --test tests/unit/*.test.ts",
+    "test": "tsx --import ./tests/helpers/server-only.mjs --test tests/unit/*.test.ts",
     "test:integration": "tsx --test tests/integration/network-content.test.ts"
   },
   "prisma": {
@@ -61,7 +61,7 @@
     "@types/react-dom": "19.3.0",
     "@types/three": "^0.160.0",
     "autoprefixer": "^10.0.1",
-    "eslint": "10.10.0",
+    "eslint": "^9.39.5",
     "eslint-config-next": "16.3.5",
     "postcss": "^8",
     "prisma": "^5.10.0",

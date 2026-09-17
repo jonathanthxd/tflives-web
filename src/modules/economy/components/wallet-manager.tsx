@@ -34,6 +34,7 @@ function formatCoins(value: number, locale: string) {
 
 export default function WalletManager() {
   const t = useTranslations("WalletAdmin");
+  const tCompletion = useTranslations("Completion");
   const tWallet = useTranslations("Wallet");
   const locale = useLocale();
   const [query, setQuery] = useState("");
@@ -56,7 +57,7 @@ export default function WalletManager() {
         return;
       }
       setUsers(payload.users || []);
-    } finally {
+    } catch { setError(tCompletion("networkError")); } finally {
       setBusy(false);
     }
   }
@@ -74,7 +75,7 @@ export default function WalletManager() {
       setSelected(payload as WalletDetail);
       setAmount("");
       setReason("");
-    } finally {
+    } catch { setError(tCompletion("networkError")); } finally {
       setBusy(false);
     }
   }
@@ -95,7 +96,7 @@ export default function WalletManager() {
         return;
       }
       await selectUser({ ...selected.user, balance: payload.balance });
-    } finally {
+    } catch { setError(tCompletion("networkError")); } finally {
       setBusy(false);
     }
   }

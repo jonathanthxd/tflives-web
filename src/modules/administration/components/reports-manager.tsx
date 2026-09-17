@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Check, X, Flag } from "lucide-react";
 import { StatusBadge } from "@/modules/administration/components/ui/status-badge";
 import { EmptyState } from "@/modules/administration/components/ui/empty-state";
@@ -28,11 +28,7 @@ interface ReportRow {
   targetContext: { content: string; deletedAt: string | null; author: PersonRef } | null;
 }
 
-const STATUS_LABELS: Record<ReportStatus, string> = {
-  OPEN: "Abierto",
-  REVIEWED: "Revisado",
-  DISMISSED: "Descartado",
-};
+
 
 const STATUS_TONE: Record<ReportStatus, "danger" | "success" | "neutral"> = {
   OPEN: "danger",
@@ -45,6 +41,14 @@ function personLabel(p: PersonRef) {
 }
 
 export default function ReportsManager({ initialReports }: { initialReports: ReportRow[] }) {
+  const tCompletion = useTranslations("Completion");
+  const completionLocale = useLocale();
+const STATUS_LABELS: Record<ReportStatus, string> = {
+  OPEN: tCompletion("open"),
+  REVIEWED: tCompletion("reviewed"),
+  DISMISSED: tCompletion("dismissed"),
+};
+
   const t = useTranslations("AdminChat");
   const [reports, setReports] = useState(initialReports);
   const [filter, setFilter] = useState<ReportStatus | "ALL">("OPEN");
@@ -67,11 +71,11 @@ export default function ReportsManager({ initialReports }: { initialReports: Rep
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || "Error al actualizar el reporte");
+        setError(data.error || tCompletion("reportError"));
         return;
       }
-      setReports((prev) => prev.map((r) => (r.id === report.id ? data.report : r)));
-    } finally {
+      setReports((prev) => prev.map((r) => (r.id === report.id ? { ...r, ...data.report, targetContext: r.targetContext } : r)));
+    } catch { setError(tCompletion("networkError")); } finally {
       setBusyId(null);
     }
   }
@@ -94,7 +98,7 @@ export default function ReportsManager({ initialReports }: { initialReports: Rep
         ...item,
         targetContext: item.targetContext ? { ...item.targetContext, deletedAt: data.message.deletedAt } : null,
       } : item));
-    } finally { setBusyId(null); }
+    } catch { setError(tCompletion("networkError")); } finally { setBusyId(null); }
   }
 
   return (
@@ -105,7 +109,7 @@ export default function ReportsManager({ initialReports }: { initialReports: Rep
         </div>
       )}
 
-      <div className="mb-6 flex gap-2">
+      <div className="mb-6 flex flex-wrap gap-2">
         {(["OPEN", "REVIEWED", "DISMISSED", "ALL"] as const).map((f) => (
           <button
             key={f}
@@ -116,22 +120,22 @@ export default function ReportsManager({ initialReports }: { initialReports: Rep
                 : "border-transparent text-muted-foreground hover:bg-primary/5"
             }`}
           >
-            {f === "ALL" ? "Todos" : STATUS_LABELS[f]}
+            {f === "ALL" ? tCompletion("all") : STATUS_LABELS[f]}
           </button>
         ))}
       </div>
 
       {filtered.length === 0 ? (
-        <EmptyState icon={Flag} title="No hay reportes en esta categoría" />
+        <EmptyState icon={Flag} title={tCompletion("reportsEmpty")} />
       ) : (
         <div className="space-y-3">
           {filtered.map((r) => (
             <div key={r.id} className="rounded-2xl border border-primary/10 bg-card/20 p-5">
-              <div className="flex items-start justify-between gap-4">
-                <div>
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0 break-words">
                   <StatusBadge tone={STATUS_TONE[r.status]}>{STATUS_LABELS[r.status]}</StatusBadge>
                   <div className="mt-2 text-sm text-foreground">
-                    <span className="font-medium">{personLabel(r.reporter)}</span> reportó{" "}
+                    <span className="font-medium">{personLabel(r.reporter)}</span> {tCompletion("reported")}{" "}
                     <span className="font-medium">{r.targetType.toLowerCase()}</span>
                   </div>
                   <p className="mt-1 text-sm text-muted-foreground">{r.reason}</p>
@@ -143,8 +147,8 @@ export default function ReportsManager({ initialReports }: { initialReports: Rep
                     </div>
                   )}
                   <p className="mt-2 font-mono text-[11px] text-muted-foreground/50">
-                    {new Date(r.createdAt).toLocaleString("es-ES")}
-                    {r.reviewedBy && ` · resuelto por ${personLabel(r.reviewedBy)}`}
+                    {new Date(r.createdAt).toLocaleString(completionLocale)}
+                    {r.reviewedBy && ` · ${tCompletion("resolvedBy", { name: personLabel(r.reviewedBy) })}`}
                   </p>
                 </div>
                 {r.status === "OPEN" && (
@@ -164,16 +168,14 @@ export default function ReportsManager({ initialReports }: { initialReports: Rep
                       onClick={() => resolve(r, "review")}
                     >
                       <Check className="h-3.5 w-3.5" strokeWidth={2} />
-                      Marcar revisado
-                    </button>
+                      {tCompletion("review")}</button>
                     <button
                       className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted-foreground/10 hover:text-foreground disabled:opacity-50"
                       disabled={busyId === r.id}
                       onClick={() => resolve(r, "dismiss")}
                     >
                       <X className="h-3.5 w-3.5" strokeWidth={2} />
-                      Descartar
-                    </button>
+                      {tCompletion("dismiss")}</button>
                   </div>
                 )}
               </div>

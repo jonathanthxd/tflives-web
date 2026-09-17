@@ -1,5 +1,7 @@
 interface NotificationLike {
   type: string;
+  conversationId?: string | null;
+  recipientUsername?: string | null;
   entityType?: string | null;
   entityId?: string | null;
   actor?: { username: string | null } | null;
@@ -7,14 +9,19 @@ interface NotificationLike {
 
 /**
  * A dónde navegar al hacer click en una notificación, según su categoría.
- * Devuelve null para las categorías que todavía no tienen una acción real
- * asociada (sus módulos fuente no existen aún).
+ * Los anuncios se leen completos en el dropdown y no necesitan otra ruta.
  */
 export function getNotificationHref(n: NotificationLike): string | null {
   if (n.entityType === "GlobalChatMessage") return "/comunidad#chat-global";
   if (n.entityType === "Conversation") return n.entityId ? `/mensajes?c=${n.entityId}` : "/mensajes";
-  if (n.entityType === "DirectMessage") return "/mensajes";
+  if (n.entityType === "DirectMessage") return n.conversationId ? `/mensajes?c=${encodeURIComponent(n.conversationId)}` : "/mensajes";
+  if (n.entityType === "User") return n.actor?.username ? `/perfil/${encodeURIComponent(n.actor.username)}` : "/configuracion#profile";
   switch (n.type) {
+    case "ACHIEVEMENT":
+    case "LEVEL_UP":
+      return n.recipientUsername ? `/perfil/${encodeURIComponent(n.recipientUsername)}#achievements` : "/configuracion#profile";
+    case "SECURITY_ALERT":
+      return "/configuracion#security";
     case "FRIEND_REQUEST":
       return "/amigos";
     case "FRIEND_ACCEPTED":

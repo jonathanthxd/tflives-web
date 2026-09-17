@@ -1,6 +1,7 @@
 import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { prisma } from "@/infrastructure/database/prisma";
 import { canAccessSection, type AdminSection } from "@/modules/administration/permissions";
+import { getActiveBanOrSuspension } from "./sanctions";
 import { Role } from "@prisma/client";
 
 export class AdminGuardError extends Error {
@@ -24,5 +25,6 @@ export async function requireAdminSection(
   if (!profile || !canAccessSection(profile.role, section)) {
     throw new AdminGuardError("No autorizado", 403);
   }
+  if (await getActiveBanOrSuspension(profile.id)) throw new AdminGuardError("Tu cuenta está suspendida", 403);
   return { userId: profile.id, role: profile.role };
 }

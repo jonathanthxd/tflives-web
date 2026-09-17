@@ -109,6 +109,11 @@ export interface CosmeticInput {
 }
 
 export function normalizeCosmeticInput(input: Partial<CosmeticInput>, existing?: CosmeticInput): CosmeticInput {
+  if (!input || typeof input !== "object" || Array.isArray(input)) throw new CosmeticError("Datos de cosmético inválidos");
+  if (!existing && ["slug", "type", "rarity", "name", "description", "nameEn", "descriptionEn", "price", "visualPreset"].some((key) => !(key in input))) throw new CosmeticError("Completá todos los campos del cosmético");
+  for (const field of ["premiumOnly", "active"] as const) {
+    if (input[field] !== undefined && typeof input[field] !== "boolean") throw new CosmeticError("Estado de cosmético inválido");
+  }
   const type = input.type === undefined ? existing?.type : normalizeType(input.type);
   if (!type) throw new CosmeticError("Tipo de cosmético inválido");
   return {
@@ -120,8 +125,8 @@ export function normalizeCosmeticInput(input: Partial<CosmeticInput>, existing?:
     nameEn: input.nameEn === undefined ? existing!.nameEn : normalizeText(input.nameEn, "English name", 80),
     descriptionEn: input.descriptionEn === undefined ? existing!.descriptionEn : normalizeText(input.descriptionEn, "English description", 300),
     price: input.price === undefined ? existing!.price : normalizePrice(input.price),
-    premiumOnly: input.premiumOnly === undefined ? existing!.premiumOnly : Boolean(input.premiumOnly),
-    active: input.active === undefined ? existing!.active : Boolean(input.active),
+    premiumOnly: input.premiumOnly === undefined ? (existing?.premiumOnly ?? false) : Boolean(input.premiumOnly),
+    active: input.active === undefined ? (existing?.active ?? true) : Boolean(input.active),
     visualPreset: input.visualPreset === undefined
       ? normalizeVisualPreset(type, existing!.visualPreset)
       : normalizeVisualPreset(type, input.visualPreset),
@@ -202,7 +207,9 @@ export async function purchaseCosmetic(userId: string, cosmeticId: string) {
         throw new CosmeticError("Este cosmético requiere Premium", 403);
       }
 
-      const walletMutation = await applyWalletTransaction(tx, {
+      const walletMutation = cosmetic.price === 0
+        ? { applied: true, balance: (await tx.wallet.findUnique({ where: { userId }, select: { balance: true } }))?.balance ?? 0 }
+        : await applyWalletTransaction(tx, {
         userId,
         type: "SPEND",
         source: "FUTURE",
@@ -285,6 +292,7 @@ export async function updateCosmetic(actorId: string, id: string, rawInput: Part
   const existing = await prisma.cosmetic.findUnique({ where: { id } });
   if (!existing) throw new CosmeticError("Cosmético no encontrado", 404);
   const input = normalizeCosmeticInput(rawInput, existing);
+  if (input.type !== existing.type && await prisma.userCosmetic.count({ where: { cosmeticId: id } })) throw new CosmeticError("No se puede cambiar el tipo de un cosmético con propietarios", 409);
   try {
     return await prisma.$transaction(async (tx) => {
       const cosmetic = await tx.cosmetic.update({ where: { id }, data: input });

@@ -1,5 +1,6 @@
 "use client";
 
+import { readJsonResponse } from "@/shared/lib/http";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
@@ -27,7 +28,7 @@ function displayNameOf(person: PersonSummary) {
 
 function PersonRow({ person, children }: { person: PersonSummary; children: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between gap-3 py-2.5">
+    <div className="flex flex-wrap items-center justify-between gap-3 py-2.5">
       <Link
         href={person.username ? `/perfil/${person.username}` : "#"}
         className="flex items-center gap-3 min-w-0 hover:opacity-80 transition-opacity"
@@ -57,16 +58,19 @@ export default function FriendsPage() {
   const [error, setError] = useState("");
 
   async function loadOverview() {
+    try {
     const res = await fetch("/api/social/friends");
     if (res.status === 401) {
       router.replace("/login?redirect=/amigos");
       return;
     }
-    const data = await res.json();
+    const data = await readJsonResponse(res);
     setFriends(data.friends ?? []);
     setReceived(data.received ?? []);
     setSent(data.sent ?? []);
     setLoading(false);
+  
+    } catch { setError(t("errorGenerico")); setLoading(false); }
   }
 
   useEffect(() => {
@@ -77,19 +81,22 @@ export default function FriendsPage() {
   useEffect(() => {
     if (query.trim().length < 2) {
       setResults([]);
+      setSearching(false);
       return;
     }
     setSearching(true);
     const handle = setTimeout(() => {
       fetch(`/api/social/search?q=${encodeURIComponent(query)}`)
-        .then((res) => res.json())
+        .then(readJsonResponse)
         .then((data) => setResults(data.results ?? []))
+        .catch(() => setError(t("errorGenerico")))
         .finally(() => setSearching(false));
     }, 300);
     return () => clearTimeout(handle);
   }, [query]);
 
   async function openConversation(username: string) {
+    try {
     setError("");
     const res = await fetch("/api/messaging/conversations", {
       method: "POST",
@@ -102,9 +109,12 @@ export default function FriendsPage() {
       return;
     }
     router.push(`/mensajes?c=${data.conversation.id}`);
+  
+    } catch { setError(t("errorGenerico")); setLoading(false); }
   }
 
   async function sendRequest(username: string) {
+    try {
     setError("");
     const res = await fetch("/api/social/friends", {
       method: "POST",
@@ -118,9 +128,12 @@ export default function FriendsPage() {
       setError(data.error || t("errorGenerico"));
     }
     loadOverview();
+  
+    } catch { setError(t("errorGenerico")); setLoading(false); }
   }
 
   async function respond(friendshipId: string, action: "accept" | "decline") {
+    try {
     setError("");
     const res = await fetch("/api/social/friends", {
       method: "PATCH",
@@ -132,9 +145,12 @@ export default function FriendsPage() {
       setError(data.error || t("errorGenerico"));
     }
     loadOverview();
+  
+    } catch { setError(t("errorGenerico")); setLoading(false); }
   }
 
   async function cancelRequest(friendshipId: string) {
+    try {
     setError("");
     const res = await fetch("/api/social/friends", {
       method: "DELETE",
@@ -146,6 +162,8 @@ export default function FriendsPage() {
       setError(data.error || t("errorGenerico"));
     }
     loadOverview();
+  
+    } catch { setError(t("errorGenerico")); setLoading(false); }
   }
 
   if (loading) {

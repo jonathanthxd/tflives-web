@@ -9,7 +9,8 @@ import {
   type AdminSection,
 } from "@/modules/administration/permissions";
 import { translated } from "@/modules/editorial/publication";
-import PostCard from "@/modules/editorial/components/post-card";
+import PaginatedPosts from "@/modules/editorial/components/paginated-posts";
+import { postSummary } from "@/modules/editorial/post-summary";
 import { UserAvatar } from "@/modules/profiles/components/user-identity";
 import { identityName } from "@/modules/profiles/types";
 import { cosmeticVisualsByType, toSafeCosmeticVisual } from "@/modules/cosmetics/visuals";
@@ -137,11 +138,13 @@ export async function PostsFeed({
   modalityId,
   type,
   limit = 12,
+  paginated = true,
   locale: requestedLocale,
 }: {
   modalityId?: string;
   type?: "MAINTENANCE";
   limit?: number;
+  paginated?: boolean;
   locale?: Locale;
 }) {
   const [t, locale, posts] = await Promise.all([
@@ -149,33 +152,12 @@ export async function PostsFeed({
       ? getTranslations({ locale: requestedLocale, namespace: "Content" })
       : getTranslations("Content"),
     requestedLocale ? Promise.resolve(requestedLocale) : getLocale(),
-    getCachedPublicPosts({ modalityId, type, limit }),
+    getCachedPublicPosts({ modalityId, type, limit: paginated ? limit + 1 : limit }),
   ]);
   if (!posts.length) return <Empty>{t("postsEmpty")}</Empty>;
-  return (
-    <div className={grid}>
-      {posts.map((raw) => {
-        const post = translated(raw, locale);
-        return (
-          <PostCard
-            key={post.id}
-            title={post.title}
-            excerpt={post.excerpt ?? ""}
-            type={post.type}
-            modality={
-              post.modality ? translated(post.modality, locale).name : "TFLives"
-            }
-            date={(post.publishedAt ?? post.createdAt).toLocaleDateString(
-              locale,
-            )}
-            slug={post.slug}
-            image={post.image}
-          />
-        );
-      })}
-    </div>
-  );
+  return <PaginatedPosts key={[modalityId, type, locale].join(":")} initial={posts.slice(0, limit).map((post) => postSummary(post, locale))} hasMore={paginated && posts.length > limit} pageSize={limit} modalityId={modalityId} type={type} locale={locale} />;
 }
+
 export async function ModalityCards({
   limit,
   locale: requestedLocale,

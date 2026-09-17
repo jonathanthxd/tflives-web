@@ -22,7 +22,8 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const { userId } = await requireAdminSection("announcements");
-    const body = await request.json();
+    const body = await request.json().catch(() => null);
+    if (!body || typeof body !== "object" || Array.isArray(body) || (body.segment !== undefined && !VALID_SEGMENTS.includes(body.segment))) return NextResponse.json({ error: "invalid" }, { status: 400 });
 
     const title = typeof body.title === "string" ? body.title : "";
     const message = typeof body.body === "string" ? body.body : "";

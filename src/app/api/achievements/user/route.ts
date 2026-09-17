@@ -38,8 +38,8 @@ export async function GET(request: Request) {
     await evaluateAutomaticAchievements(target.id, ACHIEVEMENT_TRIGGER_KEYS, "significant-per-trigger");
 
     const [achievements, obtainableAchievements, progression] = await Promise.all([
-      listUserAchievements(username),
-      listUserObtainableAchievements(username),
+      listUserAchievements(username, locale),
+      listUserObtainableAchievements(username, locale),
       getPublicProgressionProfile(target.id, locale),
     ]);
     return NextResponse.json({ achievements, obtainableAchievements, progression }, { status: 200 });

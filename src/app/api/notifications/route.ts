@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { NextResponse } from "next/server";
 import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { prisma } from "@/infrastructure/database/prisma";
@@ -10,15 +11,17 @@ export async function GET(request: Request) {
   }
 
   const { searchParams } = new URL(request.url);
-  const limit = Math.min(Number(searchParams.get("limit")) || 30, 100);
+  const rawLimit = Number(searchParams.get("limit") ?? 30);
+  const limit = Number.isFinite(rawLimit) ? Math.min(Math.max(Math.floor(rawLimit), 1), 100) : 30;
 
-  const [notifications, unreadCount] = await Promise.all([
+  const [notifications, unreadCount, recipient] = await Promise.all([
     prisma.notification.findMany({
       where: { userId: authUser.id },
       orderBy: { createdAt: "desc" },
       take: limit,
     }),
     prisma.notification.count({ where: { userId: authUser.id, read: false } }),
+    prisma.user.findUnique({ where: { id: authUser.id }, select: { username: true } }),
   ]);
 
   const actorIds = [...new Set(notifications.map((n) => n.actorId).filter((id): id is string => !!id))];
@@ -45,8 +48,13 @@ export async function GET(request: Request) {
     : [];
   const announcementsById = new Map(announcements.map((a) => [a.id, a]));
 
+  const directIds = notifications.filter((n) => n.entityType === "DirectMessage" && n.entityId).map((n) => n.entityId!);
+  const directMessages = directIds.length ? await prisma.directMessage.findMany({ where: { id: { in: directIds }, conversation: { participants: { some: { userId: authUser.id, status: { not: "LEFT" } } } } }, select: { id: true, conversationId: true } }) : [];
+  const conversationByMessage = new Map(directMessages.map((m) => [m.id, m.conversationId]));
   const enriched = notifications.map((n) => ({
     ...n,
+    recipientUsername: recipient?.username ?? null,
+    conversationId: n.entityType === "DirectMessage" && n.entityId ? conversationByMessage.get(n.entityId) ?? null : null,
     actor: n.actorId ? actorsById.get(n.actorId) ?? null : null,
     announcement:
       n.entityType === "Announcement" && n.entityId ? announcementsById.get(n.entityId) ?? null : null,
@@ -63,7 +71,10 @@ export async function PATCH(request: Request) {
   }
 
   const body = await request.json().catch(() => ({}));
-  const { id, markAllRead } = body as { id?: string; markAllRead?: boolean };
+  const parsed = z.union([z.object({ id: z.string().min(1).max(200) }).strict(), z.object({ markAllRead: z.literal(true) }).strict()]).safeParse(body);
+  if (!parsed.success) return NextResponse.json({ error: "invalid" }, { status: 400 });
+  const id = "id" in parsed.data ? parsed.data.id : undefined;
+  const markAllRead = "markAllRead" in parsed.data;
 
   if (markAllRead) {
     await prisma.notification.updateMany({

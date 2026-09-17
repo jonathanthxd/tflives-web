@@ -186,7 +186,7 @@ export default function ProfileView({
                 <div className="p-5 sm:p-6">
                   <LiveProgressCard username={profile.username} initialProgress={profile.progress} embedded />
                 </div>
-                <div className="border-t border-border p-5 sm:p-6">
+                <div id="achievements" className="scroll-mt-28 border-t border-border p-5 sm:p-6">
                   <AchievementsCard username={profile.username} embedded />
                 </div>
               </>

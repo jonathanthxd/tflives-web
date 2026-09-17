@@ -1,3 +1,4 @@
+import { serializableTransaction } from "@/infrastructure/database/transaction";
 import { CreatorApplicationStatus, CreatorStatus, Prisma, type Role } from "@prisma/client";
 import { normalizeUsername } from "@/modules/authentication/validation";
 import { logAdminAction } from "@/modules/administration/action-log";
@@ -162,7 +163,7 @@ export async function applyForCreator(userId: string, input: CreatorApplicationI
 }
 
 export async function reviewCreatorApplication(actorId: string, applicationId: string, input: CreatorReviewInput) {
-  const result = await prisma.$transaction(async (tx) => {
+  const result = await serializableTransaction(async (tx) => {
     const application = await tx.creatorApplication.findUnique({
       where: { id: applicationId },
       select: { id: true, userId: true, primaryPlatform: true, channelUrl: true, category: true, description: true, status: true, user: { select: { username: true } } },

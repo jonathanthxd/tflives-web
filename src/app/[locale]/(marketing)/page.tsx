@@ -99,7 +99,7 @@ export default async function Home({
 
         <h2 className="font-display text-3xl font-semibold">{c("latest")}</h2>
         <Suspense fallback={<PublicSectionSkeleton rows={3} />}>
-          <PostsFeed locale={locale} limit={3} />
+          <PostsFeed locale={locale} limit={3} paginated={false} />
         </Suspense>
 
         <h2 className="font-display text-3xl font-semibold">{c("modalities")}</h2>

@@ -292,9 +292,9 @@ export default function Navbar() {
           >
             {user ? (
               <>
-                <div className="hidden items-center sm:flex">
+                <div className="flex items-center">
                   <NotificationBell userId={user.id} compact={compact} />
-                  <MessagingUnreadLink compact={compact} />
+                  <span className="hidden sm:inline-flex"><MessagingUnreadLink compact={compact} /></span>
                 </div>
                 <UserMenu
                   displayName={displayName}

@@ -1,5 +1,6 @@
 "use client";
 
+import { readJsonResponse } from "@/shared/lib/http";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter, Link as IntlLink } from "@/i18n/navigation";
@@ -127,6 +128,7 @@ function MessagesPageContent() {
   const router = useRouter();
   const nextSearchParams = useNextSearchParams();
 
+  const activeIdRef = useRef<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [mobileConversationOpen, setMobileConversationOpen] = useState(false);
   const [conversationSearch, setConversationSearch] = useState("");
@@ -159,6 +161,8 @@ function MessagesPageContent() {
   const [deleteTarget, setDeleteTarget] = useState<ConversationMessage | null>(null);
   const [messageClock, setMessageClock] = useState(0);
 
+  const [sendingMessage, setSendingMessage] = useState(false);
+  const sendingRef = useRef(false);
   const [draft, setDraft] = useState("");
   const [replyToMessage, setReplyToMessage] = useState<ConversationMessage | null>(null);
   const [stickers, setStickers] = useState<{ id: string; name: string; assetUrl: string; category: string | null }[]>([]);
@@ -174,21 +178,24 @@ function MessagesPageContent() {
   const nearConversationBottomRef = useRef(true);
 
   async function loadInbox() {
+    try {
     const res = await fetch("/api/messaging/conversations");
     if (res.status === 401) {
       router.replace("/login?redirect=/mensajes");
       return;
     }
-    const data = await res.json();
+    const data = await readJsonResponse(res);
     setActive(data.active ?? []);
     setRequests(data.requests ?? []);
     setLoading(false);
+  
+    } catch { setError(t("errorGenerico")); setBusy(false); setLoading(false); }
   }
 
   useEffect(() => {
     fetch("/api/me")
       .then((res) => res.json())
-      .then((data) => setMyUserId(data.user?.id ?? null));
+      .then((data) => setMyUserId(data.user?.id ?? null)).catch(() => setError(t("errorGenerico")));
     loadInbox();
     fetch("/api/chat/stickers")
       .then((res) => (res.ok ? res.json() : null))
@@ -209,10 +216,12 @@ function MessagesPageContent() {
   }, []);
 
   async function loadConversation(id: string, after?: string) {
+    try {
     const res = await fetch(`/api/messaging/conversations/${id}${after ? `?after=${encodeURIComponent(after)}` : ""}`);
     if (res.ok) {
-      const data = await res.json();
-      setNextCursor(data.nextCursor ?? null);
+      const data = await readJsonResponse(res);
+      if (activeIdRef.current !== id) return;
+      if (!after) setNextCursor(data.nextCursor ?? null);
       setConversation((previous) => {
         if (!previous || previous.id !== data.conversation.id) return data.conversation;
         if (!after) {
@@ -233,11 +242,20 @@ function MessagesPageContent() {
         };
       });
     } else {
+      if (activeIdRef.current !== id) return;
+      setError(t("errorGenerico"));
       setConversation(null);
     }
+  
+    } catch { setError(t("errorGenerico")); setBusy(false); }
   }
 
   useEffect(() => {
+    activeIdRef.current = activeId;
+    setConversation(null);
+    setNextCursor(null);
+    setReplyToMessage(null);
+    setEditingMessageId(null);
     nearConversationBottomRef.current = true;
     if (activeId) loadConversation(activeId);
     else setConversation(null);
@@ -297,6 +315,7 @@ function MessagesPageContent() {
   }, [activeId, latestMessageId]);
 
   function selectConversation(id: string) {
+    activeIdRef.current = id;
     setActiveId(id);
     setMobileConversationOpen(true);
     router.push(`/mensajes?c=${id}`);
@@ -316,12 +335,13 @@ function MessagesPageContent() {
     const handle = setTimeout(() => {
       fetch(`/api/social/search?q=${encodeURIComponent(newMessageQuery)}`)
         .then((res) => res.json())
-        .then((data) => setNewMessageResults(data.results ?? []));
+        .then((data) => setNewMessageResults(data.results ?? [])).catch(() => setError(t("errorGenerico")));
     }, 300);
     return () => clearTimeout(handle);
   }, [newMessageQuery, showNewMessage]);
 
   async function startConversation(username: string) {
+    try {
     setBusy(true);
     setError("");
     const res = await fetch("/api/messaging/conversations", {
@@ -338,15 +358,20 @@ function MessagesPageContent() {
     setShowNewMessage(false);
     await loadInbox();
     selectConversation(data.conversation.id);
+  
+    } catch { setError(t("errorGenerico")); setBusy(false); }
   }
 
   async function openNewGroup() {
+    try {
     const res = await fetch("/api/social/friends");
     const data = await res.json();
     setGroupFriends(data.friends ?? []);
     setGroupSelected(new Set());
     setGroupName("");
     setShowNewGroup(true);
+  
+    } catch { setError(t("errorGenerico")); setBusy(false); }
   }
 
   function toggleGroupMember(id: string) {
@@ -359,6 +384,7 @@ function MessagesPageContent() {
   }
 
   async function submitGroup() {
+    try {
     const usernames = groupFriends
       .filter((f) => groupSelected.has(f.id) && f.username)
       .map((f) => f.username as string);
@@ -380,64 +406,50 @@ function MessagesPageContent() {
     setShowNewGroup(false);
     await loadInbox();
     selectConversation(data.conversation.id);
+  
+    } catch { setError(t("errorGenerico")); setBusy(false); }
   }
 
   async function respondRequest(id: string, action: "open" | "decline") {
-    await fetch(`/api/messaging/conversations/${id}/requests`, {
+    try {
+    const response = await fetch(`/api/messaging/conversations/${id}/requests`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action }),
     });
     await loadInbox();
+    if (!response.ok) throw new Error("request_failed");
     if (action === "open") selectConversation(id);
+  
+    } catch { setError(t("errorGenerico")); setBusy(false); }
   }
 
-  async function sendMessage() {
-    if (!activeId || !draft.trim()) return;
+  async function submitMessage(stickerId?: string) {
+    if (!activeId || sendingRef.current || (!draft.trim() && !stickerId)) return;
+    const conversationId = activeId;
     const content = draft;
-    setDraft("");
-    const res = await fetch(`/api/messaging/conversations/${activeId}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content, replyToId: replyToMessage?.id ?? null }),
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setConversation((prev) => {
-        if (!prev) return prev;
-        if (prev.messages.some((m) => m.id === data.message.id)) return prev;
-        return { ...prev, messages: [...prev.messages, data.message] };
+    sendingRef.current = true;
+    setSendingMessage(true);
+    setError("");
+    try {
+      const response = await fetch(`/api/messaging/conversations/${conversationId}`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content, stickerId, replyToId: replyToMessage?.id ?? null }),
       });
-      setReplyToMessage(null);
-      loadInbox();
-      requestAnimationFrame(() => {
-        if (messageComposerRef.current) messageComposerRef.current.style.height = "";
+      const data = await readJsonResponse(response);
+      setConversation((previous) => !previous || previous.id !== conversationId || previous.messages.some((m) => m.id === data.message.id) ? previous : { ...previous, messages: [...previous.messages, data.message] });
+      if (activeIdRef.current === conversationId) {
+        setDraft((current) => current === content ? "" : current);
+        setReplyToMessage(null);
+        setShowExpressions(false);
         messageComposerRef.current?.focus();
-      });
-    } else {
-      setDraft(content);
-    }
+      }
+      await loadInbox();
+    } catch { setError(t("errorGenerico")); }
+    finally { sendingRef.current = false; setSendingMessage(false); }
   }
-
-  async function sendSticker(stickerId: string) {
-    if (!activeId) return;
-    const res = await fetch(`/api/messaging/conversations/${activeId}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content: draft.trim(), replyToId: replyToMessage?.id ?? null, stickerId }),
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) { setError(t("errorGenerico")); return; }
-    setConversation((prev) => !prev || prev.messages.some((message) => message.id === data.message.id) ? prev : { ...prev, messages: [...prev.messages, data.message] });
-    setDraft("");
-    setReplyToMessage(null);
-    setShowExpressions(false);
-    loadInbox();
-    requestAnimationFrame(() => {
-      if (messageComposerRef.current) messageComposerRef.current.style.height = "";
-      messageComposerRef.current?.focus();
-    });
-  }
+  async function sendMessage() { await submitMessage(); }
+  async function sendSticker(stickerId: string) { await submitMessage(stickerId); }
 
   function insertEmoji(emoji: string) {
     const composer = messageComposerRef.current;
@@ -481,9 +493,8 @@ function MessagesPageContent() {
       } : prev);
       setEditingMessageId(null);
       setEditingDraft("");
-      setMessageClock(Date.now());
       await loadInbox();
-    } finally {
+    } catch { setError(t("errorGenerico")); } finally {
       setBusy(false);
     }
   }
@@ -510,12 +521,13 @@ function MessagesPageContent() {
       if (replyToMessage?.id === deleteTarget.id) setReplyToMessage(null);
       setDeleteTarget(null);
       await loadInbox();
-    } finally {
+    } catch { setError(t("errorGenerico")); } finally {
       setBusy(false);
     }
   }
 
   async function reactToMessage(message: ConversationMessage, emoji: string) {
+    try {
     const adding = !message.reactions.some((reaction) => reaction.emoji === emoji && reaction.mine);
     const res = await fetch(`/api/messaging/messages/${message.id}/reactions`, {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ emoji }),
@@ -525,9 +537,12 @@ function MessagesPageContent() {
     setConversation((prev) => prev ? { ...prev, messages: prev.messages.map((item) => item.id === message.id ? { ...item, reactions: data.reactions } : item) } : prev);
     if (adding) setQuickReactions(recordReactionUse(emoji));
     setReactionPicker(null);
+  
+    } catch { setError(t("errorGenerico")); setBusy(false); }
   }
 
   async function loadOlderMessages() {
+    try {
     if (!activeId || !nextCursor) return;
     const viewport = messageViewportRef.current;
     const previousHeight = viewport?.scrollHeight ?? 0;
@@ -535,8 +550,10 @@ function MessagesPageContent() {
     if (!res.ok) return;
     const data = await res.json();
     setNextCursor(data.nextCursor ?? null);
-    setConversation((prev) => !prev ? prev : { ...data.conversation, messages: [...data.conversation.messages, ...prev.messages].filter((message: ConversationMessage, index: number, all: ConversationMessage[]) => all.findIndex((candidate) => candidate.id === message.id) === index) });
+    setConversation((prev) => !prev || prev.id !== data.conversation.id ? prev : { ...data.conversation, messages: [...data.conversation.messages, ...prev.messages].filter((message: ConversationMessage, index: number, all: ConversationMessage[]) => all.findIndex((candidate) => candidate.id === message.id) === index) });
     requestAnimationFrame(() => { if (viewport) viewport.scrollTop += viewport.scrollHeight - previousHeight; });
+  
+    } catch { setError(t("errorGenerico")); setBusy(false); }
   }
 
   function trackConversationScroll() {
@@ -546,6 +563,7 @@ function MessagesPageContent() {
   }
 
   async function addMember() {
+    try {
     if (!activeId || !memberUsername.trim()) return;
     setBusy(true);
     const res = await fetch(`/api/messaging/conversations/${activeId}/members`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: memberUsername }) });
@@ -553,50 +571,64 @@ function MessagesPageContent() {
     if (!res.ok) { setError(t("errorGenerico")); return; }
     setMemberUsername("");
     loadConversation(activeId);
+  
+    } catch { setError(t("errorGenerico")); setBusy(false); }
   }
 
   async function removeMember(targetUserId: string) {
+    try {
     if (!activeId) return;
     setBusy(true);
     const res = await fetch(`/api/messaging/conversations/${activeId}/members`, { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ targetUserId }) });
     setBusy(false);
     if (!res.ok) { setError(t("errorGenerico")); return; }
     loadConversation(activeId);
+  
+    } catch { setError(t("errorGenerico")); setBusy(false); }
   }
 
   async function confirmBlock() {
+    try {
     if (!conversation) return;
     const other = conversation.participants.find((p) => p.userId !== myUserId)?.user;
     if (!other?.username) return;
     setBusy(true);
-    await fetch("/api/messaging/block", {
+    const response = await fetch("/api/messaging/block", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username: other.username }),
     });
     setBusy(false);
+    if (!response.ok) throw new Error("request_failed");
     setShowBlockConfirm(false);
     setActiveId(null);
     router.push("/mensajes");
     await loadInbox();
+  
+    } catch { setError(t("errorGenerico")); setBusy(false); }
   }
 
   async function confirmLeave() {
+    try {
     if (!activeId) return;
     setBusy(true);
-    await fetch(`/api/messaging/conversations/${activeId}/members`, {
+    const response = await fetch(`/api/messaging/conversations/${activeId}/members`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({}),
     });
     setBusy(false);
+    if (!response.ok) throw new Error("request_failed");
     setShowLeaveConfirm(false);
     setActiveId(null);
     router.push("/mensajes");
     await loadInbox();
+  
+    } catch { setError(t("errorGenerico")); setBusy(false); }
   }
 
   async function confirmCloseGroup() {
+    try {
     if (!activeId) return;
     setBusy(true);
     const res = await fetch(`/api/messaging/conversations/${activeId}/members`, {
@@ -608,20 +640,26 @@ function MessagesPageContent() {
     setActiveId(null);
     router.push("/mensajes");
     await loadInbox();
+  
+    } catch { setError(t("errorGenerico")); setBusy(false); }
   }
 
   async function submitReport() {
+    try {
     if (!reportTarget || !reportReason.trim()) return;
     setBusy(true);
-    await fetch("/api/messaging/report", {
+    const response = await fetch("/api/messaging/report", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ targetType: reportTarget.targetType, targetId: reportTarget.targetId, reason: reportReason }),
     });
     setBusy(false);
+    if (!response.ok) throw new Error("request_failed");
     setReportReason("");
     setReportTarget(null);
     setShowReport(false);
+  
+    } catch { setError(t("errorGenerico")); setBusy(false); }
   }
 
   if (loading) {
@@ -920,7 +958,7 @@ function MessagesPageContent() {
                       className="max-h-28 min-h-9 flex-1 resize-none overflow-y-auto bg-transparent px-2 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground"
                     />
                     <button ref={expressionButtonRef} type="button" onClick={() => setShowExpressions((value) => !value)} aria-label={t("emojisYStickers")} aria-expanded={showExpressions} className="grid size-9 shrink-0 place-items-center rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary"><Smile className="size-[18px]" aria-hidden="true" /></button>
-                    <button type="submit" aria-label={t("enviar")} disabled={!draft.trim()} className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground shadow-sm transition-opacity disabled:opacity-40"><Send className="size-4" aria-hidden="true" /></button>
+                    <button type="submit" aria-label={t("enviar")} disabled={sendingMessage || !draft.trim()} className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground shadow-sm transition-opacity disabled:opacity-40"><Send className="size-4" aria-hidden="true" /></button>
                   </form>
                 </div>
 

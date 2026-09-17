@@ -19,11 +19,14 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const { userId } = await requireAdminSection("achievements");
-    const body = await request.json();
+    const body = await request.json().catch(() => null);
+    if (!body || typeof body !== "object" || Array.isArray(body)) return NextResponse.json({ error: "invalid" }, { status: 400 });
 
     const achievement = await createAchievement(userId, {
       name: typeof body.name === "string" ? body.name : "",
       description: typeof body.description === "string" ? body.description : "",
+      nameEn: typeof body.nameEn === "string" || body.nameEn === null ? body.nameEn : undefined,
+      descriptionEn: typeof body.descriptionEn === "string" || body.descriptionEn === null ? body.descriptionEn : undefined,
       iconKey: typeof body.iconKey === "string" ? body.iconKey : "",
       order: typeof body.order === "number" ? body.order : 0,
       active: typeof body.active === "boolean" ? body.active : true,

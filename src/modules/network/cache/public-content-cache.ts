@@ -33,7 +33,7 @@ export async function getCachedPublicPosts({
       ...(type ? { type } : {}),
     },
     include: { modality: true },
-    orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+    orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }, { id: "desc" }],
     take: limit,
   });
 }

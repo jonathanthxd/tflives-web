@@ -49,6 +49,8 @@ export default function NotificationToasts() {
             type: toast.type,
             entityType: toast.entityType,
             entityId: toast.entityId,
+            conversationId: toast.conversationId,
+              recipientUsername: toast.recipientUsername,
             actor: null,
           });
           const icon = ICONS[toast.type] ?? ICONS.DEFAULT;

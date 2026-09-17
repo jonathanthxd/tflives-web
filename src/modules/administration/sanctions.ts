@@ -52,6 +52,12 @@ export async function applySanction(
   if (!reason.trim()) throw new SanctionError("Contá el motivo de la sanción");
   if (userId === issuedById) throw new SanctionError("No podés sancionarte a vos mismo");
 
+  if (reason.trim().length > 2000) throw new SanctionError("El motivo es demasiado largo");
+  if (expiresAt && (!Number.isFinite(expiresAt.getTime()) || expiresAt <= new Date())) throw new SanctionError("La fecha de expiración debe ser futura");
+  const [actor, target] = await Promise.all([prisma.user.findUnique({ where: { id: issuedById }, select: { role: true } }), prisma.user.findUnique({ where: { id: userId }, select: { role: true } })]);
+  if (!target) throw new SanctionError("Usuario no encontrado", 404);
+  if (!actor || actor.role === "USER" || (actor.role === "MOD" && target.role !== "USER")) throw new SanctionError("No autorizado", 403);
+
   const sanction = await prisma.userSanction.create({
     data: { userId, type, reason: reason.trim(), issuedById, expiresAt },
   });

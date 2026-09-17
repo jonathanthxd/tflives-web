@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { PostType } from "@prisma/client";
 
-interface PostCardProps {
+export interface PostCardProps {
   title: string;
   excerpt: string;
   type: PostType;

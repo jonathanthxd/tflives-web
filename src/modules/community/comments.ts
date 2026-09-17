@@ -100,7 +100,7 @@ export async function listComments(
     const dto = dtoById.get(c.id)!;
     if (c.parentId && dtoById.has(c.parentId)) {
       dtoById.get(c.parentId)!.replies.push(dto);
-    } else if (!c.parentId) {
+    } else {
       topLevel.push(dto);
     }
   }

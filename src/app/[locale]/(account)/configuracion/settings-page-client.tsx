@@ -1,5 +1,6 @@
 "use client";
 
+import { readJsonResponse } from "@/shared/lib/http";
 import { useEffect, useState } from "react";
 import { Bell, Coins, ShieldCheck, UserRound, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -53,6 +54,9 @@ function Toggle({
 }
 
 export default function SettingsPage() {
+  const tCompletion = useTranslations("Completion");
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [reload, setReload] = useState(0);
   const t = useTranslations("Settings");
   const tCategory = useTranslations("Settings.categoria");
   const router = useRouter();
@@ -83,8 +87,10 @@ export default function SettingsPage() {
 
   useEffect(() => {
     async function load() {
+      setLoadFailed(false);
+      try {
       const meRes = await fetch("/api/me");
-      const me = await meRes.json();
+      const me = await readJsonResponse(meRes);
       if (!me.user) {
         router.replace("/login?redirect=/configuracion");
         return;
@@ -96,17 +102,18 @@ export default function SettingsPage() {
         fetch("/api/social/privacy"),
         fetch("/api/notifications/preferences"),
       ]);
-      const privacy = await privacyRes.json();
-      const prefs = await prefsRes.json();
+      const privacy = await readJsonResponse(privacyRes);
+      const prefs = await readJsonResponse(prefsRes);
 
       setAllowFriendRequests(privacy.allowFriendRequests ?? true);
       setVisibility(privacy.friendsListVisibility ?? "PUBLIC");
       setPreferences(prefs.preferences ?? []);
       setLoading(false);
+      } catch { setLoadFailed(true); }
     }
     void load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [reload]);
 
   function selectSection(next: Section) {
     setSection(next);
@@ -150,6 +157,8 @@ export default function SettingsPage() {
       setError(t("saveError"));
     }
   }
+
+  if (loadFailed) return <main className="mx-auto min-h-[60dvh] max-w-xl px-6 py-28"><p role="alert">{tCompletion("loadError")}</p><button className="mt-4 text-primary underline" onClick={() => setReload((v) => v + 1)}>{tCompletion("retry")}</button></main>;
 
   if (loading) {
     return (

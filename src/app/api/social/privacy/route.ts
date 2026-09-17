@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { FriendsListVisibility } from "@prisma/client";
+import { privacyInput } from "@/modules/social/validation";
 import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { prisma } from "@/infrastructure/database/prisma";
 
-const VISIBILITY_VALUES: FriendsListVisibility[] = ["PUBLIC", "FRIENDS_ONLY", "PRIVATE"];
+
 
 export async function GET() {
   const authUser = await getCurrentAuthUser();
@@ -21,18 +21,9 @@ export async function PATCH(request: Request) {
   const authUser = await getCurrentAuthUser();
   if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
-  const body = await request.json().catch(() => ({}));
-  const data: { allowFriendRequests?: boolean; friendsListVisibility?: FriendsListVisibility } = {};
-
-  if (typeof body.allowFriendRequests === "boolean") {
-    data.allowFriendRequests = body.allowFriendRequests;
-  }
-  if (VISIBILITY_VALUES.includes(body.friendsListVisibility)) {
-    data.friendsListVisibility = body.friendsListVisibility;
-  }
-  if (Object.keys(data).length === 0) {
-    return NextResponse.json({ error: "Nada para actualizar" }, { status: 400 });
-  }
+  const parsed = privacyInput.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
+  const data = parsed.data;
 
   const updated = await prisma.user.update({
     where: { id: authUser.id },

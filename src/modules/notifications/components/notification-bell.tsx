@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Bell, CheckCheck, Megaphone, Sparkles } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -24,32 +25,43 @@ interface NotificationItem {
   createdAt: string;
   entityType: string | null;
   entityId: string | null;
+  conversationId?: string | null;
+  recipientUsername?: string | null;
   actor: Actor | null;
   announcement: { id: string; title: string; body: string } | null;
 }
 
 function actorName(actor: Actor | null) {
   if (!actor) return null;
-  return actor.displayName || actor.name || actor.username || "Alguien";
+  return actor.displayName || actor.name || actor.username || null;
 }
 
 export default function NotificationBell({ userId, compact = false }: { userId: string; compact?: boolean }) {
+  const tCompletion = useTranslations("Completion");
+  const [failure, setFailure] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [reload, setReload] = useState(0);
+  const [marking, setMarking] = useState(false);
   const t = useTranslations("Notifications");
   const locale = useLocale();
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
+  const [expanded, setExpanded] = useState<string | null>(null);
   const preferencesRef = useRef<Record<string, boolean>>({});
   const knownIdsRef = useRef<Set<string>>(new Set());
   const initialLoadedRef = useRef(false);
 
   useEffect(() => {
     function handleClick(event: MouseEvent) {
-      if (ref.current && !ref.current.contains(event.target as Node)) setOpen(false);
+      if (ref.current && !ref.current.contains(event.target as Node) && !popupRef.current?.contains(event.target as Node)) setOpen(false);
     }
+    const escape = (event: KeyboardEvent) => { if (event.key === "Escape") setOpen(false); };
+    document.addEventListener("keydown", escape);
     document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
+    return () => { document.removeEventListener("mousedown", handleClick); document.removeEventListener("keydown", escape); };
   }, []);
 
   useEffect(() => {
@@ -69,7 +81,7 @@ export default function NotificationBell({ userId, compact = false }: { userId: 
     async function refreshNotifications() {
       try {
         const res = await fetch("/api/notifications", { cache: "no-store" });
-        if (!res.ok) return;
+        if (!res.ok) throw new Error("request_failed");
         const data = await res.json();
         if (cancelled) return;
 
@@ -86,6 +98,8 @@ export default function NotificationBell({ userId, compact = false }: { userId: 
               actorName: actorName(notification.actor),
               entityType: notification.entityType,
               entityId: notification.entityId,
+              conversationId: notification.conversationId,
+              recipientUsername: notification.recipientUsername,
               announcementTitle: notification.announcement?.title ?? null,
             });
 
@@ -101,10 +115,12 @@ export default function NotificationBell({ userId, compact = false }: { userId: 
 
         knownIdsRef.current = new Set(fresh.map((notification) => notification.id));
         initialLoadedRef.current = true;
+        setFailure(false);
+        setLoaded(true);
         setItems(fresh);
         setUnreadCount(data.unreadCount || 0);
       } catch {
-        // A transient network issue should not break the notification center.
+        if (!cancelled) setFailure(true);
       }
     }
 
@@ -120,32 +136,29 @@ export default function NotificationBell({ userId, compact = false }: { userId: 
       window.clearInterval(interval);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [userId, t]);
+  }, [userId, t, reload]);
 
   async function requestPermissionIfNeeded() {
     if (typeof Notification === "undefined") return;
     if (Notification.permission === "default") await Notification.requestPermission();
   }
 
-  async function markAllRead() {
-    setItems((previous) => previous.map((notification) => ({ ...notification, read: true })));
-    setUnreadCount(0);
-    await fetch("/api/notifications", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ markAllRead: true }),
-    });
+  async function persistRead(id?: string) {
+    if (marking) return;
+    setMarking(true);
+    try {
+      const response = await fetch("/api/notifications", {
+        method: "PATCH", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(id ? { id } : { markAllRead: true }),
+      });
+      if (!response.ok) throw new Error("request_failed");
+      setFailure(false);
+      setReload((value) => value + 1);
+    } catch { setFailure(true); }
+    finally { setMarking(false); }
   }
-
-  async function markRead(id: string) {
-    setItems((previous) => previous.map((notification) => (notification.id === id ? { ...notification, read: true } : notification)));
-    setUnreadCount((count) => Math.max(0, count - 1));
-    await fetch("/api/notifications", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id }),
-    });
-  }
+  async function markAllRead() { await persistRead(); }
+  async function markRead(id: string) { await persistRead(id); }
 
   function toggleOpen() {
     setOpen((value) => !value);
@@ -160,7 +173,7 @@ export default function NotificationBell({ userId, compact = false }: { userId: 
         aria-label={t("titulo")}
         aria-expanded={open}
         aria-haspopup="menu"
-        className={`relative hidden size-10 items-center justify-center text-muted-foreground transition-[color,background-color,border-radius] duration-300 hover:bg-primary/[0.08] hover:text-primary sm:inline-flex ${compact ? "rounded-full" : "rounded-xl"}`}
+        className={`relative inline-flex size-10 items-center justify-center text-muted-foreground transition-[color,background-color,border-radius] duration-300 hover:bg-primary/[0.08] hover:text-primary ${compact ? "rounded-full" : "rounded-xl"}`}
       >
         <Bell className="size-5" strokeWidth={1.6} />
         {unreadCount > 0 && (
@@ -170,11 +183,12 @@ export default function NotificationBell({ userId, compact = false }: { userId: 
         )}
       </button>
 
-      {open && (
+      {open && createPortal(
         <div
+          ref={popupRef}
           role="menu"
           aria-label={t("titulo")}
-          className="tfl-glass tfl-glass-strong absolute right-0 z-50 mt-3 w-[min(24rem,calc(100vw-2rem))] origin-top-right overflow-hidden rounded-2xl border animate-in fade-in-0 zoom-in-95 slide-in-from-top-1 duration-150"
+          className="tfl-glass tfl-glass-strong fixed inset-x-4 top-20 z-[120] mx-auto sm:left-auto sm:right-6 w-[min(24rem,calc(100vw-2rem))] origin-top-right overflow-hidden rounded-2xl border animate-in fade-in-0 zoom-in-95 slide-in-from-top-1 duration-150"
         >
           <div className="flex items-center justify-between gap-3 border-b border-border/70 px-4 py-3.5">
             <div className="min-w-0">
@@ -193,6 +207,8 @@ export default function NotificationBell({ userId, compact = false }: { userId: 
             {unreadCount > 0 && (
               <button
                 onClick={markAllRead}
+                disabled={marking}
+                aria-label={t("marcarTodoLeido")}
                 className="inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-xl px-2.5 text-xs font-medium text-primary transition-colors hover:bg-primary/[0.08]"
               >
                 <CheckCheck className="size-3.5" />
@@ -202,7 +218,8 @@ export default function NotificationBell({ userId, compact = false }: { userId: 
           </div>
 
           <div className="max-h-[min(30rem,calc(100dvh-8rem))] overflow-y-auto p-2">
-            {items.length === 0 ? (
+            {failure && <div role="alert" className="p-3 text-sm text-destructive">{tCompletion("loadError")} <button onClick={() => setReload((v) => v + 1)} className="text-primary underline">{tCompletion("retry")}</button></div>}
+            {!loaded && !failure ? <p role="status" className="p-4 text-sm">{tCompletion("loading")}</p> : items.length === 0 && !failure ? (
               <div className="flex flex-col items-center px-5 py-10 text-center">
                 <span className="mb-3 grid size-11 place-items-center rounded-2xl bg-primary/[0.08] text-primary">
                   <Sparkles className="size-5" strokeWidth={1.6} />
@@ -236,7 +253,7 @@ export default function NotificationBell({ userId, compact = false }: { userId: 
                         {notification.type === "ANNOUNCEMENT" && notification.announcement ? (
                           <>
                             <span className="block truncate text-sm font-medium text-foreground">{notification.announcement.title}</span>
-                            <span className="mt-0.5 block line-clamp-2 text-xs leading-relaxed text-muted-foreground">{notification.announcement.body}</span>
+                            <span className={`mt-0.5 block whitespace-pre-wrap break-words text-xs leading-relaxed text-muted-foreground ${expanded === notification.id ? "" : "line-clamp-2"}`}>{notification.announcement.body}</span>
                           </>
                         ) : (
                           <span className="block text-sm leading-snug text-foreground/90">
@@ -271,7 +288,7 @@ export default function NotificationBell({ userId, compact = false }: { userId: 
                     <button
                       key={notification.id}
                       role="menuitem"
-                      onClick={() => !notification.read && markRead(notification.id)}
+                      onClick={() => { if (!notification.read) markRead(notification.id); setExpanded((current) => current === notification.id ? null : notification.id); }}
                       className={itemClassName}
                     >
                       {content}
@@ -281,7 +298,7 @@ export default function NotificationBell({ userId, compact = false }: { userId: 
               </div>
             )}
           </div>
-        </div>
+        </div>, document.body
       )}
     </div>
   );

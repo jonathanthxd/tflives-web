@@ -7,7 +7,7 @@ export async function POST(request: Request) {
   const authUser = await getCurrentAuthUser();
   if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
   try {
-    const body = await request.json().catch(() => ({}));
+    const body = (await request.json().catch(() => null)) ?? {};
     const cosmeticId = typeof body.cosmeticId === "string" ? body.cosmeticId : "";
     // Price is deliberately absent from the input: the server reads the current catalogue row.
     const purchase = await purchaseCosmetic(authUser.id, cosmeticId);

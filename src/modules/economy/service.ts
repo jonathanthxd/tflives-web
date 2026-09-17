@@ -1,7 +1,8 @@
+import { serializableTransaction } from "@/infrastructure/database/transaction";
 import { randomUUID } from "node:crypto";
 import {
   NotificationType,
-  Prisma,
+  type Prisma,
   WalletTransactionSource,
   WalletTransactionType,
 } from "@prisma/client";
@@ -39,6 +40,7 @@ export function balanceAfterMutation(balance: number, amount: number) {
   if (!Number.isInteger(amount) || amount === 0) throw new WalletError("El monto debe ser un entero distinto de cero");
   const nextBalance = balance + amount;
   if (nextBalance < 0) throw new WalletError("La wallet no tiene suficientes TFL Coins");
+  if (!Number.isSafeInteger(nextBalance) || nextBalance > 2_147_483_647) throw new WalletError("El saldo supera el límite de la wallet", 409);
   return nextBalance;
 }
 
@@ -308,7 +310,7 @@ export async function adjustWalletByAdmin({
   const normalizedReason = validateAdminCoinAdjustment(amount, reason);
 
   const signedAmount = direction === "GRANT" ? amount : -amount;
-  return prisma.$transaction(async (tx) => {
+  return serializableTransaction(async (tx) => {
     const target = await tx.user.findUnique({ where: { id: targetUserId }, select: { id: true } });
     if (!target) throw new WalletError("Usuario no encontrado", 404);
 
@@ -336,5 +338,5 @@ export async function adjustWalletByAdmin({
     });
     await createWalletNotification(tx, targetUserId, result.transaction.id);
     return result;
-  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+  });
 }

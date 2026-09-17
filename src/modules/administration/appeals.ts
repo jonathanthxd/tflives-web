@@ -1,6 +1,6 @@
 import { prisma } from "@/infrastructure/database/prisma";
-import { logAdminAction } from "@/modules/administration/action-log";
-import { revokeSanction } from "@/modules/administration/sanctions";
+import { serializableTransaction } from "@/infrastructure/database/transaction";
+
 
 export class AppealError extends Error {
   status: number;
@@ -43,7 +43,8 @@ export async function submitAppeal(userId: string, sanctionId: string, message: 
   if (!trimmed) throw new AppealError("Contá por qué creés que esta sanción no debería aplicarse");
   if (trimmed.length > 2000) throw new AppealError("El mensaje es demasiado largo");
 
-  const sanction = await prisma.userSanction.findUnique({ where: { id: sanctionId } });
+  return serializableTransaction(async (tx) => {
+  const sanction = await tx.userSanction.findUnique({ where: { id: sanctionId } });
   if (!sanction || sanction.userId !== userId) {
     throw new AppealError("Sanción no encontrada", 404);
   }
@@ -51,13 +52,14 @@ export async function submitAppeal(userId: string, sanctionId: string, message: 
     throw new AppealError("Esta sanción ya no está activa");
   }
 
-  const existing = await prisma.sanctionAppeal.findFirst({
+  const existing = await tx.sanctionAppeal.findFirst({
     where: { sanctionId, status: "PENDING" },
   });
   if (existing) throw new AppealError("Ya enviaste una apelación para esta sanción");
 
-  return prisma.sanctionAppeal.create({
+  return tx.sanctionAppeal.create({
     data: { sanctionId, userId, message: trimmed },
+  });
   });
 }
 
@@ -81,15 +83,17 @@ export async function resolveAppeal(
   decision: "approve" | "deny",
   note: string
 ) {
-  const appeal = await prisma.sanctionAppeal.findUnique({ where: { id: appealId } });
+  if (note.trim().length > 2000) throw new AppealError("El mensaje es demasiado largo");
+  return serializableTransaction(async (tx) => {
+  const appeal = await tx.sanctionAppeal.findUnique({ where: { id: appealId } });
   if (!appeal) throw new AppealError("Apelación no encontrada", 404);
   if (appeal.status !== "PENDING") throw new AppealError("Esta apelación ya fue resuelta");
 
   if (decision === "approve") {
-    await revokeSanction(reviewerId, appeal.sanctionId);
+    await tx.userSanction.updateMany({ where: { id: appeal.sanctionId, revokedAt: null }, data: { revokedAt: new Date() } });
   }
 
-  const updated = await prisma.sanctionAppeal.update({
+  const updated = await tx.sanctionAppeal.update({
     where: { id: appealId },
     data: {
       status: decision === "approve" ? "APPROVED" : "DENIED",
@@ -99,13 +103,14 @@ export async function resolveAppeal(
     },
   });
 
-  await logAdminAction({
+  await tx.adminActionLog.create({ data: {
     actorId: reviewerId,
     action: decision === "approve" ? "appeal.approve" : "appeal.deny",
     targetType: "SanctionAppeal",
     targetId: appealId,
     metadata: { sanctionId: appeal.sanctionId, userId: appeal.userId },
-  });
+  } });
 
   return updated;
+  });
 }
