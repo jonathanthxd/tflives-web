@@ -362,6 +362,12 @@ export default function Navbar() {
                 <Link href="/trayectoria" className="flex min-h-11 items-center rounded-xl px-3 text-muted-foreground hover:bg-primary/5 hover:text-primary" onClick={() => setMobileOpen(false)}>
                   {t("trayectoria")}
                 </Link>
+                <Link href="/privacidad" className="flex min-h-11 items-center rounded-xl px-3 text-muted-foreground hover:bg-primary/5 hover:text-primary" onClick={() => setMobileOpen(false)}>
+                  {t("privacidad")}
+                </Link>
+                <Link href="/terminos" className="flex min-h-11 items-center rounded-xl px-3 text-muted-foreground hover:bg-primary/5 hover:text-primary" onClick={() => setMobileOpen(false)}>
+                  {t("terminos")}
+                </Link>
               </div>
 
               {user ? (

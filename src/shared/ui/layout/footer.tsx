@@ -63,7 +63,16 @@ export default function Footer() {
           </nav>
         </div>
 
-        <p className="mt-5 text-center text-xs text-muted-foreground/70 md:text-left">
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-muted-foreground/60">
+          <Link href="/privacidad" className="hover:text-primary transition-colors">
+            {t("privacidad")}
+          </Link>
+          <Link href="/terminos" className="hover:text-primary transition-colors">
+            {t("terminos")}
+          </Link>
+        </div>
+
+        <p className="mt-3 text-center text-xs text-muted-foreground/70 md:text-left">
           {t("copyright", { year })}
         </p>
       </div>
