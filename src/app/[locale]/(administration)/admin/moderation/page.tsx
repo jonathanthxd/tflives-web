@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { requireSectionPage } from "@/modules/administration/page-guard";
 import ModerationManager from "@/modules/administration/components/moderation-manager";
 import AppealsQueue from "@/modules/administration/components/appeals-queue";
@@ -13,13 +14,14 @@ export default async function ModerationPage({
 }) {
   const { locale } = await params;
   await requireSectionPage("moderation", locale);
+  const t = await getTranslations({ locale, namespace: "AdminPlatform" });
 
   return (
     <div>
       <PageHeader
         icon={SECTION_ICONS.moderation}
-        title="Sanciones"
-        description="Banear, suspender, silenciar o advertir a un usuario. Buscá su cuenta para ver el historial y aplicar una sanción."
+        title={t("moderationTitle")}
+        description={t("moderationDescription")}
       />
       <AppealsQueue />
       <ModerationManager />

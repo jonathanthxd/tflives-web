@@ -19,6 +19,11 @@ const MIGRATIONS = [
   "20260915000000_tfl_economy",
 ];
 
+const COSMETICS_MIGRATIONS = [
+  ...MIGRATIONS,
+  "20260916000000_cosmetics_premium",
+];
+
 async function migratedDatabase() {
   const db = await PGlite.create();
   for (const migration of MIGRATIONS) {
@@ -27,12 +32,18 @@ async function migratedDatabase() {
   return db;
 }
 
-test("v0.8 additive migration preserves v0.7 data and creates the cosmetic tables", async () => {
+async function migratedCosmeticsDatabase() {
   const db = await migratedDatabase();
+  await db.exec(readFileSync("prisma/migrations/20260916000000_cosmetics_premium/migration.sql", "utf8"));
+  await db.exec(`ALTER TYPE "WalletTransactionSource" ADD VALUE IF NOT EXISTS 'COSMETIC_PURCHASE';`);
+  return db;
+}
+
+test("v0.8 additive migration preserves v0.7 data and creates the cosmetic tables", async () => {
+  const db = await migratedCosmeticsDatabase();
   try {
     await db.exec(`INSERT INTO "User" (id,email,name,"updatedAt") VALUES ('member','member@example.test','Member',now());
       INSERT INTO "Wallet" (id,"userId",balance,"updatedAt") VALUES ('wallet','member',40,now());`);
-    await db.exec(readFileSync("prisma/migrations/20260916000000_cosmetics_premium/migration.sql", "utf8"));
     const [user, wallet, cosmeticTable] = await Promise.all([
       db.query<{ id: string }>(`SELECT id FROM "User" WHERE id = 'member'`),
       db.query<{ balance: number }>(`SELECT balance FROM "Wallet" WHERE id = 'wallet'`),
@@ -47,14 +58,13 @@ test("v0.8 additive migration preserves v0.7 data and creates the cosmetic table
 });
 
 test("successful cosmetic purchase debits once, writes one ledger row, and creates one owner", async () => {
-  const db = await migratedDatabase();
+  const db = await migratedCosmeticsDatabase();
   try {
-    await db.exec(readFileSync("prisma/migrations/20260916000000_cosmetics_premium/migration.sql", "utf8"));
     await db.exec(`INSERT INTO "User" (id,email,name,"updatedAt") VALUES ('buyer','buyer@example.test','Buyer',now());
       INSERT INTO "Wallet" (id,"userId",balance,"updatedAt") VALUES ('buyer-wallet','buyer',300,now());
       INSERT INTO "Cosmetic" (id,slug,type,rarity,name,description,name_en,description_en,price,"visualPreset","updatedAt") VALUES ('frame','bronze-frame','AVATAR_FRAME','COMMON','Marco Bronce','Marco','Bronze Frame','Frame',100,'BRONZE_FRAME',now());
       BEGIN;
-      INSERT INTO "WalletTransaction" (id,"walletId",type,source,amount,"balanceAfter","sourceKey",description) VALUES ('purchase-ledger','buyer-wallet','SPEND','FUTURE',-100,200,'cosmetic-purchase:buyer:frame','Cosmético · Marco Bronce');
+      INSERT INTO "WalletTransaction" (id,"walletId",type,source,amount,"balanceAfter","sourceKey",description) VALUES ('purchase-ledger','buyer-wallet','SPEND','COSMETIC_PURCHASE',-100,200,'cosmetic-purchase:buyer:frame','Cosmético · Marco Bronce');
       UPDATE "Wallet" SET balance = 200 WHERE id = 'buyer-wallet';
       INSERT INTO "UserCosmetic" (user_id,cosmetic_id) VALUES ('buyer','frame');
       COMMIT;`);
@@ -67,16 +77,15 @@ test("successful cosmetic purchase debits once, writes one ledger row, and creat
     assert.deepEqual(ledger.rows[0], { amount: -100, balanceAfter: 200, description: "Cosmético · Marco Bronce" });
     assert.equal(ownership.rows[0]?.count, 1);
     assert.throws(() => balanceAfterMutation(200, -201), /suficientes/i);
-    await assert.rejects(db.exec(`INSERT INTO "WalletTransaction" (id,"walletId",type,source,amount,"balanceAfter","sourceKey") VALUES ('repeat-ledger','buyer-wallet','SPEND','FUTURE',-100,100,'cosmetic-purchase:buyer:frame')`));
+    await assert.rejects(db.exec(`INSERT INTO "WalletTransaction" (id,"walletId",type,source,amount,"balanceAfter","sourceKey") VALUES ('repeat-ledger','buyer-wallet','SPEND','COSMETIC_PURCHASE',-100,100,'cosmetic-purchase:buyer:frame')`));
   } finally {
     await db.close();
   }
 });
 
 test("inventory ownership is unique and equip atomically replaces the prior item of the same type", async () => {
-  const db = await migratedDatabase();
+  const db = await migratedCosmeticsDatabase();
   try {
-    await db.exec(readFileSync("prisma/migrations/20260916000000_cosmetics_premium/migration.sql", "utf8"));
     await db.exec(`INSERT INTO "User" (id,email,name,"updatedAt") VALUES ('owner','owner@example.test','Owner',now());
       INSERT INTO "Cosmetic" (id,slug,type,rarity,name,description,name_en,description_en,price,"visualPreset","updatedAt") VALUES
       ('frame-one','frame-one','AVATAR_FRAME','COMMON','Uno','Uno','One','One',1,'BRONZE_FRAME',now()),
@@ -187,9 +196,8 @@ test("production cosmetics expose eighty safe recipes across all five visual typ
 });
 
 test("production catalogue migrations safely add enum values before seeding eighty official cosmetics", async () => {
-  const db = await migratedDatabase();
+  const db = await migratedCosmeticsDatabase();
   try {
-    await db.exec(readFileSync("prisma/migrations/20260916000000_cosmetics_premium/migration.sql", "utf8"));
     await db.exec(readFileSync("prisma/migrations/20260919000000_cosmetics_visual_system/migration.sql", "utf8"));
     await db.exec(readFileSync("prisma/migrations/20260919001000_production_cosmetics_catalog/migration.sql", "utf8"));
     const result = await db.query<{ count: number; types: number }>(`SELECT count(*)::int AS count, count(DISTINCT type)::int AS types FROM "Cosmetic" WHERE id LIKE 'official-cosmetic-%'`);
@@ -201,9 +209,8 @@ test("production catalogue migrations safely add enum values before seeding eigh
 });
 
 test("final production cosmetic reconciliation removes test rows and normalizes all eighty purchasable items", async () => {
-  const db = await migratedDatabase();
+  const db = await migratedCosmeticsDatabase();
   try {
-    await db.exec(readFileSync("prisma/migrations/20260916000000_cosmetics_premium/migration.sql", "utf8"));
     await db.exec(readFileSync("prisma/migrations/20260919000000_cosmetics_visual_system/migration.sql", "utf8"));
     await db.exec(readFileSync("prisma/migrations/20260919001000_production_cosmetics_catalog/migration.sql", "utf8"));
 

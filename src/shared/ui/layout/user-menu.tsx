@@ -155,19 +155,17 @@ export default function UserMenu({ displayName, username, role, image, onLogout,
             {t("amigos")}
           </Link>
 
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              setOpen(false);
-            }}
+          <Link
+            href="/suscripcion"
             role="menuitem"
-            className="flex w-full items-center gap-2.5 px-3 py-2 rounded-xl text-sm text-foreground hover:bg-primary/5 hover:text-primary transition-colors"
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm text-foreground hover:bg-primary/5 hover:text-primary transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 8.25v-1.5a2.25 2.25 0 012.25-2.25h7.5a2.25 2.25 0 012.25 2.25v7.5a2.25 2.25 0 01-2.25 2.25h-1.5m-9-9h-1.5a2.25 2.25 0 00-2.25 2.25v7.5A2.25 2.25 0 007.5 18.75h7.5a2.25 2.25 0 002.25-2.25v-1.5m-9-9h9m-9 9h9" />
             </svg>
             {t("suscripcion")}
-          </button>
+          </Link>
 
           {(role === "ADMIN" || role === "MOD") && (
             <Link

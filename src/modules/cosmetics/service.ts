@@ -212,7 +212,7 @@ export async function purchaseCosmetic(userId: string, cosmeticId: string) {
         : await applyWalletTransaction(tx, {
         userId,
         type: "SPEND",
-        source: "FUTURE",
+        source: "COSMETIC_PURCHASE",
         amount: -cosmetic.price,
         sourceKey: `cosmetic-purchase:${userId}:${cosmetic.id}`,
         description: `Cosmético · ${cosmetic.name}`,
@@ -366,6 +366,23 @@ export async function getAdminPremiumSummary(userId: string) {
   if (!user) throw new CosmeticError("Usuario no encontrado", 404);
   const now = new Date();
   return { ...user, premium: user.premiumEntitlements.some((entitlement) => isEntitlementActive(entitlement, now)) };
+}
+
+export async function getUserPremiumStatus(userId: string) {
+  const entitlement = await prisma.premiumEntitlement.findFirst({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+    select: { tier: true, startsAt: true, expiresAt: true, revokedAt: true, source: true, createdAt: true },
+  });
+  if (!entitlement) return { active: false as const };
+  const now = new Date();
+  return {
+    active: isEntitlementActive(entitlement, now),
+    tier: entitlement.tier,
+    grantedAt: entitlement.startsAt.toISOString(),
+    expiresAt: entitlement.expiresAt?.toISOString() ?? null,
+    source: entitlement.source,
+  };
 }
 
 export async function grantPremium(actorId: string, userId: string, raw: { reason: unknown; expiresAt: unknown }) {

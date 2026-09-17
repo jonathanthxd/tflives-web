@@ -22,7 +22,6 @@ model User {
   usernameChangedAt DateTime? @map("username_changed_at")
   role              Role      @default(USER)
   twoFactorEnabled  Boolean   @default(false)
-  messages          Message[]
   posts             Post[]
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
@@ -799,7 +798,7 @@ enum WalletTransactionSource {
   PROGRESSION
   ACHIEVEMENT
   ADMIN
-  FUTURE
+  COSMETIC_PURCHASE
 }
 
 /// A small, curated visual catalogue. `visualPreset` is an enum rather than
@@ -970,7 +969,6 @@ enum CosmeticVisualPreset {
 enum CosmeticAcquisitionSource {
   PURCHASE
   ADMIN_GRANT
-  FUTURE
 }
 
 enum PremiumTier {
@@ -979,7 +977,6 @@ enum PremiumTier {
 
 enum PremiumEntitlementSource {
   ADMIN
-  FUTURE
 }
 
 /// Server-managed community progression. `level` is persisted as a read
@@ -1118,14 +1115,6 @@ model Modality {
   wikiArticles WikiArticle[]
 
   @@index([published, status, order])
-}
-
-model Message {
-  id        String   @id @default(cuid())
-  content   String
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
 }
 
 enum Role {

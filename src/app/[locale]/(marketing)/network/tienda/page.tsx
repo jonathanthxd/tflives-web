@@ -7,7 +7,7 @@ import { contentMetadata } from "@/modules/editorial/metadata";
 
 export const instant = false;
 export const generateMetadata = () =>
-  contentMetadata("shop", "shopDescription", "/tienda");
+  contentMetadata("shop", "shopDescription", "/network/tienda");
 export default async function Page() {
   const t = await getTranslations("Content");
   return (

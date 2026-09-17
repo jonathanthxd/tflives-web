@@ -46,7 +46,7 @@ export default function Footer() {
             <Link href="/trayectoria" className="hover:text-primary">
               {t("trayectoria")}
             </Link>
-            <Link href="/tienda" className="hover:text-primary">
+            <Link href="/network/tienda" className="hover:text-primary">
               {t("tienda")}
             </Link>
             <Link href="/equipo" className="hover:text-primary">

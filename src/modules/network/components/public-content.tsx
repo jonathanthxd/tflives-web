@@ -121,7 +121,7 @@ export async function AreaLinks({ locale }: { locale?: Locale } = {}) {
         ["/comunidad", "community"],
         ["/equipo", "team"],
         ["/trayectoria", "timeline"],
-        ["/tienda", "shop"],
+        ["/network/tienda", "shop"],
       ].map(([href, key]) => (
         <Link
           href={href}
