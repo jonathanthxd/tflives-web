@@ -6,6 +6,10 @@ export async function getCurrentSession() {
 }
 
 export async function getCurrentAuthUser() {
-  const session = await getCurrentSession();
-  return session?.user ?? null;
+  try {
+    const session = await getCurrentSession();
+    return session?.user ?? null;
+  } catch {
+    return null;
+  }
 }

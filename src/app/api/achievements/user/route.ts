@@ -13,11 +13,16 @@ export async function GET(request: Request) {
   if (!username) return NextResponse.json({ error: "Falta username" }, { status: 400 });
 
   try {
-    const [target, viewer] = await Promise.all([
-      prisma.user.findUnique({ where: { username }, select: { id: true } }),
-      getCurrentAuthUser(),
-    ]);
+    const target = await prisma.user.findUnique({ where: { username }, select: { id: true } });
     if (!target) return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 });
+
+    let viewer = null;
+    try {
+      viewer = await getCurrentAuthUser();
+    } catch {
+      // Not logged in or session error — treat as anonymous viewer
+    }
+
     if (viewer && viewer.id !== target.id) {
       const blocked = await prisma.block.findFirst({
         where: {
