@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { listUserAchievements, listUserObtainableAchievements, AchievementError } from "@/modules/achievements/service";
+import { listUserAchievementsByUserId, listUserObtainableAchievementsByUserId, AchievementError } from "@/modules/achievements/service";
 import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { prisma } from "@/infrastructure/database/prisma";
 import { getPublicProgressionProfile, reconcileProgressionAchievements } from "@/modules/progression/service";
@@ -39,12 +39,16 @@ export async function GET(request: Request) {
     // achievement surface is requested. This makes pre-existing Google/Discord
     // links, verified email, profile completion, messages, friendships, XP, and
     // levels count even if they happened before a particular achievement shipped.
-    await reconcileProgressionAchievements(target.id);
-    await evaluateAutomaticAchievements(target.id, ACHIEVEMENT_TRIGGER_KEYS, "significant-per-trigger");
+    // These are "catch-up" operations — if they fail or are slow the response
+    // still returns existing data; the next request will retry.
+    await Promise.allSettled([
+      reconcileProgressionAchievements(target.id),
+      evaluateAutomaticAchievements(target.id, ACHIEVEMENT_TRIGGER_KEYS, "significant-per-trigger"),
+    ]);
 
     const [achievements, obtainableAchievements, progression] = await Promise.all([
-      listUserAchievements(username, locale),
-      listUserObtainableAchievements(username, locale),
+      listUserAchievementsByUserId(target.id, locale),
+      listUserObtainableAchievementsByUserId(target.id, locale),
       getPublicProgressionProfile(target.id, locale),
     ]);
     return NextResponse.json({ achievements, obtainableAchievements, progression }, { status: 200 });

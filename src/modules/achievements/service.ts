@@ -289,9 +289,13 @@ export async function listUserAchievements(username: string, locale = "es") {
   const user = await prisma.user.findUnique({ where: { username }, select: { id: true } });
   if (!user) throw new AchievementError("Usuario no encontrado", 404);
 
+  return listUserAchievementsByUserId(user.id, locale);
+}
+
+export async function listUserAchievementsByUserId(userId: string, locale = "es") {
   const awards = await prisma.userAchievement.findMany({
     where: {
-      userId: user.id,
+      userId,
       achievement: { active: true, unlockMode: "MANUAL" },
     },
     include: { achievement: true },
@@ -314,6 +318,10 @@ export async function listUserObtainableAchievements(username: string, locale = 
   const user = await prisma.user.findUnique({ where: { username }, select: { id: true } });
   if (!user) throw new AchievementError("Usuario no encontrado", 404);
 
+  return listUserObtainableAchievementsByUserId(user.id, locale);
+}
+
+export async function listUserObtainableAchievementsByUserId(userId: string, locale = "es") {
   const achievements = await prisma.achievement.findMany({
     where: { active: true, unlockMode: "AUTOMATIC" },
     orderBy: [{ order: "asc" }, { createdAt: "asc" }],
@@ -327,7 +335,7 @@ export async function listUserObtainableAchievements(username: string, locale = 
       trigger: true,
       triggerValue: true,
       awards: {
-        where: { userId: user.id },
+        where: { userId },
         select: { awardedAt: true },
         take: 1,
       },

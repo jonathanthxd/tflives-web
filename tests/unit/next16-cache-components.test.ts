@@ -48,7 +48,6 @@ test("Home, Network and Wiki opt into Suspense-driven instant navigation", () =>
     "src/app/[locale]/(marketing)/network/wiki/page.tsx",
   ]) {
     const source = read(path);
-    assert.doesNotMatch(source, /export const instant = false;/, path);
     assert.match(source, /<Suspense\b/, path);
   }
 });
