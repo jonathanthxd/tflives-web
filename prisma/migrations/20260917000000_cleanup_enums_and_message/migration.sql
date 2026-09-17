@@ -3,44 +3,53 @@
 -- 2. Removes unused FUTURE from CosmeticAcquisitionSource and PremiumEntitlementSource
 -- 3. Drops the unused Message table
 
--- === WalletTransactionSource: add COSMETIC_PURCHASE, migrate data, drop FUTURE ===
+-- === WalletTransactionSource: replace FUTURE with COSMETIC_PURCHASE (transaction-safe) ===
 
--- Add the new value
-ALTER TYPE "WalletTransactionSource" ADD VALUE 'COSMETIC_PURCHASE' BEFORE 'FUTURE';
-
--- Migrate any existing FUTURE rows to the new value
-UPDATE "WalletTransaction" SET source = 'COSMETIC_PURCHASE' WHERE source = 'FUTURE';
-
--- Create a clean enum without FUTURE
 CREATE TYPE "WalletTransactionSource_new" AS ENUM ('PROGRESSION', 'ACHIEVEMENT', 'ADMIN', 'COSMETIC_PURCHASE');
 
--- Migrate the column
-ALTER TABLE "WalletTransaction" ALTER COLUMN source TYPE "WalletTransactionSource_new" USING source::text::"WalletTransactionSource_new";
+ALTER TABLE "WalletTransaction" ADD COLUMN source_new "WalletTransactionSource_new";
 
--- Drop old enum and rename new
-ALTER TYPE "WalletTransactionSource" RENAME TO "WalletTransactionSource_old";
+UPDATE "WalletTransaction" SET source_new = CASE source::text
+  WHEN 'FUTURE' THEN 'COSMETIC_PURCHASE'::"WalletTransactionSource_new"
+  ELSE source::text::"WalletTransactionSource_new"
+END;
+
+ALTER TABLE "WalletTransaction" DROP COLUMN source;
+ALTER TABLE "WalletTransaction" RENAME COLUMN source_new TO source;
+ALTER TABLE "WalletTransaction" ALTER COLUMN source SET NOT NULL;
+
+DROP TYPE "WalletTransactionSource";
 ALTER TYPE "WalletTransactionSource_new" RENAME TO "WalletTransactionSource";
-DROP TYPE "WalletTransactionSource_old";
 
 -- === CosmeticAcquisitionSource: drop FUTURE ===
 
 CREATE TYPE "CosmeticAcquisitionSource_new" AS ENUM ('PURCHASE', 'ADMIN_GRANT');
 
-ALTER TABLE "UserCosmetic" ALTER COLUMN source TYPE "CosmeticAcquisitionSource_new" USING source::text::"CosmeticAcquisitionSource_new";
+ALTER TABLE "UserCosmetic" ADD COLUMN source_new "CosmeticAcquisitionSource_new";
 
-ALTER TYPE "CosmeticAcquisitionSource" RENAME TO "CosmeticAcquisitionSource_old";
+UPDATE "UserCosmetic" SET source_new = source::text::"CosmeticAcquisitionSource_new";
+
+ALTER TABLE "UserCosmetic" DROP COLUMN source;
+ALTER TABLE "UserCosmetic" RENAME COLUMN source_new TO source;
+ALTER TABLE "UserCosmetic" ALTER COLUMN source SET NOT NULL;
+
+DROP TYPE "CosmeticAcquisitionSource";
 ALTER TYPE "CosmeticAcquisitionSource_new" RENAME TO "CosmeticAcquisitionSource";
-DROP TYPE "CosmeticAcquisitionSource_old";
 
 -- === PremiumEntitlementSource: drop FUTURE ===
 
 CREATE TYPE "PremiumEntitlementSource_new" AS ENUM ('ADMIN');
 
-ALTER TABLE "PremiumEntitlement" ALTER COLUMN source TYPE "PremiumEntitlementSource_new" USING source::text::"PremiumEntitlementSource_new";
+ALTER TABLE "PremiumEntitlement" ADD COLUMN source_new "PremiumEntitlementSource_new";
 
-ALTER TYPE "PremiumEntitlementSource" RENAME TO "PremiumEntitlementSource_old";
+UPDATE "PremiumEntitlement" SET source_new = source::text::"PremiumEntitlementSource_new";
+
+ALTER TABLE "PremiumEntitlement" DROP COLUMN source;
+ALTER TABLE "PremiumEntitlement" RENAME COLUMN source_new TO source;
+ALTER TABLE "PremiumEntitlement" ALTER COLUMN source SET NOT NULL;
+
+DROP TYPE "PremiumEntitlementSource";
 ALTER TYPE "PremiumEntitlementSource_new" RENAME TO "PremiumEntitlementSource";
-DROP TYPE "PremiumEntitlementSource_old";
 
 -- === Drop unused Message table ===
 
