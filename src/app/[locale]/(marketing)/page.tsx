@@ -17,6 +17,8 @@ import OwnersSection from "@/modules/administration/components/owners-section";
 import HeroGlow from "@/shared/ui/effects/hero-glow";
 import Reveal from "@/shared/ui/reveal";
 
+export const instant = false;
+
 export async function generateMetadata({
   params,
 }: {

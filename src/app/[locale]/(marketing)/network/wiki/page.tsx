@@ -16,6 +16,8 @@ import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { getCachedWikiFilters } from "@/modules/network/cache/public-content-cache";
 
+export const instant = false;
+
 export async function generateMetadata({
   params,
 }: {

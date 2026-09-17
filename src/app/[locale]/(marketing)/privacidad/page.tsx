@@ -1,6 +1,8 @@
 import { getTranslations } from "next-intl/server";
 import type { Locale } from "@/i18n/routing";
 
+export const instant = false;
+
 export async function generateMetadata({
   params,
 }: {

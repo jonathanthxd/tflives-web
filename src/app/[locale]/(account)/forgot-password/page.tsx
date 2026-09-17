@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { authClient } from "@/infrastructure/auth/client";
@@ -12,6 +12,14 @@ import { FormField } from "@/shared/ui/form-field";
 import HeroGlow from "@/shared/ui/effects/hero-glow";
 
 export default function ForgotPasswordPage() {
+  return (
+    <Suspense fallback={null}>
+      <ForgotPasswordForm />
+    </Suspense>
+  );
+}
+
+function ForgotPasswordForm() {
   const t = useTranslations("ForgotPassword");
   const tAuth = useTranslations("Auth");
   const [loading, setLoading] = useState(false);

@@ -13,6 +13,8 @@ import { contentMetadata } from "@/modules/editorial/metadata";
 import { getCachedPublicModalities } from "@/modules/network/cache/public-content-cache";
 import type { Locale } from "@/i18n/routing";
 
+export const instant = false;
+
 export async function generateMetadata({
   params,
 }: {
@@ -69,14 +71,13 @@ async function NetworkEditorialFeed({
   );
 }
 
-export default async function NetworkPage({
-  params,
+async function NetworkContent({
   searchParams,
+  locale,
 }: {
-  params: Promise<{ locale: Locale }>;
   searchParams: NetworkSearchParams;
+  locale: Locale;
 }) {
-  const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "Content" });
 
   return (
@@ -103,5 +104,21 @@ export default async function NetworkPage({
         <StaffLink section="posts" href="/admin/posts" />
       </Suspense>
     </PublicShell>
+  );
+}
+
+export default async function NetworkPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: Locale }>;
+  searchParams: NetworkSearchParams;
+}) {
+  const { locale } = await params;
+
+  return (
+    <Suspense fallback={<PublicSectionSkeleton rows={6} />}>
+      <NetworkContent searchParams={searchParams} locale={locale} />
+    </Suspense>
   );
 }
