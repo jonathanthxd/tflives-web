@@ -29,10 +29,6 @@ npm run dev
 
 Abre `http://localhost:3000`.
 
-> Esta entrega no incluye `package-lock.json` porque se cambió el proveedor de
-> autenticación y el lock anterior pertenecía a la arquitectura vieja. El primer
-> `npm install` genera uno nuevo; conviene hacer commit de ese archivo después.
-
 ## Variables mínimas
 
 Para que la web y el login por email funcionen localmente:
@@ -42,6 +38,7 @@ DATABASE_URL="TU_CONNECTION_STRING_DE_NEON"
 BETTER_AUTH_SECRET="UN_SECRETO_LARGO_Y_ALEATORIO"
 BETTER_AUTH_URL="http://localhost:3000"
 AUTH_REQUIRE_EMAIL_VERIFICATION="false"
+NEXT_PUBLIC_SITE_URL="http://localhost:3000"
 ```
 
 Puedes generar un secreto en PowerShell con:
@@ -61,15 +58,22 @@ Generar el cliente Prisma no modifica la base:
 npm run db:generate
 ```
 
-Para crear/actualizar tablas:
+Para crear/actualizar tablas en desarrollo usa migraciones versionadas:
 
 ```powershell
-npm run db:push
+npx prisma migrate dev
 ```
 
-**No ejecutes `db:push` contra una base importante sin confirmar primero el
-`DATABASE_URL` y tener backup/branch de Neon.** Si la base ya contiene usuarios de
-la arquitectura anterior, lee `docs/AUTH_NEON_MIGRATION.md` antes de sincronizar.
+En producción **nunca** ejecutes `npm run db:push` contra Neon. Aplica solo las
+migraciones ya versionadas y con backup/branch previo:
+
+```powershell
+npx prisma migrate deploy
+```
+
+Si la base ya contiene usuarios de la arquitectura anterior, lee
+`docs/AUTH_NEON_MIGRATION.md` antes de sincronizar. El plan de backups y
+restauración está en `docs/TFLIVES_V0.15_PRODUCTION_HARDENING.md`.
 
 ## Autenticación
 
@@ -153,12 +157,25 @@ WebSocket/SSE si la escala lo necesita.
 npm run dev
 npm run typecheck
 npm run lint
+npm test
 npm run build
+npm run test:e2e          # requiere build previo
+npm run test:integration  # requiere build previo
 npm run db:generate
-npm run db:push
 npm run db:studio
 npm run db:seed
 ```
+
+## Tests
+
+- `npm test`: tests unitarios sobre PostgreSQL en memoria (PGlite). Es el ciclo
+  principal y también corre en CI.
+- `npm run test:e2e`: smoke HTTP de los flujos principales. Requiere `npm run build`
+  antes.
+- `npm run test:integration`: aceptación HTTP de Network & Content Core. Requiere
+  `npm run build` antes.
+
+Detalles en `tests/unit`, `tests/e2e/README.md` y `tests/integration/README.md`.
 
 ## Flujo Git recomendado
 

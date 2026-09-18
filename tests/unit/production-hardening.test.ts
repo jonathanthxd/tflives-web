@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { PGlite } from "@electric-sql/pglite";
 import {
+  RATE_LIMIT_COUNTER_RETENTION_MS,
   RATE_LIMITS,
   rateLimitDecision,
   rateLimitKey,
@@ -81,6 +82,29 @@ test("hardening migration adds a defaulted error source and an atomic counter", 
   } finally {
     await db.close();
   }
+});
+
+test("expired rate-limit counters are purged after the retention window", async () => {
+  assert.equal(RATE_LIMIT_COUNTER_RETENTION_MS, 24 * 60 * 60 * 1000);
+
+  const db = await PGlite.create();
+  try {
+    for (const migration of MIGRATIONS) await db.exec(readFileSync(`prisma/migrations/${migration}/migration.sql`, "utf8"));
+    await db.exec(`INSERT INTO "RateLimitCounter" ("key","count","windowStartedAt","updatedAt") VALUES
+      ('fresh',1,now(),now()),
+      ('stale',1,now() - interval '25 hours', now() - interval '25 hours')`);
+
+    // Same housekeeping predicate the limiter runs: drop counters idle past retention.
+    await db.exec(`DELETE FROM "RateLimitCounter" WHERE "updatedAt" < now() - interval '24 hours'`);
+    const remaining = await db.query<{ key: string }>(`SELECT key FROM "RateLimitCounter" ORDER BY key`);
+    assert.deepEqual(remaining.rows.map((row) => row.key), ["fresh"]);
+  } finally {
+    await db.close();
+  }
+
+  const service = readFileSync("src/infrastructure/rate-limit/service.ts", "utf8");
+  assert.match(service, /RATE_LIMIT_COUNTER_RETENTION_MS/);
+  assert.match(service, /rateLimitCounter\.deleteMany/);
 });
 
 test("client errors are sanitized before storage", () => {

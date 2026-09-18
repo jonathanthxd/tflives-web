@@ -113,11 +113,16 @@ export async function consumeRateLimit(
   }
 }
 
+/** Counters idle for longer than this are safe to drop: no window exceeds it. */
+export const RATE_LIMIT_COUNTER_RETENTION_MS = 24 * 60 * 60 * 1000;
+
 /** Keep the counter table bounded without paying for a periodic job. */
 async function maybePurgeExpiredCounters(now: Date) {
   if (randomInt(1, 256) !== 1) return;
   try {
-    await prisma.rateLimitCounter.deleteMany({ where: { updatedAt: { lt: new Date(now.getTime() - 24 * 60 * 60 * 1000) } } });
+    await prisma.rateLimitCounter.deleteMany({
+      where: { updatedAt: { lt: new Date(now.getTime() - RATE_LIMIT_COUNTER_RETENTION_MS) } },
+    });
   } catch {
     /* Best-effort housekeeping only. */
   }
