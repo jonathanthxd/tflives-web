@@ -2,6 +2,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { prisma } from "@/infrastructure/database/prisma";
 import { publicModalities, translated } from "@/modules/editorial/publication";
+import { alternatesFor } from "@/config/site";
 import {
   PublicShell,
   AreaLinks,
@@ -21,7 +22,7 @@ export async function generateMetadata({ params }: Props) {
   return {
     title: `${mode.name} | TFL Network`,
     description: mode.description ?? undefined,
-    alternates: { canonical: `/${locale}/network/modalidades/${slug}` },
+    alternates: alternatesFor(locale, `/network/modalidades/${slug}`),
   };
 }
 export default async function Page({ params }: Props) {

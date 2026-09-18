@@ -1,14 +1,22 @@
 import { ArrowUpRight, Blocks, RadioTower, UsersRound } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import type { Locale } from "@/i18n/routing";
+import { alternatesFor } from "@/config/site";
 
 export const instant = false;
 
-export async function generateMetadata() {
-  const t = await getTranslations("Projects");
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Projects" });
   return {
     title: `${t("title")} — TFLives`,
     description: t("description"),
+    alternates: alternatesFor(locale, "/proyectos"),
   };
 }
 

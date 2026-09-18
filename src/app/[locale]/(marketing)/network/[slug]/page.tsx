@@ -7,6 +7,9 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import LikeButton from "@/modules/community/components/like-button";
 import CommentsSection from "@/modules/community/components/comments-section";
+import { localePath } from "@/config/site";
+import { JsonLd } from "@/shared/seo/json-ld";
+import { articleNode } from "@/shared/seo/schema";
 
 export const instant = false;
 export async function generateMetadata({
@@ -78,6 +81,21 @@ export default async function PostDetailPage({ params }: PostPageProps) {
 
   return (
     <main className="relative min-h-screen pt-24 pb-16">
+      <JsonLd
+        data={articleNode({
+          locale,
+          headline: post.title,
+          description: post.excerpt ?? undefined,
+          image: post.image ?? undefined,
+          path: localePath(locale, `/network/${slug}`),
+          datePublished: (post.publishedAt ?? post.createdAt).toISOString(),
+          dateModified: post.updatedAt.toISOString(),
+          authorName: post.author.name ?? undefined,
+          section: post.modality
+            ? translated(post.modality, locale).name
+            : "TFLives",
+        })}
+      />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <Link
           href="/network"

@@ -16,6 +16,13 @@ import type { Locale } from "@/i18n/routing";
 import OwnersSection from "@/modules/administration/components/owners-section";
 import HeroGlow from "@/shared/ui/effects/hero-glow";
 import Reveal from "@/shared/ui/reveal";
+import { absoluteUrl, alternatesFor, localePath } from "@/config/site";
+import { JsonLd } from "@/shared/seo/json-ld";
+import {
+  jsonLdGraph,
+  organizationNode,
+  websiteNode,
+} from "@/shared/seo/schema";
 
 export const instant = false;
 
@@ -26,9 +33,18 @@ export async function generateMetadata({
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "Content" });
+  const title = "TFLives — Time For Lives";
+  const description = t("homeDescription");
   return {
-    title: "TFLives — Time For Lives",
-    description: t("homeDescription"),
+    title,
+    description,
+    alternates: alternatesFor(locale, "/"),
+    openGraph: {
+      type: "website",
+      url: absoluteUrl(localePath(locale, "/")),
+      title,
+      description,
+    },
   };
 }
 
@@ -45,6 +61,7 @@ export default async function Home({
 
   return (
     <main className="relative overflow-hidden pt-16 md:pt-20">
+      <JsonLd data={jsonLdGraph(organizationNode(), websiteNode(locale))} />
       <section className="relative min-h-[calc(100svh-4rem)] md:min-h-[calc(100svh-5rem)] flex flex-col items-center justify-center">
         <HeroGlow />
 

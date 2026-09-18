@@ -10,6 +10,9 @@ import {
 import ArticleBody from "@/modules/wiki/components/article-body";
 import { articleHeadings } from "@/modules/wiki/headings";
 import { Link } from "@/i18n/navigation";
+import { localePath } from "@/config/site";
+import { JsonLd } from "@/shared/seo/json-ld";
+import { articleNode } from "@/shared/seo/schema";
 type Props = { params: Promise<{ slug: string; locale: string }> };
 export const instant = false;
 export async function generateMetadata({ params }: Props) {
@@ -70,6 +73,20 @@ export default async function WikiArticlePage({ params }: Props) {
       title={article.title}
       description={article.excerpt ?? undefined}
     >
+      <JsonLd
+        data={articleNode({
+          locale,
+          headline: article.title,
+          description: article.excerpt ?? undefined,
+          path: localePath(locale, `/network/wiki/${slug}`),
+          datePublished: (article.publishedAt ?? article.createdAt).toISOString(),
+          dateModified: article.updatedAt.toISOString(),
+          authorName: article.editor.name,
+          section: article.category
+            ? translated(article.category, locale).name
+            : undefined,
+        })}
+      />
       <nav className="flex flex-wrap gap-3 text-sm text-primary">
         <Link href="/network">TFL Network</Link>
         <span>/</span>

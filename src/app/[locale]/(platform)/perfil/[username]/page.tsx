@@ -7,6 +7,9 @@ import { normalizeUsername } from "@/modules/authentication/validation";
 import ProfileView from "@/modules/profiles/components/profile-view";
 import { publicProfileSelect, toPublicProfile } from "@/modules/profiles/service";
 import { identityName } from "@/modules/profiles/types";
+import { absoluteUrl, alternatesFor, localePath } from "@/config/site";
+import { JsonLd } from "@/shared/seo/json-ld";
+import { personNode } from "@/shared/seo/schema";
 
 export const instant = false;
 
@@ -36,10 +39,21 @@ export async function generateMetadata({ params }: ProfilePageProps): Promise<Me
   const publicProfile = toPublicProfile(result.profile);
   const name = identityName(publicProfile);
   const t = await getTranslations({ locale, namespace: "Profile" });
+  const path = `/perfil/${publicProfile.username}`;
+  const description =
+    publicProfile.bio ||
+    t("metadataDescription", { username: publicProfile.username ?? name });
   return {
     title: `${name} (@${publicProfile.username}) | TFLives`,
-    description: publicProfile.bio || t("metadataDescription", { username: publicProfile.username ?? name }),
-    alternates: { canonical: `/${locale}/perfil/${publicProfile.username}` },
+    description,
+    alternates: alternatesFor(locale, path),
+    openGraph: {
+      type: "profile",
+      url: absoluteUrl(localePath(locale, path)),
+      title: `${name} (@${publicProfile.username})`,
+      description,
+      images: publicProfile.image ? [publicProfile.image] : undefined,
+    },
   };
 }
 
@@ -63,5 +77,22 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 
   if (!blocked && result.alias && profile.username) redirect(`/${locale}/perfil/${profile.username}`);
 
-  return <ProfileView profile={blocked ? null : toPublicProfile(profile)} isOwner={authUser?.id === profile.id} />;
+  const publicProfile = toPublicProfile(profile);
+  return (
+    <>
+      {publicProfile.username && (
+        <JsonLd
+          data={personNode({
+            locale,
+            name: identityName(publicProfile),
+            username: publicProfile.username,
+            description: publicProfile.bio ?? undefined,
+            image: publicProfile.image ?? undefined,
+            path: `/perfil/${publicProfile.username}`,
+          })}
+        />
+      )}
+      <ProfileView profile={blocked ? null : publicProfile} isOwner={authUser?.id === profile.id} />
+    </>
+  );
 }
