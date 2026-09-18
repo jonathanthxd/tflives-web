@@ -376,13 +376,16 @@ v0.9  completado
 v0.10 completado
 v0.11 funcional + rework visual
 v0.12 mayormente implementado; hubo correcciones posteriores
-v0.13+ todavía no desarrollados formalmente como roadmap
+v0.13 completado (Performance & SEO)
+v0.14 completado (Legal, Privacy & Safety)
+v0.15 completado (Production Hardening)
+v0.16 en curso (Release Candidate)
 ```
 
 El número de versión en `package.json` ha seguido mostrando algo como:
 
 ```text
-0.11.0
+0.16.0
 ```
 
 aunque funcionalmente el proyecto ha avanzado bastante más. No asumir que la semver del package representa el roadmap real.
@@ -2002,10 +2005,10 @@ Recomendación para Jonathan:
 Este .md contiene todo el contexto del chat anterior.
 Quiero que continúes exactamente desde aquí.
 
-La siguiente update pendiente es:
+La siguiente update pendiente (v1.1 backlog) es:
 1. Avatar Frames 2.0 con geometrías mucho más complejas y únicas.
 2. Reconciliación automática de logros históricos.
-3. Eliminar reduced motion / low resource visual degradation en todo el proyecto.
+3. Eliminar reduced motion / low resource visual degradation en todo el proyecto (auditado: src/ ya limpio).
 
 Trabaja directamente sobre el ZIP que adjunto y entrégame un overlay ZIP.
 ```

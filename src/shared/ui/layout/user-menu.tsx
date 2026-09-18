@@ -103,8 +103,10 @@ export default function UserMenu({ displayName, username, role, image, onLogout,
           alt={displayName || "User"}
         />
         <span
-          className={`overflow-hidden whitespace-nowrap transition-[max-width,opacity,margin] duration-300 ${
-            compact ? "max-w-0 opacity-0" : "max-w-[80px] opacity-100 md:max-w-[140px]"
+          className={`overflow-hidden whitespace-nowrap truncate transition-[max-width,opacity,margin] duration-300 ${
+            compact
+              ? "max-w-0 sm:max-w-[52px] opacity-0 sm:opacity-100"
+              : "max-w-[80px] sm:max-w-[110px] md:max-w-[150px] lg:max-w-[200px] opacity-100"
           }`}
           title={displayName}
           aria-hidden={compact}

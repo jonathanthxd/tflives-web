@@ -66,6 +66,7 @@
 
   html {
     background-color: hsl(var(--background));
+    overflow-x: hidden;
   }
 
   /* Global scrollbar follows the active TFL Studio accent.
