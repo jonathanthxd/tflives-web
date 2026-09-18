@@ -1,6 +1,8 @@
 import { getTranslations } from "next-intl/server";
 import type { Locale } from "@/i18n/routing";
 import { alternatesFor } from "@/config/site";
+import { DISCORD_INVITE } from "@/infrastructure/external-services/discord";
+import { LegalPage, LegalSection } from "@/shared/ui/legal-page";
 
 export const instant = false;
 
@@ -27,93 +29,73 @@ export default async function PrivacyPage({
   const t = await getTranslations({ locale, namespace: "Privacy" });
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-24 sm:px-6 lg:px-8">
-      <div className="tfl-glass rounded-3xl border border-border p-6 sm:p-10">
-        <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-          {t("title")}
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">{t("lastUpdated")}</p>
+    <LegalPage title={t("title")} updated={t("lastUpdated")}>
+      <LegalSection title={t("introTitle")}>
+        <p>{t("intro")}</p>
+      </LegalSection>
 
-        <div className="prose prose-invert mt-8 max-w-none space-y-8 text-sm leading-relaxed text-muted-foreground">
-          <section>
-            <h2 className="font-display text-xl font-semibold text-foreground">
-              {t("introTitle")}
-            </h2>
-            <p>{t("intro")}</p>
-          </section>
+      <LegalSection title={t("dataWeCollectTitle")}>
+        <ul className="list-disc pl-5 space-y-2">
+          <li>{t("dataAccount")}</li>
+          <li>{t("dataProfile")}</li>
+          <li>{t("dataUsage")}</li>
+          <li>{t("dataCookies")}</li>
+        </ul>
+      </LegalSection>
 
-          <section>
-            <h2 className="font-display text-xl font-semibold text-foreground">
-              {t("dataWeCollectTitle")}
-            </h2>
-            <ul className="list-disc pl-5 space-y-2">
-              <li>{t("dataAccount")}</li>
-              <li>{t("dataProfile")}</li>
-              <li>{t("dataUsage")}</li>
-              <li>{t("dataCookies")}</li>
-            </ul>
-          </section>
+      <LegalSection title={t("howWeUseTitle")}>
+        <ul className="list-disc pl-5 space-y-2">
+          <li>{t("useProvide")}</li>
+          <li>{t("useImprove")}</li>
+          <li>{t("useCommunicate")}</li>
+          <li>{t("useSecurity")}</li>
+        </ul>
+      </LegalSection>
 
-          <section>
-            <h2 className="font-display text-xl font-semibold text-foreground">
-              {t("howWeUseTitle")}
-            </h2>
-            <ul className="list-disc pl-5 space-y-2">
-              <li>{t("useProvide")}</li>
-              <li>{t("useImprove")}</li>
-              <li>{t("useCommunicate")}</li>
-              <li>{t("useSecurity")}</li>
-            </ul>
-          </section>
+      <LegalSection title={t("dataSharingTitle")}>
+        <p>{t("dataSharing")}</p>
+      </LegalSection>
 
-          <section>
-            <h2 className="font-display text-xl font-semibold text-foreground">
-              {t("dataSharingTitle")}
-            </h2>
-            <p>{t("dataSharing")}</p>
-          </section>
+      <LegalSection title={t("cookiesTitle")}>
+        <p>{t("cookies")}</p>
+      </LegalSection>
 
-          <section>
-            <h2 className="font-display text-xl font-semibold text-foreground">
-              {t("dataRetentionTitle")}
-            </h2>
-            <p>{t("dataRetention")}</p>
-          </section>
+      <LegalSection title={t("dataRetentionTitle")}>
+        <p>{t("dataRetention")}</p>
+      </LegalSection>
 
-          <section>
-            <h2 className="font-display text-xl font-semibold text-foreground">
-              {t("yourRightsTitle")}
-            </h2>
-            <ul className="list-disc pl-5 space-y-2">
-              <li>{t("rightAccess")}</li>
-              <li>{t("rightCorrection")}</li>
-              <li>{t("rightDeletion")}</li>
-              <li>{t("rightPortability")}</li>
-            </ul>
-          </section>
+      <LegalSection title={t("yourRightsTitle")}>
+        <ul className="list-disc pl-5 space-y-2">
+          <li>{t("rightAccess")}</li>
+          <li>{t("rightCorrection")}</li>
+          <li>{t("rightDeletion")}</li>
+          <li>{t("rightPortability")}</li>
+        </ul>
+      </LegalSection>
 
-          <section>
-            <h2 className="font-display text-xl font-semibold text-foreground">
-              {t("childrenTitle")}
-            </h2>
-            <p>{t("children")}</p>
-          </section>
+      <LegalSection title={t("childrenTitle")}>
+        <p>{t("children")}</p>
+      </LegalSection>
 
-          <section>
-            <h2 className="font-display text-xl font-semibold text-foreground">
-              {t("changesTitle")}
-            </h2>
-            <p>{t("changes")}</p>
-          </section>
+      <LegalSection title={t("securityTitle")}>
+        <p>{t("security")}</p>
+      </LegalSection>
 
-          <section>
-            <h2 className="font-display text-xl font-semibold text-foreground">
-              {t("contactTitle")}
-            </h2>
-            <p>{t("contact")}</p>
-          </section>
-        </div>
-      </div>
-    </main>
+      <LegalSection title={t("changesTitle")}>
+        <p>{t("changes")}</p>
+      </LegalSection>
+
+      <LegalSection title={t("contactTitle")}>
+        <p>{t("contact")}</p>
+        <a
+          href={DISCORD_INVITE}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 inline-flex items-center gap-2 rounded-full border border-border bg-card/50 px-5 py-2.5 text-xs font-semibold uppercase tracking-widest text-foreground transition-colors hover:border-primary/40 hover:text-primary"
+        >
+          {t("contactDiscord")}
+        </a>
+      </LegalSection>
+    </LegalPage>
   );
 }

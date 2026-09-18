@@ -12,71 +12,46 @@ export async function generateMetadata({
   params: Promise<{ locale: Locale }>;
 }) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "Terms" });
+  const t = await getTranslations({ locale, namespace: "Cookies" });
   return {
     title: t("metaTitle"),
     description: t("metaDescription"),
-    alternates: alternatesFor(locale, "/terminos"),
+    alternates: alternatesFor(locale, "/cookies"),
   };
 }
 
-export default async function TermsPage({
+export default async function CookiesPage({
   params,
 }: {
   params: Promise<{ locale: Locale }>;
 }) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "Terms" });
+  const t = await getTranslations({ locale, namespace: "Cookies" });
 
   return (
     <LegalPage title={t("title")} updated={t("lastUpdated")}>
-      <LegalSection title={t("acceptanceTitle")}>
-        <p>{t("acceptance")}</p>
+      <LegalSection title={t("introTitle")}>
+        <p>{t("intro")}</p>
       </LegalSection>
 
-      <LegalSection title={t("accountsTitle")}>
-        <p>{t("accounts")}</p>
+      <LegalSection title={t("essentialTitle")}>
+        <p>{t("essential")}</p>
       </LegalSection>
 
-      <LegalSection title={t("ageTitle")}>
-        <p>{t("age")}</p>
+      <LegalSection title={t("preferenceTitle")}>
+        <p>{t("preference")}</p>
       </LegalSection>
 
-      <LegalSection title={t("conductTitle")}>
-        <ul className="list-disc pl-5 space-y-2">
-          <li>{t("conductNoHarassment")}</li>
-          <li>{t("conductNoExploits")}</li>
-          <li>{t("conductNoSpam")}</li>
-          <li>{t("conductNoIllegal")}</li>
-        </ul>
+      <LegalSection title={t("analyticsTitle")}>
+        <p>{t("analytics")}</p>
       </LegalSection>
 
-      <LegalSection title={t("ipTitle")}>
-        <p>{t("ip")}</p>
+      <LegalSection title={t("thirdPartyTitle")}>
+        <p>{t("thirdParty")}</p>
       </LegalSection>
 
-      <LegalSection title={t("userContentTitle")}>
-        <p>{t("userContent")}</p>
-      </LegalSection>
-
-      <LegalSection title={t("virtualItemsTitle")}>
-        <p>{t("virtualItems")}</p>
-      </LegalSection>
-
-      <LegalSection title={t("terminationTitle")}>
-        <p>{t("termination")}</p>
-      </LegalSection>
-
-      <LegalSection title={t("disclaimerTitle")}>
-        <p>{t("disclaimer")}</p>
-      </LegalSection>
-
-      <LegalSection title={t("limitationTitle")}>
-        <p>{t("limitation")}</p>
-      </LegalSection>
-
-      <LegalSection title={t("governingLawTitle")}>
-        <p>{t("governingLaw")}</p>
+      <LegalSection title={t("manageTitle")}>
+        <p>{t("manage")}</p>
       </LegalSection>
 
       <LegalSection title={t("changesTitle")}>

@@ -10,6 +10,7 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import { StudioProvider } from "@/providers/studio-provider";
 import Navbar from "@/shared/ui/layout/navbar";
 import Footer from "@/shared/ui/layout/footer";
+import CookieNotice from "@/shared/ui/cookie-notice";
 import ScrollReset from "@/shared/ui/layout/scroll-reset";
 import AmbientBackground from "@/shared/ui/effects/ambient-background";
 import DiscordWidget from "@/shared/ui/effects/discord-widget";
@@ -108,6 +109,7 @@ export default async function RootLayout({
               <OAuthErrorNotice />
               <div id="page-content" tabIndex={-1}>{children}</div>
               <Footer />
+              <CookieNotice />
 
               {/* Discord Widget */}
               <DiscordWidget />

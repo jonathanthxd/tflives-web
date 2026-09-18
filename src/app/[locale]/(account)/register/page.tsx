@@ -24,6 +24,7 @@ export default function RegisterPage() {
   const [usernameTaken, setUsernameTaken] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState(false);
   const [registered, setRegistered] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const passwordStrength = useMemo(() => {
     let strength = 0;
@@ -86,6 +87,11 @@ export default function RegisterPage() {
 
     if (usernameTaken) {
       setFieldErrors((prev) => ({ ...prev, username: t("usernameEnUso") }));
+      return;
+    }
+
+    if (!acceptedTerms) {
+      setFieldErrors((prev) => ({ ...prev, terms: t("debesAceptar") }));
       return;
     }
 
@@ -307,6 +313,56 @@ export default function RegisterPage() {
               aria-invalid={!!fieldErrors.confirmPassword}
             />
           </FormField>
+
+          <div>
+            <label
+              htmlFor="acceptTerms"
+              className="flex cursor-pointer items-start gap-3 text-sm text-muted-foreground"
+            >
+              <input
+                id="acceptTerms"
+                name="acceptTerms"
+                type="checkbox"
+                checked={acceptedTerms}
+                aria-invalid={!!fieldErrors.terms}
+                aria-describedby={fieldErrors.terms ? "acceptTerms-error" : undefined}
+                onChange={(e) => {
+                  setAcceptedTerms(e.target.checked);
+                  setFieldErrors((prev) => ({ ...prev, terms: "" }));
+                }}
+                className="mt-0.5 size-5 shrink-0 cursor-pointer rounded border-border bg-input/30 accent-primary"
+              />
+              <span>
+                {t.rich("aceptoTerminos", {
+                  terms: (chunks) => (
+                    <Link
+                      href="/terminos"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      {chunks}
+                    </Link>
+                  ),
+                  privacy: (chunks) => (
+                    <Link
+                      href="/privacidad"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      {chunks}
+                    </Link>
+                  ),
+                })}
+              </span>
+            </label>
+            {fieldErrors.terms && (
+              <p id="acceptTerms-error" role="alert" className="mt-1.5 text-xs text-destructive">
+                {fieldErrors.terms}
+              </p>
+            )}
+          </div>
 
           <Button type="submit" disabled={loading} className="w-full">
             {loading ? t("creandoCuenta") : t("crearCuentaBoton")}

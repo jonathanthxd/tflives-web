@@ -70,6 +70,15 @@ export default function Footer() {
           <Link href="/terminos" className="hover:text-primary transition-colors">
             {t("terminos")}
           </Link>
+          <Link href="/cookies" className="hover:text-primary transition-colors">
+            {t("cookies")}
+          </Link>
+          <Link href="/aviso-legal" className="hover:text-primary transition-colors">
+            {t("avisoLegal")}
+          </Link>
+          <Link href="/normas" className="hover:text-primary transition-colors">
+            {t("normas")}
+          </Link>
         </div>
 
         <p className="mt-3 text-center text-xs text-muted-foreground/70 md:text-left">

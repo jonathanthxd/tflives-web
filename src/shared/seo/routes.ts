@@ -26,4 +26,7 @@ export const staticSeoRoutes: StaticSeoRoute[] = [
   { path: "/streamers", changeFrequency: "weekly", priority: 0.8 },
   { path: "/privacidad", changeFrequency: "yearly", priority: 0.3 },
   { path: "/terminos", changeFrequency: "yearly", priority: 0.3 },
+  { path: "/cookies", changeFrequency: "yearly", priority: 0.3 },
+  { path: "/aviso-legal", changeFrequency: "yearly", priority: 0.3 },
+  { path: "/normas", changeFrequency: "yearly", priority: 0.4 },
 ];
