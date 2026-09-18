@@ -1,6 +1,6 @@
 {
   "name": "tflives-web",
-  "version": "0.11.0",
+  "version": "0.15.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -14,6 +14,7 @@
     "db:studio": "prisma studio",
     "cursor:import": "node scripts/cursors/import-windows-pack.mjs",
     "test": "tsx --import ./tests/helpers/server-only.mjs --test tests/unit/*.test.ts",
+    "test:e2e": "tsx --test tests/e2e/*.test.ts",
     "test:integration": "tsx --test tests/integration/network-content.test.ts"
   },
   "prisma": {

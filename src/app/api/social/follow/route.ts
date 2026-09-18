@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { prisma } from "@/infrastructure/database/prisma";
 import { SocialError, follow, unfollow } from "@/modules/social/service";
+import { enforceRateLimit } from "@/infrastructure/rate-limit/service";
 
 import { targetInput } from "@/modules/social/validation";
 
@@ -15,6 +16,8 @@ async function resolveTarget(request: Request) {
 export async function POST(request: Request) {
   const authUser = await getCurrentAuthUser();
   if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+  const limited = await enforceRateLimit("social-follow", authUser.id);
+  if (limited) return limited;
 
   const target = await resolveTarget(request.clone());
   if (target && "invalid" in target) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });

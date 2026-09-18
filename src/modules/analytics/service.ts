@@ -97,10 +97,12 @@ export async function captureApplicationError({
   area,
   error,
   status,
+  source = "server",
 }: {
   area: string;
   error: unknown;
   status?: number;
+  source?: "server" | "client";
 }) {
   const safeArea = area.replace(/[^a-z0-9:_-]/gi, "").slice(0, 80) || "application";
   const message = sanitizeApplicationErrorMessage(error instanceof Error ? error.message : String(error));
@@ -115,6 +117,7 @@ export async function captureApplicationError({
         message,
         count: 1,
         lastStatus: status,
+        source,
       },
       update: {
         count: { increment: 1 },
@@ -143,6 +146,7 @@ export async function updateApplicationErrorStatus(id: string, status: Applicati
       firstSeenAt: true,
       lastSeenAt: true,
       lastStatus: true,
+      source: true,
     },
   });
 }
@@ -367,7 +371,7 @@ export async function listApplicationErrors(limit = 12) {
   return prisma.applicationError.findMany({
     orderBy: [{ status: "asc" }, { lastSeenAt: "desc" }],
     take: Math.min(Math.max(limit, 1), 30),
-    select: { id: true, area: true, message: true, count: true, status: true, firstSeenAt: true, lastSeenAt: true, lastStatus: true },
+    select: { id: true, area: true, message: true, count: true, status: true, firstSeenAt: true, lastSeenAt: true, lastStatus: true, source: true },
   });
 }
 

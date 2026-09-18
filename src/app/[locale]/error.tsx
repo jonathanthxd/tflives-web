@@ -1,11 +1,16 @@
 "use client";
 
+import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { RefreshCw } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { sendClientError } from "@/shared/observability/client-error";
 
-export default function SectionError({ retry }: { error: Error & { digest?: string }; retry: () => void }) {
+export default function SectionError({ error, retry }: { error: Error & { digest?: string }; retry: () => void }) {
   const t = useTranslations("Completion");
+  useEffect(() => {
+    sendClientError(error?.digest ? `[${error.digest}] ${error?.message ?? "Unknown error"}` : (error?.message ?? "Unknown error"));
+  }, [error]);
   return <main className="mx-auto flex min-h-[60dvh] max-w-xl flex-col items-center justify-center gap-5 px-6 py-28 text-center">
     <div className="tfl-glass tfl-glass-soft w-full rounded-3xl border border-primary/20 p-8">
       <h1 className="font-display text-2xl font-semibold">{t("pageError")}</h1>

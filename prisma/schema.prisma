@@ -582,6 +582,7 @@ model ApplicationError {
   lastStatus  Int?
   metadata    Json?
   resolvedAt  DateTime?
+  source      String                 @default("server")
 
   @@index([status, lastSeenAt])
   @@index([lastSeenAt])
@@ -1199,4 +1200,15 @@ model TimelineMilestone {
   updatedAt DateTime @updatedAt
 
   @@index([published, archived, order])
+}
+
+/// Fixed-window DB-backed rate limit counters. Keys are hashed in the caller
+/// so no raw IPs or identifiers are persisted.
+model RateLimitCounter {
+  key             String   @id
+  count           Int      @default(1)
+  windowStartedAt DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([updatedAt])
 }

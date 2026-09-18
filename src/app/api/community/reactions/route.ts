@@ -6,6 +6,7 @@ import {
   ReactionError,
   type ReactionTargetType,
 } from "@/modules/community/reactions";
+import { enforceRateLimit } from "@/infrastructure/rate-limit/service";
 
 function parseTargetType(value: unknown): ReactionTargetType | null {
   return value === "POST" || value === "COMMENT" ? value : null;
@@ -44,6 +45,8 @@ export async function POST(request: Request) {
   const authUser = await getCurrentAuthUser();
   if (!authUser)
     return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+  const limited = await enforceRateLimit("reactions", authUser.id);
+  if (limited) return limited;
 
   try {
     const body = await request.json();

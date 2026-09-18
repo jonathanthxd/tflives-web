@@ -13,10 +13,13 @@ import {
   requireAdminSection,
   AdminGuardError,
 } from "@/modules/administration/api-guard";
+import { enforceRateLimit } from "@/infrastructure/rate-limit/service";
 
 export async function POST(request: Request) {
   try {
     const { userId } = await requireAdminSection("posts");
+    const limited = await enforceRateLimit("posts", userId);
+    if (limited) return limited;
 
     if (await getActiveBanOrSuspension(userId)) {
       return NextResponse.json(

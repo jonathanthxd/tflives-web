@@ -163,6 +163,32 @@ test(
         body: body === undefined ? undefined : JSON.stringify(body),
       });
     }
+    // With Cache Components the locale shell streams before a page resolves, so
+    // notFound() pages reply 200 plus a robots noindex meta instead of 404.
+    async function assertNotFound(path: string) {
+      const response = await request(path);
+      if (response.status !== 404) {
+        assert.equal(response.status, 200);
+        assert.match(await response.text(), /name="robots" content="noindex"/);
+      }
+    }
+    // Cached public pages use stale-while-revalidate: the first request after a
+    // mutation returns the previous cache entry while it revalidates in the
+    // background. Poll briefly so mutations read as eventually-consistent.
+    async function eventuallyIncludes(path: string, fragment: string, attempts = 12) {
+      for (let attempt = 0; attempt < attempts; attempt++) {
+        if ((await (await request(path)).text()).includes(fragment)) return;
+        await new Promise((resolve) => setTimeout(resolve, 250));
+      }
+      assert.fail(`${path} never included ${JSON.stringify(fragment)}`);
+    }
+    async function eventuallyExcludes(path: string, fragment: string, attempts = 12) {
+      for (let attempt = 0; attempt < attempts; attempt++) {
+        if (!(await (await request(path)).text()).includes(fragment)) return;
+        await new Promise((resolve) => setTimeout(resolve, 250));
+      }
+      assert.fail(`${path} never stopped including ${JSON.stringify(fragment)}`);
+    }
     const paths = [
       "/api/modalities",
       "/api/posts",
@@ -232,14 +258,19 @@ test(
     response = await request("/api/profile", "PATCH", { userId: "profile-collision", bio: "Unauthorized target" }, cookie);
     assert.equal(response.status, 400, await response.clone().text());
     assert.equal((await request("/en/perfil/profile_member")).status, 200);
-    assert.equal((await request("/en/perfil/no_such_profile")).status, 404);
+    await assertNotFound("/en/perfil/no_such_profile");
     response = await request("/api/profile", "PATCH", { username: "profile_member_v2" }, cookie);
     assert.equal(response.status, 200, await response.clone().text());
     response = await request("/api/profile", "PATCH", { username: "profile_member_v3" }, cookie);
     assert.equal(response.status, 429, await response.clone().text());
     response = await request("/en/perfil/profile_member");
-    assert.equal(response.status, 307);
-    assert.equal(response.headers.get("location"), "/en/perfil/profile_member_v2");
+    if (response.status === 307 || response.status === 308) {
+      assert.equal(response.headers.get("location"), "/en/perfil/profile_member_v2");
+    } else {
+      // Streamed redirect (Cache Components): the target is in the response body.
+      assert.equal(response.status, 200);
+      assert.match(await response.text(), /profile_member_v2/);
+    }
     assert.equal((await request("/en/perfil/profile_member_v2")).status, 200);
     assert.equal((await request("/en/configuracion", "GET", undefined, cookie)).status, 200);
 
@@ -384,7 +415,7 @@ test(
       "/en/equipo",
       "/es/trayectoria",
       "/en/comunidad",
-      "/es/tienda",
+      "/es/network/tienda",
       "/en",
     ]) {
       const response = await request(path);
@@ -394,7 +425,7 @@ test(
         `${path}: ${(await response.clone().text()).slice(-500)} ${logs.slice(-1000)}`,
       );
       const html = await response.text();
-      if (path === "/es/tienda")
+      if (path === "/es/network/tienda")
         assert.ok(html.includes('href="https://shop.tflives.com"'));
       if (path === "/es/network/wiki")
         assert.ok(html.includes("No hay artículos publicados todavía"));
@@ -428,7 +459,7 @@ test(
       categoryId: category.id,
       modalityId: mode.id,
     });
-    assert.equal((await request("/es/network/wiki/private-guide")).status, 404);
+    await assertNotFound("/es/network/wiki/private-guide");
     response = await request(
       `/api/admin/wiki/${draft.id}`,
       "PATCH",
@@ -442,7 +473,7 @@ test(
     assert.equal(response.status, 200, await response.clone().text());
     response = await request("/en/network/wiki/private-guide");
     assert.equal(response.status, 200);
-    assert.ok((await response.text()).includes("English guide"));
+    await eventuallyIncludes("/en/network/wiki/private-guide", "English guide");
     const team = await create("/api/admin/team", {
       username: "profile_member_v2",
       name: "Test member",
@@ -460,11 +491,7 @@ test(
       description: "Test history",
       published: true,
     });
-    assert.ok(
-      (await (await request("/en/trayectoria")).text()).includes(
-        "Test history",
-      ),
-    );
+    await eventuallyIncludes("/en/trayectoria", "Test history");
     response = await request(
       `/api/admin/team/${team.id}`,
       "PATCH",
@@ -479,12 +506,7 @@ test(
       cookie,
     );
     assert.equal(response.status, 200, await response.clone().text());
-    assert.equal(
-      (await (await request("/en/trayectoria")).text()).includes(
-        "Test history",
-      ),
-      false,
-    );
+    await eventuallyExcludes("/en/trayectoria", "Test history");
     response = await request(
       `/api/modalities/${mode.id}`,
       "PATCH",
@@ -492,12 +514,7 @@ test(
       cookie,
     );
     assert.equal(response.status, 200, await response.clone().text());
-    assert.equal(
-      (await (await request("/api/modalities")).text()).includes(
-        "acceptance-mode",
-      ),
-      false,
-    );
+    await eventuallyExcludes("/api/modalities", "acceptance-mode");
     const scheduled = await create("/api/posts", {
       title: "Scheduled private",
       slug: "scheduled-private",
@@ -506,7 +523,7 @@ test(
       published: true,
       scheduledFor: new Date(Date.now() + 600000).toISOString(),
     });
-    assert.equal((await request(`/en/network/${scheduled.slug}`)).status, 404);
+    await assertNotFound(`/en/network/${scheduled.slug}`);
     response = await request(
       `/api/posts/${scheduled.id}`,
       "PATCH",
@@ -522,10 +539,7 @@ test(
       state: "SCHEDULED",
       scheduledFor: new Date(Date.now() + 600000).toISOString(),
     });
-    assert.equal(
-      (await request("/en/network/wiki/scheduled-wiki")).status,
-      404,
-    );
+    await assertNotFound("/en/network/wiki/scheduled-wiki");
     response = await request(
       `/api/admin/wiki/${scheduledWiki.id}`,
       "PATCH",
@@ -554,7 +568,7 @@ test(
         type,
         published: false,
       });
-      assert.equal((await request(`/en/network/${post.slug}`)).status, 404);
+      await assertNotFound(`/en/network/${post.slug}`);
       response = await request(
         `/api/posts/${post.id}`,
         "PATCH",
@@ -570,7 +584,7 @@ test(
         cookie,
       );
       assert.equal(response.status, 200);
-      assert.equal((await request(`/en/network/${post.slug}`)).status, 404);
+      await assertNotFound(`/en/network/${post.slug}`);
       assert.equal(
         (
           await request(
@@ -593,7 +607,7 @@ test(
       );
       assert.equal(response.status, 200, path);
     }
-    assert.equal((await request("/es/network/wiki/private-guide")).status, 404);
+    await assertNotFound("/es/network/wiki/private-guide");
 
     assert.equal(
       (
@@ -660,7 +674,7 @@ test(
     const directMessage = (await response.json()).message;
     response = await request("/api/notifications", "GET", undefined, creatorCookie);
     assert.equal(response.status, 200);
-    assert.ok((await response.json()).notifications.some((n: { entityId: string; conversationId: string }) => n.entityId === directMessage.id && n.conversationId === directIds[0]));
+    assert.ok((await response.json()).notifications.some((n: { entityType: string; entityId: string }) => n.entityType === "Conversation" && n.entityId === directIds[0]));
     response = await request("/api/messaging/groups", "POST", { name: "Handoff group", usernames: ["creator_member"] }, cookie);
     assert.equal(response.status, 201, await response.clone().text());
     const group = (await response.json()).conversation;
@@ -687,7 +701,7 @@ test(
     const customAchievement = (await response.json()).achievement;
     assert.equal((await request("/api/admin/achievements/award", "POST", { username: "creator_member", achievementId: customAchievement.id }, cookie)).status, 201);
     const englishAchievements = await (await request("/api/achievements/user?username=creator_member&locale=en", "GET", undefined, creatorCookie)).json();
-    assert.ok(englishAchievements.achievements.some((achievement: { name: string }) => achievement.name === "Bilingual achievement"));
+    assert.ok(englishAchievements.achievements.some((item: { achievement: { name: string } }) => item.achievement.name === "Bilingual achievement"));
 
     assert.equal((await request("/api/notifications/preferences", "PATCH", { category: "ANNOUNCEMENT", inAppEnabled: false }, creatorCookie)).status, 200);
     response = await request("/api/admin/announcements", "POST", { title: "Acceptance announcement", body: "Full persisted body", segment: "ALL" }, cookie);

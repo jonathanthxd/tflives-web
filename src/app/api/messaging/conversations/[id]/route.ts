@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { MessagingError, getConversation, markConversationRead, sendMessage } from "@/modules/messaging/service";
 import { captureApplicationError } from "@/modules/analytics/service";
+import { enforceRateLimit } from "@/infrastructure/rate-limit/service";
 
 async function requireUser() {
   const authUser = await getCurrentAuthUser();
@@ -38,6 +39,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const authUser = await requireUser();
   if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+  const limited = await enforceRateLimit("messaging-send", authUser.id);
+  if (limited) return limited;
 
   const { id } = await params;
   const payload = await request.json().catch(() => null);

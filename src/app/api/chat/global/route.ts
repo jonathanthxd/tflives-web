@@ -8,6 +8,7 @@ import {
   sendGlobalMessage,
 } from "@/modules/chat/service";
 import { captureApplicationError } from "@/modules/analytics/service";
+import { enforceRateLimit } from "@/infrastructure/rate-limit/service";
 
 async function errorResponse(error: unknown) {
   if (error instanceof ChatValidationError) {
@@ -45,6 +46,8 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const user = await getCurrentAuthUser();
   if (!user) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+  const limited = await enforceRateLimit("chat-global", user.id);
+  if (limited) return limited;
   try {
     const message = await sendGlobalMessage(user.id, await request.json());
     return NextResponse.json({ message }, { status: 201 });

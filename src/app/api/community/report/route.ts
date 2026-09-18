@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
 import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { reportComment, CommunityReportError } from "@/modules/community/report";
+import { enforceRateLimit } from "@/infrastructure/rate-limit/service";
 
 export async function POST(request: Request) {
   const authUser = await getCurrentAuthUser();
   if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+  const limited = await enforceRateLimit("community-report", authUser.id);
+  if (limited) return limited;
 
   try {
     const body = await request.json();

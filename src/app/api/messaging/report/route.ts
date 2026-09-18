@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
 import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { MessagingError, report } from "@/modules/messaging/service";
+import { enforceRateLimit } from "@/infrastructure/rate-limit/service";
 
 export async function POST(request: Request) {
   const authUser = await getCurrentAuthUser();
   if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+  const limited = await enforceRateLimit("messaging-report", authUser.id);
+  if (limited) return limited;
 
   const { targetType, targetId, reason, details } = await request.json().catch(() => ({}));
   if (!targetType || !targetId || !reason) {

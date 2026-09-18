@@ -10,6 +10,7 @@ import {
   respondToFriendRequest,
   sendFriendRequest,
 } from "@/modules/social/service";
+import { enforceRateLimit } from "@/infrastructure/rate-limit/service";
 
 import { targetInput, friendResponseInput, friendDeleteInput } from "@/modules/social/validation";
 
@@ -33,6 +34,8 @@ export async function GET() {
 export async function POST(request: Request) {
   const authUser = await requireUser();
   if (!authUser) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+  const limited = await enforceRateLimit("social-friends", authUser.id);
+  if (limited) return limited;
 
   const parsed = targetInput.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });

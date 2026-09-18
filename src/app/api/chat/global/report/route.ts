@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
 import { getCurrentAuthUser } from "@/infrastructure/auth/server";
 import { ChatValidationError, reportGlobalChatMessage } from "@/modules/chat/service";
+import { enforceRateLimit } from "@/infrastructure/rate-limit/service";
 
 export async function POST(request: Request) {
   const user = await getCurrentAuthUser();
   if (!user) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+  const limited = await enforceRateLimit("chat-report", user.id);
+  if (limited) return limited;
   try {
     const body = await request.json();
     if (typeof body.messageId !== "string" || typeof body.reason !== "string") {

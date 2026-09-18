@@ -4,7 +4,7 @@ Web principal y plataforma comunitaria de **TFLives / Time For Lives**.
 
 ## Stack actual
 
-- Next.js 15 + App Router
+- Next.js 16 + App Router
 - React 19 + TypeScript
 - Tailwind CSS
 - PostgreSQL en Neon
