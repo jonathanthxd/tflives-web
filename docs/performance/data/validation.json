@@ -1,5 +1,4 @@
 {
-  "implementationCommit": "10aa84d3e7ab05cf7d002b5bdb2733656f2386fa",
   "referenceCommit": "34a8df7373996cc4dcaaed36bd20c816377f486a",
   "local": {
     "lintErrors": 0,
@@ -38,5 +37,20 @@
     "iconNormalizedRgbaEqual": true,
     "findings": "Final layout and identities preserved in reproducible states. Mobile authenticated navbar can overlap the centered logo with the long fixture name; visible in both original and candidate, left for the separate responsive review."
   },
-  "remote": "Consult the PR checks and publication receipt; local results do not assert a remote deployment."
+  "remote": {
+    "pullRequest": "https://github.com/jonathanthxd/tflives-web/pull/1",
+    "initialCiFailure": {
+      "run": 37717524043,
+      "phase": "HTTP harness asynchronous PGlite shutdown"
+    },
+    "latestCi": "Consult current PR checks",
+    "merge": "Owner requested leave PR open without merging",
+    "vercelPreview": {
+      "state": "failed",
+      "cause": "Missing DATABASE_URL in Preview; compilation and TypeScript passed",
+      "source": "Owner supplied deployment logs",
+      "toolAccess": "403 for project team"
+    }
+  },
+  "measuredApplicationCommit": "10aa84d3e7ab05cf7d002b5bdb2733656f2386fa"
 }

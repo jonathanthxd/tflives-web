@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { readFileSync, readdirSync } from "node:fs";
 import { spawn } from "node:child_process";
 import { once } from "node:events";
+import { closeIsolatedDatabase } from "./close-database.mjs";
 const require = createRequire(resolve("package.json"));
 const { PGlite } = require("@electric-sql/pglite");
 const { PGLiteSocketServer } = require("@electric-sql/pglite-socket");
@@ -58,6 +59,6 @@ try {
   const [code] = await once(child, "exit");
   process.exitCode = code ?? 1;
 } finally {
-  if (socket) await socket.stop();
-  await db.close();
+  if (socket) await closeIsolatedDatabase(socket, db);
+  else await db.close();
 }

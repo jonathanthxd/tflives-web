@@ -37,6 +37,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
+        env:
+          # Generate explicitly below, instead of the client's install hook.
+          PRISMA_SKIP_POSTINSTALL_GENERATE: "1"
 
       - uses: actions/cache@v4
         with:

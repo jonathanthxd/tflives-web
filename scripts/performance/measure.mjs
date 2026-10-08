@@ -12,6 +12,7 @@ import {
 } from "./studio-checks.mjs";
 import { installMetrics, captureMetrics } from "./browser-metrics.mjs";
 import { observeInitialRequests } from "./readiness.mjs";
+import { closeIsolatedDatabase } from "./close-database.mjs";
 import {
   installBlobProbe,
   checkLoginFeedback,
@@ -565,6 +566,6 @@ try {
     app.kill();
     await exited;
   }
-  if (socket) await socket.stop();
-  await db.close();
+  if (socket) await closeIsolatedDatabase(socket, db);
+  else await db.close();
 }
