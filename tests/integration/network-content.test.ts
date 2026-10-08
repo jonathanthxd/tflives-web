@@ -5,6 +5,7 @@ import { spawn } from "node:child_process";
 import { once } from "node:events";
 import { PGlite } from "@electric-sql/pglite";
 import { PGLiteSocketServer } from "@electric-sql/pglite-socket";
+import { closeIsolatedDatabase } from "../../scripts/performance/close-database.mjs";
 
 /** In-memory PostgreSQL only. Never reads DATABASE_URL or writes the configured Neon database. */
 test(
@@ -132,8 +133,7 @@ test(
     t.after(async () => {
       app.kill();
       await once(app, "exit").catch(() => {});
-      await socket.stop();
-      await db.close();
+      await closeIsolatedDatabase(socket, db);
     });
     for (let attempt = 0; attempt < 80; attempt++) {
       try {

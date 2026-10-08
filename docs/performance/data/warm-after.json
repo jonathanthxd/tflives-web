@@ -1,0 +1,95 @@
+{
+  "node": "v24.20.0",
+  "next": "16.3.8",
+  "buildId": "HB5R_MhyKoCGLhi8Y0eFX",
+  "browser": "151.0.7922.34",
+  "browserArgs": [
+    "--disable-gpu",
+    "--use-angle=swiftshader",
+    "--enable-unsafe-swiftshader"
+  ],
+  "routeFilter": "/",
+  "phase": "routes",
+  "observations": [
+    {
+      "viewport": "desktop",
+      "locale": "es",
+      "theme": "dark",
+      "from": "/",
+      "to": "/network",
+      "headingVisibleObservedMs": 265.09999999403954,
+      "newJsEncodedBytes": 0,
+      "newFontEncodedBytes": 0
+    },
+    {
+      "viewport": "desktop",
+      "locale": "es",
+      "theme": "light",
+      "from": "/",
+      "to": "/network",
+      "headingVisibleObservedMs": 189.10000000149012,
+      "newJsEncodedBytes": 0,
+      "newFontEncodedBytes": 0
+    },
+    {
+      "viewport": "desktop",
+      "locale": "en",
+      "theme": "dark",
+      "from": "/",
+      "to": "/network",
+      "headingVisibleObservedMs": 192.5,
+      "newJsEncodedBytes": 0,
+      "newFontEncodedBytes": 0
+    },
+    {
+      "viewport": "desktop",
+      "locale": "en",
+      "theme": "light",
+      "from": "/",
+      "to": "/network",
+      "headingVisibleObservedMs": 200.09999999403954,
+      "newJsEncodedBytes": 0,
+      "newFontEncodedBytes": 0
+    },
+    {
+      "viewport": "mobile",
+      "locale": "es",
+      "theme": "dark",
+      "from": "/",
+      "to": "/network",
+      "headingVisibleObservedMs": 188,
+      "newJsEncodedBytes": 0,
+      "newFontEncodedBytes": 0
+    },
+    {
+      "viewport": "mobile",
+      "locale": "es",
+      "theme": "light",
+      "from": "/",
+      "to": "/network",
+      "headingVisibleObservedMs": 169,
+      "newJsEncodedBytes": 0,
+      "newFontEncodedBytes": 0
+    },
+    {
+      "viewport": "mobile",
+      "locale": "en",
+      "theme": "dark",
+      "from": "/",
+      "to": "/network",
+      "headingVisibleObservedMs": 196.19999999552965,
+      "newJsEncodedBytes": 0,
+      "newFontEncodedBytes": 0
+    },
+    {
+      "viewport": "mobile",
+      "locale": "en",
+      "theme": "light",
+      "from": "/",
+      "to": "/network",
+      "headingVisibleObservedMs": 188.70000000298023,
+      "newJsEncodedBytes": 0,
+      "newFontEncodedBytes": 0
+    }
+  ]
+}

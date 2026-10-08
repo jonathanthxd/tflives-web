@@ -27,7 +27,6 @@ export function CursorPackPreview({
 
   useEffect(() => {
     if (!active || !animationInterval) {
-      setElapsed(0);
       return;
     }
 
@@ -51,16 +50,16 @@ export function CursorPackPreview({
                 : role === "text"
                   ? "text"
                   : "wait"
-            : getCursorCssValue(pack, role, elapsed),
+            : getCursorCssValue(pack, role, active && animationInterval ? elapsed : 0),
         ]),
       ) as Partial<Record<StudioCursorRole, string | undefined>>,
-    [elapsed, pack],
+    [active, animationInterval, elapsed, pack],
   );
 
   return (
     <div
       className="studio-cursor-preview relative overflow-hidden"
-      onPointerEnter={() => setActive(true)}
+      onPointerEnter={() => { setElapsed(0); setActive(true); }}
       onPointerLeave={() => setActive(false)}
     >
       <div className="studio-cursor-preview__ambient" aria-hidden="true" />

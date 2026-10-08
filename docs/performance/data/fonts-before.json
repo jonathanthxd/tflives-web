@@ -1,0 +1,632 @@
+[
+  {
+    "viewport": "desktop",
+    "font": "tfl",
+    "lcp": 1240,
+    "cls": 0.0008850557471171982,
+    "blocking": 224,
+    "lcpTag": "H1",
+    "lcpInMain": true,
+    "fcp": 1240,
+    "ttfb": 236.09999999776483,
+    "js": {
+      "count": 21,
+      "encodedBytes": 505139,
+      "transferBytes": 511439
+    },
+    "css": {
+      "count": 2,
+      "encodedBytes": 46502,
+      "transferBytes": 47102
+    },
+    "fonts": {
+      "count": 15,
+      "encodedBytes": 395268,
+      "transferBytes": 399768
+    },
+    "images": {
+      "count": 0,
+      "encodedBytes": 0,
+      "transferBytes": 0
+    },
+    "fontPreloads": 15,
+    "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+    "lang": "es",
+    "theme": "dark"
+  },
+  {
+    "viewport": "desktop",
+    "font": "nunito",
+    "lcp": 676,
+    "cls": 0.0029991001961162554,
+    "blocking": 266,
+    "lcpTag": "H1",
+    "lcpInMain": true,
+    "fcp": 676,
+    "ttfb": 12.600000001490116,
+    "js": {
+      "count": 22,
+      "encodedBytes": 508272,
+      "transferBytes": 514872
+    },
+    "css": {
+      "count": 2,
+      "encodedBytes": 46502,
+      "transferBytes": 47102
+    },
+    "fonts": {
+      "count": 15,
+      "encodedBytes": 395268,
+      "transferBytes": 399768
+    },
+    "images": {
+      "count": 0,
+      "encodedBytes": 0,
+      "transferBytes": 0
+    },
+    "fontPreloads": 15,
+    "bodyFont": "Nunito, \"Nunito Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+    "lang": "es",
+    "theme": "dark"
+  },
+  {
+    "viewport": "desktop",
+    "font": "vt323",
+    "lcp": 1056,
+    "cls": 0.0071750460652166915,
+    "blocking": 612,
+    "lcpTag": "H1",
+    "lcpInMain": true,
+    "fcp": 1056,
+    "ttfb": 12.099999997764826,
+    "js": {
+      "count": 22,
+      "encodedBytes": 508272,
+      "transferBytes": 514872
+    },
+    "css": {
+      "count": 2,
+      "encodedBytes": 46502,
+      "transferBytes": 47102
+    },
+    "fonts": {
+      "count": 15,
+      "encodedBytes": 395268,
+      "transferBytes": 399768
+    },
+    "images": {
+      "count": 0,
+      "encodedBytes": 0,
+      "transferBytes": 0
+    },
+    "fontPreloads": 15,
+    "bodyFont": "VT323, \"VT323 Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+    "lang": "es",
+    "theme": "dark"
+  },
+  {
+    "viewport": "desktop",
+    "font": "outfit",
+    "lcp": 580,
+    "cls": 0.003185644028903035,
+    "blocking": 292,
+    "lcpTag": "H1",
+    "lcpInMain": true,
+    "fcp": 580,
+    "ttfb": 11.5,
+    "js": {
+      "count": 21,
+      "encodedBytes": 505139,
+      "transferBytes": 511439
+    },
+    "css": {
+      "count": 2,
+      "encodedBytes": 46502,
+      "transferBytes": 47102
+    },
+    "fonts": {
+      "count": 15,
+      "encodedBytes": 395268,
+      "transferBytes": 399768
+    },
+    "images": {
+      "count": 0,
+      "encodedBytes": 0,
+      "transferBytes": 0
+    },
+    "fontPreloads": 15,
+    "bodyFont": "Outfit, \"Outfit Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+    "lang": "es",
+    "theme": "dark"
+  },
+  {
+    "viewport": "desktop",
+    "font": "fredoka",
+    "lcp": 572,
+    "cls": 0.0026588248296039096,
+    "blocking": 509,
+    "lcpTag": "H1",
+    "lcpInMain": true,
+    "fcp": 572,
+    "ttfb": 10.699999999254942,
+    "js": {
+      "count": 22,
+      "encodedBytes": 508272,
+      "transferBytes": 514872
+    },
+    "css": {
+      "count": 2,
+      "encodedBytes": 46502,
+      "transferBytes": 47102
+    },
+    "fonts": {
+      "count": 15,
+      "encodedBytes": 395268,
+      "transferBytes": 399768
+    },
+    "images": {
+      "count": 0,
+      "encodedBytes": 0,
+      "transferBytes": 0
+    },
+    "fontPreloads": 15,
+    "bodyFont": "Fredoka, \"Fredoka Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+    "lang": "es",
+    "theme": "dark"
+  },
+  {
+    "viewport": "desktop",
+    "font": "pixelify",
+    "lcp": 588,
+    "cls": 0.009649024132413303,
+    "blocking": 465,
+    "lcpTag": "H1",
+    "lcpInMain": true,
+    "fcp": 588,
+    "ttfb": 10.5,
+    "js": {
+      "count": 22,
+      "encodedBytes": 508272,
+      "transferBytes": 514872
+    },
+    "css": {
+      "count": 2,
+      "encodedBytes": 46502,
+      "transferBytes": 47102
+    },
+    "fonts": {
+      "count": 15,
+      "encodedBytes": 395268,
+      "transferBytes": 399768
+    },
+    "images": {
+      "count": 0,
+      "encodedBytes": 0,
+      "transferBytes": 0
+    },
+    "fontPreloads": 15,
+    "bodyFont": "\"Pixelify Sans\", \"Pixelify Sans Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+    "lang": "es",
+    "theme": "dark"
+  },
+  {
+    "viewport": "desktop",
+    "font": "chakra",
+    "lcp": 596,
+    "cls": 0.0020944580747920957,
+    "blocking": 259,
+    "lcpTag": "H1",
+    "lcpInMain": true,
+    "fcp": 596,
+    "ttfb": 11.5,
+    "js": {
+      "count": 22,
+      "encodedBytes": 508272,
+      "transferBytes": 514872
+    },
+    "css": {
+      "count": 2,
+      "encodedBytes": 46502,
+      "transferBytes": 47102
+    },
+    "fonts": {
+      "count": 15,
+      "encodedBytes": 395268,
+      "transferBytes": 399768
+    },
+    "images": {
+      "count": 0,
+      "encodedBytes": 0,
+      "transferBytes": 0
+    },
+    "fontPreloads": 15,
+    "bodyFont": "\"Chakra Petch\", \"Chakra Petch Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+    "lang": "es",
+    "theme": "dark"
+  },
+  {
+    "viewport": "desktop",
+    "font": "quicksand",
+    "lcp": 608,
+    "cls": 0.001410832174586334,
+    "blocking": 382,
+    "lcpTag": "H1",
+    "lcpInMain": true,
+    "fcp": 608,
+    "ttfb": 10.599999997764826,
+    "js": {
+      "count": 22,
+      "encodedBytes": 508272,
+      "transferBytes": 514872
+    },
+    "css": {
+      "count": 2,
+      "encodedBytes": 46502,
+      "transferBytes": 47102
+    },
+    "fonts": {
+      "count": 15,
+      "encodedBytes": 395268,
+      "transferBytes": 399768
+    },
+    "images": {
+      "count": 0,
+      "encodedBytes": 0,
+      "transferBytes": 0
+    },
+    "fontPreloads": 15,
+    "bodyFont": "Quicksand, \"Quicksand Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+    "lang": "es",
+    "theme": "dark"
+  },
+  {
+    "viewport": "desktop",
+    "font": "rubik",
+    "lcp": 600,
+    "cls": 0.002035680566272291,
+    "blocking": 372,
+    "lcpTag": "H1",
+    "lcpInMain": true,
+    "fcp": 600,
+    "ttfb": 9,
+    "js": {
+      "count": 19,
+      "encodedBytes": 485962,
+      "transferBytes": 491662
+    },
+    "css": {
+      "count": 2,
+      "encodedBytes": 46502,
+      "transferBytes": 47102
+    },
+    "fonts": {
+      "count": 15,
+      "encodedBytes": 395268,
+      "transferBytes": 399768
+    },
+    "images": {
+      "count": 0,
+      "encodedBytes": 0,
+      "transferBytes": 0
+    },
+    "fontPreloads": 15,
+    "bodyFont": "Rubik, \"Rubik Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+    "lang": "es",
+    "theme": "dark"
+  },
+  {
+    "viewport": "mobile",
+    "font": "tfl",
+    "lcp": 836,
+    "cls": 0.0009070387375534104,
+    "blocking": 159,
+    "lcpTag": "SPAN",
+    "lcpInMain": false,
+    "fcp": 396,
+    "ttfb": 8.599999997764826,
+    "js": {
+      "count": 22,
+      "encodedBytes": 508272,
+      "transferBytes": 514872
+    },
+    "css": {
+      "count": 2,
+      "encodedBytes": 46502,
+      "transferBytes": 47102
+    },
+    "fonts": {
+      "count": 15,
+      "encodedBytes": 395268,
+      "transferBytes": 399768
+    },
+    "images": {
+      "count": 0,
+      "encodedBytes": 0,
+      "transferBytes": 0
+    },
+    "fontPreloads": 15,
+    "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+    "lang": "es",
+    "theme": "dark"
+  },
+  {
+    "viewport": "mobile",
+    "font": "nunito",
+    "lcp": 1148,
+    "cls": 0.003282371130751319,
+    "blocking": 200,
+    "lcpTag": "SPAN",
+    "lcpInMain": false,
+    "fcp": 416,
+    "ttfb": 10.899999998509884,
+    "js": {
+      "count": 22,
+      "encodedBytes": 508272,
+      "transferBytes": 514872
+    },
+    "css": {
+      "count": 2,
+      "encodedBytes": 46502,
+      "transferBytes": 47102
+    },
+    "fonts": {
+      "count": 15,
+      "encodedBytes": 395268,
+      "transferBytes": 399768
+    },
+    "images": {
+      "count": 0,
+      "encodedBytes": 0,
+      "transferBytes": 0
+    },
+    "fontPreloads": 15,
+    "bodyFont": "Nunito, \"Nunito Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+    "lang": "es",
+    "theme": "dark"
+  },
+  {
+    "viewport": "mobile",
+    "font": "vt323",
+    "lcp": 1116,
+    "cls": 0.017846283664608865,
+    "blocking": 205,
+    "lcpTag": "SPAN",
+    "lcpInMain": false,
+    "fcp": 456,
+    "ttfb": 10.299999997019768,
+    "js": {
+      "count": 22,
+      "encodedBytes": 508272,
+      "transferBytes": 514872
+    },
+    "css": {
+      "count": 2,
+      "encodedBytes": 46502,
+      "transferBytes": 47102
+    },
+    "fonts": {
+      "count": 15,
+      "encodedBytes": 395268,
+      "transferBytes": 399768
+    },
+    "images": {
+      "count": 0,
+      "encodedBytes": 0,
+      "transferBytes": 0
+    },
+    "fontPreloads": 15,
+    "bodyFont": "VT323, \"VT323 Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+    "lang": "es",
+    "theme": "dark"
+  },
+  {
+    "viewport": "mobile",
+    "font": "outfit",
+    "lcp": 908,
+    "cls": 0.0036498169313213757,
+    "blocking": 160,
+    "lcpTag": "SPAN",
+    "lcpInMain": false,
+    "fcp": 508,
+    "ttfb": 10.100000001490116,
+    "js": {
+      "count": 22,
+      "encodedBytes": 508272,
+      "transferBytes": 514872
+    },
+    "css": {
+      "count": 2,
+      "encodedBytes": 46502,
+      "transferBytes": 47102
+    },
+    "fonts": {
+      "count": 15,
+      "encodedBytes": 395268,
+      "transferBytes": 399768
+    },
+    "images": {
+      "count": 0,
+      "encodedBytes": 0,
+      "transferBytes": 0
+    },
+    "fontPreloads": 15,
+    "bodyFont": "Outfit, \"Outfit Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+    "lang": "es",
+    "theme": "dark"
+  },
+  {
+    "viewport": "mobile",
+    "font": "fredoka",
+    "lcp": 1192,
+    "cls": 0.003000511156792041,
+    "blocking": 156,
+    "lcpTag": "SPAN",
+    "lcpInMain": false,
+    "fcp": 472,
+    "ttfb": 11.199999999254942,
+    "js": {
+      "count": 22,
+      "encodedBytes": 508272,
+      "transferBytes": 514872
+    },
+    "css": {
+      "count": 2,
+      "encodedBytes": 46502,
+      "transferBytes": 47102
+    },
+    "fonts": {
+      "count": 15,
+      "encodedBytes": 395268,
+      "transferBytes": 399768
+    },
+    "images": {
+      "count": 0,
+      "encodedBytes": 0,
+      "transferBytes": 0
+    },
+    "fontPreloads": 15,
+    "bodyFont": "Fredoka, \"Fredoka Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+    "lang": "es",
+    "theme": "dark"
+  },
+  {
+    "viewport": "mobile",
+    "font": "pixelify",
+    "lcp": 1008,
+    "cls": 0.017350985673571503,
+    "blocking": 175,
+    "lcpTag": "SPAN",
+    "lcpInMain": false,
+    "fcp": 492,
+    "ttfb": 10.199999999254942,
+    "js": {
+      "count": 22,
+      "encodedBytes": 508272,
+      "transferBytes": 514872
+    },
+    "css": {
+      "count": 2,
+      "encodedBytes": 46502,
+      "transferBytes": 47102
+    },
+    "fonts": {
+      "count": 15,
+      "encodedBytes": 395268,
+      "transferBytes": 399768
+    },
+    "images": {
+      "count": 0,
+      "encodedBytes": 0,
+      "transferBytes": 0
+    },
+    "fontPreloads": 15,
+    "bodyFont": "\"Pixelify Sans\", \"Pixelify Sans Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+    "lang": "es",
+    "theme": "dark"
+  },
+  {
+    "viewport": "mobile",
+    "font": "chakra",
+    "lcp": 1052,
+    "cls": 0.001529414336809653,
+    "blocking": 166,
+    "lcpTag": "SPAN",
+    "lcpInMain": false,
+    "fcp": 628,
+    "ttfb": 10,
+    "js": {
+      "count": 22,
+      "encodedBytes": 508272,
+      "transferBytes": 514872
+    },
+    "css": {
+      "count": 2,
+      "encodedBytes": 46502,
+      "transferBytes": 47102
+    },
+    "fonts": {
+      "count": 15,
+      "encodedBytes": 395268,
+      "transferBytes": 399768
+    },
+    "images": {
+      "count": 0,
+      "encodedBytes": 0,
+      "transferBytes": 0
+    },
+    "fontPreloads": 15,
+    "bodyFont": "\"Chakra Petch\", \"Chakra Petch Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+    "lang": "es",
+    "theme": "dark"
+  },
+  {
+    "viewport": "mobile",
+    "font": "quicksand",
+    "lcp": 1004,
+    "cls": 0.0012165150546212993,
+    "blocking": 163,
+    "lcpTag": "SPAN",
+    "lcpInMain": false,
+    "fcp": 416,
+    "ttfb": 8.100000001490116,
+    "js": {
+      "count": 22,
+      "encodedBytes": 508272,
+      "transferBytes": 514872
+    },
+    "css": {
+      "count": 2,
+      "encodedBytes": 46502,
+      "transferBytes": 47102
+    },
+    "fonts": {
+      "count": 15,
+      "encodedBytes": 395268,
+      "transferBytes": 399768
+    },
+    "images": {
+      "count": 0,
+      "encodedBytes": 0,
+      "transferBytes": 0
+    },
+    "fontPreloads": 15,
+    "bodyFont": "Quicksand, \"Quicksand Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+    "lang": "es",
+    "theme": "dark"
+  },
+  {
+    "viewport": "mobile",
+    "font": "rubik",
+    "lcp": 964,
+    "cls": 0.0018882014867011763,
+    "blocking": 156,
+    "lcpTag": "SPAN",
+    "lcpInMain": false,
+    "fcp": 412,
+    "ttfb": 8.299999997019768,
+    "js": {
+      "count": 22,
+      "encodedBytes": 508272,
+      "transferBytes": 514872
+    },
+    "css": {
+      "count": 2,
+      "encodedBytes": 46502,
+      "transferBytes": 47102
+    },
+    "fonts": {
+      "count": 15,
+      "encodedBytes": 395268,
+      "transferBytes": 399768
+    },
+    "images": {
+      "count": 0,
+      "encodedBytes": 0,
+      "transferBytes": 0
+    },
+    "fontPreloads": 15,
+    "bodyFont": "Rubik, \"Rubik Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+    "lang": "es",
+    "theme": "dark"
+  }
+]

@@ -15,11 +15,12 @@ function VerifyEmailContent() {
   const t = useTranslations("VerifyEmail");
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [error, setError] = useState(false);
+  const [verificationFailed, setError] = useState(false);
+  const error = !searchParams.get("token") || verificationFailed;
 
   useEffect(() => {
     const token = searchParams.get("token");
-    if (!token) { setError(true); return; }
+    if (!token) return;
     void authClient.verifyEmail({ query: { token, callbackURL: "/onboarding/username" } }).then(({ error: verifyError }) => {
       if (verifyError) { setError(true); return; }
       router.replace("/onboarding/username");

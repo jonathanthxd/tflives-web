@@ -1,0 +1,56 @@
+{
+  "referenceCommit": "34a8df7373996cc4dcaaed36bd20c816377f486a",
+  "local": {
+    "lintErrors": 0,
+    "lintWarnings": 17,
+    "typecheck": "passed",
+    "unit": {
+      "passed": 112,
+      "failed": 0,
+      "skipped": 0
+    },
+    "productionBuild": "passed; npm run build with isolated PGlite and real cached fonts",
+    "prisma": "generated 5.22.0",
+    "httpSmoke": "passed",
+    "populatedIntegration": "passed",
+    "finalRouteStates": 72,
+    "finalSavedFontVisits": 18,
+    "warmNavigationsPerRevision": 8,
+    "browserErrors": 0,
+    "otherServerFailures": 0
+  },
+  "studioCheckpoint": {
+    "note": "Interactive Studio, avatar and chat tests ran before the final preload and chat-loading corrections. Final font/route/DM/loading repetitions are recorded separately; CI repeats the complete suite on the published source.",
+    "accentChecks": 136,
+    "fontChecks": 72,
+    "staticBackgroundChecks": 6,
+    "animatedDrawingAndTimeChecks": 14,
+    "liveSilkAccentChecks": 2,
+    "avatarEditorChecks": 2,
+    "authenticatedChatPickerChecks": 2
+  },
+  "visualReview": {
+    "routeSheets": 9,
+    "comparedStates": 72,
+    "fontSheets": 3,
+    "savedFontStates": 18,
+    "iconNormalizedRgbaEqual": true,
+    "findings": "Final layout and identities preserved in reproducible states. Mobile authenticated navbar can overlap the centered logo with the long fixture name; visible in both original and candidate, left for the separate responsive review."
+  },
+  "remote": {
+    "pullRequest": "https://github.com/jonathanthxd/tflives-web/pull/1",
+    "initialCiFailure": {
+      "run": 37717524043,
+      "phase": "HTTP harness asynchronous PGlite shutdown"
+    },
+    "latestCi": "Consult current PR checks",
+    "merge": "Owner requested leave PR open without merging",
+    "vercelPreview": {
+      "state": "failed",
+      "cause": "Missing DATABASE_URL in Preview; compilation and TypeScript passed",
+      "source": "Owner supplied deployment logs",
+      "toolAccess": "403 for project team"
+    }
+  },
+  "measuredApplicationCommit": "10aa84d3e7ab05cf7d002b5bdb2733656f2386fa"
+}

@@ -2,6 +2,9 @@
 
 Web principal y plataforma comunitaria de **TFLives / Time For Lives**.
 
+Rendimiento v0.17: [resultados y límites de medición](docs/performance/V0_17.md),
+[protocolo de compilación aislada y pruebas visuales](docs/performance/PROTOCOL.md).
+
 ## Stack actual
 
 - Next.js 16 + App Router

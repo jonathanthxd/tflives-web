@@ -171,13 +171,17 @@ const Silk: React.FC<SilkProps> = ({
   );
 
   useEffect(() => {
-    uniforms.uSpeed.value = speed;
-    uniforms.uScale.value = scale;
-    uniforms.uNoiseIntensity.value = noiseIntensity;
-    uniforms.uColor.value.setRGB(...hexToNormalizedRGB(color));
-    uniforms.uRotation.value = rotation;
-    uniforms.uLightMode.value = lightMode ? 1 : 0;
-  }, [speed, scale, noiseIntensity, color, rotation, lightMode, uniforms]);
+    const material = meshRef.current?.material as ShaderMaterial | undefined;
+    if (!material) return;
+    // Update the engine's material through its ref, rather than mutating the
+    // memoized React inputs. R3F owns the mutable shader uniforms after mount.
+    material.uniforms.uSpeed.value = speed;
+    material.uniforms.uScale.value = scale;
+    material.uniforms.uNoiseIntensity.value = noiseIntensity;
+    material.uniforms.uColor.value.setRGB(...hexToNormalizedRGB(color));
+    material.uniforms.uRotation.value = rotation;
+    material.uniforms.uLightMode.value = lightMode ? 1 : 0;
+  }, [speed, scale, noiseIntensity, color, rotation, lightMode]);
 
   return (
     <Canvas dpr={[1, 2]} frameloop={paused ? "demand" : "always"}>

@@ -2,7 +2,8 @@
 
 import { useLocale, useTranslations } from "next-intl";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
+import { useInitialClientValue } from "@/shared/lib/client-value";
 import { Search, Ban, Clock3, VolumeX, TriangleAlert, RotateCcw, ShieldOff, UserSearch, type LucideIcon } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import ConfirmDialog from "@/shared/ui/confirm-dialog";
@@ -65,16 +66,13 @@ const TYPE_LABELS: Record<SanctionType, string> = {
   const [loadingSanctions, setLoadingSanctions] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const [now, setNow] = useState<number | null>(null);
+  const now = useInitialClientValue<number | null>(() => Date.now(), null);
 
   const [type, setType] = useState<SanctionType>("WARNING");
   const [reason, setReason] = useState("");
   const [duration, setDuration] = useState<"permanent" | "1d" | "7d" | "30d">("permanent");
   const [revoking, setRevoking] = useState<Sanction | null>(null);
 
-  useEffect(() => {
-    setNow(Date.now());
-  }, []);
 
   async function search(q: string) {
     const sequence = ++searchSequence.current;

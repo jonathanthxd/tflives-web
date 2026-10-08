@@ -35,10 +35,7 @@ export function AdminGlobalSearch() {
 
   useEffect(() => {
     const normalized = query.trim();
-    setActiveIndex(0);
     if (normalized.length < 2) {
-      setGroups(EMPTY_RESULTS);
-      setLoading(false);
       return;
     }
     const controller = new AbortController();
@@ -88,7 +85,11 @@ export function AdminGlobalSearch() {
         ref={inputRef}
         id={inputId}
         value={query}
-        onChange={(event) => { setQuery(event.target.value); setOpen(true); }}
+        onChange={(event) => {
+          const value = event.target.value;
+          setQuery(value); setOpen(true); setActiveIndex(0);
+          if (value.trim().length < 2) { setGroups(EMPTY_RESULTS); setLoading(false); }
+        }}
         onFocus={() => setOpen(true)}
         onKeyDown={onKeyDown}
         placeholder={t("searchPlaceholder")}

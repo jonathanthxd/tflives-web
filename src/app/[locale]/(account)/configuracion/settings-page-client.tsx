@@ -2,6 +2,7 @@
 
 import { readJsonResponse } from "@/shared/lib/http";
 import { useEffect, useState } from "react";
+import { useInitialClientValue } from "@/shared/lib/client-value";
 import { Bell, Coins, ShieldCheck, UserRound, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
@@ -61,7 +62,12 @@ export default function SettingsPage() {
   const tCategory = useTranslations("Settings.categoria");
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [section, setSection] = useState<Section>("security");
+  const initialSection = useInitialClientValue<Section>(() => {
+    const hash = window.location.hash.slice(1);
+    return hash === "profile" || hash === "privacy" || hash === "notifications" || hash === "security" || hash === "wallet" ? hash : "security";
+  }, "security");
+  const [selectedSection, setSection] = useState<Section | null>(null);
+  const section = selectedSection ?? initialSection;
   const [allowFriendRequests, setAllowFriendRequests] = useState(true);
   const [visibility, setVisibility] = useState<Visibility>("PUBLIC");
   const [preferences, setPreferences] = useState<Preference[]>([]);
@@ -69,11 +75,6 @@ export default function SettingsPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const hash = window.location.hash.slice(1);
-    if (hash === "profile" || hash === "privacy" || hash === "notifications" || hash === "security" || hash === "wallet") {
-      setSection(hash);
-    }
-
     const onHashChange = () => {
       const next = window.location.hash.slice(1);
       if (next === "profile" || next === "privacy" || next === "notifications" || next === "security" || next === "wallet") {

@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useInitialClientValue } from "@/shared/lib/client-value";
 import { useTranslations } from "next-intl";
 import { useRouter, Link } from "@/i18n/navigation";
 import { Plus, Pencil, Trash2, BookOpen } from "lucide-react";
@@ -69,11 +70,8 @@ export default function ContentManager({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
-  const [now, setNow] = useState<number | null>(null);
+  const now = useInitialClientValue<number | null>(() => Date.now(), null);
   const [deleting, setDeleting] = useState<ContentRecord | null>(null);
-  useEffect(() => {
-    setNow(Date.now());
-  }, []);
 
   const fields = CONTENT_FIELDS[kind];
   const stateOf = (item: Record<string, unknown>) =>

@@ -10,6 +10,9 @@ import { CosmeticAvatarFrame } from "@/modules/cosmetics/components/cosmetic-ren
 import { cosmeticVisualsByType, type SafeCosmeticVisual } from "@/modules/cosmetics/visuals";
 import { UserAvatar } from "@/modules/profiles/components/user-identity";
 import { formatUserTime } from "@/shared/lib/date-time";
+import { useInitialClientValue } from "@/shared/lib/client-value";
+import { DEFAULT_QUICK_REACTIONS } from "@/modules/chat/emojis";
+const INITIAL_QUICK_REACTIONS = [...DEFAULT_QUICK_REACTIONS];
 
 interface Person {
   id: string;
@@ -80,7 +83,9 @@ const CHAT_POSITION_STORAGE_KEY = "tflives:global-chat-x";
 export default function GlobalChat({ userId }: { userId: string }) {
   const t = useTranslations("GlobalChat");
   const locale = useLocale();
-  const [open, setOpen] = useState(false);
+  const initialOpen = useInitialClientValue(() => window.location.hash === "#chat-global", false);
+  const [openOverride, setOpen] = useState<boolean | null>(null);
+  const open = openOverride ?? initialOpen;
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [stickers, setStickers] = useState<Sticker[]>([]);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
@@ -89,8 +94,10 @@ export default function GlobalChat({ userId }: { userId: string }) {
   const [replyTo, setReplyTo] = useState<ChatMessage | null>(null);
   const [showExpressions, setShowExpressions] = useState(false);
   const [reactionPicker, setReactionPicker] = useState<{ messageId: string; anchorRect: PickerAnchorRect } | null>(null);
-  const [quickReactions, setQuickReactions] = useState<string[]>(() => getQuickReactions());
-  const [loading, setLoading] = useState(false);
+  const initialReactions = useInitialClientValue(getQuickReactions, INITIAL_QUICK_REACTIONS);
+  const [updatedReactions, setQuickReactions] = useState<string[] | null>(null);
+  const quickReactions = updatedReactions ?? initialReactions;
+  const [loading, setLoading] = useState(true);
   const [loadingOlder, setLoadingOlder] = useState(false);
   const [sending, setSending] = useState(false);
   const [connection, setConnection] = useState<"live" | "limited">("live");
@@ -100,11 +107,11 @@ export default function GlobalChat({ userId }: { userId: string }) {
   const [reportReason, setReportReason] = useState("");
   const [reportDetails, setReportDetails] = useState("");
   const [notice, setNotice] = useState("");
-  const [bubbleX, setBubbleX] = useState<number | null>(null);
+  const [bubbleOverride, setBubbleX] = useState<number | null>(null);
   const [draggingBubble, setDraggingBubble] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const composerRef = useRef<HTMLTextAreaElement>(null);
-  const expressionButtonRef = useRef<HTMLButtonElement>(null);
+  const [expressionButton, setExpressionButton] = useState<HTMLButtonElement | null>(null);
   const reportDialogRef = useRef<HTMLDialogElement>(null);
   const nearBottomRef = useRef(true);
   const suppressBubbleClickRef = useRef(false);
@@ -123,6 +130,16 @@ export default function GlobalChat({ userId }: { userId: string }) {
     return Math.min(maxX, Math.max(minX, candidate));
   }, []);
 
+  const initialBubbleX = useInitialClientValue<number | null>(() => {
+    let stored = Number.NaN;
+    try {
+      const value = window.localStorage.getItem(CHAT_POSITION_STORAGE_KEY);
+      if (value != null) stored = Number(value);
+    } catch { /* Storage can be unavailable; retain a usable default. */ }
+    return constrainBubbleX(Number.isFinite(stored) ? stored : window.innerWidth - CHAT_EDGE_GAP - CHAT_BUBBLE_SIZE);
+  }, null);
+  const bubbleX = bubbleOverride ?? initialBubbleX;
+
   const panelLeft = useMemo(() => {
     if (bubbleX == null || typeof window === "undefined") return null;
     const panelWidth = Math.min(400, window.innerWidth - CHAT_EDGE_GAP * 2);
@@ -130,15 +147,15 @@ export default function GlobalChat({ userId }: { userId: string }) {
     return Math.max(CHAT_EDGE_GAP, Math.min(preferred, window.innerWidth - panelWidth - CHAT_EDGE_GAP));
   }, [bubbleX]);
 
-  const refreshUnread = useCallback(async () => {
-    try {
-      const response = await fetch("/api/chat/global?meta=unread", { cache: "no-store" });
-      if (!response.ok) return;
-      const data = await response.json();
-      setUnread(data.unreadCount || 0);
-    } catch {
-      // The chat remains usable if a background badge refresh is unavailable.
-    }
+  const refreshUnread = useCallback(() => {
+    return fetch("/api/chat/global?meta=unread", { cache: "no-store" })
+      .then(async (response) => {
+        if (!response.ok) return;
+        const data = await response.json();
+        setUnread(data.unreadCount || 0);
+      }).catch(() => {
+        // The chat remains usable if a background badge refresh is unavailable.
+      });
   }, []);
 
   const scrollToBottom = useCallback((smooth = false) => {
@@ -151,14 +168,11 @@ export default function GlobalChat({ userId }: { userId: string }) {
     await fetch("/api/chat/global", { method: "PATCH" }).catch(() => {});
   }, []);
 
-  const loadInitial = useCallback(async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const [messagesResponse, stickersResponse] = await Promise.all([
+  const loadInitial = useCallback(() => {
+      return Promise.all([
         fetch("/api/chat/global?limit=40", { cache: "no-store" }),
         fetch("/api/chat/stickers", { cache: "no-store" }),
-      ]);
+      ]).then(async ([messagesResponse, stickersResponse]) => {
       if (!messagesResponse.ok) throw new Error("messages");
       const data = await messagesResponse.json();
       setMessages(data.messages || []);
@@ -168,17 +182,17 @@ export default function GlobalChat({ userId }: { userId: string }) {
       setConnection("live");
       if (data.unreadCount > 0) await markRead();
       requestAnimationFrame(() => scrollToBottom());
-    } catch {
+    }).catch(() => {
       setConnection("limited");
       setError(t("error"));
-    } finally {
+    }).finally(() => {
       setLoading(false);
-    }
+    });
   }, [markRead, scrollToBottom, t]);
 
   const refreshIncremental = useCallback(async () => {
     const after = messages[messages.length - 1]?.id;
-    if (!after) return loadInitial();
+    if (!after) { setLoading(true); setError(""); return loadInitial(); }
     try {
       const response = await fetch(`/api/chat/global?after=${encodeURIComponent(after)}&limit=50`, { cache: "no-store" });
       if (!response.ok) throw new Error("refresh");
@@ -198,8 +212,11 @@ export default function GlobalChat({ userId }: { userId: string }) {
   }, [loadInitial, markRead, messages, scrollToBottom]);
 
   useEffect(() => {
-    if (window.location.hash === "#chat-global") setOpen(true);
-    const onHash = () => setOpen(window.location.hash === "#chat-global");
+    const onHash = () => {
+      const next = window.location.hash === "#chat-global";
+      if (next) { setLoading(true); setError(""); }
+      setOpen(next);
+    };
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
@@ -229,20 +246,11 @@ export default function GlobalChat({ userId }: { userId: string }) {
     if (!reporting && dialog?.open) dialog.close();
   }, [reporting]);
 
-  useEffect(() => { setQuickReactions(getQuickReactions()); }, []);
-
   useEffect(() => {
-    const restorePosition = () => {
-      const storedValue = window.localStorage.getItem(CHAT_POSITION_STORAGE_KEY);
-      const stored = storedValue == null ? Number.NaN : Number(storedValue);
-      const defaultX = window.innerWidth - CHAT_EDGE_GAP - CHAT_BUBBLE_SIZE;
-      setBubbleX(constrainBubbleX(Number.isFinite(stored) ? stored : defaultX));
-    };
-    restorePosition();
-    const onResize = () => setBubbleX((current) => constrainBubbleX(current ?? window.innerWidth - CHAT_EDGE_GAP - CHAT_BUBBLE_SIZE));
+    const onResize = () => setBubbleX((current) => constrainBubbleX(current ?? initialBubbleX ?? window.innerWidth - CHAT_EDGE_GAP - CHAT_BUBBLE_SIZE));
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
-  }, [constrainBubbleX]);
+  }, [constrainBubbleX, initialBubbleX]);
 
   useEffect(() => {
     if (!replyTo) return;
@@ -250,7 +258,8 @@ export default function GlobalChat({ userId }: { userId: string }) {
   }, [replyTo]);
 
   function toggleOpen() {
-    setOpen((current) => !current);
+    if (!open) { setLoading(true); setError(""); }
+    setOpen((current) => !(current ?? initialOpen));
     setNotice("");
   }
 
@@ -472,7 +481,7 @@ export default function GlobalChat({ userId }: { userId: string }) {
           </div>
           {replyTo && <div className="flex items-center gap-2 border-t border-border bg-primary/5 px-3 py-1.5 text-xs"><span className="min-w-0 flex-1 truncate">{t("respondiendoA", { name: personName(replyTo.author) })}</span><button type="button" onClick={() => setReplyTo(null)} className="text-muted-foreground hover:text-primary">{t("cancelarRespuesta")}</button></div>}
           <form onSubmit={submit} className="safe-area-bottom flex items-end gap-1 border-t border-border p-2">
-            <button ref={expressionButtonRef} type="button" onClick={() => setShowExpressions((value) => !value)} aria-label={t("emojisYStickers")} aria-expanded={showExpressions} className="grid size-10 place-items-center rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary"><SmilePlus className="h-4 w-4" /></button>
+            <button ref={setExpressionButton} type="button" onClick={() => setShowExpressions((value) => !value)} aria-label={t("emojisYStickers")} aria-expanded={showExpressions} className="grid size-10 place-items-center rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary"><SmilePlus className="h-4 w-4" /></button>
             <textarea
               ref={composerRef}
               value={draft}
@@ -513,7 +522,7 @@ export default function GlobalChat({ userId }: { userId: string }) {
       })()}
       <AnchoredEmojiStickerPicker
         open={open && showExpressions}
-        anchorEl={expressionButtonRef.current}
+        anchorEl={expressionButton}
         onClose={() => setShowExpressions(false)}
         onEmojiSelect={insertEmoji}
         stickers={sortedStickers}

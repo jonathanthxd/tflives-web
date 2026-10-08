@@ -1,0 +1,3182 @@
+{
+  "kind": "laboratory-unthrottled-local-production",
+  "node": "v24.20.0",
+  "next": "16.3.8",
+  "buildId": "p2Ygo9aOydrC7iDDDJxFE",
+  "browser": "151.0.7922.34",
+  "browserArgs": [
+    "--disable-gpu",
+    "--use-angle=swiftshader",
+    "--enable-unsafe-swiftshader"
+  ],
+  "results": [
+    {
+      "viewport": "desktop",
+      "locale": "es",
+      "theme": "dark",
+      "route": "",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 3107.39999999851,
+      "headingVisibleObservedMs": 3513.60000000149,
+      "initialSettledObservedMs": 7032,
+      "fontPreloadHeaders": 0,
+      "fontPreloadHtml": 0,
+      "lcp": 2784,
+      "cls": 0.001070022143454218,
+      "blocking": 398,
+      "lcpTag": "H1",
+      "lcpInMain": true,
+      "fcp": 2784,
+      "ttfb": 662.6000000014901,
+      "js": {
+        "count": 22,
+        "encodedBytes": 508272,
+        "transferBytes": 514872
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "es",
+      "theme": "dark",
+      "route": "/network",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 930,
+      "headingVisibleObservedMs": 967.1000000014901,
+      "initialSettledObservedMs": 3781.900000002235,
+      "fontPreloadHeaders": 0,
+      "fontPreloadHtml": 0,
+      "lcp": 1064,
+      "cls": 0.0000684226707175926,
+      "blocking": 202,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 684,
+      "ttfb": 18.100000001490116,
+      "js": {
+        "count": 22,
+        "encodedBytes": 508272,
+        "transferBytes": 514872
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "es",
+      "theme": "dark",
+      "route": "/network/wiki",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 767.2000000029802,
+      "headingVisibleObservedMs": 797.2000000029802,
+      "initialSettledObservedMs": 3592.800000000745,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 964,
+      "cls": 0,
+      "blocking": 26,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 756,
+      "ttfb": 21.600000001490116,
+      "js": {
+        "count": 22,
+        "encodedBytes": 508272,
+        "transferBytes": 514872
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "es",
+      "theme": "dark",
+      "route": "/login",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 872.8000000007451,
+      "headingVisibleObservedMs": 899.1999999992549,
+      "initialSettledObservedMs": 3678.5,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 1012,
+      "cls": 0,
+      "blocking": 42,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 852,
+      "ttfb": 12.399999998509884,
+      "js": {
+        "count": 24,
+        "encodedBytes": 518148,
+        "transferBytes": 525348
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "es",
+      "theme": "dark",
+      "route": "/register",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 618.1999999992549,
+      "headingVisibleObservedMs": 693.2999999970198,
+      "initialSettledObservedMs": 3478.099999997765,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 856,
+      "cls": 0,
+      "blocking": 17,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 548,
+      "ttfb": 11.599999997764826,
+      "js": {
+        "count": 21,
+        "encodedBytes": 509667,
+        "transferBytes": 515967
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "es",
+      "theme": "dark",
+      "route": "/perfil/visual_fixture",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 2180.699999999255,
+      "headingVisibleObservedMs": 2255.7999999970198,
+      "initialSettledObservedMs": 5990.29999999702,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 2440,
+      "cls": 0.03445314708532783,
+      "blocking": 1491,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 1324,
+      "ttfb": 118,
+      "js": {
+        "count": 23,
+        "encodedBytes": 521478,
+        "transferBytes": 528378
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 16,
+        "encodedBytes": 414312,
+        "transferBytes": 419112
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "es",
+      "theme": "dark",
+      "route": "/mensajes",
+      "authenticated": true,
+      "status": 200,
+      "mainVisibleObservedMs": 1104.7999999970198,
+      "headingVisibleObservedMs": 1122.8999999985099,
+      "initialSettledObservedMs": 3785.89999999851,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 1312,
+      "cls": 0,
+      "blocking": 28,
+      "lcpTag": "P",
+      "lcpInMain": true,
+      "fcp": 752,
+      "ttfb": 180.5,
+      "js": {
+        "count": 21,
+        "encodedBytes": 498182,
+        "transferBytes": 504482
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "es",
+      "theme": "dark",
+      "route": "/configuracion",
+      "authenticated": true,
+      "status": 200,
+      "mainVisibleObservedMs": 1888.4000000022352,
+      "headingVisibleObservedMs": 1900.4000000022352,
+      "initialSettledObservedMs": 4564.10000000149,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 696,
+      "cls": 0.0038296296296296294,
+      "blocking": 36,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 600,
+      "ttfb": 148.40000000223517,
+      "js": {
+        "count": 25,
+        "encodedBytes": 527511,
+        "transferBytes": 535011
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "es",
+      "theme": "dark",
+      "route": "/admin",
+      "authenticated": true,
+      "status": 200,
+      "mainVisibleObservedMs": 833.6000000014901,
+      "headingVisibleObservedMs": 853.7000000029802,
+      "initialSettledObservedMs": 3901.7000000029802,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 912,
+      "cls": 0,
+      "blocking": 36,
+      "lcpTag": "P",
+      "lcpInMain": true,
+      "fcp": 688,
+      "ttfb": 105.40000000223517,
+      "js": {
+        "count": 19,
+        "encodedBytes": 490979,
+        "transferBytes": 496679
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "es",
+      "theme": "light",
+      "route": "",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 1046.9000000022352,
+      "headingVisibleObservedMs": 1103.5,
+      "initialSettledObservedMs": 3735.900000002235,
+      "fontPreloadHeaders": 0,
+      "fontPreloadHtml": 0,
+      "lcp": 640,
+      "cls": 0.0008850557471171982,
+      "blocking": 226,
+      "lcpTag": "H1",
+      "lcpInMain": true,
+      "fcp": 640,
+      "ttfb": 10.300000000745058,
+      "js": {
+        "count": 22,
+        "encodedBytes": 508272,
+        "transferBytes": 514872
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "es",
+      "theme": "light",
+      "route": "/network",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 771.8999999985099,
+      "headingVisibleObservedMs": 913.5999999977648,
+      "initialSettledObservedMs": 3638.300000000745,
+      "fontPreloadHeaders": 0,
+      "fontPreloadHtml": 0,
+      "lcp": 912,
+      "cls": 0.0000684226707175926,
+      "blocking": 152,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 568,
+      "ttfb": 10.199999999254942,
+      "js": {
+        "count": 22,
+        "encodedBytes": 508272,
+        "transferBytes": 514872
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "es",
+      "theme": "light",
+      "route": "/network/wiki",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 610.1000000014901,
+      "headingVisibleObservedMs": 788.4000000022352,
+      "initialSettledObservedMs": 3753,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 680,
+      "cls": 0,
+      "blocking": 48,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 652,
+      "ttfb": 11.100000001490116,
+      "js": {
+        "count": 22,
+        "encodedBytes": 508272,
+        "transferBytes": 514872
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "es",
+      "theme": "light",
+      "route": "/login",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 780.1000000014901,
+      "headingVisibleObservedMs": 1379.199999999255,
+      "initialSettledObservedMs": 4089.10000000149,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 1264,
+      "cls": 0.004139948673536093,
+      "blocking": 336,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 696,
+      "ttfb": 10.600000001490116,
+      "js": {
+        "count": 24,
+        "encodedBytes": 518148,
+        "transferBytes": 525348
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "es",
+      "theme": "light",
+      "route": "/register",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 721.6999999992549,
+      "headingVisibleObservedMs": 991,
+      "initialSettledObservedMs": 4036.199999999255,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 1036,
+      "cls": 0.00009944447123628259,
+      "blocking": 164,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 672,
+      "ttfb": 9.5,
+      "js": {
+        "count": 21,
+        "encodedBytes": 509667,
+        "transferBytes": 515967
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "es",
+      "theme": "light",
+      "route": "/perfil/visual_fixture",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 3682.199999999255,
+      "headingVisibleObservedMs": 4443.199999999255,
+      "initialSettledObservedMs": 7826.300000000745,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 3952,
+      "cls": 0.011076260319462529,
+      "blocking": 2311,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 1504,
+      "ttfb": 10.5,
+      "js": {
+        "count": 23,
+        "encodedBytes": 521478,
+        "transferBytes": 528378
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 16,
+        "encodedBytes": 414312,
+        "transferBytes": 419112
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "es",
+      "theme": "light",
+      "route": "/mensajes",
+      "authenticated": true,
+      "status": 200,
+      "mainVisibleObservedMs": 1170.199999999255,
+      "headingVisibleObservedMs": 1210.5999999977648,
+      "initialSettledObservedMs": 3848.699999999255,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 1096,
+      "cls": 0,
+      "blocking": 27,
+      "lcpTag": "P",
+      "lcpInMain": true,
+      "fcp": 588,
+      "ttfb": 11.099999997764826,
+      "js": {
+        "count": 21,
+        "encodedBytes": 498182,
+        "transferBytes": 504482
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "es",
+      "theme": "light",
+      "route": "/configuracion",
+      "authenticated": true,
+      "status": 200,
+      "mainVisibleObservedMs": 1261.7999999970198,
+      "headingVisibleObservedMs": 1283.199999999255,
+      "initialSettledObservedMs": 3943.699999999255,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 596,
+      "cls": 0.0035393518518518517,
+      "blocking": 42,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 460,
+      "ttfb": 11.899999998509884,
+      "js": {
+        "count": 24,
+        "encodedBytes": 524378,
+        "transferBytes": 531578
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "es",
+      "theme": "light",
+      "route": "/admin",
+      "authenticated": true,
+      "status": 200,
+      "mainVisibleObservedMs": 757.5,
+      "headingVisibleObservedMs": 790.5,
+      "initialSettledObservedMs": 3717.89999999851,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 1004,
+      "cls": 0,
+      "blocking": 85,
+      "lcpTag": "P",
+      "lcpInMain": true,
+      "fcp": 600,
+      "ttfb": 11.799999997019768,
+      "js": {
+        "count": 19,
+        "encodedBytes": 490979,
+        "transferBytes": 496679
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "en",
+      "theme": "dark",
+      "route": "",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 940.1000000014901,
+      "headingVisibleObservedMs": 1177.1000000014901,
+      "initialSettledObservedMs": 3898.800000000745,
+      "fontPreloadHeaders": 0,
+      "fontPreloadHtml": 0,
+      "lcp": 788,
+      "cls": 0.0008732817054612483,
+      "blocking": 260,
+      "lcpTag": "H1",
+      "lcpInMain": true,
+      "fcp": 788,
+      "ttfb": 62,
+      "js": {
+        "count": 22,
+        "encodedBytes": 508272,
+        "transferBytes": 514872
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "en",
+      "theme": "dark",
+      "route": "/network",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 598.3000000007451,
+      "headingVisibleObservedMs": 648.8000000007451,
+      "initialSettledObservedMs": 3395.099999997765,
+      "fontPreloadHeaders": 0,
+      "fontPreloadHtml": 0,
+      "lcp": 740,
+      "cls": 0.0000732984503600823,
+      "blocking": 164,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 552,
+      "ttfb": 9,
+      "js": {
+        "count": 22,
+        "encodedBytes": 508272,
+        "transferBytes": 514872
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "en",
+      "theme": "dark",
+      "route": "/network/wiki",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 352.19999999925494,
+      "headingVisibleObservedMs": 374.4000000022352,
+      "initialSettledObservedMs": 3053.800000000745,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 500,
+      "cls": 0,
+      "blocking": 15,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 460,
+      "ttfb": 8.600000001490116,
+      "js": {
+        "count": 22,
+        "encodedBytes": 508272,
+        "transferBytes": 514872
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "en",
+      "theme": "dark",
+      "route": "/login",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 471.5,
+      "headingVisibleObservedMs": 519.5999999977648,
+      "initialSettledObservedMs": 3171.599999997765,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 644,
+      "cls": 0,
+      "blocking": 10,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 500,
+      "ttfb": 8,
+      "js": {
+        "count": 24,
+        "encodedBytes": 518148,
+        "transferBytes": 525348
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "en",
+      "theme": "dark",
+      "route": "/register",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 484.1000000014901,
+      "headingVisibleObservedMs": 537.3000000007451,
+      "initialSettledObservedMs": 3190.10000000149,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 648,
+      "cls": 0,
+      "blocking": 5,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 508,
+      "ttfb": 8,
+      "js": {
+        "count": 21,
+        "encodedBytes": 509667,
+        "transferBytes": 515967
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "en",
+      "theme": "dark",
+      "route": "/perfil/visual_fixture",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 849.1000000014901,
+      "headingVisibleObservedMs": 971.5,
+      "initialSettledObservedMs": 4263.699999999255,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 1692,
+      "cls": 0.022253302020791135,
+      "blocking": 1153,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 912,
+      "ttfb": 35.80000000074506,
+      "js": {
+        "count": 23,
+        "encodedBytes": 521478,
+        "transferBytes": 528378
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 16,
+        "encodedBytes": 414312,
+        "transferBytes": 419112
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "en",
+      "theme": "dark",
+      "route": "/mensajes",
+      "authenticated": true,
+      "status": 200,
+      "mainVisibleObservedMs": 725.6999999992549,
+      "headingVisibleObservedMs": 738.1000000014901,
+      "initialSettledObservedMs": 3336.39999999851,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 844,
+      "cls": 0,
+      "blocking": 7,
+      "lcpTag": "P",
+      "lcpInMain": true,
+      "fcp": 436,
+      "ttfb": 57.5,
+      "js": {
+        "count": 21,
+        "encodedBytes": 498182,
+        "transferBytes": 504482
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "en",
+      "theme": "dark",
+      "route": "/configuracion",
+      "authenticated": true,
+      "status": 200,
+      "mainVisibleObservedMs": 1155.8999999985099,
+      "headingVisibleObservedMs": 1168.0999999977648,
+      "initialSettledObservedMs": 3760.300000000745,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 484,
+      "cls": 0.0038296296296296294,
+      "blocking": 20,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 396,
+      "ttfb": 47.5,
+      "js": {
+        "count": 25,
+        "encodedBytes": 527511,
+        "transferBytes": 535011
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "en",
+      "theme": "dark",
+      "route": "/admin",
+      "authenticated": true,
+      "status": 200,
+      "mainVisibleObservedMs": 772.1000000014901,
+      "headingVisibleObservedMs": 813.4000000022352,
+      "initialSettledObservedMs": 3726.199999999255,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 904,
+      "cls": 0,
+      "blocking": 63,
+      "lcpTag": "P",
+      "lcpInMain": true,
+      "fcp": 904,
+      "ttfb": 65.30000000074506,
+      "js": {
+        "count": 19,
+        "encodedBytes": 490979,
+        "transferBytes": 496679
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "en",
+      "theme": "light",
+      "route": "",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 680.4000000022352,
+      "headingVisibleObservedMs": 799.1000000014901,
+      "initialSettledObservedMs": 3449.60000000149,
+      "fontPreloadHeaders": 0,
+      "fontPreloadHtml": 0,
+      "lcp": 592,
+      "cls": 0.0008732817054612483,
+      "blocking": 130,
+      "lcpTag": "H1",
+      "lcpInMain": true,
+      "fcp": 592,
+      "ttfb": 8.100000001490116,
+      "js": {
+        "count": 22,
+        "encodedBytes": 508272,
+        "transferBytes": 514872
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "en",
+      "theme": "light",
+      "route": "/network",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 496.5,
+      "headingVisibleObservedMs": 547.1000000014901,
+      "initialSettledObservedMs": 3147.400000002235,
+      "fontPreloadHeaders": 0,
+      "fontPreloadHtml": 0,
+      "lcp": 644,
+      "cls": 0.0000732984503600823,
+      "blocking": 95,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 444,
+      "ttfb": 7.699999999254942,
+      "js": {
+        "count": 22,
+        "encodedBytes": 508272,
+        "transferBytes": 514872
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "en",
+      "theme": "light",
+      "route": "/network/wiki",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 339.30000000074506,
+      "headingVisibleObservedMs": 357,
+      "initialSettledObservedMs": 3024.300000000745,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 492,
+      "cls": 0,
+      "blocking": 25,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 388,
+      "ttfb": 8.5,
+      "js": {
+        "count": 22,
+        "encodedBytes": 508272,
+        "transferBytes": 514872
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "en",
+      "theme": "light",
+      "route": "/login",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 476.6000000014901,
+      "headingVisibleObservedMs": 497.4000000022352,
+      "initialSettledObservedMs": 3176.400000002235,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 664,
+      "cls": 0,
+      "blocking": 36,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 520,
+      "ttfb": 8,
+      "js": {
+        "count": 24,
+        "encodedBytes": 518148,
+        "transferBytes": 525348
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "en",
+      "theme": "light",
+      "route": "/register",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 385.20000000298023,
+      "headingVisibleObservedMs": 407.70000000298023,
+      "initialSettledObservedMs": 3128.900000002235,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 620,
+      "cls": 0,
+      "blocking": 15,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 416,
+      "ttfb": 7.800000000745058,
+      "js": {
+        "count": 21,
+        "encodedBytes": 509667,
+        "transferBytes": 515967
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "en",
+      "theme": "light",
+      "route": "/perfil/visual_fixture",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 847.9000000022352,
+      "headingVisibleObservedMs": 1491.7000000029802,
+      "initialSettledObservedMs": 4347.900000002235,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 1776,
+      "cls": 0.011126886721010561,
+      "blocking": 783,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 904,
+      "ttfb": 7.800000000745058,
+      "js": {
+        "count": 23,
+        "encodedBytes": 521478,
+        "transferBytes": 528378
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 16,
+        "encodedBytes": 414312,
+        "transferBytes": 419112
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "en",
+      "theme": "light",
+      "route": "/mensajes",
+      "authenticated": true,
+      "status": 200,
+      "mainVisibleObservedMs": 613.6999999992549,
+      "headingVisibleObservedMs": 622.8999999985099,
+      "initialSettledObservedMs": 3222.599999997765,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 772,
+      "cls": 0,
+      "blocking": 9,
+      "lcpTag": "P",
+      "lcpInMain": true,
+      "fcp": 336,
+      "ttfb": 9,
+      "js": {
+        "count": 21,
+        "encodedBytes": 498182,
+        "transferBytes": 504482
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "en",
+      "theme": "light",
+      "route": "/configuracion",
+      "authenticated": true,
+      "status": 200,
+      "mainVisibleObservedMs": 1288.5,
+      "headingVisibleObservedMs": 1298.7000000029802,
+      "initialSettledObservedMs": 3914.2000000029802,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 556,
+      "cls": 0.0035393518518518517,
+      "blocking": 17,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 476,
+      "ttfb": 12,
+      "js": {
+        "count": 25,
+        "encodedBytes": 527511,
+        "transferBytes": 535011
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "locale": "en",
+      "theme": "light",
+      "route": "/admin",
+      "authenticated": true,
+      "status": 200,
+      "mainVisibleObservedMs": 957,
+      "headingVisibleObservedMs": 980.2999999970198,
+      "initialSettledObservedMs": 3666.099999997765,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 1148,
+      "cls": 0,
+      "blocking": 103,
+      "lcpTag": "P",
+      "lcpInMain": true,
+      "fcp": 676,
+      "ttfb": 13.799999997019768,
+      "js": {
+        "count": 19,
+        "encodedBytes": 490979,
+        "transferBytes": 496679
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "es",
+      "theme": "dark",
+      "route": "",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 739.5,
+      "headingVisibleObservedMs": 839,
+      "initialSettledObservedMs": 3469.699999999255,
+      "fontPreloadHeaders": 0,
+      "fontPreloadHtml": 0,
+      "lcp": 924,
+      "cls": 0.0009070387375534104,
+      "blocking": 158,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 452,
+      "ttfb": 8.100000001490116,
+      "js": {
+        "count": 22,
+        "encodedBytes": 508272,
+        "transferBytes": 514872
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "es",
+      "theme": "dark",
+      "route": "/network",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 522.7000000029802,
+      "headingVisibleObservedMs": 572.4000000022352,
+      "initialSettledObservedMs": 3155.300000000745,
+      "fontPreloadHeaders": 0,
+      "fontPreloadHtml": 0,
+      "lcp": 616,
+      "cls": 0.00016734531140303135,
+      "blocking": 117,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 432,
+      "ttfb": 7.800000000745058,
+      "js": {
+        "count": 22,
+        "encodedBytes": 508272,
+        "transferBytes": 514872
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "es",
+      "theme": "dark",
+      "route": "/network/wiki",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 423.19999999925494,
+      "headingVisibleObservedMs": 449,
+      "initialSettledObservedMs": 3081.10000000149,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 556,
+      "cls": 0,
+      "blocking": 31,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 448,
+      "ttfb": 8.699999999254942,
+      "js": {
+        "count": 22,
+        "encodedBytes": 508272,
+        "transferBytes": 514872
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "es",
+      "theme": "dark",
+      "route": "/login",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 686.2000000029802,
+      "headingVisibleObservedMs": 714.9000000022352,
+      "initialSettledObservedMs": 3456.800000000745,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 844,
+      "cls": 0.00004174645111295793,
+      "blocking": 74,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 424,
+      "ttfb": 8.300000000745058,
+      "js": {
+        "count": 24,
+        "encodedBytes": 518148,
+        "transferBytes": 525348
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "es",
+      "theme": "dark",
+      "route": "/register",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 461.29999999701977,
+      "headingVisibleObservedMs": 517.1999999992549,
+      "initialSettledObservedMs": 3177,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 600,
+      "cls": 0,
+      "blocking": 52,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 468,
+      "ttfb": 12.299999997019768,
+      "js": {
+        "count": 21,
+        "encodedBytes": 509667,
+        "transferBytes": 515967
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "es",
+      "theme": "dark",
+      "route": "/perfil/visual_fixture",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 499.29999999701977,
+      "headingVisibleObservedMs": 567,
+      "initialSettledObservedMs": 3320.699999999255,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 728,
+      "cls": 0.03220343927108427,
+      "blocking": 179,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 500,
+      "ttfb": 11.899999998509884,
+      "js": {
+        "count": 22,
+        "encodedBytes": 519576,
+        "transferBytes": 526176
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 16,
+        "encodedBytes": 414312,
+        "transferBytes": 419112
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "es",
+      "theme": "dark",
+      "route": "/mensajes",
+      "authenticated": true,
+      "status": 200,
+      "mainVisibleObservedMs": 569.5999999977648,
+      "headingVisibleObservedMs": 612.5,
+      "initialSettledObservedMs": 3219.7999999970198,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 572,
+      "cls": 0,
+      "blocking": 5,
+      "lcpTag": "P",
+      "lcpInMain": true,
+      "fcp": 356,
+      "ttfb": 8.399999998509884,
+      "js": {
+        "count": 22,
+        "encodedBytes": 515457,
+        "transferBytes": 522057
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "es",
+      "theme": "dark",
+      "route": "/configuracion",
+      "authenticated": true,
+      "status": 200,
+      "mainVisibleObservedMs": 1231.699999999255,
+      "headingVisibleObservedMs": 1237.6000000014901,
+      "initialSettledObservedMs": 3809.300000000745,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 520,
+      "cls": 0.011859571887423911,
+      "blocking": 20,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 356,
+      "ttfb": 47.69999999925494,
+      "js": {
+        "count": 23,
+        "encodedBytes": 515291,
+        "transferBytes": 522191
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "es",
+      "theme": "dark",
+      "route": "/admin",
+      "authenticated": true,
+      "status": 200,
+      "mainVisibleObservedMs": 547.5,
+      "headingVisibleObservedMs": 743,
+      "initialSettledObservedMs": 3406.599999997765,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 740,
+      "cls": 0,
+      "blocking": 53,
+      "lcpTag": "P",
+      "lcpInMain": true,
+      "fcp": 436,
+      "ttfb": 7.899999998509884,
+      "js": {
+        "count": 19,
+        "encodedBytes": 490979,
+        "transferBytes": 496679
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "es",
+      "theme": "light",
+      "route": "",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 881.3999999985099,
+      "headingVisibleObservedMs": 1051.7999999970198,
+      "initialSettledObservedMs": 3658.2999999970198,
+      "fontPreloadHeaders": 0,
+      "fontPreloadHtml": 0,
+      "lcp": 956,
+      "cls": 0.0009070387375534104,
+      "blocking": 187,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 472,
+      "ttfb": 9.799999997019768,
+      "js": {
+        "count": 22,
+        "encodedBytes": 508272,
+        "transferBytes": 514872
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "es",
+      "theme": "light",
+      "route": "/network",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 633,
+      "headingVisibleObservedMs": 681.5,
+      "initialSettledObservedMs": 3355.39999999851,
+      "fontPreloadHeaders": 0,
+      "fontPreloadHtml": 0,
+      "lcp": 740,
+      "cls": 0.0002224223162621615,
+      "blocking": 119,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 436,
+      "ttfb": 10.399999998509884,
+      "js": {
+        "count": 22,
+        "encodedBytes": 508272,
+        "transferBytes": 514872
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "es",
+      "theme": "light",
+      "route": "/network/wiki",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 489.6000000014901,
+      "headingVisibleObservedMs": 538.5,
+      "initialSettledObservedMs": 3188.60000000149,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 584,
+      "cls": 0,
+      "blocking": 22,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 468,
+      "ttfb": 8.200000002980232,
+      "js": {
+        "count": 22,
+        "encodedBytes": 508272,
+        "transferBytes": 514872
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "es",
+      "theme": "light",
+      "route": "/login",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 391.69999999925494,
+      "headingVisibleObservedMs": 419.30000000074506,
+      "initialSettledObservedMs": 3222.300000000745,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 540,
+      "cls": 0,
+      "blocking": 2,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 400,
+      "ttfb": 8.300000000745058,
+      "js": {
+        "count": 24,
+        "encodedBytes": 518148,
+        "transferBytes": 525348
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "es",
+      "theme": "light",
+      "route": "/register",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 424.80000000074506,
+      "headingVisibleObservedMs": 450.80000000074506,
+      "initialSettledObservedMs": 3239.60000000149,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 624,
+      "cls": 0,
+      "blocking": 16,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 428,
+      "ttfb": 9.900000002235174,
+      "js": {
+        "count": 21,
+        "encodedBytes": 509667,
+        "transferBytes": 515967
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "es",
+      "theme": "light",
+      "route": "/perfil/visual_fixture",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 716.3000000007451,
+      "headingVisibleObservedMs": 807.8000000007451,
+      "initialSettledObservedMs": 3533.800000000745,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 916,
+      "cls": 0.03314438411846475,
+      "blocking": 247,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 640,
+      "ttfb": 10.5,
+      "js": {
+        "count": 22,
+        "encodedBytes": 519576,
+        "transferBytes": 526176
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 16,
+        "encodedBytes": 414312,
+        "transferBytes": 419112
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "es",
+      "theme": "light",
+      "route": "/mensajes",
+      "authenticated": true,
+      "status": 200,
+      "mainVisibleObservedMs": 730,
+      "headingVisibleObservedMs": 753.6999999992549,
+      "initialSettledObservedMs": 3351.199999999255,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 740,
+      "cls": 0.00011333152922936396,
+      "blocking": 29,
+      "lcpTag": "P",
+      "lcpInMain": true,
+      "fcp": 376,
+      "ttfb": 9.099999997764826,
+      "js": {
+        "count": 22,
+        "encodedBytes": 515457,
+        "transferBytes": 522057
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "es",
+      "theme": "light",
+      "route": "/configuracion",
+      "authenticated": true,
+      "status": 200,
+      "mainVisibleObservedMs": 1042,
+      "headingVisibleObservedMs": 1049.8999999985099,
+      "initialSettledObservedMs": 3642.7999999970198,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 408,
+      "cls": 0.011118348644459918,
+      "blocking": 19,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 248,
+      "ttfb": 8.099999997764826,
+      "js": {
+        "count": 25,
+        "encodedBytes": 534468,
+        "transferBytes": 541968
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "es",
+      "theme": "light",
+      "route": "/admin",
+      "authenticated": true,
+      "status": 200,
+      "mainVisibleObservedMs": 1068.699999999255,
+      "headingVisibleObservedMs": 1094.699999999255,
+      "initialSettledObservedMs": 3798.599999997765,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 1080,
+      "cls": 0,
+      "blocking": 170,
+      "lcpTag": "P",
+      "lcpInMain": true,
+      "fcp": 724,
+      "ttfb": 12.299999997019768,
+      "js": {
+        "count": 19,
+        "encodedBytes": 490979,
+        "transferBytes": 496679
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "es",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "en",
+      "theme": "dark",
+      "route": "",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 973.5999999977648,
+      "headingVisibleObservedMs": 1294.3999999985099,
+      "initialSettledObservedMs": 3959.699999999255,
+      "fontPreloadHeaders": 0,
+      "fontPreloadHtml": 0,
+      "lcp": 576,
+      "cls": 0.0009070387375534104,
+      "blocking": 230,
+      "lcpTag": "P",
+      "lcpInMain": true,
+      "fcp": 576,
+      "ttfb": 11.799999997019768,
+      "js": {
+        "count": 22,
+        "encodedBytes": 508272,
+        "transferBytes": 514872
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "en",
+      "theme": "dark",
+      "route": "/network",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 1342.199999999255,
+      "headingVisibleObservedMs": 1363.1000000014901,
+      "initialSettledObservedMs": 3950.199999999255,
+      "fontPreloadHeaders": 0,
+      "fontPreloadHtml": 0,
+      "lcp": 760,
+      "cls": 0.00011333152922936396,
+      "blocking": 171,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 436,
+      "ttfb": 8.399999998509884,
+      "js": {
+        "count": 22,
+        "encodedBytes": 508272,
+        "transferBytes": 514872
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "en",
+      "theme": "dark",
+      "route": "/network/wiki",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 515.2999999970198,
+      "headingVisibleObservedMs": 535.1999999992549,
+      "initialSettledObservedMs": 3270,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 576,
+      "cls": 0,
+      "blocking": 20,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 468,
+      "ttfb": 9.699999999254942,
+      "js": {
+        "count": 22,
+        "encodedBytes": 508272,
+        "transferBytes": 514872
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "en",
+      "theme": "dark",
+      "route": "/login",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 519.8000000007451,
+      "headingVisibleObservedMs": 582.3999999985099,
+      "initialSettledObservedMs": 3469.89999999851,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 664,
+      "cls": 0,
+      "blocking": 30,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 516,
+      "ttfb": 10,
+      "js": {
+        "count": 24,
+        "encodedBytes": 518148,
+        "transferBytes": 525348
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "en",
+      "theme": "dark",
+      "route": "/register",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 423,
+      "headingVisibleObservedMs": 446.80000000074506,
+      "initialSettledObservedMs": 3226.60000000149,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 612,
+      "cls": 0,
+      "blocking": 12,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 428,
+      "ttfb": 8.199999999254942,
+      "js": {
+        "count": 21,
+        "encodedBytes": 509667,
+        "transferBytes": 515967
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "en",
+      "theme": "dark",
+      "route": "/perfil/visual_fixture",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 556,
+      "headingVisibleObservedMs": 631.4000000022352,
+      "initialSettledObservedMs": 3299.699999999255,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 776,
+      "cls": 0.032171345848152726,
+      "blocking": 87,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 548,
+      "ttfb": 8.199999999254942,
+      "js": {
+        "count": 22,
+        "encodedBytes": 519576,
+        "transferBytes": 526176
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 16,
+        "encodedBytes": 414312,
+        "transferBytes": 419112
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "en",
+      "theme": "dark",
+      "route": "/mensajes",
+      "authenticated": true,
+      "status": 200,
+      "mainVisibleObservedMs": 526.0999999977648,
+      "headingVisibleObservedMs": 535.1999999992549,
+      "initialSettledObservedMs": 3150.699999999255,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 576,
+      "cls": 0,
+      "blocking": 10,
+      "lcpTag": "P",
+      "lcpInMain": true,
+      "fcp": 264,
+      "ttfb": 8.099999997764826,
+      "js": {
+        "count": 22,
+        "encodedBytes": 515457,
+        "transferBytes": 522057
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "en",
+      "theme": "dark",
+      "route": "/configuracion",
+      "authenticated": true,
+      "status": 200,
+      "mainVisibleObservedMs": 1183.199999999255,
+      "headingVisibleObservedMs": 1189.199999999255,
+      "initialSettledObservedMs": 3774.5,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 460,
+      "cls": 0.011859571887423911,
+      "blocking": 24,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 372,
+      "ttfb": 8.900000002235174,
+      "js": {
+        "count": 25,
+        "encodedBytes": 534468,
+        "transferBytes": 541968
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "en",
+      "theme": "dark",
+      "route": "/admin",
+      "authenticated": true,
+      "status": 200,
+      "mainVisibleObservedMs": 476.0999999977648,
+      "headingVisibleObservedMs": 645.3000000007451,
+      "initialSettledObservedMs": 3225.199999999255,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 680,
+      "cls": 0,
+      "blocking": 44,
+      "lcpTag": "P",
+      "lcpInMain": true,
+      "fcp": 380,
+      "ttfb": 7.800000000745058,
+      "js": {
+        "count": 19,
+        "encodedBytes": 490979,
+        "transferBytes": 496679
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "en",
+      "theme": "light",
+      "route": "",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 765,
+      "headingVisibleObservedMs": 835.6000000014901,
+      "initialSettledObservedMs": 3451.900000002235,
+      "fontPreloadHeaders": 0,
+      "fontPreloadHtml": 0,
+      "lcp": 380,
+      "cls": 0.0009070387375534104,
+      "blocking": 132,
+      "lcpTag": "P",
+      "lcpInMain": true,
+      "fcp": 380,
+      "ttfb": 8.100000001490116,
+      "js": {
+        "count": 22,
+        "encodedBytes": 508272,
+        "transferBytes": 514872
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "en",
+      "theme": "light",
+      "route": "/network",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 699,
+      "headingVisibleObservedMs": 776.1000000014901,
+      "initialSettledObservedMs": 3488.39999999851,
+      "fontPreloadHeaders": 0,
+      "fontPreloadHtml": 0,
+      "lcp": 776,
+      "cls": 0.00011333152922936396,
+      "blocking": 158,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 436,
+      "ttfb": 10.399999998509884,
+      "js": {
+        "count": 22,
+        "encodedBytes": 508272,
+        "transferBytes": 514872
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "en",
+      "theme": "light",
+      "route": "/network/wiki",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 547.7000000029802,
+      "headingVisibleObservedMs": 589.4000000022352,
+      "initialSettledObservedMs": 3350.2000000029802,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 604,
+      "cls": 0,
+      "blocking": 48,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 488,
+      "ttfb": 8.900000002235174,
+      "js": {
+        "count": 22,
+        "encodedBytes": 508272,
+        "transferBytes": 514872
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "en",
+      "theme": "light",
+      "route": "/login",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 419.20000000298023,
+      "headingVisibleObservedMs": 450.9000000022352,
+      "initialSettledObservedMs": 3088.60000000149,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 476,
+      "cls": 0,
+      "blocking": 11,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 348,
+      "ttfb": 7.800000000745058,
+      "js": {
+        "count": 24,
+        "encodedBytes": 518148,
+        "transferBytes": 525348
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "en",
+      "theme": "light",
+      "route": "/register",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 541.6999999992549,
+      "headingVisibleObservedMs": 576.8999999985099,
+      "initialSettledObservedMs": 3291.300000000745,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 720,
+      "cls": 0.00004174645111295793,
+      "blocking": 89,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 420,
+      "ttfb": 9.199999999254942,
+      "js": {
+        "count": 21,
+        "encodedBytes": 509667,
+        "transferBytes": 515967
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "en",
+      "theme": "light",
+      "route": "/perfil/visual_fixture",
+      "authenticated": false,
+      "status": 200,
+      "mainVisibleObservedMs": 764.2999999970198,
+      "headingVisibleObservedMs": 1154.199999999255,
+      "initialSettledObservedMs": 4331.39999999851,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 1276,
+      "cls": 0.032330308335008565,
+      "blocking": 566,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 768,
+      "ttfb": 8.099999997764826,
+      "js": {
+        "count": 22,
+        "encodedBytes": 519576,
+        "transferBytes": 526176
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 16,
+        "encodedBytes": 414312,
+        "transferBytes": 419112
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "en",
+      "theme": "light",
+      "route": "/mensajes",
+      "authenticated": true,
+      "status": 200,
+      "mainVisibleObservedMs": 766,
+      "headingVisibleObservedMs": 784.8000000007451,
+      "initialSettledObservedMs": 3385.89999999851,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 680,
+      "cls": 0,
+      "blocking": 4,
+      "lcpTag": "P",
+      "lcpInMain": true,
+      "fcp": 352,
+      "ttfb": 7.899999998509884,
+      "js": {
+        "count": 22,
+        "encodedBytes": 515457,
+        "transferBytes": 522057
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "en",
+      "theme": "light",
+      "route": "/configuracion",
+      "authenticated": true,
+      "status": 200,
+      "mainVisibleObservedMs": 1139.5999999977648,
+      "headingVisibleObservedMs": 1145.5999999977648,
+      "initialSettledObservedMs": 3724.7999999970198,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 424,
+      "cls": 0.011118348644459918,
+      "blocking": 16,
+      "lcpTag": "SPAN",
+      "lcpInMain": false,
+      "fcp": 340,
+      "ttfb": 8,
+      "js": {
+        "count": 23,
+        "encodedBytes": 515291,
+        "transferBytes": 522191
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "locale": "en",
+      "theme": "light",
+      "route": "/admin",
+      "authenticated": true,
+      "status": 200,
+      "mainVisibleObservedMs": 734.7999999970198,
+      "headingVisibleObservedMs": 761.5,
+      "initialSettledObservedMs": 3363.699999999255,
+      "fontPreloadHeaders": 15,
+      "fontPreloadHtml": 0,
+      "lcp": 760,
+      "cls": 0,
+      "blocking": 64,
+      "lcpTag": "P",
+      "lcpInMain": true,
+      "fcp": 464,
+      "ttfb": 9,
+      "js": {
+        "count": 19,
+        "encodedBytes": 490979,
+        "transferBytes": 496679
+      },
+      "css": {
+        "count": 2,
+        "encodedBytes": 46502,
+        "transferBytes": 47102
+      },
+      "fonts": {
+        "count": 15,
+        "encodedBytes": 395268,
+        "transferBytes": 399768
+      },
+      "images": {
+        "count": 0,
+        "encodedBytes": 0,
+        "transferBytes": 0
+      },
+      "fontPreloads": 15,
+      "bodyFont": "Inter, \"Inter Fallback\", Inter, \"Inter Fallback\", GeistSans, \"GeistSans Fallback\", sans-serif",
+      "lang": "en",
+      "errors": []
+    }
+  ]
+}

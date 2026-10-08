@@ -99,6 +99,35 @@ function PeopleDialog({
   );
 }
 
+function Metric({
+  label,
+  value,
+  icon,
+  onClick,
+}: {
+  label: string;
+  value: string | number;
+  icon?: ReactNode;
+  onClick?: () => void;
+}) {
+  const content = (
+    <>
+      {icon}
+      <span className="font-display text-base font-bold text-foreground sm:text-lg">{value}</span>
+      <span className="text-xs text-muted-foreground">{label}</span>
+    </>
+  );
+  const className = "inline-flex min-h-11 items-center gap-2 rounded-xl border border-border/70 bg-background/35 px-3 py-2 text-left transition";
+  return onClick ? (
+    <button type="button" onClick={onClick} className={`${className} hover:border-primary/30 hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40`}>
+      {content}
+    </button>
+  ) : (
+    <div className={className}>{content}</div>
+  );
+}
+
+
 export default function SocialCard({
   username,
   coinBalance,
@@ -118,12 +147,13 @@ export default function SocialCard({
   const [peopleList, setPeopleList] = useState<PeopleList>(null);
 
   async function load() {
-    const [socialResponse, likeResponse] = await Promise.all([
+    return Promise.all([
       fetch(`/api/social/status?username=${encodeURIComponent(username)}`, { cache: "no-store" }),
       fetch(`/api/profile/like?username=${encodeURIComponent(username)}`, { cache: "no-store" }),
-    ]);
-    if (socialResponse.ok) setStatus(await socialResponse.json());
-    if (likeResponse.ok) setLikeStatus(await likeResponse.json());
+    ]).then(async ([socialResponse, likeResponse]) => {
+      if (socialResponse.ok) setStatus(await socialResponse.json());
+      if (likeResponse.ok) setLikeStatus(await likeResponse.json());
+    }).catch(() => setError(t("errorGenerico")));
   }
 
   useEffect(() => {
@@ -258,33 +288,6 @@ export default function SocialCard({
 
   const formatter = new Intl.NumberFormat(locale === "es" ? "es-CO" : "en-US");
 
-  function Metric({
-    label,
-    value,
-    icon,
-    onClick,
-  }: {
-    label: string;
-    value: string | number;
-    icon?: ReactNode;
-    onClick?: () => void;
-  }) {
-    const content = (
-      <>
-        {icon}
-        <span className="font-display text-base font-bold text-foreground sm:text-lg">{value}</span>
-        <span className="text-xs text-muted-foreground">{label}</span>
-      </>
-    );
-    const className = "inline-flex min-h-11 items-center gap-2 rounded-xl border border-border/70 bg-background/35 px-3 py-2 text-left transition";
-    return onClick ? (
-      <button type="button" onClick={onClick} className={`${className} hover:border-primary/30 hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40`}>
-        {content}
-      </button>
-    ) : (
-      <div className={className}>{content}</div>
-    );
-  }
 
   return (
     <div className="mt-5 border-t border-border/70 pt-5">

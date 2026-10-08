@@ -11,6 +11,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Generated measurement data/font-cache responses, not application code.
+    "performance-artifacts/**",
+    "playwright-report/**",
+    "test-results/**",
   ]),
 ]);
 

@@ -10,12 +10,12 @@ export default function MessagingUnreadLink({ compact = false }: { compact?: boo
   const [unread, setUnread] = useState(0);
 
   const refresh = useCallback(async () => {
-    try {
-      const response = await fetch("/api/messaging/unread", { cache: "no-store" });
-      if (response.ok) setUnread((await response.json()).unreadCount || 0);
-    } catch {
-      // A transient badge failure does not affect access to messages.
-    }
+    return fetch("/api/messaging/unread", { cache: "no-store" })
+      .then(async (response) => {
+        if (response.ok) setUnread((await response.json()).unreadCount || 0);
+      }).catch(() => {
+        // A transient badge failure does not affect access to messages.
+      });
   }, []);
 
   useEffect(() => {

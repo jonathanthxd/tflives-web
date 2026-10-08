@@ -1,0 +1,1832 @@
+[
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "blue",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "slate",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "rose",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "pink",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "fuchsia",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "violet",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "indigo",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "sky",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "cyan",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "teal",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "emerald",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "green",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "lime",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "yellow",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "amber",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "orange",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "red",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "font": "tfl",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "font": "nunito",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "font": "vt323",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "font": "outfit",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "font": "fredoka",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "font": "pixelify",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "font": "chakra",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "font": "quicksand",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "dark",
+    "font": "rubik",
+    "passed": true
+  },
+  {
+    "kind": "static-background",
+    "viewport": "desktop",
+    "background": "dot",
+    "passed": true
+  },
+  {
+    "kind": "static-background",
+    "viewport": "desktop",
+    "background": "shading",
+    "passed": true
+  },
+  {
+    "kind": "static-background",
+    "viewport": "desktop",
+    "background": "solid",
+    "passed": true
+  },
+  {
+    "kind": "animated-background-draws-and-time-uniforms",
+    "viewport": "desktop",
+    "background": "silk",
+    "passed": true
+  },
+  {
+    "kind": "silk-live-accent-uniform-update",
+    "viewport": "desktop",
+    "passed": true
+  },
+  {
+    "kind": "animated-background-draws-and-time-uniforms",
+    "viewport": "desktop",
+    "background": "ghost-fibers",
+    "passed": true
+  },
+  {
+    "kind": "animated-background-draws-and-time-uniforms",
+    "viewport": "desktop",
+    "background": "crt-warp",
+    "passed": true
+  },
+  {
+    "kind": "animated-background-draws-and-time-uniforms",
+    "viewport": "desktop",
+    "background": "molten-metal",
+    "passed": true
+  },
+  {
+    "kind": "animated-background-draws-and-time-uniforms",
+    "viewport": "desktop",
+    "background": "gradient-waves",
+    "passed": true
+  },
+  {
+    "kind": "animated-background-draws-and-time-uniforms",
+    "viewport": "desktop",
+    "background": "prism",
+    "passed": true
+  },
+  {
+    "kind": "animated-background-draws-and-time-uniforms",
+    "viewport": "desktop",
+    "background": "line-waves",
+    "passed": true
+  },
+  {
+    "kind": "oauth-feedback-url-cleanup",
+    "locale": "es",
+    "passed": true
+  },
+  {
+    "kind": "avatar-editor-load-zoom-cancel-resource-disposal",
+    "viewport": "desktop",
+    "locale": "es",
+    "passed": true,
+    "upload": "not exercised: external storage"
+  },
+  {
+    "kind": "authenticated-dynamic-chat-picker",
+    "viewport": "desktop",
+    "locale": "es",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "accent": "blue",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "accent": "slate",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "accent": "rose",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "accent": "pink",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "accent": "fuchsia",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "accent": "violet",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "accent": "indigo",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "accent": "sky",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "accent": "cyan",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "accent": "teal",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "accent": "emerald",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "accent": "green",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "accent": "lime",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "accent": "yellow",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "accent": "amber",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "accent": "orange",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "accent": "red",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "font": "tfl",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "font": "nunito",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "font": "vt323",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "font": "outfit",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "font": "fredoka",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "font": "pixelify",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "font": "chakra",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "font": "quicksand",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "es",
+    "theme": "light",
+    "font": "rubik",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "blue",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "slate",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "rose",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "pink",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "fuchsia",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "violet",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "indigo",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "sky",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "cyan",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "teal",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "emerald",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "green",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "lime",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "yellow",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "amber",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "orange",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "red",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "font": "tfl",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "font": "nunito",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "font": "vt323",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "font": "outfit",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "font": "fredoka",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "font": "pixelify",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "font": "chakra",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "font": "quicksand",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "dark",
+    "font": "rubik",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "accent": "blue",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "accent": "slate",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "accent": "rose",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "accent": "pink",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "accent": "fuchsia",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "accent": "violet",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "accent": "indigo",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "accent": "sky",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "accent": "cyan",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "accent": "teal",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "accent": "emerald",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "accent": "green",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "accent": "lime",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "accent": "yellow",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "accent": "amber",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "accent": "orange",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "accent": "red",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "font": "tfl",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "font": "nunito",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "font": "vt323",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "font": "outfit",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "font": "fredoka",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "font": "pixelify",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "font": "chakra",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "font": "quicksand",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "desktop",
+    "locale": "en",
+    "theme": "light",
+    "font": "rubik",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "blue",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "slate",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "rose",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "pink",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "fuchsia",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "violet",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "indigo",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "sky",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "cyan",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "teal",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "emerald",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "green",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "lime",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "yellow",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "amber",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "orange",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "accent": "red",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "font": "tfl",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "font": "nunito",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "font": "vt323",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "font": "outfit",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "font": "fredoka",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "font": "pixelify",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "font": "chakra",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "font": "quicksand",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "dark",
+    "font": "rubik",
+    "passed": true
+  },
+  {
+    "kind": "static-background",
+    "viewport": "mobile",
+    "background": "dot",
+    "passed": true
+  },
+  {
+    "kind": "static-background",
+    "viewport": "mobile",
+    "background": "shading",
+    "passed": true
+  },
+  {
+    "kind": "static-background",
+    "viewport": "mobile",
+    "background": "solid",
+    "passed": true
+  },
+  {
+    "kind": "animated-background-draws-and-time-uniforms",
+    "viewport": "mobile",
+    "background": "silk",
+    "passed": true
+  },
+  {
+    "kind": "silk-live-accent-uniform-update",
+    "viewport": "mobile",
+    "passed": true
+  },
+  {
+    "kind": "animated-background-draws-and-time-uniforms",
+    "viewport": "mobile",
+    "background": "ghost-fibers",
+    "passed": true
+  },
+  {
+    "kind": "animated-background-draws-and-time-uniforms",
+    "viewport": "mobile",
+    "background": "crt-warp",
+    "passed": true
+  },
+  {
+    "kind": "animated-background-draws-and-time-uniforms",
+    "viewport": "mobile",
+    "background": "molten-metal",
+    "passed": true
+  },
+  {
+    "kind": "animated-background-draws-and-time-uniforms",
+    "viewport": "mobile",
+    "background": "gradient-waves",
+    "passed": true
+  },
+  {
+    "kind": "animated-background-draws-and-time-uniforms",
+    "viewport": "mobile",
+    "background": "prism",
+    "passed": true
+  },
+  {
+    "kind": "animated-background-draws-and-time-uniforms",
+    "viewport": "mobile",
+    "background": "line-waves",
+    "passed": true
+  },
+  {
+    "kind": "oauth-feedback-url-cleanup",
+    "locale": "es",
+    "passed": true
+  },
+  {
+    "kind": "avatar-editor-load-zoom-cancel-resource-disposal",
+    "viewport": "mobile",
+    "locale": "es",
+    "passed": true,
+    "upload": "not exercised: external storage"
+  },
+  {
+    "kind": "authenticated-dynamic-chat-picker",
+    "viewport": "mobile",
+    "locale": "es",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "accent": "blue",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "accent": "slate",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "accent": "rose",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "accent": "pink",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "accent": "fuchsia",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "accent": "violet",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "accent": "indigo",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "accent": "sky",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "accent": "cyan",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "accent": "teal",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "accent": "emerald",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "accent": "green",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "accent": "lime",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "accent": "yellow",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "accent": "amber",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "accent": "orange",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "accent": "red",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "font": "tfl",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "font": "nunito",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "font": "vt323",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "font": "outfit",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "font": "fredoka",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "font": "pixelify",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "font": "chakra",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "font": "quicksand",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "es",
+    "theme": "light",
+    "font": "rubik",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "blue",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "slate",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "rose",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "pink",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "fuchsia",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "violet",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "indigo",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "sky",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "cyan",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "teal",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "emerald",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "green",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "lime",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "yellow",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "amber",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "orange",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "accent": "red",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "font": "tfl",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "font": "nunito",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "font": "vt323",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "font": "outfit",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "font": "fredoka",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "font": "pixelify",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "font": "chakra",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "font": "quicksand",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "dark",
+    "font": "rubik",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "accent": "blue",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "accent": "slate",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "accent": "rose",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "accent": "pink",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "accent": "fuchsia",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "accent": "violet",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "accent": "indigo",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "accent": "sky",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "accent": "cyan",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "accent": "teal",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "accent": "emerald",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "accent": "green",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "accent": "lime",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "accent": "yellow",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "accent": "amber",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "accent": "orange",
+    "passed": true
+  },
+  {
+    "kind": "accent-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "accent": "red",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "font": "tfl",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "font": "nunito",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "font": "vt323",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "font": "outfit",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "font": "fredoka",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "font": "pixelify",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "font": "chakra",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "font": "quicksand",
+    "passed": true
+  },
+  {
+    "kind": "font-selection-and-persistence",
+    "viewport": "mobile",
+    "locale": "en",
+    "theme": "light",
+    "font": "rubik",
+    "passed": true
+  }
+]
