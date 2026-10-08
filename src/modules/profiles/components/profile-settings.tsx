@@ -9,7 +9,8 @@ import { Card } from "@/shared/ui/card";
 import { FormField } from "@/shared/ui/form-field";
 import { Input } from "@/shared/ui/input";
 import { UserAvatar } from "@/modules/profiles/components/user-identity";
-import { ProfileImageEditor } from "@/modules/profiles/components/profile-image-editor";
+import dynamic from "next/dynamic";
+
 import {
   SOCIAL_PLATFORMS,
   parseSocialLinks,
@@ -17,6 +18,9 @@ import {
   type SocialLink,
   type SocialPlatform,
 } from "@/modules/profiles/types";
+
+const loadImageEditor = () => import("./profile-image-editor");
+const ProfileImageEditor = dynamic(() => loadImageEditor().then((module) => module.ProfileImageEditor), { loading: () => null });
 
 export type EditableProfile = Omit<Pick<
   PublicProfile,
@@ -153,7 +157,9 @@ export function ProfileSettings({ profile, onUpdated }: { profile: EditableProfi
           {current.bannerUrl && <img src={current.bannerUrl} alt="" referrerPolicy="no-referrer" className="absolute inset-0 size-full object-cover" />}
           <button
             type="button"
-            onClick={() => bannerInput.current?.click()}
+            onPointerEnter={() => { void loadImageEditor(); }}
+            onFocus={() => { void loadImageEditor(); }}
+            onClick={() => { void loadImageEditor(); bannerInput.current?.click(); }}
             disabled={uploading !== null}
             className="tfl-glass-chip absolute right-4 top-4 inline-flex min-h-11 items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-medium text-foreground transition hover:border-primary/40 disabled:opacity-60"
           >
@@ -175,7 +181,9 @@ export function ProfileSettings({ profile, onUpdated }: { profile: EditableProfi
             />
             <button
               type="button"
-              onClick={() => avatarInput.current?.click()}
+              onPointerEnter={() => { void loadImageEditor(); }}
+              onFocus={() => { void loadImageEditor(); }}
+              onClick={() => { void loadImageEditor(); avatarInput.current?.click(); }}
               disabled={uploading !== null}
               aria-label={t("changeAvatar")}
               className="absolute -bottom-1 -right-1 grid size-10 place-items-center rounded-full border-2 border-card bg-primary text-primary-foreground shadow-sm transition hover:bg-primary/90 disabled:opacity-60"

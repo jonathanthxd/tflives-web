@@ -1,0 +1,42 @@
+{
+  "base": "c79fd260b297bba86ce493f0cc7b81d811743fa0",
+  "shaders": [
+    {
+      "path": "src/shared/ui/studio/backgrounds/crt-warp.tsx",
+      "shaderCount": 2,
+      "shaderHashes": [
+        "82ee27730b2e527ddebe01ee3712177092a4ddcf6f5fa2dbe61155f74c208267",
+        "ece426b44b30da58dce34d242df1c3e9106fc2b0af54c6fa0f8e8f678b50268c"
+      ],
+      "unchanged": true
+    },
+    {
+      "path": "src/shared/ui/studio/backgrounds/prism.tsx",
+      "shaderCount": 2,
+      "shaderHashes": [
+        "336f7c8bf98bd29268b1e4225e1287f1b1e055cb714d2095fe62cb06e9bcf247",
+        "7a40260e2d92d33ba7b838d44b3e46e7de25a69f2d83a8d400920774d04d9b7a"
+      ],
+      "unchanged": true
+    }
+  ],
+  "preserved": [
+    {
+      "path": "src/app/[locale]/layout.tsx",
+      "unchanged": true,
+      "sha256": "ff827c0ad3f6f2b3bc78654e39624f5fc60db564d3c594d0a16fd8abeb9579ce"
+    },
+    {
+      "path": "src/shared/ui/studio/studio-background.tsx",
+      "unchanged": true,
+      "sha256": "661abc08bcc6dfac98830ceb492b43fdc1c13bfcb7346ae58d7c5f3ed0c086ff"
+    },
+    {
+      "path": "src/providers/studio-provider.tsx",
+      "unchanged": true,
+      "sha256": "839f5f9327aa366db7ae99b6bb6a4623bc635e6082d07c692745377af744ade8"
+    }
+  ],
+  "teamPositionCalculationUnchanged": true,
+  "apiInfrastructureSchemaMigrationsUnchanged": true
+}

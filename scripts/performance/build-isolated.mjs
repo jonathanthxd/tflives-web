@@ -4,6 +4,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { spawn } from "node:child_process";
 import { once } from "node:events";
 import { closeIsolatedDatabase } from "./close-database.mjs";
+import { seedTeamFixture } from "./team-fixture.mjs";
 const require = createRequire(resolve("package.json"));
 const { PGlite } = require("@electric-sql/pglite");
 const { PGLiteSocketServer } = require("@electric-sql/pglite-socket");
@@ -16,6 +17,7 @@ try {
     await db.exec(
       readFileSync(`prisma/migrations/${name}/migration.sql`, "utf8"),
     );
+  if (process.env.TFL_TEAM_FIXTURE === "1") await seedTeamFixture(db);
   socket = new PGLiteSocketServer({
     db,
     host: "127.0.0.1",

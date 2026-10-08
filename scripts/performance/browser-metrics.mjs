@@ -72,6 +72,14 @@ export function captureMetrics() {
     images: group(/\.(png|jpg|webp|ico)(?:\?|$)/),
     fontPreloads: document.querySelectorAll("link[rel=preload][as=font]")
       .length,
+    assets: resources.filter((resource) => /\.(js|css|woff2?)(?:\?|$)/.test(resource.name)).map((resource) => ({
+      path: new URL(resource.name).pathname,
+      kind: resource.initiatorType,
+      startMs: resource.startTime,
+      durationMs: resource.duration,
+      encodedBytes: resource.encodedBodySize,
+      transferBytes: resource.transferSize,
+    })),
     bodyFont: getComputedStyle(document.body).fontFamily,
     lang: document.documentElement.lang,
     theme: document.documentElement.className,

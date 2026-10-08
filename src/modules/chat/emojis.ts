@@ -111,7 +111,7 @@ export const EMOJI_CATEGORIES: readonly EmojiCategory[] = [
 ] as const;
 
 export const ALL_CHAT_EMOJIS = [...new Set(EMOJI_CATEGORIES.flatMap((category) => category.emojis))];
-export const DEFAULT_QUICK_REACTIONS = ["👍", "❤️", "😂"] as const;
+export { DEFAULT_QUICK_REACTIONS } from "./quick-reactions";
 
 /**
  * Accepts a single Unicode emoji grapheme (including flags, modifiers and ZWJ

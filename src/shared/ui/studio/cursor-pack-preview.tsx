@@ -1,5 +1,7 @@
 "use client";
 
+import "./cursor-pack-preview.css";
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { MousePointer2, Sparkles } from "lucide-react";
 import {

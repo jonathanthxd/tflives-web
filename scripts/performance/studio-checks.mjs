@@ -27,12 +27,14 @@ const animatedChoices = [
 // independently of CSS animation or other moving elements in a screenshot.
 export function installWebGLProbe() {
   window.__glStats = new WeakMap();
+  window.__lostWebGLContexts = 0;
   const locations = new WeakMap();
   const statsFor = (gl) => {
     let stats = window.__glStats.get(gl.canvas);
     if (!stats) {
       stats = { draws: 0, times: new Set(), colors: new Set() };
       window.__glStats.set(gl.canvas, stats);
+      gl.canvas.addEventListener("webglcontextlost", () => { stats.lost = true; window.__lostWebGLContexts++; });
     }
     return stats;
   };
@@ -261,6 +263,15 @@ export async function checkStudio(page, locale, theme, viewport, output) {
         passed: true,
       });
       console.log("Verified animated background", viewport.name, id);
+      if (id === "prism" && process.env.TFL_GRAPHICS_CHECKS === "1") {
+        const replaced = await page.locator(".studio-background--animated canvas").first().elementHandle();
+        const dialog = await studio(page, locale);
+        await dialog.locator("button[aria-pressed]").filter({ has: page.getByText(labels.backgroundNames.dot, { exact: true }) }).click();
+        await page.keyboard.press("Escape");
+        await page.waitForFunction((canvas) => window.__glStats.get(canvas)?.lost === true, replaced);
+        await replaced.dispose();
+        checks.push({ kind: "prism-releases-webgl-context-on-replacement", viewport: viewport.name, passed: true });
+      }
       if (id === "silk") {
         const dialog = await studio(page, locale);
         await dialog
@@ -287,5 +298,66 @@ export async function checkStudio(page, locale, theme, viewport, output) {
       }
     }
   }
+  if (locale === "es" && theme === "dark" && process.env.TFL_GRAPHICS_CHECKS === "1") {
+    for (const label of ["CRT Warp", "Prism"]) {
+    const dialog = await studio(page, locale);
+    await dialog.getByRole("button", { name: labelsForReset(locale), exact: true }).click();
+    const crt = dialog.locator("button[aria-pressed]").filter({ has: page.getByText(label, { exact: true }) });
+    await crt.scrollIntoViewIfNeeded();
+    await crt.hover();
+    const canvas = crt.locator("canvas");
+    await canvas.waitFor();
+    await page.waitForFunction((label) => {
+      const buttons = [...document.querySelectorAll('[role="dialog"] button')];
+      const canvas = buttons.find((button) => button.textContent.includes(label))?.querySelector("canvas");
+      return window.__glStats.get(canvas)?.times.size > 2;
+    }, label);
+    await page.mouse.move(0, 0);
+    await page.waitForTimeout(250);
+    // Software WebGL can take much longer than a physical GPU to finish the
+    // same pointer-inertia frames. Observe the stop instead of assuming 5 s.
+    const handle = await canvas.elementHandle();
+    await page.waitForFunction((canvas) => {
+      const stats = window.__glStats.get(canvas);
+      if (!stats) return false;
+      const now = performance.now();
+      if (stats.settleDraws !== stats.draws) {
+        stats.settleDraws = stats.draws;
+        stats.settleSince = now;
+      }
+      return now - stats.settleSince > 1500;
+    }, handle, { timeout: 60000, polling: 100 });
+    await handle.dispose();
+    const draws = await canvas.evaluate((node) => window.__glStats.get(node)?.draws);
+    await page.waitForTimeout(800);
+    const later = await canvas.evaluate((node) => window.__glStats.get(node)?.draws);
+    assert.equal(later, draws, `Paused, settled ${label} preview must stop drawing`);
+    await page.keyboard.press("Escape");
+    await page.waitForFunction(() => document.querySelectorAll('[role="dialog"] canvas').length === 0);
+    checks.push({ kind: "preview-active-then-paused-no-draw-and-close", background: label, viewport: viewport.name, drawsDuringPause: later - draws, passed: true });
+    }
+  }
+  for (const [cursor, label] of [
+    ["system", "System"], ["prism-glass", "TFL Prism Glass"],
+    ["frost-glass", "TFL Clear Glass"], ["aurora-glass", "TFL Liquid Glass"],
+    ["obsidian-glass", "TFL Midnight Glass"],
+  ]) {
+    const dialog = await studio(page, locale);
+    await dialog.getByRole("radio").filter({ has: page.getByText(label, { exact: true }) }).click();
+    await page.keyboard.press("Escape");
+    await page.waitForFunction((id) => document.documentElement.dataset.tflCursor === id, cursor);
+    if (cursor !== "system") {
+      const initial = await page.evaluate(() => document.documentElement.style.getPropertyValue("--tfl-cursor-wait"));
+      assert.ok(initial.includes("url("), "Native cursor assets remain configured");
+      await page.waitForFunction((initial) => document.documentElement.style.getPropertyValue("--tfl-cursor-wait") !== initial, initial);
+    }
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await page.waitForFunction((id) => document.documentElement.dataset.tflCursor === id, cursor);
+    checks.push({ kind: "native-cursor-selection-status-animation-and-persistence", cursor, locale, theme, viewport: viewport.name, passed: true });
+  }
   return checks;
+}
+
+function labelsForReset(locale) {
+  return JSON.parse(readFileSync(`messages/${locale}.json`, "utf8")).Studio.reset;
 }

@@ -5,7 +5,8 @@ import { translated } from "@/modules/editorial/publication";
 import { identityName } from "@/modules/profiles/types";
 import { cosmeticVisualsByType, toSafeCosmeticVisual } from "@/modules/cosmetics/visuals";
 import { isEntitlementActive } from "@/modules/cosmetics/service";
-import TeamConstellation, { type TeamConstellationMember } from "@/modules/administration/components/team-constellation";
+import TeamConstellation from "@/modules/administration/components/team-constellation-loader";
+import type { TeamConstellationMember } from "@/modules/administration/components/team-constellation";
 
 export default async function OwnersSection() {
   const [t, locale, members] = await Promise.all([

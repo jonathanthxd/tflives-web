@@ -184,9 +184,11 @@ export default function CRTWarp({
   const visibleRef = useRef(true);
   const fpsRef = useRef(fps);
   const lastFrameRef = useRef(0);
+  const runtimeRef = useRef<{ sync: () => void; paint: () => void } | null>(null);
 
   useEffect(() => {
     pausedRef.current = paused;
+    runtimeRef.current?.sync();
   }, [paused]);
 
   useEffect(() => {
@@ -245,6 +247,7 @@ export default function CRTWarp({
       const height = Math.max(container.clientHeight, 1);
       renderer.setSize(width, height, false);
       material.uniforms.uResolution.value.set(renderer.domElement.width, renderer.domElement.height);
+      renderer.render(scene, camera);
     };
 
     const resizeObserver = new ResizeObserver(resize);
@@ -252,25 +255,45 @@ export default function CRTWarp({
     resize();
 
     const clock = new THREE.Clock();
+    const canRender = () => visibleRef.current && !document.hidden;
+    const needsFrames = () => !pausedRef.current || (
+      material.uniforms.uMouseReact.value > 0 &&
+      pointerCurrentRef.current.distanceToSquared(pointerTargetRef.current) > 1e-8
+    );
+    const stop = () => {
+      if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+      frameRef.current = null;
+    };
+    const sync = () => {
+      if (!canRender() || !needsFrames()) { stop(); return; }
+      if (frameRef.current !== null) return;
+      clock.getDelta();
+      frameRef.current = requestAnimationFrame(render);
+    };
     const visibilityObserver = new IntersectionObserver(([entry]) => {
       visibleRef.current = entry.isIntersecting;
+      sync();
     });
     visibilityObserver.observe(container);
 
     const render = (now: number) => {
-      frameRef.current = requestAnimationFrame(render);
-      if (!visibleRef.current || document.hidden) return;
+      frameRef.current = null;
+      if (!canRender() || !needsFrames()) return;
       const interval = 1000 / fpsRef.current;
-      if (now - lastFrameRef.current < interval) return;
-      lastFrameRef.current = now - ((now - lastFrameRef.current) % interval);
-      const delta = Math.min(clock.getDelta(), 0.1);
-      if (!pausedRef.current) material.uniforms.uTime.value += delta * material.uniforms.uSpeed.value;
-      pointerCurrentRef.current.lerp(pointerTargetRef.current, 0.08);
-      material.uniforms.uPointer.value.copy(pointerCurrentRef.current);
-      renderer.render(scene, camera);
+      if (now - lastFrameRef.current >= interval) {
+        lastFrameRef.current = now - ((now - lastFrameRef.current) % interval);
+        const delta = Math.min(clock.getDelta(), 0.1);
+        if (!pausedRef.current) material.uniforms.uTime.value += delta * material.uniforms.uSpeed.value;
+        pointerCurrentRef.current.lerp(pointerTargetRef.current, 0.08);
+        material.uniforms.uPointer.value.copy(pointerCurrentRef.current);
+        renderer.render(scene, camera);
+      }
+      if (needsFrames()) frameRef.current = requestAnimationFrame(render);
     };
 
-    render(0);
+    runtimeRef.current = { sync, paint: () => renderer.render(scene, camera) };
+    sync();
+    document.addEventListener('visibilitychange', sync);
 
     const onPointerMove = (event: PointerEvent) => {
       const rect = container.getBoundingClientRect();
@@ -278,23 +301,27 @@ export default function CRTWarp({
         ((event.clientX - rect.left) / Math.max(rect.width, 1)) * 2 - 1,
         -(((event.clientY - rect.top) / Math.max(rect.height, 1)) * 2 - 1)
       );
+      sync();
     };
-    const onPointerLeave = () => pointerTargetRef.current.set(0, 0);
+    const onPointerLeave = () => { pointerTargetRef.current.set(0, 0); sync(); };
     window.addEventListener('pointermove', onPointerMove, { passive: true });
     window.addEventListener('pointerleave', onPointerLeave);
 
     return () => {
-      if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+      stop();
       resizeObserver.disconnect();
       visibilityObserver.disconnect();
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerleave', onPointerLeave);
+      document.removeEventListener('visibilitychange', sync);
       geometry.dispose();
       material.dispose();
       renderer.dispose();
+      renderer.forceContextLoss();
       renderer.domElement.remove();
       materialRef.current = null;
       rendererRef.current = null;
+      runtimeRef.current = null;
     };
   }, []);
 
@@ -326,6 +353,8 @@ export default function CRTWarp({
       renderer.setSize(Math.max(container.clientWidth, 1), Math.max(container.clientHeight, 1), false);
       uniforms.uResolution.value.set(renderer.domElement.width, renderer.domElement.height);
     }
+    runtimeRef.current?.paint();
+    runtimeRef.current?.sync();
   }, [
     backgroundColor,
     bloom,

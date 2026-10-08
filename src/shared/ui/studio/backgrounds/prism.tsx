@@ -61,7 +61,7 @@ const Prism: React.FC<PrismProps> = ({
     const RSX = 1;
     const RSY = 1;
     const RSZ = 1;
-    const TS = Math.max(0, timeScale || 1);
+    const TS = Math.max(0, timeScale);
     const HOVSTR = Math.max(0, hoverStrength || 1);
     const INERT = Math.max(0, Math.min(1, inertia || 0.12));
 
@@ -443,6 +443,9 @@ const Prism: React.FC<PrismProps> = ({
         delete (container as PrismContainer).__prismIO;
       }
       if (gl.canvas.parentElement === container) container.removeChild(gl.canvas);
+      geometry.remove();
+      program.remove();
+      gl.getExtension('WEBGL_lose_context')?.loseContext();
     };
   }, [
     height,

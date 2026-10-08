@@ -131,7 +131,8 @@ export async function checkLoginLoadingLayout(browser, origin, output) {
   return checks;
 }
 
-export async function checkSelectedConversation(page, origin, id, output) {
+export async function checkSelectedConversation(page, origin, id, output, otherId, viewport = "desktop") {
+  const labels = JSON.parse(readFileSync("messages/es.json", "utf8")).MessagesPage;
   await page.goto(`${origin}/es/mensajes?c=${id}`, {
     waitUntil: "domcontentloaded",
   });
@@ -141,6 +142,7 @@ export async function checkSelectedConversation(page, origin, id, output) {
       exact: true,
     });
   await text.waitFor();
+  if (viewport === "mobile") await page.getByRole("button", { name: labels.volverAConversaciones, exact: true }).click();
   await page
     .getByRole("button")
     .filter({ hasText: "Visual Admin" })
@@ -155,12 +157,70 @@ export async function checkSelectedConversation(page, origin, id, output) {
     .filter({ visible: true })
     .first()
     .click();
+  await page.getByRole("button", { name: "😀", exact: true }).waitFor();
   await page.screenshot({
-    path: resolve(output, "direct-message-picker.png"),
+    path: resolve(output, `direct-message-picker-${viewport}.png`),
     animations: "disabled",
   });
+  if (otherId) {
+    await page.getByRole("button", { name: "😀", exact: true }).click();
+    const composer = page.getByPlaceholder(labels.escribiMensaje, { exact: true });
+    assert.ok((await composer.inputValue()).includes("😀"));
+    const sent = `Browser send ${viewport} 😀`;
+    await composer.fill(sent);
+    await page.getByRole("button", { name: labels.enviar, exact: true }).filter({ visible: true }).click();
+    await page.getByRole("article").getByText(sent, { exact: true }).waitFor();
+    await page.waitForFunction(() => document.querySelector("main textarea")?.value === "");
+    assert.equal(await page.getByRole("button", { name: labels.enviar, exact: true }).filter({ visible: true }).isDisabled(), true);
+    const documentOrigin = await page.evaluate(() => performance.timeOrigin);
+    const choose = async (name) => {
+      if (viewport === "mobile") await page.getByRole("button", { name: labels.volverAConversaciones, exact: true }).click();
+      await page.getByRole("button").filter({ hasText: name }).filter({ visible: true }).first().click();
+    };
+    await choose("Visual Peer");
+    await page.waitForURL(`${origin}/es/mensajes?c=${otherId}`);
+    await composer.waitFor();
+    assert.equal(await text.count(), 0, "Messages from the previous conversation cannot leak into an empty conversation");
+    await choose("Visual Admin");
+    await page.getByRole("article").getByText(sent, { exact: true }).waitFor();
+    assert.equal(await page.evaluate(() => performance.timeOrigin), documentOrigin, "Conversation switches keep the client document");
+    if (viewport === "desktop") {
+      await page.getByRole("button").filter({ hasText: "Visual Peer" }).first().click();
+      await page.getByRole("button").filter({ hasText: "Visual Admin" }).first().click();
+      await text.waitFor();
+      await page.waitForURL(`${origin}/es/mensajes?c=${id}`);
+    }
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await page.getByRole("article").getByText(sent, { exact: true }).waitFor();
+    await page.goto(`${origin}/es/mensajes?c=nonexistent-local-conversation`, { waitUntil: "domcontentloaded" });
+    await page.getByRole("alert").getByText(labels.errorGenerico, { exact: true }).waitFor();
+  }
   return {
-    kind: "direct-message-query-selection-repeat-and-picker",
+    kind: otherId ? "direct-message-first-picker-emoji-send-switch-empty-reload-and-error" : "direct-message-query-selection-repeat-and-picker",
+    viewport,
     passed: true,
   };
+}
+
+export async function checkProfileRefresh(page, locale, viewport) {
+  const labels = JSON.parse(readFileSync(`messages/${locale}.json`, "utf8")).Profile;
+  let requests = 0;
+  const count = (request) => { if (request.url().includes("/api/profile/progress?username=visual_fixture")) requests++; };
+  page.on("request", count);
+  try {
+    await page.setViewportSize({ width: viewport.width, height: 300 });
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(500);
+    const before = requests;
+    await page.waitForTimeout(11000);
+    assert.equal(requests, before, "Offscreen profile progress must not poll");
+    const refreshed = page.waitForResponse((response) => response.url().includes("/api/profile/progress?username=visual_fixture") && response.status() === 200);
+    await page.getByRole("region", { name: labels.progression, exact: true }).scrollIntoViewIfNeeded();
+    await refreshed;
+    assert.ok(requests > before, "Visible progress refreshes immediately after returning to view");
+    return { kind: "profile-identity-retained-offscreen-polling-stops-and-resumes", passed: true, offscreenRequests: 0 };
+  } finally {
+    page.off("request", count);
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+  }
 }

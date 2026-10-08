@@ -1,4 +1,4 @@
-import { DEFAULT_QUICK_REACTIONS } from "@/modules/chat/emojis";
+import { DEFAULT_QUICK_REACTIONS } from "@/modules/chat/quick-reactions";
 
 const STORAGE_KEY = "tflives:reaction-preferences:v1";
 const HALF_LIFE_MS = 1000 * 60 * 60 * 24 * 30;

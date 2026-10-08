@@ -1,5 +1,7 @@
 "use client";
 
+import "./team-constellation.css";
+
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Orbit, Sparkles } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
@@ -14,9 +16,10 @@ import {
 } from "@/modules/cosmetics/components/cosmetic-renderer";
 import type { CosmeticVisualPresetKey } from "@/modules/cosmetics/visuals";
 import { UserAvatar } from "@/modules/profiles/components/user-identity";
-import TeamNeuralField, {
-  teamSpacePosition,
-} from "@/modules/administration/components/team-neural-field";
+import dynamic from "next/dynamic";
+import { teamSpacePosition } from "./team-space";
+
+const TeamNeuralField = dynamic(() => import("./team-neural-field"));
 
 export interface TeamConstellationMember {
   id: string;

@@ -77,6 +77,15 @@ jobs:
 
       - name: Browser, visual and performance checks
         run: npm run test:visual
+        env:
+          TFL_GRAPHICS_CHECKS: "1"
+          TFL_INTERACTIONS: "1"
+          TFL_QR_CHECK: "1"
+
+      - name: Prerendered team fixture, 3D navigation and CSS
+        run: node scripts/performance/check-team-isolated.mjs
+        env:
+          TFL_PRISMA_READY: "1"
 
       - name: Save laboratory artifacts
         if: always()

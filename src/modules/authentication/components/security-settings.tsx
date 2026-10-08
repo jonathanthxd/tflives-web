@@ -2,7 +2,6 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { useInitialClientValue } from "@/shared/lib/client-value";
-import QRCode from "qrcode";
 import { useLocale, useTranslations } from "next-intl";
 import { authClient } from "@/infrastructure/auth/client";
 import { Button } from "@/shared/ui/button";
@@ -201,6 +200,7 @@ export function SecuritySettings() {
         return;
       }
 
+      const { default: QRCode } = await import("qrcode");
       const generatedQr = await QRCode.toDataURL(setup.totpURI, {
         width: 192,
         margin: 1,

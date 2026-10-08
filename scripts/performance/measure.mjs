@@ -13,12 +13,16 @@ import {
 import { installMetrics, captureMetrics } from "./browser-metrics.mjs";
 import { observeInitialRequests } from "./readiness.mjs";
 import { closeIsolatedDatabase } from "./close-database.mjs";
+import { checkInitialInteractions } from "./interaction-checks.mjs";
+import { checkTeam } from "./team-checks.mjs";
+import { seedTeamFixture } from "./team-fixture.mjs";
 import {
   installBlobProbe,
   checkLoginFeedback,
   checkPrivateUi,
   checkSelectedConversation,
   checkLoginLoadingLayout,
+  checkProfileRefresh,
 } from "./ui-checks.mjs";
 const require = createRequire(resolve("package.json"));
 const { PGlite } = require("@electric-sql/pglite");
@@ -35,6 +39,7 @@ let serverErrors = "";
 const visualChecks = [];
 const coldFonts = [];
 const warmNavigations = [];
+const interactions = [];
 const browserArgs = [
   "--disable-gpu",
   "--use-angle=swiftshader",
@@ -44,6 +49,7 @@ const extended = process.env.TFL_VISUAL_EXTENDED !== "0";
 const fontVisitsOnly = process.env.TFL_FONT_VISITS_ONLY === "1";
 const studioOnly = process.env.TFL_STUDIO_ONLY === "1";
 const dmOnly = process.env.TFL_DM_ONLY === "1";
+const teamOnly = process.env.TFL_TEAM_ONLY === "1";
 try {
   for (const migration of readdirSync("prisma/migrations")
     .filter((n) => /^\d/.test(n))
@@ -52,6 +58,7 @@ try {
       readFileSync(`prisma/migrations/${migration}/migration.sql`, "utf8"),
     );
   }
+  if (process.env.TFL_TEAM_FIXTURE === "1") await seedTeamFixture(db);
   socket = new PGLiteSocketServer({
     db,
     host: "127.0.0.1",
@@ -184,6 +191,12 @@ try {
     browser: browser.version(),
     browserArgs,
     routeFilter: process.env.TFL_ROUTE_FILTER || null,
+    viewportFilter: process.env.TFL_VIEWPORT_FILTER || null,
+    localeFilter: process.env.TFL_LOCALE_FILTER || null,
+    themeFilter: process.env.TFL_THEME_FILTER || null,
+    interactions: process.env.TFL_INTERACTIONS === "1",
+    graphicsChecks: process.env.TFL_GRAPHICS_CHECKS === "1",
+    qrSetup: process.env.TFL_QR_CHECK === "1",
     phase: dmOnly ? "direct-message" : fontVisitsOnly
       ? "saved-fonts"
       : studioOnly
@@ -213,11 +226,14 @@ try {
     { name: "desktop", width: 1440, height: 900 },
     { name: "mobile", width: 390, height: 844 },
   ]) {
+    if (process.env.TFL_VIEWPORT_FILTER && viewport.name !== process.env.TFL_VIEWPORT_FILTER) continue;
     for (const locale of ["es", "en"]) {
+      if (process.env.TFL_LOCALE_FILTER && locale !== process.env.TFL_LOCALE_FILTER) continue;
       for (const theme of ["dark", "light"]) {
+        if (process.env.TFL_THEME_FILTER && theme !== process.env.TFL_THEME_FILTER) continue;
         for (const route of routes) {
-          if (fontVisitsOnly || dmOnly) continue;
-          if (process.env.TFL_ROUTE_FILTER && route !== (process.env.TFL_ROUTE_FILTER === "/" ? "" : process.env.TFL_ROUTE_FILTER)) continue;
+          if (fontVisitsOnly || dmOnly || teamOnly) continue;
+          if (process.env.TFL_ROUTE_FILTER && !process.env.TFL_ROUTE_FILTER.split(",").map((value) => value === "/" ? "" : value).includes(route)) continue;
           if (
             studioOnly &&
             route !== "" &&
@@ -359,6 +375,13 @@ try {
             ),
           );
           console.log("Verified", name);
+          if (process.env.TFL_INTERACTIONS === "1") {
+            interactions.push(...await checkInitialInteractions(page, route, locale, viewport));
+            writeFileSync(resolve(output, "interactions.json"), JSON.stringify(interactions, null, 2));
+          }
+          if (extended && route === "/perfil/visual_fixture" && viewport.name === "desktop" && locale === "es" && theme === "dark") {
+            visualChecks.push(await checkProfileRefresh(page, locale, viewport));
+          }
           if (route === "") {
             const previousAssets = await page.evaluate(captureMetrics);
             const started = await page.evaluate(() => ({ now: performance.now(), origin: performance.timeOrigin }));
@@ -425,7 +448,7 @@ try {
       }
     }
   }
-  if ((extended || fontVisitsOnly) && !dmOnly)
+  if ((extended || fontVisitsOnly) && !dmOnly && !teamOnly)
     for (const viewport of [
       { name: "desktop", width: 1440, height: 900 },
       { name: "mobile", width: 390, height: 844 },
@@ -476,7 +499,7 @@ try {
         );
       }
     }
-  if (extended && !fontVisitsOnly) {
+  if (extended && !fontVisitsOnly && !teamOnly) {
     // Only after measurements: keep before/after fixture data identical.
     await db.query(
       "UPDATE \"User\" SET username = 'visual_admin' WHERE id = $1",
@@ -497,8 +520,17 @@ try {
       }),
     });
     assert.equal(sent.status, 201);
+    await db.query('INSERT INTO "User" (id,name,email,email_verified,"createdAt","updatedAt",username,role) VALUES ($1,$2,$3,false,now(),now(),$4,\'MOD\')',
+      ["visual-peer-local", "Visual Peer", "peer@example.test", "visual_peer"]);
+    const other = await fetch(origin + "/api/messaging/conversations", {
+      method: "POST", headers: { "content-type": "application/json", origin, cookie },
+      body: JSON.stringify({ username: "visual_peer" }),
+    });
+    assert.equal(other.status, 201);
+    const otherId = (await other.json()).conversation.id;
+    for (const viewport of [{ name: "desktop", width: 1440, height: 900 }, { name: "mobile", width: 390, height: 844 }]) {
     const context = await browser.newContext({
-      viewport: { width: 1440, height: 900 },
+      viewport: { width: viewport.width, height: viewport.height },
       extraHTTPHeaders: { "x-forwarded-for": `192.0.2.${++visitorNumber}` },
     });
     context.setDefaultTimeout(90000);
@@ -514,15 +546,21 @@ try {
     const errors = [];
     page.on("pageerror", (error) => errors.push(error.message));
     visualChecks.push(
-      await checkSelectedConversation(page, origin, id, output),
+      await checkSelectedConversation(page, origin, id, output, otherId, viewport.name),
     );
-    visualChecks.push(...await checkLoginLoadingLayout(browser, origin, output));
     assert.equal(errors.length, 0, errors.join("; "));
     await context.close();
+    }
+    visualChecks.push(...await checkLoginLoadingLayout(browser, origin, output));
     writeFileSync(
       resolve(output, "visual-checks.json"),
       JSON.stringify(visualChecks, null, 2),
     );
+  }
+  if (extended && process.env.TFL_TEAM_CHECKS === "1") {
+    assert.equal(process.env.TFL_TEAM_FIXTURE, "1", "Use the dedicated team command: this section needs its fixture at build time");
+    visualChecks.push(...await checkTeam(browser, origin, output));
+    writeFileSync(resolve(output, "visual-checks.json"), JSON.stringify(visualChecks, null, 2));
   }
   for (const path of ["/icon.png", "/favicon.ico", "/manifest.webmanifest"])
     assert.ok((await fetch(origin + path)).ok, path);
