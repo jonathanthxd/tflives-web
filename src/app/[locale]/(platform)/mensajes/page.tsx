@@ -2,7 +2,7 @@
 
 import { readJsonResponse } from "@/shared/lib/http";
 import { useInitialClientValue } from "@/shared/lib/client-value";
-import { DEFAULT_QUICK_REACTIONS } from "@/modules/chat/emojis";
+import { DEFAULT_QUICK_REACTIONS } from "@/modules/chat/quick-reactions";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter, Link as IntlLink } from "@/i18n/navigation";
@@ -133,6 +133,7 @@ function MessagesPageContent() {
   const nextSearchParams = useNextSearchParams();
 
   const activeIdRef = useRef<string | null>(null);
+  const conversationRequests = useRef(new Map<string, { controller: AbortController; promise: Promise<void> }>());
   const [activeId, setActiveIdState] = useState<string | null>(() => nextSearchParams.get("c"));
   const [mobileConversationOpen, setMobileConversationOpen] = useState(() => Boolean(nextSearchParams.get("c")));
   const [conversationSearch, setConversationSearch] = useState("");
@@ -187,6 +188,8 @@ function MessagesPageContent() {
 
   function setActiveId(id: string | null) {
     if (id === activeId) return;
+    for (const request of conversationRequests.current.values()) request.controller.abort();
+    conversationRequests.current.clear();
     activeIdRef.current = id;
     setActiveIdState(id);
     setConversation(null);
@@ -227,10 +230,14 @@ function MessagesPageContent() {
   }, []);
 
   async function loadConversation(id: string, after?: string) {
-    return fetch(`/api/messaging/conversations/${id}${after ? `?after=${encodeURIComponent(after)}` : ""}`).then(async (res) => {
+    const key = `${id}:${after ?? ""}`;
+    const pending = conversationRequests.current.get(key);
+    if (pending) return pending.promise;
+    const controller = new AbortController();
+    const promise = fetch(`/api/messaging/conversations/${id}${after ? `?after=${encodeURIComponent(after)}` : ""}`, { signal: controller.signal }).then(async (res) => {
     if (res.ok) {
       const data = await readJsonResponse(res);
-      if (activeIdRef.current !== id) return;
+      if (controller.signal.aborted || activeIdRef.current !== id) return;
       if (!after) setNextCursor(data.nextCursor ?? null);
       setConversation((previous) => {
         if (!previous || previous.id !== data.conversation.id) return data.conversation;
@@ -246,9 +253,11 @@ function MessagesPageContent() {
           };
         }
         const all = [...previous.messages, ...data.conversation.messages];
+        const byId = new Map<string, ConversationMessage>();
+        for (const message of all) if (!byId.has(message.id)) byId.set(message.id, message);
         return {
           ...data.conversation,
-          messages: all.filter((message, index) => all.findIndex((candidate) => candidate.id === message.id) === index),
+          messages: [...byId.values()],
         };
       });
     } else {
@@ -257,8 +266,18 @@ function MessagesPageContent() {
       setConversation(null);
     }
   
-    }).catch(() => { if (activeIdRef.current !== id) return; setError(t("errorGenerico")); setBusy(false); });
+    }).catch(() => { if (controller.signal.aborted || activeIdRef.current !== id) return; setError(t("errorGenerico")); setBusy(false); })
+      .finally(() => {
+        if (conversationRequests.current.get(key)?.controller === controller) conversationRequests.current.delete(key);
+      });
+    conversationRequests.current.set(key, { controller, promise });
+    return promise;
   }
+
+  useEffect(() => {
+    const requests = conversationRequests.current;
+    return () => { for (const request of requests.values()) request.controller.abort(); requests.clear(); };
+  }, []);
 
   useEffect(() => {
     activeIdRef.current = activeId;
@@ -271,7 +290,8 @@ function MessagesPageContent() {
 
   useEffect(() => {
     if (!replyToMessage) return;
-    requestAnimationFrame(() => messageComposerRef.current?.focus());
+    const frame = requestAnimationFrame(() => messageComposerRef.current?.focus());
+    return () => cancelAnimationFrame(frame);
   }, [replyToMessage]);
 
   useEffect(() => {
@@ -333,12 +353,14 @@ function MessagesPageContent() {
 
   useEffect(() => {
     if (!showNewMessage || newMessageQuery.trim().length < 2) return;
+    const controller = new AbortController();
     const handle = setTimeout(() => {
-      fetch(`/api/social/search?q=${encodeURIComponent(newMessageQuery)}`)
+      fetch(`/api/social/search?q=${encodeURIComponent(newMessageQuery)}`, { signal: controller.signal })
         .then((res) => res.json())
-        .then((data) => setNewMessageResults(data.results ?? [])).catch(() => setError(t("errorGenerico")));
+        .then((data) => { if (!controller.signal.aborted) setNewMessageResults(data.results ?? []); })
+        .catch(() => { if (!controller.signal.aborted) setError(t("errorGenerico")); });
     }, 300);
-    return () => clearTimeout(handle);
+    return () => { clearTimeout(handle); controller.abort(); };
   }, [newMessageQuery, showNewMessage]);
 
   async function startConversation(username: string) {

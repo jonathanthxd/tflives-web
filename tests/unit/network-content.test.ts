@@ -222,7 +222,7 @@ test("home team constellation keeps every active linked member addressable in on
   const section = readFileSync("src/modules/administration/components/owners-section.tsx", "utf8");
   const constellation = readFileSync("src/modules/administration/components/team-constellation.tsx", "utf8");
   const neuralField = readFileSync("src/modules/administration/components/team-neural-field.tsx", "utf8");
-  const css = readFileSync("src/styles/globals.css", "utf8");
+  const css = readFileSync("src/modules/administration/components/team-constellation.css", "utf8");
 
   assert.match(section, /prisma\.teamMember\.findMany/);
   assert.doesNotMatch(section, /take:\s*3/);

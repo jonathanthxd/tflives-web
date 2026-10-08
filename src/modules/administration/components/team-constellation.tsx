@@ -1,8 +1,10 @@
 "use client";
 
+import "./team-constellation.css";
+
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Orbit, Sparkles } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import {
   CosmeticAccentLayer,
@@ -14,9 +16,10 @@ import {
 } from "@/modules/cosmetics/components/cosmetic-renderer";
 import type { CosmeticVisualPresetKey } from "@/modules/cosmetics/visuals";
 import { UserAvatar } from "@/modules/profiles/components/user-identity";
-import TeamNeuralField, {
-  teamSpacePosition,
-} from "@/modules/administration/components/team-neural-field";
+import dynamic from "next/dynamic";
+import { teamSpacePosition } from "./team-space";
+
+const TeamNeuralField = dynamic(() => import("./team-neural-field"), { ssr: false });
 
 export interface TeamConstellationMember {
   id: string;
@@ -69,7 +72,34 @@ export default function TeamConstellation({
 }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [travel, setTravel] = useState<TravelVector>({ x: 0, y: 0 });
+  const arenaRef = useRef<HTMLDivElement>(null);
+  const [fieldReady, setFieldReady] = useState(false);
+  const [fieldVisible, setFieldVisible] = useState(false);
   const active = members[activeIndex] ?? members[0];
+
+  useEffect(() => {
+    const arena = arenaRef.current;
+    if (!arena) return;
+    let inView = false;
+    const syncVisibility = () => setFieldVisible(inView && !document.hidden);
+    const near = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      setFieldReady(true);
+      near.disconnect();
+    }, { rootMargin: "480px" });
+    const visible = new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      syncVisibility();
+    });
+    near.observe(arena);
+    visible.observe(arena);
+    document.addEventListener("visibilitychange", syncVisibility);
+    return () => {
+      near.disconnect();
+      visible.disconnect();
+      document.removeEventListener("visibilitychange", syncVisibility);
+    };
+  }, []);
 
   const paddedIndex = useMemo(
     () => String(activeIndex + 1).padStart(Math.max(2, String(members.length).length), "0"),
@@ -95,8 +125,8 @@ export default function TeamConstellation({
 
   return (
     <div className="team-constellation team-neural" data-count={members.length}>
-      <div className="team-neural__arena">
-        <TeamNeuralField members={members} activeIndex={activeIndex} onSelect={selectIndex} />
+      <div className="team-neural__arena" ref={arenaRef}>
+        {fieldReady ? <TeamNeuralField members={members} activeIndex={activeIndex} onSelect={selectIndex} visible={fieldVisible} /> : null}
         <div aria-hidden className="team-neural__vignette" />
         <div aria-hidden className="team-neural__grid" />
         <div aria-hidden className="team-neural__safe-zone" />

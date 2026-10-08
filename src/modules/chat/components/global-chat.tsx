@@ -11,7 +11,8 @@ import { cosmeticVisualsByType, type SafeCosmeticVisual } from "@/modules/cosmet
 import { UserAvatar } from "@/modules/profiles/components/user-identity";
 import { formatUserTime } from "@/shared/lib/date-time";
 import { useInitialClientValue } from "@/shared/lib/client-value";
-import { DEFAULT_QUICK_REACTIONS } from "@/modules/chat/emojis";
+import { DEFAULT_QUICK_REACTIONS } from "@/modules/chat/quick-reactions";
+import { usePathname } from "@/i18n/navigation";
 const INITIAL_QUICK_REACTIONS = [...DEFAULT_QUICK_REACTIONS];
 
 interface Person {
@@ -83,6 +84,8 @@ const CHAT_POSITION_STORAGE_KEY = "tflives:global-chat-x";
 export default function GlobalChat({ userId }: { userId: string }) {
   const t = useTranslations("GlobalChat");
   const locale = useLocale();
+  const pathname = usePathname();
+  const messaging = pathname === "/mensajes" || pathname.startsWith("/mensajes/");
   const initialOpen = useInitialClientValue(() => window.location.hash === "#chat-global", false);
   const [openOverride, setOpen] = useState<boolean | null>(null);
   const open = openOverride ?? initialOpen;
@@ -406,9 +409,9 @@ export default function GlobalChat({ userId }: { userId: string }) {
       {open && (
         <section
           aria-label={t("titulo")}
-          className="tfl-glass tfl-glass-strong fixed z-[55] flex h-[min(38rem,calc(100dvh-7rem))] w-[calc(100vw-1.5rem)] max-w-[25rem] flex-col overflow-hidden rounded-2xl border border-primary/20 sm:w-[25rem]"
+          className={`tfl-glass tfl-glass-strong fixed z-[55] flex ${messaging ? "h-[min(38rem,calc(100dvh-11rem))]" : "h-[min(38rem,calc(100dvh-7rem))]"} w-[calc(100vw-1.5rem)] max-w-[25rem] flex-col overflow-hidden rounded-2xl border border-primary/20 sm:w-[25rem]`}
           style={{
-            bottom: "calc(max(1rem, env(safe-area-inset-bottom)) + 3.75rem)",
+            bottom: messaging ? "calc(max(1rem, env(safe-area-inset-bottom)) + 7.75rem)" : "calc(max(1rem, env(safe-area-inset-bottom)) + 3.75rem)",
             ...(panelLeft == null ? { right: CHAT_EDGE_GAP } : { left: panelLeft }),
           }}
         >
@@ -541,7 +544,7 @@ export default function GlobalChat({ userId }: { userId: string }) {
         title={t("titulo")}
         className={`fixed z-[55] flex h-12 w-12 select-none items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 transition-[transform,box-shadow] hover:scale-105 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/40 ${draggingBubble ? "cursor-grabbing scale-105 shadow-xl" : "cursor-grab"}`}
         style={{
-          bottom: "max(1rem, env(safe-area-inset-bottom))",
+          bottom: messaging ? "calc(max(1rem, env(safe-area-inset-bottom)) + 4rem)" : "max(1rem, env(safe-area-inset-bottom))",
           touchAction: "none",
           ...(bubbleX == null ? { right: CHAT_EDGE_GAP } : { left: bubbleX }),
         }}

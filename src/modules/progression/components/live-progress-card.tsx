@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Gauge } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { PublicProgress } from "@/modules/progression/level";
@@ -18,41 +18,54 @@ export default function LiveProgressCard({
   embedded?: boolean;
 }) {
   const t = useTranslations("Profile");
+  const rootRef = useRef<HTMLElement>(null);
   const [live, setLive] = useState<{ username: string; initial: PublicProgress; progress: PublicProgress } | null>(null);
   const progress = live?.username === username && live.initial === initialProgress ? live.progress : initialProgress;
 
-  const refresh = useCallback(async () => {
-    try {
-      const response = await fetch(`/api/profile/progress?username=${encodeURIComponent(username)}`, {
-        cache: "no-store",
-      });
-      if (!response.ok) return;
-      const data = await response.json();
-      if (data?.progress) setLive({ username, initial: initialProgress, progress: data.progress as PublicProgress });
-    } catch {
-      // Keep the last known progress on temporary network failures.
-    }
-  }, [initialProgress, username]);
-
   useEffect(() => {
+    let visible = true;
     let cancelled = false;
+    let request: AbortController | null = null;
     const run = async () => {
-      if (!cancelled) await refresh();
+      if (cancelled || !visible || document.hidden || request) return;
+      const controller = new AbortController();
+      request = controller;
+      try {
+        const response = await fetch(`/api/profile/progress?username=${encodeURIComponent(username)}`, {
+          cache: "no-store", signal: controller.signal,
+        });
+        if (!response.ok) return;
+        const data = await response.json();
+        if (!cancelled && !controller.signal.aborted && data?.progress)
+          setLive({ username, initial: initialProgress, progress: data.progress as PublicProgress });
+      } catch {
+        // Keep the server-rendered identity and last progress during interruptions.
+      } finally { if (request === controller) request = null; }
     };
     const interval = window.setInterval(run, REFRESH_MS);
     const onVisibility = () => {
-      if (document.visibilityState === "visible") void run();
+      if (document.hidden) request?.abort();
+      else void run();
     };
+    const observer = new IntersectionObserver(([entry]) => {
+      const previous = visible;
+      visible = entry.isIntersecting;
+      if (!visible) request?.abort();
+      else if (!previous) void run();
+    });
+    if (rootRef.current) observer.observe(rootRef.current);
     document.addEventListener("visibilitychange", onVisibility);
     return () => {
       cancelled = true;
+      request?.abort();
+      observer.disconnect();
       window.clearInterval(interval);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [refresh]);
+  }, [initialProgress, username]);
 
   const content = (
-    <section aria-label={t("progression")}>
+    <section ref={rootRef} aria-label={t("progression")}>
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Gauge className="size-4 text-primary" aria-hidden="true" />

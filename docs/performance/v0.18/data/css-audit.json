@@ -1,0 +1,36 @@
+{
+  "base": "c79fd260b297bba86ce493f0cc7b81d811743fa0",
+  "lineEndings": "All source sizes normalized to LF; HTTP transfer is measured separately",
+  "originalBytes": 187460,
+  "originalGzipBytes": 30832,
+  "reconstructedDeclarationsAndOrderEqualExceptDeclaredCorrection": true,
+  "acceptedCorrections": [
+    {
+      "selector": ".team-neural__arena",
+      "property": "overflow",
+      "before": "hidden",
+      "after": "clip",
+      "reason": "Prevent focus from scrolling an oversized clipped WebGL scene and displacing the identity/navigation on mobile"
+    }
+  ],
+  "inventory": [
+    {
+      "name": "globals",
+      "sourceBytes": 166845,
+      "sourceGzipBytes": 26996,
+      "topLevelNodes": 746
+    },
+    {
+      "name": "team-constellation",
+      "sourceBytes": 19156,
+      "sourceGzipBytes": 4092,
+      "topLevelNodes": 81
+    },
+    {
+      "name": "cursor-preview",
+      "sourceBytes": 1456,
+      "sourceGzipBytes": 525,
+      "topLevelNodes": 6
+    }
+  ]
+}
