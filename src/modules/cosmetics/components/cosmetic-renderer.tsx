@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
+import { avatarFrameRecipe } from "@/modules/cosmetics/recipes";
 import { cn } from "@/shared/utilities/utils";
 import {
   COSMETIC_PRESETS,
@@ -11,33 +12,13 @@ function styleFor(preset?: CosmeticVisualPresetKey): CSSProperties {
   return presetCssVariables(preset) as CSSProperties;
 }
 
-const FRAME_DETAIL_COUNTS: Record<string, number> = {
-  metal: 6,
-  mono: 6,
-  wave: 9,
-  pulse: 6,
-  frost: 9,
-  circuit: 10,
-  flame: 10,
-  toxic: 10,
-  prism: 10,
-  grid: 9,
-  petal: 18,
-  void: 9,
-  flare: 10,
-  royal: 10,
-  nebula: 10,
-  galaxy: 10,
-};
-
 /**
  * Avatar-frame motion is intentionally semantic rather than shared.
  * Each preset receives independent pieces so petals can fall, embers can rise,
  * circuit nodes can pulse, gems can sparkle, etc. The portrait stays circular;
  * the decorative silhouette is never clipped to that circle.
  */
-function AvatarFrameDetails({ variant }: { variant: string }) {
-  const count = FRAME_DETAIL_COUNTS[variant] ?? 0;
+function AvatarFrameDetails({ count }: { count: number }) {
   if (!count) return null;
   return (
     <span aria-hidden className="cosmetic-avatar-frame__details">
@@ -48,19 +29,13 @@ function AvatarFrameDetails({ variant }: { variant: string }) {
   );
 }
 
-export function CosmeticAvatarFrame({ preset, className, children }: { preset?: CosmeticVisualPresetKey; className?: string; children: ReactNode }) {
-  const definition = preset ? COSMETIC_PRESETS[preset] : null;
-  if (!definition || definition.type !== "AVATAR_FRAME") return <span className={cn("relative inline-grid shrink-0 place-items-center", className)}>{children}</span>;
+export function CosmeticAvatarFrame({ preset, className, children }: { preset?: CosmeticVisualPresetKey; className?: string; children?: ReactNode }) {
+  const recipe = avatarFrameRecipe(preset);
+  if (!recipe) return <span className={cn("relative inline-grid shrink-0 place-items-center", className)}>{children}</span>;
   return (
-    <span className={cn("cosmetic-avatar-frame relative inline-grid shrink-0 place-items-center", className)} data-variant={definition.variant} style={styleFor(preset)}>
-      <span aria-hidden className="cosmetic-avatar-frame__aura" />
-      <span aria-hidden className="cosmetic-avatar-frame__motif" />
-      <span aria-hidden className="cosmetic-avatar-frame__signature" />
-      <span aria-hidden className="cosmetic-avatar-frame__orbit" />
-      <span aria-hidden className="cosmetic-avatar-frame__particles" />
-      <span aria-hidden className="cosmetic-avatar-frame__ambient" />
-      <span aria-hidden className="cosmetic-avatar-frame__ornament" />
-      <AvatarFrameDetails variant={definition.variant} />
+    <span className={cn("cosmetic-avatar-frame relative inline-grid shrink-0 place-items-center", className)} data-variant={recipe.cssVariant} data-frame-motion={recipe.motion} style={styleFor(preset)}>
+      {recipe.layers.map((layer) => <span key={layer} aria-hidden className={`cosmetic-avatar-frame__${layer}`} />)}
+      <AvatarFrameDetails count={recipe.details} />
       <span className="relative z-[4] inline-grid place-items-center">{children}</span>
     </span>
   );

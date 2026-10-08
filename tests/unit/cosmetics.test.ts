@@ -1,4 +1,5 @@
 import test from "node:test";
+import { avatarFrameRecipe } from "../../src/modules/cosmetics/recipes";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { PGlite } from "@electric-sql/pglite";
@@ -154,14 +155,15 @@ test("avatar frames 4.0 keep sixteen semantic recipes without full-frame vinyl r
     assert.match(avatarCss, new RegExp(`\\.cosmetic-avatar-frame\\[data-variant="${variant}"\\]`));
   }
   assert.doesNotMatch(avatarCss, /cosmetic-frame-spin|cosmetic-frame-petals|cosmetic-frame-orbit|cosmetic-frame-solar/);
-  assert.match(renderer, /FRAME_DETAIL_COUNTS/);
+  assert.match(renderer, /avatarFrameRecipe/);
+  assert.equal(avatarFrameRecipe("SAKURA_FRAME")?.details, 18);
   assert.match(renderer, /AvatarFrameDetails/);
-  assert.match(renderer, /cosmetic-avatar-frame__signature/);
-  assert.match(renderer, /cosmetic-avatar-frame__ambient/);
+  assert.ok(avatarFrameRecipe("SAKURA_FRAME")?.layers.includes("signature"));
+  assert.ok(avatarFrameRecipe("SAKURA_FRAME")?.layers.includes("ambient"));
   assert.match(renderer, /h-32/);
   assert.match(renderer, /size-16/);
   assert.match(renderer, /cosmetic-avatar-frame__piece--/);
-  assert.match(renderer, /petal: 18/);
+  assert.equal(avatarFrameRecipe("SAKURA_FRAME")?.details, 18);
   assert.match(css, /tfl-frame-petal-fall-a/);
   assert.match(css, /tfl-frame-flame-tongue/);
   assert.match(css, /tfl-frame-circuit-node/);
@@ -295,7 +297,6 @@ test("production cosmetic fixture contains one finalized bilingual commercial en
 
 test("sakura ornaments are free from circular clipping and profile hero allows frame overflow", () => {
   const css = readFileSync("src/styles/globals.css", "utf8");
-  const renderer = readFileSync("src/modules/cosmetics/components/cosmetic-renderer.tsx", "utf8");
   const profile = readFileSync("src/modules/profiles/components/profile-view.tsx", "utf8");
   const sakuraStart = css.indexOf('/* 11 — Sakura:');
   const sakuraEnd = css.indexOf('/* 12 — Void:', sakuraStart);
@@ -308,7 +309,7 @@ test("sakura ornaments are free from circular clipping and profile hero allows f
   assert.match(sakuraCss, /tfl-frame-petal-fall-a/);
   assert.match(sakuraCss, /tfl-frame-petal-fall-b/);
   assert.match(sakuraCss, /tfl-frame-petal-fall-c/);
-  assert.match(renderer, /petal: 18/);
+  assert.equal(avatarFrameRecipe("SAKURA_FRAME")?.details, 18);
   assert.match(css, /data-variant="petal"\] \.cosmetic-avatar-frame__ornament/);
   assert.match(css, /cosmetic-avatar-frame__piece--18/);
   assert.match(css, /tfl-frame-petal-cross-a/);
