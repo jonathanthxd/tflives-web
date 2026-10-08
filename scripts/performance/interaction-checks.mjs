@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { captureMetrics } from "./browser-metrics.mjs";
 
-async function observe(page, action, ready) {
+export async function observe(page, action, ready) {
   const before = await page.evaluate(captureMetrics);
   const start = await page.evaluate(() => performance.now());
   const pending = new Set();
@@ -48,13 +48,20 @@ export async function checkInitialInteractions(page, route, locale, viewport) {
     const button = page.getByRole("button", { name: messages.Studio.open, exact: true }).filter({ visible: true }).first();
     const ready = async () => {
       assert.ok(await button.isVisible(), "Opening Studio keeps its navigation trigger visible");
-      await page.getByRole("button", { name: messages.Studio.reset, exact: true }).waitFor();
+      await page.getByRole("button", { name: messages.StudioV2.openFull, exact: true }).waitFor();
     };
     const first = await observe(page, () => button.click(), ready);
     await page.keyboard.press("Escape");
     const second = await observe(page, () => button.click(), ready);
     await page.keyboard.press("Escape");
-    results.push({ kind: "studio-first-open-and-repeat", locale, viewport: viewport.name, first, second, passed: true });
+    results.push({ kind: "studio-quick-first-open-and-repeat", locale, viewport: viewport.name, first, second, passed: true });
+    await button.click();
+    const full = await observe(page, () => page.getByRole("button", { name: messages.StudioV2.openFull, exact: true }).click(), () => page.locator('[data-studio-category="general"]').waitFor());
+    results.push({ kind: "studio-full-first-open", locale, viewport: viewport.name, first: full, passed: true });
+    const fonts = await observe(page, () => page.locator('[data-studio-category="typography"]').click(), () => page.locator('[data-studio-font="rubik"]').waitFor());
+    results.push({ kind: "studio-typography-first-open", locale, viewport: viewport.name, first: fonts, passed: true });
+    await page.keyboard.press("Escape");
+
   }
   if (route === "/configuracion") {
     await page.locator("button[aria-controls=settings-profile]").click();
