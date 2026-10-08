@@ -32,7 +32,6 @@ export const publicProfileSelect = {
   socialLinks: true,
   createdAt: true,
   progress: { select: { xp: true, level: true } },
-  wallet: { select: { balance: true } },
   equippedCosmetics: { select: { type: true, cosmetic: { select: { visualPreset: true, premiumOnly: true } } } },
   premiumEntitlements: { select: { startsAt: true, expiresAt: true, revokedAt: true } },
   creatorProfile: { select: { status: true, category: true } },
@@ -75,7 +74,7 @@ export function toPublicProfile(user: ProfileRecord): PublicProfile {
     socialLinks: parseSocialLinks(user.socialLinks),
     createdAt: user.createdAt.toISOString(),
     progress: getProgressSummary(user.progress, user._count.progressionAchievements),
-    coinBalance: user.wallet?.balance ?? 0,
+    coinBalance: null, // Existing economy policy: balances are private; wallet remains self-scoped.
     cosmetics: user.equippedCosmetics
       .filter((equipped) => !equipped.cosmetic.premiumOnly || user.premiumEntitlements.some((entitlement) => isEntitlementActive(entitlement)))
       .map((equipped) => toSafeCosmeticVisual({ type: equipped.type, visualPreset: equipped.cosmetic.visualPreset }))

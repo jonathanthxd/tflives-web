@@ -24,6 +24,7 @@ export type RateLimitDecision = {
 
 /** Central limits for the endpoints the app opts into. Tests assert these. */
 export const RATE_LIMITS = {
+  "profile-card": { limit: 60, windowSeconds: 60 },
   "client-errors": { limit: 20, windowSeconds: 5 * 60 },
   "community-report": { limit: 10, windowSeconds: 60 },
   "messaging-report": { limit: 10, windowSeconds: 60 },

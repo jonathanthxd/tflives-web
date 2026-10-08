@@ -34,7 +34,7 @@ export interface PublicProfile extends PublicIdentity {
   socialLinks: SocialLink[];
   createdAt: string;
   progress: PublicProgress;
-  coinBalance: number;
+  coinBalance: null;
   cosmetics: SafeCosmeticVisual[];
   creator: { category: string } | null;
 }
