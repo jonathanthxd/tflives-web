@@ -180,8 +180,15 @@ export default function LineWaves({
   paused = false,
 }: LineWavesProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const optionsRef = useRef<Required<LineWavesProps>>({ speed, innerLineCount, outerLineCount, warpIntensity, rotation, edgeFadeWidth, colorCycleSpeed, brightness, color1, color2, color3, enableMouseInteraction, mouseInfluence, lightMode, paused });
+  const updateRef = useRef<((options: Required<LineWavesProps>) => void) | null>(null);
+  useEffect(() => {
+    optionsRef.current = { speed, innerLineCount, outerLineCount, warpIntensity, rotation, edgeFadeWidth, colorCycleSpeed, brightness, color1, color2, color3, enableMouseInteraction, mouseInfluence, lightMode, paused };
+    updateRef.current?.(optionsRef.current);
+  }, [speed, innerLineCount, outerLineCount, warpIntensity, rotation, edgeFadeWidth, colorCycleSpeed, brightness, color1, color2, color3, enableMouseInteraction, mouseInfluence, lightMode, paused]);
 
   useEffect(() => {
+    const { speed, innerLineCount, outerLineCount, warpIntensity, rotation, edgeFadeWidth, colorCycleSpeed, brightness, color1, color2, color3, enableMouseInteraction, mouseInfluence, lightMode } = optionsRef.current;
     if (!containerRef.current) return;
     const container = containerRef.current;
     const renderer = new Renderer({ alpha: true, premultipliedAlpha: false });
@@ -244,17 +251,16 @@ export default function LineWaves({
     const mesh = new Mesh(gl, { geometry, program });
     container.appendChild(gl.canvas);
 
-    if (enableMouseInteraction) {
-      window.addEventListener("mousemove", handleMouseMove, { passive: true });
-      window.addEventListener("mouseleave", handleMouseLeave);
-    }
-
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    window.addEventListener("mouseleave", handleMouseLeave);
     let animationFrameId: number | null = null;
-
+    let onScreen = true;
+    const canAnimate = () => !optionsRef.current.paused && onScreen && !document.hidden;
+    function stop() { if (animationFrameId !== null) cancelAnimationFrame(animationFrameId); animationFrameId = null; }
     function update(time: number) {
+      animationFrameId = null;
       program.uniforms.uTime.value = time * 0.001;
-
-      if (enableMouseInteraction) {
+      if (optionsRef.current.enableMouseInteraction) {
         currentMouse[0] += 0.05 * (targetMouse[0] - currentMouse[0]);
         currentMouse[1] += 0.05 * (targetMouse[1] - currentMouse[1]);
         program.uniforms.uMouse.value[0] = currentMouse[0];
@@ -263,43 +269,47 @@ export default function LineWaves({
         program.uniforms.uMouse.value[0] = 0.5;
         program.uniforms.uMouse.value[1] = 0.5;
       }
-
       renderer.render({ scene: mesh });
-      if (!paused) animationFrameId = requestAnimationFrame(update);
+      if (canAnimate()) animationFrameId = requestAnimationFrame(update);
     }
-    if (paused) {
-      renderer.render({ scene: mesh });
-    } else {
-      animationFrameId = requestAnimationFrame(update);
+    function sync() {
+      stop();
+      if (canAnimate()) animationFrameId = requestAnimationFrame(update);
+      else if (onScreen && !document.hidden) renderer.render({ scene: mesh });
     }
+    updateRef.current = (options) => {
+      const uniforms = program.uniforms;
+      uniforms.uSpeed.value = options.speed;
+      uniforms.uInnerLines.value = options.innerLineCount;
+      uniforms.uOuterLines.value = options.outerLineCount;
+      uniforms.uWarpIntensity.value = options.warpIntensity;
+      uniforms.uRotation.value = options.rotation * Math.PI / 180;
+      uniforms.uEdgeFadeWidth.value = options.edgeFadeWidth;
+      uniforms.uColorCycleSpeed.value = options.colorCycleSpeed;
+      uniforms.uBrightness.value = options.brightness;
+      uniforms.uColor1.value = hexToVec3(options.color1);
+      uniforms.uColor2.value = hexToVec3(options.color2);
+      uniforms.uColor3.value = hexToVec3(options.color3);
+      uniforms.uMouseInfluence.value = options.mouseInfluence;
+      uniforms.uEnableMouse.value = options.enableMouseInteraction;
+      uniforms.uLightMode.value = options.lightMode ? 1 : 0;
+      sync();
+    };
+    const observer = new IntersectionObserver(([entry]) => { onScreen = entry.isIntersecting; sync(); });
+    observer.observe(container);
+    document.addEventListener("visibilitychange", sync);
+    sync();
 
     return () => {
-      if (animationFrameId !== null) cancelAnimationFrame(animationFrameId);
+      stop(); updateRef.current = null;
+      observer.disconnect(); document.removeEventListener("visibilitychange", sync);
       window.removeEventListener("resize", resize);
-      if (enableMouseInteraction) {
-        window.removeEventListener("mousemove", handleMouseMove);
-        window.removeEventListener("mouseleave", handleMouseLeave);
-      }
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseleave", handleMouseLeave);
       container.removeChild(gl.canvas);
       gl.getExtension("WEBGL_lose_context")?.loseContext();
     };
-  }, [
-    speed,
-    innerLineCount,
-    outerLineCount,
-    warpIntensity,
-    rotation,
-    edgeFadeWidth,
-    colorCycleSpeed,
-    brightness,
-    color1,
-    color2,
-    color3,
-    enableMouseInteraction,
-    mouseInfluence,
-    lightMode,
-    paused,
-  ]);
+  }, []);
 
   return <div ref={containerRef} className="w-full h-full" />;
 }

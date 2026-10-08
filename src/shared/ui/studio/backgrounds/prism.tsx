@@ -41,8 +41,15 @@ const Prism: React.FC<PrismProps> = ({
   lightMode = false
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const updateRef = useRef<((values: { glow: number; noise: number; scale: number; timeScale: number; hueShift: number }) => void) | null>(null);
+  const visualRef = useRef({ glow, noise, scale, timeScale, hueShift });
+  useEffect(() => {
+    visualRef.current = { glow, noise, scale, timeScale, hueShift };
+    updateRef.current?.(visualRef.current);
+  }, [glow, noise, scale, timeScale, hueShift]);
 
   useEffect(() => {
+    const { glow, noise, scale, timeScale, hueShift } = visualRef.current;
     const container = containerRef.current;
     if (!container) return;
 
@@ -54,14 +61,14 @@ const Prism: React.FC<PrismProps> = ({
     const offX = offset?.x ?? 0;
     const offY = offset?.y ?? 0;
     const SAT = transparent ? 1.5 : 1;
-    const SCALE = Math.max(0.001, scale);
+    let SCALE = Math.max(0.001, scale);
     const HUE = hueShift || 0;
     const CFREQ = Math.max(0.0, colorFrequency || 1);
     const BLOOM = Math.max(0.0, bloom || 1);
     const RSX = 1;
     const RSY = 1;
     const RSZ = 1;
-    const TS = Math.max(0, timeScale);
+    let TS = Math.max(0, timeScale);
     const HOVSTR = Math.max(0, hoverStrength || 1);
     const INERT = Math.max(0, Math.min(1, inertia || 0.12));
 
@@ -297,11 +304,12 @@ const Prism: React.FC<PrismProps> = ({
       return out;
     };
 
-    const NOISE_IS_ZERO = NOISE < 1e-6;
+    let NOISE_IS_ZERO = NOISE < 1e-6;
+    let visible = true;
     let raf = 0;
     const t0 = performance.now();
     const startRAF = () => {
-      if (raf) return;
+      if (raf || !visible || document.hidden) return;
       raf = requestAnimationFrame(render);
     };
     const stopRAF = () => {
@@ -360,6 +368,7 @@ const Prism: React.FC<PrismProps> = ({
     }
 
     const render = (t: number) => {
+      if (!visible || document.hidden) { raf = 0; return; }
       const time = (t - t0) * 0.001;
       program.uniforms.iTime.value = time;
 
@@ -416,10 +425,29 @@ const Prism: React.FC<PrismProps> = ({
       __prismIO?: IntersectionObserver;
     }
 
+    updateRef.current = values => {
+      SCALE = Math.max(0.001, values.scale);
+      TS = Math.max(0, values.timeScale);
+      NOISE_IS_ZERO = values.noise < 1e-6;
+      program.uniforms.uScale.value = SCALE;
+      program.uniforms.uPxScale.value = 1 / ((gl.drawingBufferHeight || 1) * 0.1 * SCALE);
+      program.uniforms.uGlow.value = Math.max(0, values.glow);
+      program.uniforms.uNoise.value = Math.max(0, values.noise);
+      program.uniforms.uTimeScale.value = TS;
+      program.uniforms.uHueShift.value = values.hueShift;
+      stopRAF();
+      startRAF(); // One actual frame when paused; continuous drawing resumes otherwise.
+    };
+    const onVisibilityChange = () => {
+      if (document.hidden) stopRAF();
+      else startRAF();
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
+
     if (suspendWhenOffscreen) {
       const io = new IntersectionObserver(entries => {
-        const vis = entries.some(e => e.isIntersecting);
-        if (vis) startRAF();
+        visible = entries.some(e => e.isIntersecting);
+        if (visible) startRAF();
         else stopRAF();
       });
       io.observe(container);
@@ -430,6 +458,8 @@ const Prism: React.FC<PrismProps> = ({
     }
 
     return () => {
+      updateRef.current = null;
+      document.removeEventListener('visibilitychange', onVisibilityChange);
       stopRAF();
       ro.disconnect();
       if (animationType === 'hover') {
@@ -451,21 +481,17 @@ const Prism: React.FC<PrismProps> = ({
     height,
     baseWidth,
     animationType,
-    glow,
-    noise,
     offset?.x,
     offset?.y,
-    scale,
     transparent,
-    hueShift,
     colorFrequency,
-    timeScale,
     hoverStrength,
     inertia,
     bloom,
     suspendWhenOffscreen,
     lightMode
   ]);
+
 
   return <div className="w-full h-full relative" ref={containerRef} />;
 };
