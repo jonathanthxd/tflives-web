@@ -32,7 +32,7 @@ export function installWebGLProbe() {
   const statsFor = (gl) => {
     let stats = window.__glStats.get(gl.canvas);
     if (!stats) {
-      stats = { draws: 0, times: new Set(), colors: new Set() };
+      stats = { draws: 0, times: new Set(), colors: new Set(), uniforms: {} };
       window.__glStats.set(gl.canvas, stats);
       gl.canvas.addEventListener("webglcontextlost", () => { stats.lost = true; window.__lostWebGLContexts++; });
     }
@@ -52,6 +52,8 @@ export function installWebGLProbe() {
     };
     const uniform = prototype.uniform1f;
     prototype.uniform1f = function (location, value) {
+      const name = locations.get(location);
+      if (name) statsFor(this).uniforms[name] = value;
       if (/time/i.test(locations.get(location) || ""))
         statsFor(this).times.add(value);
       return uniform.call(this, location, value);
@@ -93,49 +95,35 @@ export async function fontIsLoaded(page) {
   });
 }
 
-async function studio(page, locale) {
+export async function openFullStudio(page, locale, category = "backgrounds") {
   const messages = JSON.parse(readFileSync(`messages/${locale}.json`, "utf8"));
   await page
     .getByRole("button", { name: messages.Studio.open, exact: true })
     .filter({ visible: true })
     .first()
     .click();
-  return page.getByRole("dialog").filter({ visible: true }).first();
+  await page.getByRole("button", { name: messages.StudioV2.openFull, exact: true }).click();
+  const dialog = page.locator("dialog[data-studio-editor][open]");
+  await dialog.locator(`[data-studio-category="${category}"]`).click();
+  return dialog;
 }
 
 export async function checkStudio(page, locale, theme, viewport, output) {
   const checks = [];
-  const accentLabels = [
-    "Blue",
-    "Slate",
-    "Rose intense",
-    "Pink",
-    "Fuchsia",
-    "Violet",
-    "Indigo",
-    "Sky",
-    "Cyan",
-    "Teal",
-    "Emerald",
-    "Green",
-    "Lime",
-    "Yellow",
-    "Amber",
-    "Orange",
-    "Red",
-  ];
+  const translated = JSON.parse(readFileSync(`messages/${locale}.json`, "utf8"));
+  const accentLabels = Object.values(translated.StudioV2.accents);
   for (const label of accentLabels) {
-    const dialog = await studio(page, locale);
-    await dialog.getByRole("radio", { name: label, exact: true }).click();
+    const dialog = await openFullStudio(page, locale, "colors");
+    await dialog.getByRole("button", { name: label, exact: true }).click();
     await page.keyboard.press("Escape");
-    const selected = label === "Rose intense" ? "rose" : label.toLowerCase();
+    const selected = Object.keys(translated.StudioV2.accents).find((id) => translated.StudioV2.accents[id] === label);
     await page.waitForFunction(
       (id) => document.documentElement.dataset.tflAccent === id,
       selected,
     );
     await page.waitForFunction(
       (id) =>
-        JSON.parse(localStorage.getItem("tflives-studio-v1")).accent === id,
+        JSON.parse(localStorage.getItem("tflives-studio-v2")).preferences.accent === id,
       selected,
     );
     await page.waitForFunction(
@@ -164,11 +152,11 @@ export async function checkStudio(page, locale, theme, viewport, output) {
   await page.waitForFunction(
     () => document.documentElement.dataset.tflAccent === "red",
   );
-  const resetAccent = await studio(page, locale);
-  await resetAccent.getByRole("radio", { name: "Blue", exact: true }).click();
+  const resetAccent = await openFullStudio(page, locale, "colors");
+  await resetAccent.getByRole("button", { name: translated.StudioV2.accents.blue, exact: true }).click();
   await page.keyboard.press("Escape");
   for (const [id, label] of fontChoices) {
-    const dialog = await studio(page, locale);
+    const dialog = await openFullStudio(page, locale, "typography");
     await dialog
       .locator("button[aria-pressed]")
       .filter({ has: page.getByText(label, { exact: true }) })
@@ -208,7 +196,7 @@ export async function checkStudio(page, locale, theme, viewport, output) {
   if (locale === "es" && theme === "dark") {
     const labels = JSON.parse(readFileSync("messages/es.json", "utf8")).Studio;
     for (const id of ["dot", "shading", "solid"]) {
-      const dialog = await studio(page, locale);
+      const dialog = await openFullStudio(page, locale);
       await dialog
         .locator("button[aria-pressed]")
         .filter({
@@ -232,7 +220,7 @@ export async function checkStudio(page, locale, theme, viewport, output) {
       });
     }
     for (const [id, label] of animatedChoices) {
-      const dialog = await studio(page, locale);
+      const dialog = await openFullStudio(page, locale);
       await dialog
         .locator("button[aria-pressed]")
         .filter({ has: page.getByText(label, { exact: true }) })
@@ -265,7 +253,7 @@ export async function checkStudio(page, locale, theme, viewport, output) {
       console.log("Verified animated background", viewport.name, id);
       if (id === "prism" && process.env.TFL_GRAPHICS_CHECKS === "1") {
         const replaced = await page.locator(".studio-background--animated canvas").first().elementHandle();
-        const dialog = await studio(page, locale);
+        const dialog = await openFullStudio(page, locale);
         await dialog.locator("button[aria-pressed]").filter({ has: page.getByText(labels.backgroundNames.dot, { exact: true }) }).click();
         await page.keyboard.press("Escape");
         await page.waitForFunction((canvas) => window.__glStats.get(canvas)?.lost === true, replaced);
@@ -273,9 +261,9 @@ export async function checkStudio(page, locale, theme, viewport, output) {
         checks.push({ kind: "prism-releases-webgl-context-on-replacement", viewport: viewport.name, passed: true });
       }
       if (id === "silk") {
-        const dialog = await studio(page, locale);
+        const dialog = await openFullStudio(page, locale, "colors");
         await dialog
-          .getByRole("radio", { name: "Rose intense", exact: true })
+          .getByRole("button", { name: translated.StudioV2.accents.rose, exact: true })
           .click();
         await page.keyboard.press("Escape");
         await page.waitForFunction(() => {
@@ -292,28 +280,25 @@ export async function checkStudio(page, locale, theme, viewport, output) {
           viewport: viewport.name,
           passed: true,
         });
-        const reset = await studio(page, locale);
-        await reset.getByRole("radio", { name: "Blue", exact: true }).click();
+        const reset = await openFullStudio(page, locale, "colors");
+        await reset.getByRole("button", { name: translated.StudioV2.accents.blue, exact: true }).click();
         await page.keyboard.press("Escape");
       }
     }
   }
   if (locale === "es" && theme === "dark" && process.env.TFL_GRAPHICS_CHECKS === "1") {
     for (const label of ["CRT Warp", "Prism"]) {
-    const dialog = await studio(page, locale);
-    await dialog.getByRole("button", { name: labelsForReset(locale), exact: true }).click();
-    const crt = dialog.locator("button[aria-pressed]").filter({ has: page.getByText(label, { exact: true }) });
-    await crt.scrollIntoViewIfNeeded();
-    await crt.hover();
-    const canvas = crt.locator("canvas");
+    const dialog = await openFullStudio(page, locale);
+    const id = label === "Prism" ? "prism" : "crt-warp";
+    await dialog.locator(`[data-studio-background="${id}"]`).click();
+    assert.equal(await dialog.locator(".studio-editor__gallery canvas").count(), 0, "Gallery posters must not create GPU contexts");
+    const canvas = dialog.locator("[data-studio-preview] canvas");
     await canvas.waitFor();
-    await page.waitForFunction((label) => {
-      const buttons = [...document.querySelectorAll('[role="dialog"] button')];
-      const canvas = buttons.find((button) => button.textContent.includes(label))?.querySelector("canvas");
+    await page.waitForFunction(() => {
+      const canvas = document.querySelector("[data-studio-preview] canvas");
       return window.__glStats.get(canvas)?.times.size > 2;
-    }, label);
-    await page.mouse.move(0, 0);
-    await page.waitForTimeout(250);
+    });
+    await dialog.getByRole("button", { name: translated.StudioV2.pausePreview, exact: true }).click();
     // Software WebGL can take much longer than a physical GPU to finish the
     // same pointer-inertia frames. Observe the stop instead of assuming 5 s.
     const handle = await canvas.elementHandle();
@@ -333,17 +318,17 @@ export async function checkStudio(page, locale, theme, viewport, output) {
     const later = await canvas.evaluate((node) => window.__glStats.get(node)?.draws);
     assert.equal(later, draws, `Paused, settled ${label} preview must stop drawing`);
     await page.keyboard.press("Escape");
-    await page.waitForFunction(() => document.querySelectorAll('[role="dialog"] canvas').length === 0);
+    await page.waitForFunction(() => document.querySelectorAll('dialog[open] canvas').length === 0);
     checks.push({ kind: "preview-active-then-paused-no-draw-and-close", background: label, viewport: viewport.name, drawsDuringPause: later - draws, passed: true });
     }
   }
-  for (const [cursor, label] of [
+  for (const [cursor] of [
     ["system", "System"], ["prism-glass", "TFL Prism Glass"],
     ["frost-glass", "TFL Clear Glass"], ["aurora-glass", "TFL Liquid Glass"],
     ["obsidian-glass", "TFL Midnight Glass"],
   ]) {
-    const dialog = await studio(page, locale);
-    await dialog.getByRole("radio").filter({ has: page.getByText(label, { exact: true }) }).click();
+    const dialog = await openFullStudio(page, locale, "cursors");
+    await dialog.locator(`[data-studio-cursor="${cursor}"]`).click();
     await page.keyboard.press("Escape");
     await page.waitForFunction((id) => document.documentElement.dataset.tflCursor === id, cursor);
     if (cursor !== "system") {
@@ -356,8 +341,4 @@ export async function checkStudio(page, locale, theme, viewport, output) {
     checks.push({ kind: "native-cursor-selection-status-animation-and-persistence", cursor, locale, theme, viewport: viewport.name, passed: true });
   }
   return checks;
-}
-
-function labelsForReset(locale) {
-  return JSON.parse(readFileSync(`messages/${locale}.json`, "utf8")).Studio.reset;
 }

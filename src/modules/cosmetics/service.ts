@@ -3,6 +3,8 @@ import { prisma } from "@/infrastructure/database/prisma";
 import { applyWalletTransaction, WalletError } from "@/modules/economy/service";
 import { recordAnalyticsEvent } from "@/modules/analytics/service";
 import { createNotification } from "@/modules/notifications/service";
+import { isEntitlementActive } from "./entitlements";
+export { isEntitlementActive } from "./entitlements";
 import {
   COSMETIC_PRESETS,
   isCosmeticRarity,
@@ -35,13 +37,6 @@ export function activePremiumWhere(now = new Date()) {
     revokedAt: null,
     OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
   };
-}
-
-export function isEntitlementActive(
-  entitlement: { startsAt: Date; expiresAt: Date | null; revokedAt: Date | null },
-  now = new Date(),
-) {
-  return !entitlement.revokedAt && entitlement.startsAt <= now && (!entitlement.expiresAt || entitlement.expiresAt > now);
 }
 
 export async function hasActivePremiumEntitlement(userId: string, client: DatabaseClient = prisma, now = new Date()) {

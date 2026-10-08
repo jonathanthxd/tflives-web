@@ -2,6 +2,16 @@
 
 _(Este archivo es solo un borrador de trabajo para el post de Discord, no forma parte del producto.)_
 
+## v0.19.0 — Studio Engine V2 + Dynamic Profile Cards
+
+- Studio 2.0 separa ajustes rápidos y editor completo, con vista previa real, siete categorías y pantalla móvil dedicada.
+- Preferencias V2 validadas y migración aditiva que conserva la clave V1; seis controles de composición y capacidades específicas para los siete fondos existentes.
+- Ocho presets incluidos y presets personales locales, con creación, aplicación, cambio de nombre, reversión y borrado confirmado.
+- Las 16 recetas de marcos conservan paletas, capas, piezas y movimientos; las decoraciones CSS descansan fuera de vista.
+- Tarjetas públicas ES/EN de 1200 × 630, metadata OG/Twitter canónica, métricas reales, caché breve, protección de avatares y acción Compartir.
+- Se retira el saldo privado del perfil público conforme a la política de economía existente; las operaciones de cartera no cambian.
+- [Arquitectura y validación](studio/V0_19_STUDIO_ENGINE_V2.md) y [tarjetas dinámicas](studio/V0_19_DYNAMIC_PROFILE_CARDS.md).
+
 ## v0.18.0 — Frontend Performance
 
 - El motor 3D del equipo se prepara al acercarse a la pantalla y descansa fuera de vista; conserva su calidad y navegación.

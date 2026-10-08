@@ -974,7 +974,7 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
 .cosmetic-preview-scene:focus-within *,
 .cosmetic-preview-scene:focus-within *::before,
 .cosmetic-preview-scene:focus-within *::after {
-  animation-play-state: running !important;
+  animation-play-state: var(--cosmetic-global-play-state, running) !important;
 }
 
 /* Avatar frames ------------------------------------------------------------ */
@@ -2531,7 +2531,7 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
 .tfl-messaging-avatar:focus-within *,
 .tfl-messaging-avatar:focus-within *::before,
 .tfl-messaging-avatar:focus-within *::after {
-  animation-play-state: running !important;
+  animation-play-state: var(--cosmetic-global-play-state, running) !important;
 }
 
 /* Global Chat uses the same calm-by-default behavior as private messaging.
@@ -2557,7 +2557,7 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
 .tfl-chat-avatar-frame:focus-within *,
 .tfl-chat-avatar-frame:focus-within *::before,
 .tfl-chat-avatar-frame:focus-within *::after {
-  animation-play-state: running !important;
+  animation-play-state: var(--cosmetic-global-play-state, running) !important;
 }
 
 .tfl-messages-shell {
@@ -3093,4 +3093,13 @@ body[data-tfl-font="pixelify"] :where(code, pre, kbd, .font-mono) {
   html[data-tfl-cursor]:not([data-tfl-cursor="system"]) :is(.cursor-nesw-resize, [data-cursor-role="nesw-resize"]) {
     cursor: var(--tfl-cursor-nesw-resize, nesw-resize);
   }
+}
+/* Studio V2: retain recipe keyframes while suspending invisible decorations. */
+.cosmetic-avatar-frame > [aria-hidden],
+.cosmetic-avatar-frame > [aria-hidden]::before,
+.cosmetic-avatar-frame > [aria-hidden]::after,
+.cosmetic-avatar-frame > [aria-hidden] *,
+.cosmetic-avatar-frame > [aria-hidden] *::before,
+.cosmetic-avatar-frame > [aria-hidden] *::after {
+  animation-play-state: var(--cosmetic-global-play-state, var(--cosmetic-play-state, running));
 }

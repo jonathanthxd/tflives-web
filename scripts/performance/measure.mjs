@@ -15,6 +15,7 @@ import { observeInitialRequests } from "./readiness.mjs";
 import { closeIsolatedDatabase } from "./close-database.mjs";
 import { checkInitialInteractions } from "./interaction-checks.mjs";
 import { checkTeam } from "./team-checks.mjs";
+import { checkV19 } from "./v19-checks.mjs";
 import { seedTeamFixture } from "./team-fixture.mjs";
 import {
   installBlobProbe,
@@ -227,6 +228,7 @@ try {
     { name: "desktop", width: 1440, height: 900 },
     { name: "mobile", width: 390, height: 844 },
   ]) {
+    if (process.env.TFL_V19_ONLY === "1") continue;
     if (process.env.TFL_VIEWPORT_FILTER && viewport.name !== process.env.TFL_VIEWPORT_FILTER) continue;
     for (const locale of ["es", "en"]) {
       if (process.env.TFL_LOCALE_FILTER && locale !== process.env.TFL_LOCALE_FILTER) continue;
@@ -449,7 +451,7 @@ try {
       }
     }
   }
-  if ((extended || fontVisitsOnly) && !dmOnly && !teamOnly)
+  if ((extended || fontVisitsOnly) && !dmOnly && !teamOnly && process.env.TFL_V19_ONLY !== "1")
     for (const viewport of [
       { name: "desktop", width: 1440, height: 900 },
       { name: "mobile", width: 390, height: 844 },
@@ -500,7 +502,7 @@ try {
         );
       }
     }
-  if (extended && !fontVisitsOnly && !teamOnly) {
+  if (extended && !fontVisitsOnly && !teamOnly && process.env.TFL_V19_ONLY !== "1") {
     // Only after measurements: keep before/after fixture data identical.
     await db.query(
       "UPDATE \"User\" SET username = 'visual_admin' WHERE id = $1",
@@ -561,6 +563,10 @@ try {
   if (extended && process.env.TFL_TEAM_CHECKS === "1") {
     assert.equal(process.env.TFL_TEAM_FIXTURE, "1", "Use the dedicated team command: this section needs its fixture at build time");
     visualChecks.push(...await checkTeam(browser, origin, output));
+    writeFileSync(resolve(output, "visual-checks.json"), JSON.stringify(visualChecks, null, 2));
+  }
+  if (extended && !teamOnly && !dmOnly && !fontVisitsOnly && process.env.TFL_V19_CHECKS !== "0") {
+    visualChecks.push(...await checkV19(browser, origin, db, member, cookies, output));
     writeFileSync(resolve(output, "visual-checks.json"), JSON.stringify(visualChecks, null, 2));
   }
   for (const path of ["/icon.png", "/favicon.ico", "/manifest.webmanifest"])

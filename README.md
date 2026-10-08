@@ -2,6 +2,9 @@
 
 Web principal y plataforma comunitaria de **TFLives / Time For Lives**.
 
+Studio v0.19: [motor de apariencia, editor y validación](docs/studio/V0_19_STUDIO_ENGINE_V2.md),
+[tarjetas públicas dinámicas](docs/studio/V0_19_DYNAMIC_PROFILE_CARDS.md).
+
 Rendimiento v0.18: [resultados, decisiones y validación del frontend](docs/performance/V0_18.md).
 Se conserva el [informe de v0.17](docs/performance/V0_17.md) y el
 [protocolo de compilación aislada y pruebas visuales](docs/performance/PROTOCOL.md).

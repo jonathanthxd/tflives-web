@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cache } from "react";
 import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { getCurrentAuthUser } from "@/infrastructure/auth/server";
@@ -10,6 +11,7 @@ import { identityName } from "@/modules/profiles/types";
 import { absoluteUrl, alternatesFor, localePath } from "@/config/site";
 import { JsonLd } from "@/shared/seo/json-ld";
 import { personNode } from "@/shared/seo/schema";
+import { profileCardImagePath, PROFILE_CARD_SIZE } from "@/modules/profiles/cards/paths";
 
 export const instant = false;
 
@@ -17,7 +19,7 @@ interface ProfilePageProps {
   params: Promise<{ locale: string; username: string }>;
 }
 
-async function findProfile(rawUsername: string) {
+const findProfile = cache(async (rawUsername: string) => {
   const username = normalizeUsername(rawUsername);
   if (!/^[a-z][a-z0-9_]{2,19}$/.test(username)) return null;
   const direct = await prisma.user.findFirst({
@@ -30,7 +32,7 @@ async function findProfile(rawUsername: string) {
     select: { user: { select: publicProfileSelect } },
   });
   return alias ? { profile: alias.user, alias: true } : null;
-}
+});
 
 export async function generateMetadata({ params }: ProfilePageProps): Promise<Metadata> {
   const { locale, username } = await params;
@@ -43,6 +45,7 @@ export async function generateMetadata({ params }: ProfilePageProps): Promise<Me
   const description =
     publicProfile.bio ||
     t("metadataDescription", { username: publicProfile.username ?? name });
+  const image = { url: absoluteUrl(profileCardImagePath(locale, publicProfile.username!)), ...PROFILE_CARD_SIZE, alt: `${name} — TFLives` };
   return {
     title: `${name} (@${publicProfile.username}) | TFLives`,
     description,
@@ -52,8 +55,9 @@ export async function generateMetadata({ params }: ProfilePageProps): Promise<Me
       url: absoluteUrl(localePath(locale, path)),
       title: `${name} (@${publicProfile.username})`,
       description,
-      images: publicProfile.image ? [publicProfile.image] : undefined,
+      images: [image],
     },
+    twitter: { card: "summary_large_image", title: `${name} (@${publicProfile.username})`, description, images: [image] },
   };
 }
 

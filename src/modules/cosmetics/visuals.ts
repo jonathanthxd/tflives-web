@@ -117,7 +117,7 @@ export function isCosmeticRarity(value: unknown): value is CosmeticRarityKey {
 }
 
 export function isVisualPreset(value: unknown): value is CosmeticVisualPresetKey {
-  return typeof value === "string" && value in COSMETIC_PRESETS;
+  return typeof value === "string" && Object.hasOwn(COSMETIC_PRESETS, value);
 }
 
 export function isPresetForType(type: unknown, visualPreset: unknown): boolean {

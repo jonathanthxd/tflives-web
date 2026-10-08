@@ -11,10 +11,6 @@ import {
 } from "react";
 import {
   DEFAULT_STUDIO_PREFERENCES,
-  STUDIO_STORAGE_KEY,
-  isStudioAccent,
-  isStudioBackground,
-  isStudioFont,
   type StudioAccentId,
   type StudioBackgroundId,
   type StudioFontId,
@@ -25,10 +21,12 @@ import {
   getCursorAnimationInterval,
   getCursorCssValue,
   getStudioCursorPack,
-  normalizeStudioCursor,
   type StudioCursorId,
 } from "@/shared/studio/cursors";
 import { useHydrated, useInitialClientValue } from "@/shared/lib/client-value";
+import { observeCosmeticVisibility } from "@/modules/cosmetics/visibility";
+import { COMPOSITION_CONTROLS, backgroundControls, boundedNumber, type CompositionKey } from "@/shared/studio/appearance";
+import { DEFAULT_STUDIO_STORAGE, readStudioStorage, persistStudioStorage, sanitizePreferences, sanitizeStudioStorage, type StudioStorage, type UserAppearancePreset } from "@/shared/studio/storage";
 
 type StudioContextValue = StudioPreferences & {
   ready: boolean;
@@ -37,27 +35,17 @@ type StudioContextValue = StudioPreferences & {
   setBackground: (background: StudioBackgroundId) => void;
   setCursor: (cursor: StudioCursorId) => void;
   resetStudio: () => void;
+  setComposition: (key: CompositionKey, value: number) => void;
+  setBackgroundOption: (key: string, value: number) => void;
+  replacePreferences: (value: StudioPreferences) => void;
+  presets: UserAppearancePreset[];
+  setPresets: (presets: UserAppearancePreset[]) => void;
+  storageAvailable: boolean | null;
+  editorOpen: boolean;
+  setEditorOpen: (value: boolean) => void;
 };
 
 const StudioContext = createContext<StudioContextValue | null>(null);
-
-function sanitizePreferences(value: unknown): StudioPreferences {
-  if (!value || typeof value !== "object") return DEFAULT_STUDIO_PREFERENCES;
-
-  const candidate = value as Partial<StudioPreferences>;
-  return {
-    accent: isStudioAccent(candidate.accent)
-      ? candidate.accent
-      : DEFAULT_STUDIO_PREFERENCES.accent,
-    font: isStudioFont(candidate.font)
-      ? candidate.font
-      : DEFAULT_STUDIO_PREFERENCES.font,
-    background: isStudioBackground(candidate.background)
-      ? candidate.background
-      : DEFAULT_STUDIO_PREFERENCES.background,
-    cursor: normalizeStudioCursor(candidate.cursor),
-  };
-}
 
 function applyPreferences(preferences: StudioPreferences) {
   const root = document.documentElement;
@@ -69,31 +57,33 @@ function applyPreferences(preferences: StudioPreferences) {
 
 export function StudioProvider({ children }: { children: ReactNode }) {
   const initial = useInitialClientValue(() => {
-    let initial = DEFAULT_STUDIO_PREFERENCES;
-
     try {
-      const stored = window.localStorage.getItem(STUDIO_STORAGE_KEY);
-      if (stored) initial = sanitizePreferences(JSON.parse(stored));
+      return readStudioStorage(window.localStorage);
     } catch {
       // A corrupted/localStorage-disabled preference should never block the site.
+      return DEFAULT_STUDIO_STORAGE;
     }
-
-    return initial;
-  }, DEFAULT_STUDIO_PREFERENCES);
-  const [selected, setSelected] = useState<StudioPreferences | null>(null);
-  const preferences = selected ?? initial;
+  }, DEFAULT_STUDIO_STORAGE);
+  const [selected, setSelected] = useState<StudioStorage | null>(null);
+  const stored = selected ?? initial;
+  const preferences = stored.preferences;
+  const [storageAvailable, setStorageAvailable] = useState<boolean | null>(null);
+  const [editorOpen, setEditorOpen] = useState(false);
   const ready = useHydrated();
+
+  useEffect(() => observeCosmeticVisibility(), []);
 
   useEffect(() => {
     if (!ready) return;
     applyPreferences(preferences);
 
-    try {
-      window.localStorage.setItem(STUDIO_STORAGE_KEY, JSON.stringify(preferences));
-    } catch {
-      // Personalization stays functional for the current tab even without storage.
-    }
-  }, [preferences, ready]);
+    let available = false;
+    try { available = persistStudioStorage(window.localStorage, stored); } catch { /* Tab-only mode. */ }
+    // Report the result of the external write, rather than claiming every edit saved.
+    let active = true;
+    queueMicrotask(() => { if (active) setStorageAvailable(available); });
+    return () => { active = false; };
+  }, [stored, preferences, ready]);
 
   useEffect(() => {
     if (!ready) return;
@@ -163,25 +153,59 @@ export function StudioProvider({ children }: { children: ReactNode }) {
     };
   }, [preferences.cursor, ready]);
 
-  const setAccent = useCallback((accent: StudioAccentId) => {
-    setSelected((current) => ({ ...(current ?? initial), accent }));
+  const patchPreferences = useCallback((patch: Partial<StudioPreferences>) => {
+    setSelected((current) => {
+      const value = current ?? initial;
+      return { ...value, preferences: { ...value.preferences, ...patch, presetId: null } };
+    });
   }, [initial]);
+  const setAccent = useCallback((accent: StudioAccentId) => patchPreferences({ accent }), [patchPreferences]);
 
   const setFont = useCallback((font: StudioFontId) => {
-    setSelected((current) => ({ ...(current ?? initial), font }));
-  }, [initial]);
+    patchPreferences({ font });
+  }, [patchPreferences]);
 
   const setBackground = useCallback((background: StudioBackgroundId) => {
-    setSelected((current) => ({ ...(current ?? initial), background }));
-  }, [initial]);
+    patchPreferences({ background });
+  }, [patchPreferences]);
 
   const setCursor = useCallback((cursor: StudioCursorId) => {
-    setSelected((current) => ({ ...(current ?? initial), cursor }));
+    patchPreferences({ cursor });
+  }, [patchPreferences]);
+
+  const replacePreferences = useCallback((value: StudioPreferences) => {
+    setSelected((current) => ({ ...(current ?? initial), preferences: sanitizePreferences(value) }));
+  }, [initial]);
+  const setPresets = useCallback((presets: UserAppearancePreset[]) => {
+    setSelected((current) => {
+      const value = current ?? initial;
+      return sanitizeStudioStorage({ ...value, presets }) ?? value;
+    });
+  }, [initial]);
+  const setComposition = useCallback((key: CompositionKey, value: number) => {
+    setSelected((current) => {
+      const stored = current ?? initial;
+      return { ...stored, preferences: { ...stored.preferences, presetId: null, composition: {
+        ...stored.preferences.composition, [key]: boundedNumber(value, COMPOSITION_CONTROLS[key]),
+      } } };
+    });
+  }, [initial]);
+  const setBackgroundOption = useCallback((key: string, value: number) => {
+    setSelected((current) => {
+      const stored = current ?? initial;
+      const background = stored.preferences.background;
+      const definition = backgroundControls(background).find((item) => item.key === key);
+      if (!definition) return stored;
+      return { ...stored, preferences: { ...stored.preferences, presetId: null, backgroundSettings: {
+        ...stored.preferences.backgroundSettings,
+        [background]: { ...stored.preferences.backgroundSettings[background as keyof typeof stored.preferences.backgroundSettings], [key]: boundedNumber(value, definition) },
+      } } };
+    });
   }, [initial]);
 
   const resetStudio = useCallback(() => {
-    setSelected(DEFAULT_STUDIO_PREFERENCES);
-  }, []);
+    replacePreferences(DEFAULT_STUDIO_PREFERENCES);
+  }, [replacePreferences]);
 
   const value = useMemo<StudioContextValue>(
     () => ({
@@ -192,8 +216,11 @@ export function StudioProvider({ children }: { children: ReactNode }) {
       setBackground,
       setCursor,
       resetStudio,
+      setComposition, setBackgroundOption, replacePreferences,
+      presets: stored.presets, setPresets, storageAvailable,
+      editorOpen, setEditorOpen,
     }),
-    [preferences, ready, setAccent, setBackground, setCursor, setFont, resetStudio],
+    [preferences, ready, setAccent, setBackground, setCursor, setFont, resetStudio, setComposition, setBackgroundOption, replacePreferences, stored.presets, setPresets, storageAvailable, editorOpen],
   );
 
   return <StudioContext.Provider value={value}>{children}</StudioContext.Provider>;

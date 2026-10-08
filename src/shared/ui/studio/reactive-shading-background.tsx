@@ -22,12 +22,12 @@ function isVisible(rect: DOMRect) {
   );
 }
 
-export default function ReactiveShadingBackground({ className }: { className?: string }) {
+export default function ReactiveShadingBackground({ className, paused = false }: { className?: string; paused?: boolean }) {
   const layerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const layer = layerRef.current;
-    if (!layer) return;
+    if (!layer || paused) return;
 
     let frame = 0;
 
@@ -88,7 +88,7 @@ export default function ReactiveShadingBackground({ className }: { className?: s
       window.removeEventListener("scroll", schedule);
       observer.disconnect();
     };
-  }, []);
+  }, [paused]);
 
   return (
     <div

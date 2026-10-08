@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Ban, Coins, Heart, MessageCircle, UserPlus2, Users, X } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { UserIdentityCompact } from "@/modules/profiles/components/user-identity";
 import type { PublicIdentity } from "@/modules/profiles/types";
@@ -133,10 +133,10 @@ export default function SocialCard({
   coinBalance,
 }: {
   username: string;
-  coinBalance?: number;
+  coinBalance?: number | null;
 }) {
   const t = useTranslations("ProfilePlaceholders");
-  const locale = useLocale();
+  const cardLabels = useTranslations("ProfileCards");
   const router = useRouter();
   const [status, setStatus] = useState<SocialStatus | null>(null);
   const [likeStatus, setLikeStatus] = useState<LikeStatus | null>(null);
@@ -286,7 +286,6 @@ export default function SocialCard({
       ? t("sinSeguidores")
       : t("sinLikesPerfil");
 
-  const formatter = new Intl.NumberFormat(locale === "es" ? "es-CO" : "en-US");
 
 
   return (
@@ -312,7 +311,7 @@ export default function SocialCard({
           />
           {coinBalance !== undefined && <Metric
             label={t("tflCoins")}
-            value={formatter.format(coinBalance)}
+            value={cardLabels("private")}
             icon={<Coins className="size-4 text-amber-500" aria-hidden="true" />}
           />}
         </div>

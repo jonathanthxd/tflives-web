@@ -20,6 +20,7 @@ import {
   cosmeticAccentProps,
 } from "@/modules/cosmetics/components/cosmetic-renderer";
 import { Card } from "@/shared/ui/card";
+import ProfileShare from "./profile-share";
 import Reveal from "@/shared/ui/reveal";
 
 function roleLabel(role: PublicProfile["role"], t: ReturnType<typeof useTranslations>) {
@@ -115,6 +116,8 @@ export default function ProfileView({
                 </div>
                 {profile.username && <p className="mt-1 font-mono text-sm text-primary/85">@{profile.username}</p>}
               </div>
+              <div className="flex flex-wrap items-center gap-2">
+              {profile.username && <ProfileShare username={profile.username} name={displayName} />}
               {isOwner && (
                 <Link
                   href="/configuracion#profile"
@@ -124,6 +127,7 @@ export default function ProfileView({
                   {t("editarPerfil")}
                 </Link>
               )}
+              </div>
             </div>
 
                 {profile.username && <SocialCard username={profile.username} coinBalance={profile.coinBalance} />}

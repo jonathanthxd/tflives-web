@@ -196,7 +196,7 @@ export default function Navbar() {
               compact ? "gap-0" : "gap-0.5"
             }`}
           >
-            <StudioMenu compact={compact} />
+            <StudioMenu compact={compact} identity={user ? { name: user.name, displayName: null, username: user.username, image: user.image } : undefined} />
             <Link
               href={pathname}
               locale={locale === "es" ? "en" : "es"}

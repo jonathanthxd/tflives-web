@@ -1,4 +1,5 @@
 import type { StudioCursorId } from "@/shared/studio/cursors";
+import { DEFAULT_COMPOSITION, type BackgroundComposition, type BackgroundSettings } from "./appearance";
 
 export type StudioAccentId =
   | "blue"
@@ -48,6 +49,9 @@ export type StudioPreferences = {
   font: StudioFontId;
   background: StudioBackgroundId;
   cursor: StudioCursorId;
+  composition: BackgroundComposition;
+  backgroundSettings: BackgroundSettings;
+  presetId: string | null;
 };
 
 export const DEFAULT_STUDIO_PREFERENCES: StudioPreferences = {
@@ -55,6 +59,9 @@ export const DEFAULT_STUDIO_PREFERENCES: StudioPreferences = {
   font: "tfl",
   background: "dot",
   cursor: "system",
+  composition: DEFAULT_COMPOSITION,
+  backgroundSettings: {},
+  presetId: null,
 };
 
 export const STUDIO_STORAGE_KEY = "tflives-studio-v1";
