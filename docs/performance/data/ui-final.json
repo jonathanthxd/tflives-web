@@ -1,0 +1,28 @@
+[
+  {
+    "kind": "oauth-feedback-url-cleanup",
+    "locale": "es",
+    "passed": true
+  },
+  {
+    "kind": "oauth-feedback-url-cleanup",
+    "locale": "es",
+    "passed": true
+  },
+  {
+    "kind": "direct-message-query-selection-repeat-and-picker",
+    "passed": true
+  },
+  {
+    "kind": "login-loading-reserves-space-before-javascript",
+    "width": 1440,
+    "footerY": 956,
+    "passed": true
+  },
+  {
+    "kind": "login-loading-reserves-space-before-javascript",
+    "width": 390,
+    "footerY": 900,
+    "passed": true
+  }
+]
