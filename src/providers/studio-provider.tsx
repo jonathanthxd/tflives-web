@@ -28,6 +28,7 @@ import {
   normalizeStudioCursor,
   type StudioCursorId,
 } from "@/shared/studio/cursors";
+import { useHydrated, useInitialClientValue } from "@/shared/lib/client-value";
 
 type StudioContextValue = StudioPreferences & {
   ready: boolean;
@@ -67,12 +68,7 @@ function applyPreferences(preferences: StudioPreferences) {
 }
 
 export function StudioProvider({ children }: { children: ReactNode }) {
-  const [preferences, setPreferences] = useState<StudioPreferences>(
-    DEFAULT_STUDIO_PREFERENCES,
-  );
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
+  const initial = useInitialClientValue(() => {
     let initial = DEFAULT_STUDIO_PREFERENCES;
 
     try {
@@ -82,10 +78,11 @@ export function StudioProvider({ children }: { children: ReactNode }) {
       // A corrupted/localStorage-disabled preference should never block the site.
     }
 
-    setPreferences(initial);
-    applyPreferences(initial);
-    setReady(true);
-  }, []);
+    return initial;
+  }, DEFAULT_STUDIO_PREFERENCES);
+  const [selected, setSelected] = useState<StudioPreferences | null>(null);
+  const preferences = selected ?? initial;
+  const ready = useHydrated();
 
   useEffect(() => {
     if (!ready) return;
@@ -167,23 +164,23 @@ export function StudioProvider({ children }: { children: ReactNode }) {
   }, [preferences.cursor, ready]);
 
   const setAccent = useCallback((accent: StudioAccentId) => {
-    setPreferences((current) => ({ ...current, accent }));
-  }, []);
+    setSelected((current) => ({ ...(current ?? initial), accent }));
+  }, [initial]);
 
   const setFont = useCallback((font: StudioFontId) => {
-    setPreferences((current) => ({ ...current, font }));
-  }, []);
+    setSelected((current) => ({ ...(current ?? initial), font }));
+  }, [initial]);
 
   const setBackground = useCallback((background: StudioBackgroundId) => {
-    setPreferences((current) => ({ ...current, background }));
-  }, []);
+    setSelected((current) => ({ ...(current ?? initial), background }));
+  }, [initial]);
 
   const setCursor = useCallback((cursor: StudioCursorId) => {
-    setPreferences((current) => ({ ...current, cursor }));
-  }, []);
+    setSelected((current) => ({ ...(current ?? initial), cursor }));
+  }, [initial]);
 
   const resetStudio = useCallback(() => {
-    setPreferences(DEFAULT_STUDIO_PREFERENCES);
+    setSelected(DEFAULT_STUDIO_PREFERENCES);
   }, []);
 
   const value = useMemo<StudioContextValue>(

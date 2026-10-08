@@ -1,6 +1,6 @@
 {
   "name": "tflives-web",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -15,7 +15,11 @@
     "cursor:import": "node scripts/cursors/import-windows-pack.mjs",
     "test": "tsx --import ./tests/helpers/server-only.mjs --test tests/unit/*.test.ts",
     "test:e2e": "tsx --test tests/e2e/*.test.ts",
-    "test:integration": "tsx --test tests/integration/network-content.test.ts"
+    "test:integration": "tsx --test tests/integration/network-content.test.ts",
+    "test:visual": "node scripts/performance/measure.mjs",
+    "build:lab": "node scripts/performance/build-isolated.mjs",
+    "perf:cache-fonts": "node scripts/performance/cache-fonts.mjs",
+    "build:lab:cached": "node scripts/performance/build-cached.mjs"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -35,7 +39,7 @@
     "geist": "^1.2.0",
     "lenis": "^1.0.0",
     "lucide-react": "^1.29.0",
-    "next": "16.3.5",
+    "next": "16.3.8",
     "next-intl": "^4.13.4",
     "next-themes": "^0.4.6",
     "ogl": "^1.0.11",
@@ -63,7 +67,8 @@
     "@types/three": "^0.160.0",
     "autoprefixer": "^10.0.1",
     "eslint": "^9.39.5",
-    "eslint-config-next": "16.3.5",
+    "eslint-config-next": "16.3.8",
+    "playwright": "1.62.1",
     "postcss": "^8",
     "prisma": "^5.10.0",
     "tailwindcss": "^3.4.0",

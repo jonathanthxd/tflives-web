@@ -1,17 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useInitialClientValue } from "@/shared/lib/client-value";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 
 export default function Footer() {
   const t = useTranslations("Footer");
   const pathname = usePathname();
-  const [year, setYear] = useState(2026);
-
-  useEffect(() => {
-    setYear(new Date().getFullYear());
-  }, []);
+  const year = useInitialClientValue(() => new Date().getFullYear(), 2026);
 
   const isAdminRoute = pathname === "/admin" || pathname.startsWith("/admin/");
   const isMessagingRoute = pathname === "/mensajes" || pathname.startsWith("/mensajes/");

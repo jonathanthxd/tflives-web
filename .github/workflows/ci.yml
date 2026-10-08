@@ -6,25 +6,44 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 35
     env:
-      # Prisma generate only needs a syntactically valid URL. Runtime/database
-      # integration tests should use a dedicated Neon preview/test database.
+      # Generation only needs a valid URL. Build and runtime tests override it
+      # with their own migrated in-memory Postgres; no external DB is accessed.
       DATABASE_URL: "postgresql://ci:ci@localhost:5432/ci_placeholder"
       BETTER_AUTH_SECRET: "ci-placeholder-secret-change-me-1234567890"
       BETTER_AUTH_URL: "http://localhost:3000"
       AUTH_REQUIRE_EMAIL_VERIFICATION: "false"
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # registerHooks in the unit-test bootstrap requires a modern Node.
+          node-version: 24
+          cache: npm
 
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
+
+      - uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: next-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-${{ github.sha }}
+          restore-keys: |
+            next-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-
 
       - name: Prisma generate
         run: npm run db:generate
@@ -39,4 +58,28 @@ jobs:
         run: npm test
 
       - name: Build
-        run: npm run build
+        # Prerender reads the catalog. An empty URL placeholder cannot support
+        # this build; use migrated in-memory Postgres, never Neon or CI secrets.
+        run: node scripts/performance/build-isolated.mjs
+        env:
+          TFL_PRISMA_READY: "1"
+
+      - name: HTTP smoke and integration
+        run: |
+          npm run test:e2e
+          npm run test:integration
+
+      - name: Install browser
+        run: npm exec -- playwright install --with-deps chromium
+
+      - name: Browser, visual and performance checks
+        run: npm run test:visual
+
+      - name: Save laboratory artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-${{ github.sha }}
+          path: performance-artifacts/
+          if-no-files-found: ignore
+          retention-days: 14

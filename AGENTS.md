@@ -10,7 +10,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 # Repo-specific notes
 
-TFLives web: Next.js 16.3.5 + React 19 + Tailwind, Prisma → PostgreSQL en Neon, Better Auth, next-intl (es/en). Doc del proyecto en `docs/` (español) y README por módulo en `src/modules/*/README.md`. README.md raíz está desactualizado (dice Next 15; el repo es Next 16.3.5).
+TFLives web: Next.js 16.3.8 + React 19 + Tailwind, Prisma → PostgreSQL en Neon, Better Auth, next-intl (es/en). Doc del proyecto en `docs/` (español) y README por módulo en `src/modules/*/README.md`.
 
 ## Comandos (en cada cambio)
 - `npm run typecheck` y `npm run lint` antes de commitear.
@@ -19,7 +19,8 @@ TFLives web: Next.js 16.3.5 + React 19 + Tailwind, Prisma → PostgreSQL en Neon
 - Aplicar migraciones a producción: `npx prisma migrate deploy` (usa `DATABASE_URL` real de Neon). **Nunca uses `npm run db:push` contra producción.**
 
 ## Tests
-- `npm test`: 82 unit tests sobre PGlite (Postgres en memoria). Lento (~2 min); el flag `--import tests/helpers/server-only.mjs` es obligatorio y ya está en el script.
+- `npm test`: 112 unit tests, incluidos tests sobre PGlite (Postgres en memoria). Lento; el flag `--import tests/helpers/server-only.mjs` es obligatorio y ya está en el script. El helper fija una URL local sin servicio para evitar leer credenciales reales.
+- `npm run build:lab`: build de producción con todas las migraciones en PGlite efímero; necesario porque el prerender consulta el catálogo. Ver `docs/performance/PROTOCOL.md` para mediciones, fuentes reales en caché y pruebas de navegador.
 - Archivo suelto: `npx tsx --import ./tests/helpers/server-only.mjs --test tests/unit/<archivo>.test.ts`
 - Los tests aplican los `prisma/migrations/*/migration.sql` crudos a PGlite. Cada archivo de test lista su propio array `MIGRATIONS` curado: **las migraciones nuevas NO se incluyen solas**; añádelas a mano y añade también los valores de enum nuevos que introduzcan (ver `migratedCosmeticsDatabase()` en `tests/unit/cosmetics.test.ts`).
 - Integración: primero `npm run build`, luego `npm run test:integration` (levanta Postgres local en puertos 55439/3109; nunca usa `DATABASE_URL` configurada).
@@ -40,5 +41,5 @@ TFLives web: Next.js 16.3.5 + React 19 + Tailwind, Prisma → PostgreSQL en Neon
 - Arquitectura: `src/modules/*` features, `src/infrastructure/*` transversales, `src/shared/*` reutilizable. Mantén esa separación.
 
 ## Mantenimiento
-- Los `*.zip` sueltos en la raíz NO están gitignoreados; ya se han colado en commits antes. No los stagges (`.zip` de respaldo/artefactos).
+- `*.zip`, resultados de navegador y temporales están ignorados. Los backups históricos ya versionados requieren revisar su función antes de retirarlos; no añadir otros.
 - `.env` tiene credenciales reales de Neon y Better Auth; está gitignoreado pero nunca lo imprimas ni lo loguees.

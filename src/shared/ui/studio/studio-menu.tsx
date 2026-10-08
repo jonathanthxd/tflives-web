@@ -32,7 +32,6 @@ function AnimatedPreview({
 
   useEffect(() => {
     if (locked) {
-      setVisible(false);
       return;
     }
 
@@ -49,7 +48,7 @@ function AnimatedPreview({
 
   return (
     <div ref={rootRef} className="relative h-20 overflow-hidden bg-[#05010a]">
-      {visible ? (
+      {visible && !locked ? (
         <StudioBackground background={background} preview animate={animate} />
       ) : (
         <div className="absolute inset-0 grid place-items-center bg-[#05010a]" aria-hidden="true">

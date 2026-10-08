@@ -12,6 +12,9 @@
 
 # testing
 /coverage
+/performance-artifacts/
+/playwright-report/
+/test-results/
 
 # next.js
 /.next/
@@ -24,6 +27,9 @@
 .DS_Store
 *.pem
 *.zip
+*.bak
+*.tmp
+*.log
 
 # debug
 npm-debug.log*

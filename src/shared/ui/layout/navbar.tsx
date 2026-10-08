@@ -50,7 +50,7 @@ export default function Navbar() {
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [user, setUser] = useState<{
+  const [loadedUser, setUser] = useState<{
     id: string;
     name: string | null;
     username: string | null;
@@ -58,11 +58,15 @@ export default function Navbar() {
     image: string | null;
   } | null>(null);
 
+  const user = loadedUser?.id === session?.user?.id ? loadedUser : null;
+  const [previousPath, setPreviousPath] = useState(pathname);
+  if (previousPath !== pathname) {
+    setPreviousPath(pathname);
+    setMobileOpen(false);
+  }
+
   useEffect(() => {
-    if (!session?.user?.id) {
-      setUser(null);
-      return;
-    }
+    if (!session?.user?.id) return;
 
     let cancelled = false;
     fetch("/api/me")
@@ -89,10 +93,6 @@ export default function Navbar() {
       cancelled = true;
     };
   }, [session?.user?.id]);
-
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {

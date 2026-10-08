@@ -18,7 +18,8 @@ export default function LiveProgressCard({
   embedded?: boolean;
 }) {
   const t = useTranslations("Profile");
-  const [progress, setProgress] = useState(initialProgress);
+  const [live, setLive] = useState<{ username: string; initial: PublicProgress; progress: PublicProgress } | null>(null);
+  const progress = live?.username === username && live.initial === initialProgress ? live.progress : initialProgress;
 
   const refresh = useCallback(async () => {
     try {
@@ -27,14 +28,10 @@ export default function LiveProgressCard({
       });
       if (!response.ok) return;
       const data = await response.json();
-      if (data?.progress) setProgress(data.progress as PublicProgress);
+      if (data?.progress) setLive({ username, initial: initialProgress, progress: data.progress as PublicProgress });
     } catch {
       // Keep the last known progress on temporary network failures.
     }
-  }, [username]);
-
-  useEffect(() => {
-    setProgress(initialProgress);
   }, [initialProgress, username]);
 
   useEffect(() => {

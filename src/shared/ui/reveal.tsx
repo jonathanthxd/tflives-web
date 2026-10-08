@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useHydrated } from "@/shared/lib/client-value";
 import { motion } from "framer-motion";
 
 interface RevealProps {
@@ -10,11 +10,7 @@ interface RevealProps {
 }
 
 export default function Reveal({ children, className, delay = 0 }: RevealProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useHydrated();
 
   if (!mounted) {
     return (

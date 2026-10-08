@@ -1,6 +1,8 @@
 "use client";
 
 import { readJsonResponse } from "@/shared/lib/http";
+import { useInitialClientValue } from "@/shared/lib/client-value";
+import { DEFAULT_QUICK_REACTIONS } from "@/modules/chat/emojis";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter, Link as IntlLink } from "@/i18n/navigation";
@@ -16,6 +18,8 @@ import { cosmeticVisualsByType, type SafeCosmeticVisual } from "@/modules/cosmet
 import { UserAvatar } from "@/modules/profiles/components/user-identity";
 import { formatUserTime } from "@/shared/lib/date-time";
 import { ChevronLeft, Flag, MessageSquarePlus, MoreHorizontal, Pencil, Plus, Reply, Search, Send, Smile, Trash2, Users } from "lucide-react";
+
+const INITIAL_QUICK_REACTIONS = [...DEFAULT_QUICK_REACTIONS];
 
 interface PersonSummary {
   id: string;
@@ -129,8 +133,8 @@ function MessagesPageContent() {
   const nextSearchParams = useNextSearchParams();
 
   const activeIdRef = useRef<string | null>(null);
-  const [activeId, setActiveId] = useState<string | null>(null);
-  const [mobileConversationOpen, setMobileConversationOpen] = useState(false);
+  const [activeId, setActiveIdState] = useState<string | null>(() => nextSearchParams.get("c"));
+  const [mobileConversationOpen, setMobileConversationOpen] = useState(() => Boolean(nextSearchParams.get("c")));
   const [conversationSearch, setConversationSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [active, setActive] = useState<InboxEntry[]>([]);
@@ -159,7 +163,9 @@ function MessagesPageContent() {
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editingDraft, setEditingDraft] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<ConversationMessage | null>(null);
-  const [messageClock, setMessageClock] = useState(0);
+  const initialClock = useInitialClientValue(() => Date.now(), 0);
+  const [tickedClock, setMessageClock] = useState<number | null>(null);
+  const messageClock = tickedClock ?? initialClock;
 
   const [sendingMessage, setSendingMessage] = useState(false);
   const sendingRef = useRef(false);
@@ -168,28 +174,39 @@ function MessagesPageContent() {
   const [stickers, setStickers] = useState<{ id: string; name: string; assetUrl: string; category: string | null }[]>([]);
   const [showExpressions, setShowExpressions] = useState(false);
   const [reactionPicker, setReactionPicker] = useState<{ messageId: string; anchorRect: PickerAnchorRect } | null>(null);
-  const [quickReactions, setQuickReactions] = useState<string[]>(() => getQuickReactions());
+  const initialReactions = useInitialClientValue(getQuickReactions, INITIAL_QUICK_REACTIONS);
+  const [updatedReactions, setQuickReactions] = useState<string[] | null>(null);
+  const quickReactions = updatedReactions ?? initialReactions;
   const [reportTarget, setReportTarget] = useState<{ targetType: "CONVERSATION" | "DIRECT_MESSAGE"; targetId: string } | null>(null);
   const [memberUsername, setMemberUsername] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messageComposerRef = useRef<HTMLTextAreaElement>(null);
-  const expressionButtonRef = useRef<HTMLButtonElement>(null);
+  const [expressionButton, setExpressionButton] = useState<HTMLButtonElement | null>(null);
   const messageViewportRef = useRef<HTMLDivElement>(null);
   const nearConversationBottomRef = useRef(true);
 
+  function setActiveId(id: string | null) {
+    if (id === activeId) return;
+    activeIdRef.current = id;
+    setActiveIdState(id);
+    setConversation(null);
+    setNextCursor(null);
+    setReplyToMessage(null);
+    setEditingMessageId(null);
+    nearConversationBottomRef.current = true;
+  }
+
   async function loadInbox() {
-    try {
-    const res = await fetch("/api/messaging/conversations");
-    if (res.status === 401) {
-      router.replace("/login?redirect=/mensajes");
-      return;
-    }
-    const data = await readJsonResponse(res);
-    setActive(data.active ?? []);
-    setRequests(data.requests ?? []);
-    setLoading(false);
-  
-    } catch { setError(t("errorGenerico")); setBusy(false); setLoading(false); }
+    return fetch("/api/messaging/conversations").then(async (res) => {
+      if (res.status === 401) {
+        router.replace("/login?redirect=/mensajes");
+        return;
+      }
+      const data = await readJsonResponse(res);
+      setActive(data.active ?? []);
+      setRequests(data.requests ?? []);
+      setLoading(false);
+    }).catch(() => { setError(t("errorGenerico")); setBusy(false); setLoading(false); });
   }
 
   useEffect(() => {
@@ -201,23 +218,16 @@ function MessagesPageContent() {
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => setStickers(data?.stickers ?? []))
       .catch(() => {});
-    const initialConversationId = nextSearchParams.get("c");
-    setActiveId(initialConversationId);
-    setMobileConversationOpen(Boolean(initialConversationId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => { setQuickReactions(getQuickReactions()); }, []);
-
   useEffect(() => {
-    setMessageClock(Date.now());
     const interval = window.setInterval(() => setMessageClock(Date.now()), 30_000);
     return () => window.clearInterval(interval);
   }, []);
 
   async function loadConversation(id: string, after?: string) {
-    try {
-    const res = await fetch(`/api/messaging/conversations/${id}${after ? `?after=${encodeURIComponent(after)}` : ""}`);
+    return fetch(`/api/messaging/conversations/${id}${after ? `?after=${encodeURIComponent(after)}` : ""}`).then(async (res) => {
     if (res.ok) {
       const data = await readJsonResponse(res);
       if (activeIdRef.current !== id) return;
@@ -247,18 +257,12 @@ function MessagesPageContent() {
       setConversation(null);
     }
   
-    } catch { setError(t("errorGenerico")); setBusy(false); }
+    }).catch(() => { if (activeIdRef.current !== id) return; setError(t("errorGenerico")); setBusy(false); });
   }
 
   useEffect(() => {
     activeIdRef.current = activeId;
-    setConversation(null);
-    setNextCursor(null);
-    setReplyToMessage(null);
-    setEditingMessageId(null);
-    nearConversationBottomRef.current = true;
-    if (activeId) loadConversation(activeId);
-    else setConversation(null);
+    if (activeId) void loadConversation(activeId);
   }, [activeId]);
 
   useEffect(() => {
@@ -328,10 +332,7 @@ function MessagesPageContent() {
   }
 
   useEffect(() => {
-    if (!showNewMessage || newMessageQuery.trim().length < 2) {
-      setNewMessageResults([]);
-      return;
-    }
+    if (!showNewMessage || newMessageQuery.trim().length < 2) return;
     const handle = setTimeout(() => {
       fetch(`/api/social/search?q=${encodeURIComponent(newMessageQuery)}`)
         .then((res) => res.json())
@@ -957,7 +958,7 @@ function MessagesPageContent() {
                       onKeyDown={(event) => { if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) return; event.preventDefault(); event.currentTarget.form?.requestSubmit(); }}
                       className="max-h-28 min-h-9 flex-1 resize-none overflow-y-auto bg-transparent px-2 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground"
                     />
-                    <button ref={expressionButtonRef} type="button" onClick={() => setShowExpressions((value) => !value)} aria-label={t("emojisYStickers")} aria-expanded={showExpressions} className="grid size-9 shrink-0 place-items-center rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary"><Smile className="size-[18px]" aria-hidden="true" /></button>
+                    <button ref={setExpressionButton} type="button" onClick={() => setShowExpressions((value) => !value)} aria-label={t("emojisYStickers")} aria-expanded={showExpressions} className="grid size-9 shrink-0 place-items-center rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary"><Smile className="size-[18px]" aria-hidden="true" /></button>
                     <button type="submit" aria-label={t("enviar")} disabled={sendingMessage || !draft.trim()} className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground shadow-sm transition-opacity disabled:opacity-40"><Send className="size-4" aria-hidden="true" /></button>
                   </form>
                 </div>
@@ -966,7 +967,7 @@ function MessagesPageContent() {
                   const message = conversation.messages.find((item) => item.id === reactionPicker.messageId);
                   return message ? <AnchoredEmojiStickerPicker open anchorRect={reactionPicker.anchorRect} onClose={() => setReactionPicker(null)} reactionOnly onEmojiSelect={(emoji) => { void reactToMessage(message, emoji); setReactionPicker(null); }} labels={{ emojis: t("emojis"), stickers: t("stickers"), emptyStickers: t("sinStickers") }} /> : null;
                 })()}
-                <AnchoredEmojiStickerPicker open={showExpressions} anchorEl={expressionButtonRef.current} onClose={() => setShowExpressions(false)} onEmojiSelect={insertEmoji} stickers={stickers} onStickerSelect={sendSticker} labels={{ emojis: t("emojis"), stickers: t("stickers"), emptyStickers: t("sinStickers"), customEmojis: t("emojisCustom") }} />
+                <AnchoredEmojiStickerPicker open={showExpressions} anchorEl={expressionButton} onClose={() => setShowExpressions(false)} onEmojiSelect={insertEmoji} stickers={stickers} onStickerSelect={sendSticker} labels={{ emojis: t("emojis"), stickers: t("stickers"), emptyStickers: t("sinStickers"), customEmojis: t("emojisCustom") }} />
               </>
             ) : (
               <div className="flex h-full flex-col items-center justify-center p-8 text-center">
@@ -986,7 +987,11 @@ function MessagesPageContent() {
             <Input
               autoFocus
               value={newMessageQuery}
-              onChange={(e) => setNewMessageQuery(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                setNewMessageQuery(value);
+                if (value.trim().length < 2) setNewMessageResults([]);
+              }}
               placeholder={t("buscarPlaceholder")}
             />
             <div className="mt-3 max-h-60 overflow-y-auto space-y-1">

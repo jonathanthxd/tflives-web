@@ -31,42 +31,51 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ["400", "500", "600"],
 });
 const nunito = Nunito({
+  preload: false,
   subsets: ["latin"],
   variable: "--font-nunito",
   weight: ["400", "500", "600", "700", "800"],
 });
 const vt323 = VT323({
+  // Preserve saved pixel-font layout: late loading caused measurable CLS.
+  preload: true,
   subsets: ["latin"],
   variable: "--font-vt323",
   weight: "400",
 });
 const outfit = Outfit({
+  preload: false,
   subsets: ["latin"],
   variable: "--font-outfit",
   weight: ["400", "500", "600", "700", "800"],
 });
 const fredoka = Fredoka({
+  preload: false,
   subsets: ["latin"],
   variable: "--font-fredoka",
   weight: ["400", "500", "600", "700"],
 });
 
 const pixelify = Pixelify_Sans({
+  preload: true,
   subsets: ["latin"],
   variable: "--font-pixelify",
   weight: ["400", "500", "600", "700"],
 });
 const chakra = Chakra_Petch({
+  preload: false,
   subsets: ["latin"],
   variable: "--font-chakra",
   weight: ["400", "500", "600", "700"],
 });
 const quicksand = Quicksand({
+  preload: false,
   subsets: ["latin"],
   variable: "--font-quicksand",
   weight: ["400", "500", "600", "700"],
 });
 const rubik = Rubik({
+  preload: false,
   subsets: ["latin"],
   variable: "--font-rubik",
   weight: ["400", "500", "600", "700", "800"],

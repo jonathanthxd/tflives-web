@@ -58,19 +58,17 @@ export default function FriendsPage() {
   const [error, setError] = useState("");
 
   async function loadOverview() {
-    try {
-    const res = await fetch("/api/social/friends");
-    if (res.status === 401) {
-      router.replace("/login?redirect=/amigos");
-      return;
-    }
-    const data = await readJsonResponse(res);
-    setFriends(data.friends ?? []);
-    setReceived(data.received ?? []);
-    setSent(data.sent ?? []);
-    setLoading(false);
-  
-    } catch { setError(t("errorGenerico")); setLoading(false); }
+    return fetch("/api/social/friends").then(async (res) => {
+      if (res.status === 401) {
+        router.replace("/login?redirect=/amigos");
+        return;
+      }
+      const data = await readJsonResponse(res);
+      setFriends(data.friends ?? []);
+      setReceived(data.received ?? []);
+      setSent(data.sent ?? []);
+      setLoading(false);
+    }).catch(() => { setError(t("errorGenerico")); setLoading(false); });
   }
 
   useEffect(() => {
@@ -80,11 +78,8 @@ export default function FriendsPage() {
 
   useEffect(() => {
     if (query.trim().length < 2) {
-      setResults([]);
-      setSearching(false);
       return;
     }
-    setSearching(true);
     const handle = setTimeout(() => {
       fetch(`/api/social/search?q=${encodeURIComponent(query)}`)
         .then(readJsonResponse)
@@ -188,7 +183,12 @@ export default function FriendsPage() {
         <Card className="p-6">
           <Input
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              setQuery(value);
+              setSearching(value.trim().length >= 2);
+              if (value.trim().length < 2) setResults([]);
+            }}
             placeholder={t("buscarPlaceholder")}
           />
 

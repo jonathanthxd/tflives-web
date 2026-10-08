@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import { useInitialClientValue } from "@/shared/lib/client-value";
 import QRCode from "qrcode";
 import { useLocale, useTranslations } from "next-intl";
 import { authClient } from "@/infrastructure/auth/client";
@@ -42,14 +43,23 @@ function authErrorCode(error: unknown) {
 }
 
 const PROVIDERS: Provider[] = ["google", "discord"];
+const EMPTY_OAUTH = { provider: null as string | null, error: false };
 
 export function SecuritySettings() {
   const t = useTranslations("Security");
   const locale = useLocale();
   const [data, setData] = useState<SecurityData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [notice, setNotice] = useState("");
-  const [error, setError] = useState("");
+  const initialOAuth = useInitialClientValue(() => {
+    const url = new URL(window.location.href);
+    const provider = url.searchParams.get("provider");
+    return { provider, error: provider !== "google" && provider !== "discord" && Boolean(url.searchParams.get("oauthError")) };
+  }, EMPTY_OAUTH);
+  const [noticeOverride, setNotice] = useState<string | null>(null);
+  const [errorOverride, setError] = useState<string | null>(null);
+  const notice = noticeOverride ?? (initialOAuth.provider === "google" || initialOAuth.provider === "discord"
+    ? t("providerLinked", { provider: initialOAuth.provider === "google" ? "Google" : "Discord" }) : "");
+  const error = errorOverride ?? (initialOAuth.error ? t("providerActionFailed") : "");
   const [busy, setBusy] = useState<string | null>(null);
   const [confirm, setConfirm] = useState<ConfirmAction>(null);
   const [currentPassword, setCurrentPassword] = useState("");
@@ -61,18 +71,12 @@ export function SecuritySettings() {
   const [qrCode, setQrCode] = useState<string | null>(null);
   const [backupCodes, setBackupCodes] = useState<string[]>([]);
 
-  const load = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch("/api/account/security", { cache: "no-store" });
+  const load = () => fetch("/api/account/security", { cache: "no-store" })
+    .then(async (response) => {
       if (!response.ok) throw new Error(await response.text());
       setData(await response.json());
-    } catch {
-      setError(t("sessionRefreshRequired"));
-    } finally {
-      setLoading(false);
-    }
-  };
+    }).catch(() => setError(t("sessionRefreshRequired")))
+    .finally(() => setLoading(false));
 
   useEffect(() => {
     void load();
@@ -82,10 +86,8 @@ export function SecuritySettings() {
     const oauthError = url.searchParams.get("oauthError");
 
     if (linkedProvider === "google" || linkedProvider === "discord") {
-      setNotice(t("providerLinked", { provider: linkedProvider === "google" ? "Google" : "Discord" }));
       url.searchParams.delete("provider");
     } else if (oauthError) {
-      setError(t("providerActionFailed"));
       url.searchParams.delete("oauthError");
     }
 
@@ -171,7 +173,7 @@ export function SecuritySettings() {
       setCurrentPassword("");
       setNewPassword("");
       showSuccess(t("passwordChanged"));
-      void load();
+      setLoading(true); void load();
     }
   }
 
@@ -227,7 +229,7 @@ export function SecuritySettings() {
     }
     setTwoFactorCode("");
     showSuccess(t("twoFactorEnabled"));
-    void load();
+    setLoading(true); void load();
   }
 
   async function regenerateCodes() {
@@ -278,7 +280,7 @@ export function SecuritySettings() {
         showSuccess(confirm.kind === "revoke-others" ? t("otherSessionsRevoked") : t("sessionRevoked"));
       }
       setConfirm(null);
-      void load();
+      setLoading(true); void load();
     } catch {
       setError(t("securityActionFailed"));
     } finally {
@@ -303,7 +305,7 @@ export function SecuritySettings() {
       setQrCode(null);
       setBackupCodes([]);
       showSuccess(t("twoFactorDisabled"));
-      void load();
+      setLoading(true); void load();
     }
   }
 

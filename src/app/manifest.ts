@@ -16,8 +16,8 @@ export default function manifest(): MetadataRoute.Manifest {
     dir: "ltr",
     categories: ["games", "social"],
     icons: [
-      { src: "/icon.png", sizes: "any", type: "image/png" },
-      { src: "/favicon.ico", sizes: "any", type: "image/x-icon" },
+      { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { src: "/icon.png", sizes: "512x512", type: "image/png" },
     ],
   };
 }

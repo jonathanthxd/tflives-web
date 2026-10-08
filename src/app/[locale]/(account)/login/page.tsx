@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useRouter, Link } from "@/i18n/navigation";
@@ -15,7 +15,7 @@ import HeroGlow from "@/shared/ui/effects/hero-glow";
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<div className="min-h-screen" aria-hidden="true" />}>
       <LoginForm />
     </Suspense>
   );
@@ -30,16 +30,19 @@ function LoginForm() {
   const redirectTo = explicitRedirect || "/onboarding/username";
 
   const [loading, setLoading] = useState(false);
-  const [formError, setFormError] = useState("");
+  const queryError = searchParams.get("error") === "account_not_linked"
+    ? "accountNotLinked" : searchParams.get("oauthError") ? "oauthError" : null;
+  const [previousQueryError, setPreviousQueryError] = useState(queryError);
+  const [rememberedQueryError, setRememberedQueryError] = useState(queryError);
+  const [submittedError, setFormError] = useState<string | null>(null);
+  if (previousQueryError !== queryError) {
+    setPreviousQueryError(queryError);
+    if (queryError) { setRememberedQueryError(queryError); setFormError(null); }
+  }
+  // The global notice removes OAuth query parameters from history. Keep the
+  // inline feedback until a form submission replaces it, as before.
+  const formError = submittedError ?? (rememberedQueryError ? t(rememberedQueryError) : "");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-
-  useEffect(() => {
-    if (searchParams.get("error") === "account_not_linked") {
-      setFormError(t("accountNotLinked"));
-    } else if (searchParams.get("oauthError")) {
-      setFormError(t("oauthError"));
-    }
-  }, [searchParams, t]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();

@@ -226,9 +226,8 @@ export function AnchoredEmojiStickerPicker({
 
   useLayoutEffect(() => {
     if (!open) return;
-    setPosition((current) => ({ ...current, ready: false }));
-    const frame = window.requestAnimationFrame(updatePosition);
-    return () => window.cancelAnimationFrame(frame);
+    // Measure the mounted DOM before paint; no extra state reset or frame is needed.
+    updatePosition();
   }, [open, updatePosition]);
 
   useEffect(() => {

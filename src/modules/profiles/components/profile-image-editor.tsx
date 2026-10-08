@@ -1,4 +1,5 @@
 "use client";
+import { useObjectUrl } from "@/shared/lib/client-value";
 
 import { ImageIcon, Minus, Plus, RotateCcw, X } from "lucide-react";
 import { useEffect, useId, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
@@ -78,7 +79,7 @@ export function ProfileImageEditor({
   const viewportRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ pointerId: number; origin: Point; start: Point } | null>(null);
   const id = useId();
-  const [sourceUrl, setSourceUrl] = useState("");
+  const sourceUrl = useObjectUrl(file);
   const [imageSize, setImageSize] = useState<Size>({ width: 0, height: 0 });
   const [viewportSize, setViewportSize] = useState<Size>({ width: 0, height: 0 });
   const [position, setPosition] = useState<Point>({ x: 0, y: 0 });
@@ -95,12 +96,6 @@ export function ProfileImageEditor({
   }, []);
 
   useEffect(() => {
-    const url = URL.createObjectURL(file);
-    setSourceUrl(url);
-    return () => URL.revokeObjectURL(url);
-  }, [file]);
-
-  useEffect(() => {
     const viewport = viewportRef.current;
     if (!viewport) return;
     const update = () => {
@@ -114,10 +109,6 @@ export function ProfileImageEditor({
     update();
     return () => observer.disconnect();
   }, [imageSize, zoom]);
-
-  useEffect(() => {
-    setPosition((value) => constrainedPosition(value, imageSize, viewportSize, zoom));
-  }, [imageSize, viewportSize, zoom]);
 
   const rendered = useMemo(() => {
     if (!imageSize.width || !viewportSize.width) return { scale: 1, width: 0, height: 0 };

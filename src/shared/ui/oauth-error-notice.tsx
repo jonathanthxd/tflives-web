@@ -3,21 +3,23 @@
 import { useEffect, useState } from "react";
 import { ShieldAlert, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import { useInitialClientValue } from "@/shared/lib/client-value";
 
 export default function OAuthErrorNotice() {
   const t = useTranslations("OAuthError");
   const locale = useLocale();
-  const [visible, setVisible] = useState(false);
+  const initialVisible = useInitialClientValue(() => {
+    const url = new URL(window.location.href);
+    return url.searchParams.get("error") === "account_not_linked" && !/\/(es|en)\/login\/?$/.test(url.pathname);
+  }, false);
+  const [dismissed, setDismissed] = useState(false);
+  const visible = initialVisible && !dismissed;
 
   useEffect(() => {
     const url = new URL(window.location.href);
     const error = url.searchParams.get("error");
 
     if (error !== "account_not_linked") return;
-
-    // The login page renders the same error inline, so avoid duplicate UI there.
-    const isLoginPage = /\/(es|en)\/login\/?$/.test(url.pathname);
-    if (!isLoginPage) setVisible(true);
 
     url.searchParams.delete("error");
     const next = `${url.pathname}${url.search}${url.hash}`;
@@ -52,7 +54,7 @@ export default function OAuthErrorNotice() {
             </a>
             <button
               type="button"
-              onClick={() => setVisible(false)}
+              onClick={() => setDismissed(true)}
               className="inline-flex h-9 items-center justify-center rounded-full border border-border px-4 text-xs font-semibold uppercase tracking-widest text-foreground transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
             >
               {t("dismiss")}
@@ -63,7 +65,7 @@ export default function OAuthErrorNotice() {
         <button
           type="button"
           aria-label={t("dismiss")}
-          onClick={() => setVisible(false)}
+          onClick={() => setDismissed(true)}
           className="grid size-8 shrink-0 place-items-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
         >
           <X className="size-4" aria-hidden="true" />
