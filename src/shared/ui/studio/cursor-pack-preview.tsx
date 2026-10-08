@@ -24,11 +24,12 @@ export function CursorPackPreview({
 }) {
   const [active, setActive] = useState(false);
   const [elapsed, setElapsed] = useState(0);
+  const [visible, setVisible] = useState(true);
   const startedAt = useRef(0);
   const animationInterval = getCursorAnimationInterval(pack);
 
   useEffect(() => {
-    if (!active || !animationInterval) {
+    if (!active || !visible || !animationInterval) {
       return;
     }
 
@@ -37,7 +38,13 @@ export function CursorPackPreview({
       setElapsed(performance.now() - startedAt.current);
     }, animationInterval);
     return () => window.clearInterval(timer);
-  }, [active, animationInterval]);
+  }, [active, visible, animationInterval]);
+
+  useEffect(() => {
+    const update = () => setVisible(!document.hidden);
+    document.addEventListener("visibilitychange", update);
+    return () => document.removeEventListener("visibilitychange", update);
+  }, []);
 
   const roleCursors = useMemo(
     () =>
@@ -61,6 +68,10 @@ export function CursorPackPreview({
   return (
     <div
       className="studio-cursor-preview relative overflow-hidden"
+      tabIndex={0}
+      aria-label={`${pack.label}: ${animatedLabel}`}
+      onFocus={() => { setElapsed(0); setActive(true); }}
+      onBlur={() => setActive(false)}
       onPointerEnter={() => { setElapsed(0); setActive(true); }}
       onPointerLeave={() => setActive(false)}
     >
