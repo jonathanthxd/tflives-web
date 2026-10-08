@@ -2,7 +2,8 @@
 
 Web principal y plataforma comunitaria de **TFLives / Time For Lives**.
 
-Rendimiento v0.17: [resultados y límites de medición](docs/performance/V0_17.md),
+Rendimiento v0.18: [resultados, decisiones y validación del frontend](docs/performance/V0_18.md).
+Se conserva el [informe de v0.17](docs/performance/V0_17.md) y el
 [protocolo de compilación aislada y pruebas visuales](docs/performance/PROTOCOL.md).
 
 ## Stack actual

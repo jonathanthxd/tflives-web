@@ -11,7 +11,7 @@ import { Card } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import ConfirmDialog from "@/shared/ui/confirm-dialog";
-import { AnchoredEmojiStickerPicker, preloadEmojiPicker, type PickerAnchorRect } from "@/modules/chat/components/emoji-sticker-picker";
+import { AnchoredEmojiStickerPicker, type PickerAnchorRect } from "@/modules/chat/components/emoji-sticker-picker";
 import { getQuickReactions, recordReactionUse } from "@/modules/chat/reaction-preferences";
 import { CosmeticAvatarFrame } from "@/modules/cosmetics/components/cosmetic-renderer";
 import { cosmeticVisualsByType, type SafeCosmeticVisual } from "@/modules/cosmetics/visuals";
@@ -980,7 +980,7 @@ function MessagesPageContent() {
                       onKeyDown={(event) => { if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) return; event.preventDefault(); event.currentTarget.form?.requestSubmit(); }}
                       className="max-h-28 min-h-9 flex-1 resize-none overflow-y-auto bg-transparent px-2 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground"
                     />
-                    <button ref={setExpressionButton} type="button" onClick={() => setShowExpressions((value) => !value)} aria-label={t("emojisYStickers")} onPointerEnter={preloadEmojiPicker} onFocus={preloadEmojiPicker} aria-expanded={showExpressions} className="grid size-9 shrink-0 place-items-center rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary"><Smile className="size-[18px]" aria-hidden="true" /></button>
+                    <button ref={setExpressionButton} type="button" onClick={() => setShowExpressions((value) => !value)} aria-label={t("emojisYStickers")} aria-expanded={showExpressions} className="grid size-9 shrink-0 place-items-center rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary"><Smile className="size-[18px]" aria-hidden="true" /></button>
                     <button type="submit" aria-label={t("enviar")} disabled={sendingMessage || !draft.trim()} className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground shadow-sm transition-opacity disabled:opacity-40"><Send className="size-4" aria-hidden="true" /></button>
                   </form>
                 </div>

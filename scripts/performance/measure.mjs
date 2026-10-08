@@ -195,9 +195,10 @@ try {
     localeFilter: process.env.TFL_LOCALE_FILTER || null,
     themeFilter: process.env.TFL_THEME_FILTER || null,
     interactions: process.env.TFL_INTERACTIONS === "1",
+    extended,
     graphicsChecks: process.env.TFL_GRAPHICS_CHECKS === "1",
     qrSetup: process.env.TFL_QR_CHECK === "1",
-    phase: dmOnly ? "direct-message" : fontVisitsOnly
+    phase: teamOnly ? "team-prerender" : dmOnly ? "direct-message" : fontVisitsOnly
       ? "saved-fonts"
       : studioOnly
         ? "studio"

@@ -255,10 +255,12 @@ export default function TeamNeuralField({
   members,
   activeIndex,
   onSelect,
+  visible,
 }: {
   members: TeamConstellationMember[];
   activeIndex: number;
   onSelect: (index: number) => void;
+  visible: boolean;
 }) {
   const points = useMemo(
     () => members.map((_, index) => teamSpacePosition(index, members.length)),
@@ -268,6 +270,7 @@ export default function TeamNeuralField({
   return (
     <div aria-hidden={false} className="team-neural-field">
       <Canvas
+        frameloop={visible ? "always" : "demand"}
         dpr={[1, 1.65]}
         camera={{ position: [0, 0, 7.8], fov: 48, near: 0.1, far: 60 }}
         gl={{ alpha: true, antialias: true }}

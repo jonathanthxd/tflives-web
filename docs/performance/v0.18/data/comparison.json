@@ -1,0 +1,6604 @@
+{
+  "method": "Matched single observations, unthrottled local production builds. Timings are descriptive lab observations, not statistical proof or RUM.",
+  "runtime": {
+    "node": "v24.20.0",
+    "next": "16.3.8",
+    "browser": "151.0.7922.34"
+  },
+  "beforeBuild": "SK04bnsgZt78sZAwRavp3",
+  "afterBuild": "s-ntaHs7h5MRjp-RPcNDa",
+  "summary": {
+    "fcp": {
+      "beforeMedian": 398,
+      "afterMedian": 364
+    },
+    "lcp": {
+      "beforeMedian": 580,
+      "afterMedian": 566
+    },
+    "cls": {
+      "beforeMedian": 0,
+      "afterMedian": 0
+    },
+    "blocking": {
+      "beforeMedian": 28,
+      "afterMedian": 26
+    },
+    "mainVisibleObservedMs": {
+      "beforeMedian": 532.8999999985099,
+      "afterMedian": 517.9999999962747
+    },
+    "js": {
+      "beforeMedianEncodedBytes": 509261.5,
+      "afterMedianEncodedBytes": 286082.5,
+      "beforeMedianCount": 22,
+      "afterMedianCount": 20
+    },
+    "css": {
+      "beforeMedianEncodedBytes": 46496,
+      "afterMedianEncodedBytes": 43889,
+      "beforeMedianCount": 2,
+      "afterMedianCount": 2
+    },
+    "fonts": {
+      "beforeMedianEncodedBytes": 190944,
+      "afterMedianEncodedBytes": 190944,
+      "beforeMedianCount": 6,
+      "afterMedianCount": 6
+    }
+  },
+  "rows": [
+    {
+      "key": "desktop|es|dark|",
+      "metrics": {
+        "fcp": {
+          "before": 4368,
+          "after": 1116,
+          "delta": -3252
+        },
+        "lcp": {
+          "before": 4368,
+          "after": 1116,
+          "delta": -3252
+        },
+        "cls": {
+          "before": 0.035362962962962964,
+          "after": 0,
+          "delta": -0.035362962962962964
+        },
+        "blocking": {
+          "before": 1806,
+          "after": 69,
+          "delta": -1737
+        },
+        "ttfb": {
+          "before": 831.2999999970198,
+          "after": 302.70000000298023,
+          "delta": -528.5999999940395
+        },
+        "mainVisibleObservedMs": {
+          "before": 5844.69999999553,
+          "after": 1126.2000000029802,
+          "delta": -4718.499999992549
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 508568,
+            "transferBytes": 515168
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 285389,
+            "transferBytes": 291389
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|es|dark|/network",
+      "metrics": {
+        "fcp": {
+          "before": 748,
+          "after": 584,
+          "delta": -164
+        },
+        "lcp": {
+          "before": 996,
+          "after": 800,
+          "delta": -196
+        },
+        "cls": {
+          "before": 0.00012286817343964336,
+          "after": 0.0000684226707175926,
+          "delta": -0.00005444550272205077
+        },
+        "blocking": {
+          "before": 133,
+          "after": 106,
+          "delta": -27
+        },
+        "ttfb": {
+          "before": 148.79999999701977,
+          "after": 11,
+          "delta": -137.79999999701977
+        },
+        "mainVisibleObservedMs": {
+          "before": 857.8999999985099,
+          "after": 679.3999999985099,
+          "delta": -178.5
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 508568,
+            "transferBytes": 515168
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 285389,
+            "transferBytes": 291389
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|es|dark|/network/wiki",
+      "metrics": {
+        "fcp": {
+          "before": 560,
+          "after": 376,
+          "delta": -184
+        },
+        "lcp": {
+          "before": 724,
+          "after": 512,
+          "delta": -212
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 183,
+          "after": 34,
+          "delta": -149
+        },
+        "ttfb": {
+          "before": 8.300000004470348,
+          "after": 10.299999997019768,
+          "delta": 1.9999999925494194
+        },
+        "mainVisibleObservedMs": {
+          "before": 586.1000000014901,
+          "after": 369.6000000014901,
+          "delta": -216.5
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 508568,
+            "transferBytes": 515168
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 285389,
+            "transferBytes": 291389
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|es|dark|/login",
+      "metrics": {
+        "fcp": {
+          "before": 528,
+          "after": 472,
+          "delta": -56
+        },
+        "lcp": {
+          "before": 716,
+          "after": 664,
+          "delta": -52
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 87,
+          "after": 6,
+          "delta": -81
+        },
+        "ttfb": {
+          "before": 8.200000002980232,
+          "after": 9.899999998509884,
+          "delta": 1.6999999955296516
+        },
+        "mainVisibleObservedMs": {
+          "before": 536.9000000059605,
+          "after": 435.8999999985099,
+          "delta": -101.00000000745058
+        },
+        "js": {
+          "before": {
+            "count": 24,
+            "encodedBytes": 518445,
+            "transferBytes": 525645
+          },
+          "after": {
+            "count": 22,
+            "encodedBytes": 295266,
+            "transferBytes": 301866
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|es|dark|/register",
+      "metrics": {
+        "fcp": {
+          "before": 452,
+          "after": 500,
+          "delta": 48
+        },
+        "lcp": {
+          "before": 644,
+          "after": 632,
+          "delta": -12
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 10,
+          "after": 8,
+          "delta": -2
+        },
+        "ttfb": {
+          "before": 9,
+          "after": 9.399999998509884,
+          "delta": 0.3999999985098839
+        },
+        "mainVisibleObservedMs": {
+          "before": 417.79999999701977,
+          "after": 475.20000000298023,
+          "delta": 57.400000005960464
+        },
+        "js": {
+          "before": {
+            "count": 21,
+            "encodedBytes": 509955,
+            "transferBytes": 516255
+          },
+          "after": {
+            "count": 19,
+            "encodedBytes": 286776,
+            "transferBytes": 292476
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|es|dark|/perfil/visual_fixture",
+      "metrics": {
+        "fcp": {
+          "before": 1304,
+          "after": 976,
+          "delta": -328
+        },
+        "lcp": {
+          "before": 2176,
+          "after": 1928,
+          "delta": -248
+        },
+        "cls": {
+          "before": 0.011657027104738156,
+          "after": 0.011142859024864166,
+          "delta": -0.00051416807987399
+        },
+        "blocking": {
+          "before": 1114,
+          "after": 661,
+          "delta": -453
+        },
+        "ttfb": {
+          "before": 28.799999997019768,
+          "after": 27.200000002980232,
+          "delta": -1.5999999940395355
+        },
+        "mainVisibleObservedMs": {
+          "before": 1870.5,
+          "after": 951.2000000029802,
+          "delta": -919.2999999970198
+        },
+        "js": {
+          "before": {
+            "count": 23,
+            "encodedBytes": 521669,
+            "transferBytes": 528569
+          },
+          "after": {
+            "count": 21,
+            "encodedBytes": 298614,
+            "transferBytes": 304914
+          },
+          "encodedByteDelta": -223055
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 7,
+            "encodedBytes": 209988,
+            "transferBytes": 212088
+          },
+          "after": {
+            "count": 7,
+            "encodedBytes": 209988,
+            "transferBytes": 212088
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|es|dark|/mensajes",
+      "metrics": {
+        "fcp": {
+          "before": 356,
+          "after": 356,
+          "delta": 0
+        },
+        "lcp": {
+          "before": 872,
+          "after": 864,
+          "delta": -8
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 19,
+          "after": 7,
+          "delta": -12
+        },
+        "ttfb": {
+          "before": 38.600000001490116,
+          "after": 24.5,
+          "delta": -14.100000001490116
+        },
+        "mainVisibleObservedMs": {
+          "before": 702.5,
+          "after": 672.5,
+          "delta": -30
+        },
+        "js": {
+          "before": {
+            "count": 21,
+            "encodedBytes": 498576,
+            "transferBytes": 504876
+          },
+          "after": {
+            "count": 19,
+            "encodedBytes": 275608,
+            "transferBytes": 281308
+          },
+          "encodedByteDelta": -222968
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|es|dark|/configuracion",
+      "metrics": {
+        "fcp": {
+          "before": 344,
+          "after": 356,
+          "delta": 12
+        },
+        "lcp": {
+          "before": 464,
+          "after": 472,
+          "delta": 8
+        },
+        "cls": {
+          "before": 0.0038296296296296294,
+          "after": 0.0038296296296296294,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 24,
+          "after": 23,
+          "delta": -1
+        },
+        "ttfb": {
+          "before": 25.299999997019768,
+          "after": 22,
+          "delta": -3.2999999970197678
+        },
+        "mainVisibleObservedMs": {
+          "before": 1179.3999999985099,
+          "after": 721.1000000014901,
+          "delta": -458.29999999701977
+        },
+        "js": {
+          "before": {
+            "count": 25,
+            "encodedBytes": 527908,
+            "transferBytes": 535408
+          },
+          "after": {
+            "count": 22,
+            "encodedBytes": 293312,
+            "transferBytes": 299912
+          },
+          "encodedByteDelta": -234596
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|es|dark|/admin",
+      "metrics": {
+        "fcp": {
+          "before": 564,
+          "after": 548,
+          "delta": -16
+        },
+        "lcp": {
+          "before": 768,
+          "after": 800,
+          "delta": 32
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 111,
+          "after": 50,
+          "delta": -61
+        },
+        "ttfb": {
+          "before": 23.600000001490116,
+          "after": 23.799999997019768,
+          "delta": 0.19999999552965164
+        },
+        "mainVisibleObservedMs": {
+          "before": 567.8000000044703,
+          "after": 572.1999999955297,
+          "delta": 4.399999991059303
+        },
+        "js": {
+          "before": {
+            "count": 19,
+            "encodedBytes": 491236,
+            "transferBytes": 496936
+          },
+          "after": {
+            "count": 17,
+            "encodedBytes": 268057,
+            "transferBytes": 273157
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|es|light|",
+      "metrics": {
+        "fcp": {
+          "before": 580,
+          "after": 580,
+          "delta": 0
+        },
+        "lcp": {
+          "before": 580,
+          "after": 580,
+          "delta": 0
+        },
+        "cls": {
+          "before": 0.0008850557471171982,
+          "after": 0.0008850557471171982,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 120,
+          "after": 114,
+          "delta": -6
+        },
+        "ttfb": {
+          "before": 8.400000005960464,
+          "after": 9.200000002980232,
+          "delta": 0.7999999970197678
+        },
+        "mainVisibleObservedMs": {
+          "before": 752.8000000044703,
+          "after": 628.8999999985099,
+          "delta": -123.90000000596046
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 508568,
+            "transferBytes": 515168
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 285389,
+            "transferBytes": 291389
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|es|light|/network",
+      "metrics": {
+        "fcp": {
+          "before": 524,
+          "after": 452,
+          "delta": -72
+        },
+        "lcp": {
+          "before": 780,
+          "after": 604,
+          "delta": -176
+        },
+        "cls": {
+          "before": 0.00012286817343964336,
+          "after": 0.0000684226707175926,
+          "delta": -0.00005444550272205077
+        },
+        "blocking": {
+          "before": 106,
+          "after": 116,
+          "delta": 10
+        },
+        "ttfb": {
+          "before": 8.5,
+          "after": 8.600000001490116,
+          "delta": 0.10000000149011612
+        },
+        "mainVisibleObservedMs": {
+          "before": 558.1999999955297,
+          "after": 492.19999999552965,
+          "delta": -66
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 508568,
+            "transferBytes": 515168
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 285389,
+            "transferBytes": 291389
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|es|light|/network/wiki",
+      "metrics": {
+        "fcp": {
+          "before": 536,
+          "after": 356,
+          "delta": -180
+        },
+        "lcp": {
+          "before": 668,
+          "after": 484,
+          "delta": -184
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 11,
+          "after": 28,
+          "delta": 17
+        },
+        "ttfb": {
+          "before": 8,
+          "after": 8.5,
+          "delta": 0.5
+        },
+        "mainVisibleObservedMs": {
+          "before": 507.69999999552965,
+          "after": 335,
+          "delta": -172.69999999552965
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 508568,
+            "transferBytes": 515168
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 285389,
+            "transferBytes": 291389
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|es|light|/login",
+      "metrics": {
+        "fcp": {
+          "before": 408,
+          "after": 396,
+          "delta": -12
+        },
+        "lcp": {
+          "before": 560,
+          "after": 588,
+          "delta": 28
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 11,
+          "after": 10,
+          "delta": -1
+        },
+        "ttfb": {
+          "before": 7.799999997019768,
+          "after": 9.300000004470348,
+          "delta": 1.5000000074505806
+        },
+        "mainVisibleObservedMs": {
+          "before": 384.69999999552965,
+          "after": 354.6000000014901,
+          "delta": -30.099999994039536
+        },
+        "js": {
+          "before": {
+            "count": 24,
+            "encodedBytes": 518445,
+            "transferBytes": 525645
+          },
+          "after": {
+            "count": 22,
+            "encodedBytes": 295266,
+            "transferBytes": 301866
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|es|light|/register",
+      "metrics": {
+        "fcp": {
+          "before": 404,
+          "after": 416,
+          "delta": 12
+        },
+        "lcp": {
+          "before": 616,
+          "after": 628,
+          "delta": 12
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 11,
+          "after": 15,
+          "delta": 4
+        },
+        "ttfb": {
+          "before": 8.5,
+          "after": 9.199999995529652,
+          "delta": 0.6999999955296516
+        },
+        "mainVisibleObservedMs": {
+          "before": 364.5,
+          "after": 385.09999999403954,
+          "delta": 20.599999994039536
+        },
+        "js": {
+          "before": {
+            "count": 21,
+            "encodedBytes": 509955,
+            "transferBytes": 516255
+          },
+          "after": {
+            "count": 19,
+            "encodedBytes": 286776,
+            "transferBytes": 292476
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|es|light|/perfil/visual_fixture",
+      "metrics": {
+        "fcp": {
+          "before": 896,
+          "after": 992,
+          "delta": 96
+        },
+        "lcp": {
+          "before": 1876,
+          "after": 1960,
+          "delta": 84
+        },
+        "cls": {
+          "before": 0.011142850453569076,
+          "after": 0.011683095202033903,
+          "delta": 0.0005402447484648271
+        },
+        "blocking": {
+          "before": 579,
+          "after": 782,
+          "delta": 203
+        },
+        "ttfb": {
+          "before": 8.900000005960464,
+          "after": 14.200000002980232,
+          "delta": 5.299999997019768
+        },
+        "mainVisibleObservedMs": {
+          "before": 1088.7000000029802,
+          "after": 952.6000000014901,
+          "delta": -136.10000000149012
+        },
+        "js": {
+          "before": {
+            "count": 23,
+            "encodedBytes": 521669,
+            "transferBytes": 528569
+          },
+          "after": {
+            "count": 21,
+            "encodedBytes": 298614,
+            "transferBytes": 304914
+          },
+          "encodedByteDelta": -223055
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 7,
+            "encodedBytes": 209988,
+            "transferBytes": 212088
+          },
+          "after": {
+            "count": 7,
+            "encodedBytes": 209988,
+            "transferBytes": 212088
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|es|light|/mensajes",
+      "metrics": {
+        "fcp": {
+          "before": 324,
+          "after": 520,
+          "delta": 196
+        },
+        "lcp": {
+          "before": 700,
+          "after": 1036,
+          "delta": 336
+        },
+        "cls": {
+          "before": 0,
+          "after": 0.00005539594317986969,
+          "delta": 0.00005539594317986969
+        },
+        "blocking": {
+          "before": 8,
+          "after": 23,
+          "delta": 15
+        },
+        "ttfb": {
+          "before": 10,
+          "after": 11.399999998509884,
+          "delta": 1.3999999985098839
+        },
+        "mainVisibleObservedMs": {
+          "before": 588.2000000029802,
+          "after": 1025.6000000014901,
+          "delta": 437.3999999985099
+        },
+        "js": {
+          "before": {
+            "count": 21,
+            "encodedBytes": 498576,
+            "transferBytes": 504876
+          },
+          "after": {
+            "count": 21,
+            "encodedBytes": 294821,
+            "transferBytes": 301121
+          },
+          "encodedByteDelta": -203755
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|es|light|/configuracion",
+      "metrics": {
+        "fcp": {
+          "before": 412,
+          "after": 372,
+          "delta": -40
+        },
+        "lcp": {
+          "before": 496,
+          "after": 476,
+          "delta": -20
+        },
+        "cls": {
+          "before": 0.0035393518518518517,
+          "after": 0.0035393518518518517,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 16,
+          "after": 24,
+          "delta": 8
+        },
+        "ttfb": {
+          "before": 9.300000004470348,
+          "after": 9.400000005960464,
+          "delta": 0.10000000149011612
+        },
+        "mainVisibleObservedMs": {
+          "before": 1129.5,
+          "after": 1096.4000000059605,
+          "delta": -33.099999994039536
+        },
+        "js": {
+          "before": {
+            "count": 24,
+            "encodedBytes": 524772,
+            "transferBytes": 531972
+          },
+          "after": {
+            "count": 22,
+            "encodedBytes": 293312,
+            "transferBytes": 299912
+          },
+          "encodedByteDelta": -231460
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|es|light|/admin",
+      "metrics": {
+        "fcp": {
+          "before": 508,
+          "after": 332,
+          "delta": -176
+        },
+        "lcp": {
+          "before": 776,
+          "after": 676,
+          "delta": -100
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 48,
+          "after": 36,
+          "delta": -12
+        },
+        "ttfb": {
+          "before": 8.800000004470348,
+          "after": 9.200000002980232,
+          "delta": 0.3999999985098839
+        },
+        "mainVisibleObservedMs": {
+          "before": 544.8000000044703,
+          "after": 556.9000000059605,
+          "delta": 12.100000001490116
+        },
+        "js": {
+          "before": {
+            "count": 19,
+            "encodedBytes": 491236,
+            "transferBytes": 496936
+          },
+          "after": {
+            "count": 17,
+            "encodedBytes": 268057,
+            "transferBytes": 273157
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|en|dark|",
+      "metrics": {
+        "fcp": {
+          "before": 460,
+          "after": 468,
+          "delta": 8
+        },
+        "lcp": {
+          "before": 460,
+          "after": 468,
+          "delta": 8
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 76,
+          "after": 45,
+          "delta": -31
+        },
+        "ttfb": {
+          "before": 17.100000001490116,
+          "after": 17.399999998509884,
+          "delta": 0.29999999701976776
+        },
+        "mainVisibleObservedMs": {
+          "before": 465.5,
+          "after": 453.8999999985099,
+          "delta": -11.600000001490116
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 508568,
+            "transferBytes": 515168
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 285389,
+            "transferBytes": 291389
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|en|dark|/network",
+      "metrics": {
+        "fcp": {
+          "before": 452,
+          "after": 496,
+          "delta": 44
+        },
+        "lcp": {
+          "before": 636,
+          "after": 712,
+          "delta": 76
+        },
+        "cls": {
+          "before": 0.0000732984503600823,
+          "after": 0.00025250289351851855,
+          "delta": 0.00017920444315843624
+        },
+        "blocking": {
+          "before": 106,
+          "after": 88,
+          "delta": -18
+        },
+        "ttfb": {
+          "before": 9.5,
+          "after": 8.899999998509884,
+          "delta": -0.6000000014901161
+        },
+        "mainVisibleObservedMs": {
+          "before": 505.80000000447035,
+          "after": 585.3000000044703,
+          "delta": 79.5
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 508568,
+            "transferBytes": 515168
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 285389,
+            "transferBytes": 291389
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|en|dark|/network/wiki",
+      "metrics": {
+        "fcp": {
+          "before": 436,
+          "after": 356,
+          "delta": -80
+        },
+        "lcp": {
+          "before": 492,
+          "after": 476,
+          "delta": -16
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 21,
+          "after": 22,
+          "delta": 1
+        },
+        "ttfb": {
+          "before": 8.5,
+          "after": 8.800000004470348,
+          "delta": 0.30000000447034836
+        },
+        "mainVisibleObservedMs": {
+          "before": 315.8999999985099,
+          "after": 329.6000000014901,
+          "delta": 13.700000002980232
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 508568,
+            "transferBytes": 515168
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 285389,
+            "transferBytes": 291389
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|en|dark|/login",
+      "metrics": {
+        "fcp": {
+          "before": 472,
+          "after": 448,
+          "delta": -24
+        },
+        "lcp": {
+          "before": 680,
+          "after": 636,
+          "delta": -44
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 11,
+          "after": 11,
+          "delta": 0
+        },
+        "ttfb": {
+          "before": 7.5,
+          "after": 8.099999994039536,
+          "delta": 0.5999999940395355
+        },
+        "mainVisibleObservedMs": {
+          "before": 425.70000000298023,
+          "after": 407.3999999985099,
+          "delta": -18.30000000447035
+        },
+        "js": {
+          "before": {
+            "count": 24,
+            "encodedBytes": 518445,
+            "transferBytes": 525645
+          },
+          "after": {
+            "count": 22,
+            "encodedBytes": 295266,
+            "transferBytes": 301866
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|en|dark|/register",
+      "metrics": {
+        "fcp": {
+          "before": 488,
+          "after": 404,
+          "delta": -84
+        },
+        "lcp": {
+          "before": 648,
+          "after": 588,
+          "delta": -60
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 29,
+          "after": 11,
+          "delta": -18
+        },
+        "ttfb": {
+          "before": 7.600000001490116,
+          "after": 7.9000000059604645,
+          "delta": 0.30000000447034836
+        },
+        "mainVisibleObservedMs": {
+          "before": 443.20000000298023,
+          "after": 374.30000000447035,
+          "delta": -68.89999999850988
+        },
+        "js": {
+          "before": {
+            "count": 21,
+            "encodedBytes": 509955,
+            "transferBytes": 516255
+          },
+          "after": {
+            "count": 19,
+            "encodedBytes": 286776,
+            "transferBytes": 292476
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|en|dark|/perfil/visual_fixture",
+      "metrics": {
+        "fcp": {
+          "before": 856,
+          "after": 848,
+          "delta": -8
+        },
+        "lcp": {
+          "before": 1652,
+          "after": 1708,
+          "delta": 56
+        },
+        "cls": {
+          "before": 0.011685514389458838,
+          "after": 0.011142106377244486,
+          "delta": -0.0005434080122143515
+        },
+        "blocking": {
+          "before": 546,
+          "after": 643,
+          "delta": 97
+        },
+        "ttfb": {
+          "before": 18,
+          "after": 18.700000002980232,
+          "delta": 0.7000000029802322
+        },
+        "mainVisibleObservedMs": {
+          "before": 987.5,
+          "after": 768.1000000014901,
+          "delta": -219.39999999850988
+        },
+        "js": {
+          "before": {
+            "count": 23,
+            "encodedBytes": 521669,
+            "transferBytes": 528569
+          },
+          "after": {
+            "count": 21,
+            "encodedBytes": 298614,
+            "transferBytes": 304914
+          },
+          "encodedByteDelta": -223055
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 7,
+            "encodedBytes": 209988,
+            "transferBytes": 212088
+          },
+          "after": {
+            "count": 7,
+            "encodedBytes": 209988,
+            "transferBytes": 212088
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|en|dark|/mensajes",
+      "metrics": {
+        "fcp": {
+          "before": 396,
+          "after": 376,
+          "delta": -20
+        },
+        "lcp": {
+          "before": 740,
+          "after": 788,
+          "delta": 48
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 13,
+          "after": 11,
+          "delta": -2
+        },
+        "ttfb": {
+          "before": 18.5,
+          "after": 17.099999994039536,
+          "delta": -1.4000000059604645
+        },
+        "mainVisibleObservedMs": {
+          "before": 632.7999999970198,
+          "after": 658.8999999985099,
+          "delta": 26.100000001490116
+        },
+        "js": {
+          "before": {
+            "count": 21,
+            "encodedBytes": 498576,
+            "transferBytes": 504876
+          },
+          "after": {
+            "count": 19,
+            "encodedBytes": 275608,
+            "transferBytes": 281308
+          },
+          "encodedByteDelta": -222968
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|en|dark|/configuracion",
+      "metrics": {
+        "fcp": {
+          "before": 340,
+          "after": 360,
+          "delta": 20
+        },
+        "lcp": {
+          "before": 444,
+          "after": 460,
+          "delta": 16
+        },
+        "cls": {
+          "before": 0.0038296296296296294,
+          "after": 0,
+          "delta": -0.0038296296296296294
+        },
+        "blocking": {
+          "before": 9,
+          "after": 24,
+          "delta": 15
+        },
+        "ttfb": {
+          "before": 18.399999998509884,
+          "after": 20.100000001490116,
+          "delta": 1.7000000029802322
+        },
+        "mainVisibleObservedMs": {
+          "before": 640.5,
+          "after": 782.6000000014901,
+          "delta": 142.10000000149012
+        },
+        "js": {
+          "before": {
+            "count": 25,
+            "encodedBytes": 527908,
+            "transferBytes": 535408
+          },
+          "after": {
+            "count": 22,
+            "encodedBytes": 293312,
+            "transferBytes": 299912
+          },
+          "encodedByteDelta": -234596
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|en|dark|/admin",
+      "metrics": {
+        "fcp": {
+          "before": 460,
+          "after": 536,
+          "delta": 76
+        },
+        "lcp": {
+          "before": 728,
+          "after": 784,
+          "delta": 56
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 56,
+          "after": 51,
+          "delta": -5
+        },
+        "ttfb": {
+          "before": 17.900000005960464,
+          "after": 18.100000001490116,
+          "delta": 0.19999999552965164
+        },
+        "mainVisibleObservedMs": {
+          "before": 491,
+          "after": 527,
+          "delta": 36
+        },
+        "js": {
+          "before": {
+            "count": 19,
+            "encodedBytes": 491236,
+            "transferBytes": 496936
+          },
+          "after": {
+            "count": 17,
+            "encodedBytes": 268057,
+            "transferBytes": 273157
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|en|light|",
+      "metrics": {
+        "fcp": {
+          "before": 496,
+          "after": 568,
+          "delta": 72
+        },
+        "lcp": {
+          "before": 496,
+          "after": 568,
+          "delta": 72
+        },
+        "cls": {
+          "before": 0.0008732817054612483,
+          "after": 0.0008732817054612483,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 128,
+          "after": 113,
+          "delta": -15
+        },
+        "ttfb": {
+          "before": 7.700000002980232,
+          "after": 8.399999998509884,
+          "delta": 0.6999999955296516
+        },
+        "mainVisibleObservedMs": {
+          "before": 613.4000000059605,
+          "after": 721.5,
+          "delta": 108.09999999403954
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 508568,
+            "transferBytes": 515168
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 285389,
+            "transferBytes": 291389
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|en|light|/network",
+      "metrics": {
+        "fcp": {
+          "before": 520,
+          "after": 516,
+          "delta": -4
+        },
+        "lcp": {
+          "before": 788,
+          "after": 768,
+          "delta": -20
+        },
+        "cls": {
+          "before": 0.0000732984503600823,
+          "after": 0.0000732984503600823,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 103,
+          "after": 99,
+          "delta": -4
+        },
+        "ttfb": {
+          "before": 7.399999998509884,
+          "after": 7.899999998509884,
+          "delta": 0.5
+        },
+        "mainVisibleObservedMs": {
+          "before": 617.1999999955297,
+          "after": 545.2999999970198,
+          "delta": -71.89999999850988
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 508568,
+            "transferBytes": 515168
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 285389,
+            "transferBytes": 291389
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|en|light|/network/wiki",
+      "metrics": {
+        "fcp": {
+          "before": 344,
+          "after": 340,
+          "delta": -4
+        },
+        "lcp": {
+          "before": 460,
+          "after": 476,
+          "delta": 16
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 11,
+          "after": 24,
+          "delta": 13
+        },
+        "ttfb": {
+          "before": 7.800000004470348,
+          "after": 7.600000001490116,
+          "delta": -0.20000000298023224
+        },
+        "mainVisibleObservedMs": {
+          "before": 305.30000000447035,
+          "after": 330.90000000596046,
+          "delta": 25.600000001490116
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 508568,
+            "transferBytes": 515168
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 285389,
+            "transferBytes": 291389
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|en|light|/login",
+      "metrics": {
+        "fcp": {
+          "before": 436,
+          "after": 388,
+          "delta": -48
+        },
+        "lcp": {
+          "before": 616,
+          "after": 568,
+          "delta": -48
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 4,
+          "after": 14,
+          "delta": 10
+        },
+        "ttfb": {
+          "before": 7.5,
+          "after": 8.300000004470348,
+          "delta": 0.8000000044703484
+        },
+        "mainVisibleObservedMs": {
+          "before": 400.3999999985099,
+          "after": 385.5,
+          "delta": -14.899999998509884
+        },
+        "js": {
+          "before": {
+            "count": 24,
+            "encodedBytes": 518445,
+            "transferBytes": 525645
+          },
+          "after": {
+            "count": 22,
+            "encodedBytes": 295266,
+            "transferBytes": 301866
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|en|light|/register",
+      "metrics": {
+        "fcp": {
+          "before": 412,
+          "after": 472,
+          "delta": 60
+        },
+        "lcp": {
+          "before": 596,
+          "after": 652,
+          "delta": 56
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 27,
+          "after": 10,
+          "delta": -17
+        },
+        "ttfb": {
+          "before": 9.5,
+          "after": 8.200000002980232,
+          "delta": -1.2999999970197678
+        },
+        "mainVisibleObservedMs": {
+          "before": 385.1000000014901,
+          "after": 433.6000000014901,
+          "delta": 48.5
+        },
+        "js": {
+          "before": {
+            "count": 21,
+            "encodedBytes": 509955,
+            "transferBytes": 516255
+          },
+          "after": {
+            "count": 19,
+            "encodedBytes": 286776,
+            "transferBytes": 292476
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|en|light|/perfil/visual_fixture",
+      "metrics": {
+        "fcp": {
+          "before": 928,
+          "after": 896,
+          "delta": -32
+        },
+        "lcp": {
+          "before": 1740,
+          "after": 1956,
+          "delta": 216
+        },
+        "cls": {
+          "before": 0.01221154765933139,
+          "after": 0.012256892856395455,
+          "delta": 0.000045345197064065174
+        },
+        "blocking": {
+          "before": 430,
+          "after": 959,
+          "delta": 529
+        },
+        "ttfb": {
+          "before": 9.200000002980232,
+          "after": 8.5,
+          "delta": -0.7000000029802322
+        },
+        "mainVisibleObservedMs": {
+          "before": 1341.7999999970198,
+          "after": 1527.5999999940395,
+          "delta": 185.79999999701977
+        },
+        "js": {
+          "before": {
+            "count": 23,
+            "encodedBytes": 521669,
+            "transferBytes": 528569
+          },
+          "after": {
+            "count": 21,
+            "encodedBytes": 298614,
+            "transferBytes": 304914
+          },
+          "encodedByteDelta": -223055
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 7,
+            "encodedBytes": 209988,
+            "transferBytes": 212088
+          },
+          "after": {
+            "count": 7,
+            "encodedBytes": 209988,
+            "transferBytes": 212088
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|en|light|/mensajes",
+      "metrics": {
+        "fcp": {
+          "before": 332,
+          "after": 312,
+          "delta": -20
+        },
+        "lcp": {
+          "before": 712,
+          "after": 692,
+          "delta": -20
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 9,
+          "after": 9,
+          "delta": 0
+        },
+        "ttfb": {
+          "before": 10.699999995529652,
+          "after": 8.600000001490116,
+          "delta": -2.0999999940395355
+        },
+        "mainVisibleObservedMs": {
+          "before": 613,
+          "after": 542.5,
+          "delta": -70.5
+        },
+        "js": {
+          "before": {
+            "count": 21,
+            "encodedBytes": 498576,
+            "transferBytes": 504876
+          },
+          "after": {
+            "count": 19,
+            "encodedBytes": 275608,
+            "transferBytes": 281308
+          },
+          "encodedByteDelta": -222968
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|en|light|/configuracion",
+      "metrics": {
+        "fcp": {
+          "before": 392,
+          "after": 316,
+          "delta": -76
+        },
+        "lcp": {
+          "before": 492,
+          "after": 420,
+          "delta": -72
+        },
+        "cls": {
+          "before": 0.0035393518518518517,
+          "after": 0.0035393518518518517,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 29,
+          "after": 20,
+          "delta": -9
+        },
+        "ttfb": {
+          "before": 14.5,
+          "after": 9.799999997019768,
+          "delta": -4.700000002980232
+        },
+        "mainVisibleObservedMs": {
+          "before": 698.8000000044703,
+          "after": 621.1999999955297,
+          "delta": -77.6000000089407
+        },
+        "js": {
+          "before": {
+            "count": 24,
+            "encodedBytes": 524772,
+            "transferBytes": 531972
+          },
+          "after": {
+            "count": 22,
+            "encodedBytes": 293312,
+            "transferBytes": 299912
+          },
+          "encodedByteDelta": -231460
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "desktop|en|light|/admin",
+      "metrics": {
+        "fcp": {
+          "before": 472,
+          "after": 444,
+          "delta": -28
+        },
+        "lcp": {
+          "before": 732,
+          "after": 688,
+          "delta": -44
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 36,
+          "after": 55,
+          "delta": 19
+        },
+        "ttfb": {
+          "before": 9.600000001490116,
+          "after": 8.799999997019768,
+          "delta": -0.8000000044703484
+        },
+        "mainVisibleObservedMs": {
+          "before": 505.8999999985099,
+          "after": 464.19999999552965,
+          "delta": -41.70000000298023
+        },
+        "js": {
+          "before": {
+            "count": 19,
+            "encodedBytes": 491236,
+            "transferBytes": 496936
+          },
+          "after": {
+            "count": 17,
+            "encodedBytes": 268057,
+            "transferBytes": 273157
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|es|dark|",
+      "metrics": {
+        "fcp": {
+          "before": 408,
+          "after": 376,
+          "delta": -32
+        },
+        "lcp": {
+          "before": 748,
+          "after": 684,
+          "delta": -64
+        },
+        "cls": {
+          "before": 0.0009070387375534104,
+          "after": 0.0009070387375534104,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 132,
+          "after": 130,
+          "delta": -2
+        },
+        "ttfb": {
+          "before": 9.300000004470348,
+          "after": 7.799999997019768,
+          "delta": -1.5000000074505806
+        },
+        "mainVisibleObservedMs": {
+          "before": 646.6000000014901,
+          "after": 532.3999999985099,
+          "delta": -114.20000000298023
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 508568,
+            "transferBytes": 515168
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 285389,
+            "transferBytes": 291389
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|es|dark|/network",
+      "metrics": {
+        "fcp": {
+          "before": 332,
+          "after": 312,
+          "delta": -20
+        },
+        "lcp": {
+          "before": 588,
+          "after": 564,
+          "delta": -24
+        },
+        "cls": {
+          "before": 0.0002224223162621615,
+          "after": 0.0002224223162621615,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 110,
+          "after": 98,
+          "delta": -12
+        },
+        "ttfb": {
+          "before": 9.199999995529652,
+          "after": 7.899999998509884,
+          "delta": -1.2999999970197678
+        },
+        "mainVisibleObservedMs": {
+          "before": 477.19999999552965,
+          "after": 452.69999999552965,
+          "delta": -24.5
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 508568,
+            "transferBytes": 515168
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 285389,
+            "transferBytes": 291389
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|es|dark|/network/wiki",
+      "metrics": {
+        "fcp": {
+          "before": 260,
+          "after": 264,
+          "delta": 4
+        },
+        "lcp": {
+          "before": 460,
+          "after": 452,
+          "delta": -8
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 17,
+          "after": 5,
+          "delta": -12
+        },
+        "ttfb": {
+          "before": 8.300000004470348,
+          "after": 7.899999998509884,
+          "delta": -0.4000000059604645
+        },
+        "mainVisibleObservedMs": {
+          "before": 343.90000000596046,
+          "after": 327,
+          "delta": -16.900000005960464
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 508568,
+            "transferBytes": 515168
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 285389,
+            "transferBytes": 291389
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|es|dark|/login",
+      "metrics": {
+        "fcp": {
+          "before": 356,
+          "after": 324,
+          "delta": -32
+        },
+        "lcp": {
+          "before": 508,
+          "after": 556,
+          "delta": 48
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 3,
+          "after": 11,
+          "delta": 8
+        },
+        "ttfb": {
+          "before": 7.899999998509884,
+          "after": 8.100000001490116,
+          "delta": 0.20000000298023224
+        },
+        "mainVisibleObservedMs": {
+          "before": 368.6000000014901,
+          "after": 375.70000000298023,
+          "delta": 7.100000001490116
+        },
+        "js": {
+          "before": {
+            "count": 24,
+            "encodedBytes": 518445,
+            "transferBytes": 525645
+          },
+          "after": {
+            "count": 22,
+            "encodedBytes": 295266,
+            "transferBytes": 301866
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|es|dark|/register",
+      "metrics": {
+        "fcp": {
+          "before": 280,
+          "after": 276,
+          "delta": -4
+        },
+        "lcp": {
+          "before": 500,
+          "after": 504,
+          "delta": 4
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 15,
+          "after": 17,
+          "delta": 2
+        },
+        "ttfb": {
+          "before": 8.5,
+          "after": 8.200000002980232,
+          "delta": -0.29999999701976776
+        },
+        "mainVisibleObservedMs": {
+          "before": 342.79999999701977,
+          "after": 337.40000000596046,
+          "delta": -5.399999991059303
+        },
+        "js": {
+          "before": {
+            "count": 21,
+            "encodedBytes": 509955,
+            "transferBytes": 516255
+          },
+          "after": {
+            "count": 19,
+            "encodedBytes": 286776,
+            "transferBytes": 292476
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|es|dark|/perfil/visual_fixture",
+      "metrics": {
+        "fcp": {
+          "before": 504,
+          "after": 488,
+          "delta": -16
+        },
+        "lcp": {
+          "before": 828,
+          "after": 784,
+          "delta": -44
+        },
+        "cls": {
+          "before": 0.03310585435076075,
+          "after": 0.032193638721620704,
+          "delta": -0.0009122156291400466
+        },
+        "blocking": {
+          "before": 158,
+          "after": 128,
+          "delta": -30
+        },
+        "ttfb": {
+          "before": 7.799999997019768,
+          "after": 7.5,
+          "delta": -0.29999999701976776
+        },
+        "mainVisibleObservedMs": {
+          "before": 559.8999999985099,
+          "after": 547,
+          "delta": -12.899999998509884
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 519762,
+            "transferBytes": 526362
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 296707,
+            "transferBytes": 302707
+          },
+          "encodedByteDelta": -223055
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 7,
+            "encodedBytes": 209988,
+            "transferBytes": 212088
+          },
+          "after": {
+            "count": 7,
+            "encodedBytes": 209988,
+            "transferBytes": 212088
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|es|dark|/mensajes",
+      "metrics": {
+        "fcp": {
+          "before": 260,
+          "after": 228,
+          "delta": -32
+        },
+        "lcp": {
+          "before": 548,
+          "after": 516,
+          "delta": -32
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 22,
+          "after": 10,
+          "delta": -12
+        },
+        "ttfb": {
+          "before": 8.399999998509884,
+          "after": 8.100000001490116,
+          "delta": -0.29999999701976776
+        },
+        "mainVisibleObservedMs": {
+          "before": 556.3999999985099,
+          "after": 549.6000000014901,
+          "delta": -6.799999997019768
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 515882,
+            "transferBytes": 522482
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 292914,
+            "transferBytes": 298914
+          },
+          "encodedByteDelta": -222968
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|es|dark|/configuracion",
+      "metrics": {
+        "fcp": {
+          "before": 236,
+          "after": 240,
+          "delta": 4
+        },
+        "lcp": {
+          "before": 412,
+          "after": 416,
+          "delta": 4
+        },
+        "cls": {
+          "before": 0.011859571887423911,
+          "after": 0.011859571887423911,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 5,
+          "after": 16,
+          "delta": 11
+        },
+        "ttfb": {
+          "before": 8.200000002980232,
+          "after": 8,
+          "delta": -0.20000000298023224
+        },
+        "mainVisibleObservedMs": {
+          "before": 607.7999999970198,
+          "after": 1112.6000000014901,
+          "delta": 504.80000000447035
+        },
+        "js": {
+          "before": {
+            "count": 25,
+            "encodedBytes": 534764,
+            "transferBytes": 542264
+          },
+          "after": {
+            "count": 23,
+            "encodedBytes": 303093,
+            "transferBytes": 309993
+          },
+          "encodedByteDelta": -231671
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|es|dark|/admin",
+      "metrics": {
+        "fcp": {
+          "before": 336,
+          "after": 400,
+          "delta": 64
+        },
+        "lcp": {
+          "before": 560,
+          "after": 584,
+          "delta": 24
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 56,
+          "after": 46,
+          "delta": -10
+        },
+        "ttfb": {
+          "before": 8.399999998509884,
+          "after": 7.5,
+          "delta": -0.8999999985098839
+        },
+        "mainVisibleObservedMs": {
+          "before": 422.79999999701977,
+          "after": 447.90000000596046,
+          "delta": 25.100000008940697
+        },
+        "js": {
+          "before": {
+            "count": 19,
+            "encodedBytes": 491236,
+            "transferBytes": 496936
+          },
+          "after": {
+            "count": 17,
+            "encodedBytes": 268057,
+            "transferBytes": 273157
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|es|light|",
+      "metrics": {
+        "fcp": {
+          "before": 428,
+          "after": 360,
+          "delta": -68
+        },
+        "lcp": {
+          "before": 788,
+          "after": 696,
+          "delta": -92
+        },
+        "cls": {
+          "before": 0.0009070387375534104,
+          "after": 0.0009070387375534104,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 140,
+          "after": 125,
+          "delta": -15
+        },
+        "ttfb": {
+          "before": 7.600000001490116,
+          "after": 8.199999995529652,
+          "delta": 0.5999999940395355
+        },
+        "mainVisibleObservedMs": {
+          "before": 609.3999999985099,
+          "after": 516.7999999970198,
+          "delta": -92.60000000149012
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 508568,
+            "transferBytes": 515168
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 285389,
+            "transferBytes": 291389
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|es|light|/network",
+      "metrics": {
+        "fcp": {
+          "before": 416,
+          "after": 320,
+          "delta": -96
+        },
+        "lcp": {
+          "before": 580,
+          "after": 576,
+          "delta": -4
+        },
+        "cls": {
+          "before": 0.0002224223162621615,
+          "after": 0.00016734531140303135,
+          "delta": -0.00005507700485913016
+        },
+        "blocking": {
+          "before": 117,
+          "after": 96,
+          "delta": -21
+        },
+        "ttfb": {
+          "before": 8,
+          "after": 7.899999998509884,
+          "delta": -0.10000000149011612
+        },
+        "mainVisibleObservedMs": {
+          "before": 549.7999999970198,
+          "after": 448.3999999985099,
+          "delta": -101.39999999850988
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 508568,
+            "transferBytes": 515168
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 285389,
+            "transferBytes": 291389
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|es|light|/network/wiki",
+      "metrics": {
+        "fcp": {
+          "before": 248,
+          "after": 320,
+          "delta": 72
+        },
+        "lcp": {
+          "before": 476,
+          "after": 440,
+          "delta": -36
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 7,
+          "after": 4,
+          "delta": -3
+        },
+        "ttfb": {
+          "before": 7.5999999940395355,
+          "after": 7.799999997019768,
+          "delta": 0.20000000298023224
+        },
+        "mainVisibleObservedMs": {
+          "before": 311.59999999403954,
+          "after": 310.09999999403954,
+          "delta": -1.5
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 508568,
+            "transferBytes": 515168
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 285389,
+            "transferBytes": 291389
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|es|light|/login",
+      "metrics": {
+        "fcp": {
+          "before": 340,
+          "after": 268,
+          "delta": -72
+        },
+        "lcp": {
+          "before": 504,
+          "after": 476,
+          "delta": -28
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 4,
+          "after": 14,
+          "delta": 10
+        },
+        "ttfb": {
+          "before": 7.800000004470348,
+          "after": 7.5,
+          "delta": -0.30000000447034836
+        },
+        "mainVisibleObservedMs": {
+          "before": 356.30000000447035,
+          "after": 334.69999999552965,
+          "delta": -21.600000008940697
+        },
+        "js": {
+          "before": {
+            "count": 24,
+            "encodedBytes": 518445,
+            "transferBytes": 525645
+          },
+          "after": {
+            "count": 22,
+            "encodedBytes": 295266,
+            "transferBytes": 301866
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|es|light|/register",
+      "metrics": {
+        "fcp": {
+          "before": 360,
+          "after": 292,
+          "delta": -68
+        },
+        "lcp": {
+          "before": 508,
+          "after": 512,
+          "delta": 4
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 7,
+          "after": 16,
+          "delta": 9
+        },
+        "ttfb": {
+          "before": 7.799999997019768,
+          "after": 8.200000002980232,
+          "delta": 0.4000000059604645
+        },
+        "mainVisibleObservedMs": {
+          "before": 372.09999999403954,
+          "after": 360.8999999985099,
+          "delta": -11.199999995529652
+        },
+        "js": {
+          "before": {
+            "count": 21,
+            "encodedBytes": 509955,
+            "transferBytes": 516255
+          },
+          "after": {
+            "count": 19,
+            "encodedBytes": 286776,
+            "transferBytes": 292476
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|es|light|/perfil/visual_fixture",
+      "metrics": {
+        "fcp": {
+          "before": 428,
+          "after": 464,
+          "delta": 36
+        },
+        "lcp": {
+          "before": 816,
+          "after": 932,
+          "delta": 116
+        },
+        "cls": {
+          "before": 0.032239150285704614,
+          "after": 0.033151646373736916,
+          "delta": 0.0009124960880323024
+        },
+        "blocking": {
+          "before": 183,
+          "after": 278,
+          "delta": 95
+        },
+        "ttfb": {
+          "before": 8.200000002980232,
+          "after": 8.399999998509884,
+          "delta": 0.19999999552965164
+        },
+        "mainVisibleObservedMs": {
+          "before": 614.2000000029802,
+          "after": 520.8999999985099,
+          "delta": -93.30000000447035
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 519762,
+            "transferBytes": 526362
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 296707,
+            "transferBytes": 302707
+          },
+          "encodedByteDelta": -223055
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 7,
+            "encodedBytes": 209988,
+            "transferBytes": 212088
+          },
+          "after": {
+            "count": 7,
+            "encodedBytes": 209988,
+            "transferBytes": 212088
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|es|light|/mensajes",
+      "metrics": {
+        "fcp": {
+          "before": 224,
+          "after": 236,
+          "delta": 12
+        },
+        "lcp": {
+          "before": 516,
+          "after": 512,
+          "delta": -4
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 18,
+          "after": 28,
+          "delta": 10
+        },
+        "ttfb": {
+          "before": 8.300000004470348,
+          "after": 9,
+          "delta": 0.6999999955296516
+        },
+        "mainVisibleObservedMs": {
+          "before": 546.3999999985099,
+          "after": 529.1999999955297,
+          "delta": -17.200000002980232
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 515882,
+            "transferBytes": 522482
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 292914,
+            "transferBytes": 298914
+          },
+          "encodedByteDelta": -222968
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|es|light|/configuracion",
+      "metrics": {
+        "fcp": {
+          "before": 328,
+          "after": 364,
+          "delta": 36
+        },
+        "lcp": {
+          "before": 424,
+          "after": 464,
+          "delta": 40
+        },
+        "cls": {
+          "before": 0.011118348644459918,
+          "after": 0.011118348644459918,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 18,
+          "after": 14,
+          "delta": -4
+        },
+        "ttfb": {
+          "before": 7.899999998509884,
+          "after": 7.700000002980232,
+          "delta": -0.19999999552965164
+        },
+        "mainVisibleObservedMs": {
+          "before": 624.6999999955297,
+          "after": 642,
+          "delta": 17.30000000447035
+        },
+        "js": {
+          "before": {
+            "count": 25,
+            "encodedBytes": 534764,
+            "transferBytes": 542264
+          },
+          "after": {
+            "count": 23,
+            "encodedBytes": 303093,
+            "transferBytes": 309993
+          },
+          "encodedByteDelta": -231671
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|es|light|/admin",
+      "metrics": {
+        "fcp": {
+          "before": 296,
+          "after": 304,
+          "delta": 8
+        },
+        "lcp": {
+          "before": 564,
+          "after": 540,
+          "delta": -24
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 57,
+          "after": 47,
+          "delta": -10
+        },
+        "ttfb": {
+          "before": 8,
+          "after": 7.699999995529652,
+          "delta": -0.30000000447034836
+        },
+        "mainVisibleObservedMs": {
+          "before": 431.30000000447035,
+          "after": 417,
+          "delta": -14.300000004470348
+        },
+        "js": {
+          "before": {
+            "count": 19,
+            "encodedBytes": 491236,
+            "transferBytes": 496936
+          },
+          "after": {
+            "count": 17,
+            "encodedBytes": 268057,
+            "transferBytes": 273157
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|en|dark|",
+      "metrics": {
+        "fcp": {
+          "before": 384,
+          "after": 368,
+          "delta": -16
+        },
+        "lcp": {
+          "before": 384,
+          "after": 368,
+          "delta": -16
+        },
+        "cls": {
+          "before": 0.0009070387375534104,
+          "after": 0.0009070387375534104,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 125,
+          "after": 122,
+          "delta": -3
+        },
+        "ttfb": {
+          "before": 7.799999997019768,
+          "after": 8.199999995529652,
+          "delta": 0.3999999985098839
+        },
+        "mainVisibleObservedMs": {
+          "before": 529.6000000014901,
+          "after": 590.3999999985099,
+          "delta": 60.79999999701977
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 508568,
+            "transferBytes": 515168
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 285389,
+            "transferBytes": 291389
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|en|dark|/network",
+      "metrics": {
+        "fcp": {
+          "before": 316,
+          "after": 316,
+          "delta": 0
+        },
+        "lcp": {
+          "before": 576,
+          "after": 560,
+          "delta": -16
+        },
+        "cls": {
+          "before": 0.00011333152922936396,
+          "after": 0.00011333152922936396,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 80,
+          "after": 83,
+          "delta": 3
+        },
+        "ttfb": {
+          "before": 8.799999997019768,
+          "after": 7.399999998509884,
+          "delta": -1.3999999985098839
+        },
+        "mainVisibleObservedMs": {
+          "before": 452.3999999985099,
+          "after": 436,
+          "delta": -16.399999998509884
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 508568,
+            "transferBytes": 515168
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 285389,
+            "transferBytes": 291389
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|en|dark|/network/wiki",
+      "metrics": {
+        "fcp": {
+          "before": 344,
+          "after": 328,
+          "delta": -16
+        },
+        "lcp": {
+          "before": 436,
+          "after": 436,
+          "delta": 0
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 21,
+          "after": 13,
+          "delta": -8
+        },
+        "ttfb": {
+          "before": 8.399999998509884,
+          "after": 7.299999997019768,
+          "delta": -1.1000000014901161
+        },
+        "mainVisibleObservedMs": {
+          "before": 338.59999999403954,
+          "after": 319.6000000014901,
+          "delta": -18.99999999254942
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 508568,
+            "transferBytes": 515168
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 285389,
+            "transferBytes": 291389
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|en|dark|/login",
+      "metrics": {
+        "fcp": {
+          "before": 264,
+          "after": 384,
+          "delta": 120
+        },
+        "lcp": {
+          "before": 488,
+          "after": 572,
+          "delta": 84
+        },
+        "cls": {
+          "before": 0,
+          "after": 0.0000816196640349498,
+          "delta": 0.0000816196640349498
+        },
+        "blocking": {
+          "before": 9,
+          "after": 44,
+          "delta": 35
+        },
+        "ttfb": {
+          "before": 7.899999998509884,
+          "after": 7.700000002980232,
+          "delta": -0.19999999552965164
+        },
+        "mainVisibleObservedMs": {
+          "before": 332.8999999985099,
+          "after": 418.70000000298023,
+          "delta": 85.80000000447035
+        },
+        "js": {
+          "before": {
+            "count": 24,
+            "encodedBytes": 518445,
+            "transferBytes": 525645
+          },
+          "after": {
+            "count": 22,
+            "encodedBytes": 295266,
+            "transferBytes": 301866
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|en|dark|/register",
+      "metrics": {
+        "fcp": {
+          "before": 388,
+          "after": 268,
+          "delta": -120
+        },
+        "lcp": {
+          "before": 512,
+          "after": 480,
+          "delta": -32
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 5,
+          "after": 10,
+          "delta": 5
+        },
+        "ttfb": {
+          "before": 7.600000001490116,
+          "after": 7.100000001490116,
+          "delta": -0.5
+        },
+        "mainVisibleObservedMs": {
+          "before": 390.3999999985099,
+          "after": 333,
+          "delta": -57.399999998509884
+        },
+        "js": {
+          "before": {
+            "count": 21,
+            "encodedBytes": 509955,
+            "transferBytes": 516255
+          },
+          "after": {
+            "count": 19,
+            "encodedBytes": 286776,
+            "transferBytes": 292476
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|en|dark|/perfil/visual_fixture",
+      "metrics": {
+        "fcp": {
+          "before": 520,
+          "after": 432,
+          "delta": -88
+        },
+        "lcp": {
+          "before": 800,
+          "after": 732,
+          "delta": -68
+        },
+        "cls": {
+          "before": 0.03134648314634331,
+          "after": 0.03131796639659758,
+          "delta": -0.00002851674974573004
+        },
+        "blocking": {
+          "before": 161,
+          "after": 145,
+          "delta": -16
+        },
+        "ttfb": {
+          "before": 8.199999995529652,
+          "after": 7.800000004470348,
+          "delta": -0.3999999910593033
+        },
+        "mainVisibleObservedMs": {
+          "before": 559,
+          "after": 448.5,
+          "delta": -110.5
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 519762,
+            "transferBytes": 526362
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 296707,
+            "transferBytes": 302707
+          },
+          "encodedByteDelta": -223055
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 7,
+            "encodedBytes": 209988,
+            "transferBytes": 212088
+          },
+          "after": {
+            "count": 7,
+            "encodedBytes": 209988,
+            "transferBytes": 212088
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|en|dark|/mensajes",
+      "metrics": {
+        "fcp": {
+          "before": 312,
+          "after": 232,
+          "delta": -80
+        },
+        "lcp": {
+          "before": 496,
+          "after": 528,
+          "delta": 32
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 18,
+          "after": 13,
+          "delta": -5
+        },
+        "ttfb": {
+          "before": 8.699999995529652,
+          "after": 8.599999994039536,
+          "delta": -0.10000000149011612
+        },
+        "mainVisibleObservedMs": {
+          "before": 536.1999999955297,
+          "after": 639.1999999955297,
+          "delta": 103
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 515882,
+            "transferBytes": 522482
+          },
+          "after": {
+            "count": 18,
+            "encodedBytes": 273701,
+            "transferBytes": 279101
+          },
+          "encodedByteDelta": -242181
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|en|dark|/configuracion",
+      "metrics": {
+        "fcp": {
+          "before": 312,
+          "after": 260,
+          "delta": -52
+        },
+        "lcp": {
+          "before": 416,
+          "after": 444,
+          "delta": 28
+        },
+        "cls": {
+          "before": 0.011859571887423911,
+          "after": 0.011859571887423911,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 16,
+          "after": 19,
+          "delta": 3
+        },
+        "ttfb": {
+          "before": 7.600000001490116,
+          "after": 8.699999995529652,
+          "delta": 1.0999999940395355
+        },
+        "mainVisibleObservedMs": {
+          "before": 618.8000000044703,
+          "after": 688.3999999985099,
+          "delta": 69.59999999403954
+        },
+        "js": {
+          "before": {
+            "count": 25,
+            "encodedBytes": 534764,
+            "transferBytes": 542264
+          },
+          "after": {
+            "count": 23,
+            "encodedBytes": 303093,
+            "transferBytes": 309993
+          },
+          "encodedByteDelta": -231671
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|en|dark|/admin",
+      "metrics": {
+        "fcp": {
+          "before": 384,
+          "after": 204,
+          "delta": -180
+        },
+        "lcp": {
+          "before": 552,
+          "after": 548,
+          "delta": -4
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 45,
+          "after": 34,
+          "delta": -11
+        },
+        "ttfb": {
+          "before": 8,
+          "after": 7.699999995529652,
+          "delta": -0.30000000447034836
+        },
+        "mainVisibleObservedMs": {
+          "before": 405.20000000298023,
+          "after": 519.1999999955297,
+          "delta": 113.99999999254942
+        },
+        "js": {
+          "before": {
+            "count": 19,
+            "encodedBytes": 491236,
+            "transferBytes": 496936
+          },
+          "after": {
+            "count": 17,
+            "encodedBytes": 268057,
+            "transferBytes": 273157
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|en|light|",
+      "metrics": {
+        "fcp": {
+          "before": 360,
+          "after": 348,
+          "delta": -12
+        },
+        "lcp": {
+          "before": 360,
+          "after": 348,
+          "delta": -12
+        },
+        "cls": {
+          "before": 0.0009070387375534104,
+          "after": 0.0009070387375534104,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 122,
+          "after": 116,
+          "delta": -6
+        },
+        "ttfb": {
+          "before": 7.5,
+          "after": 7.800000004470348,
+          "delta": 0.30000000447034836
+        },
+        "mainVisibleObservedMs": {
+          "before": 517.2000000029802,
+          "after": 531.6000000014901,
+          "delta": 14.399999998509884
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 508568,
+            "transferBytes": 515168
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 285389,
+            "transferBytes": 291389
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|en|light|/network",
+      "metrics": {
+        "fcp": {
+          "before": 400,
+          "after": 324,
+          "delta": -76
+        },
+        "lcp": {
+          "before": 592,
+          "after": 548,
+          "delta": -44
+        },
+        "cls": {
+          "before": 0.00011333152922936396,
+          "after": 0.00011333152922936396,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 113,
+          "after": 92,
+          "delta": -21
+        },
+        "ttfb": {
+          "before": 8.5,
+          "after": 8.299999997019768,
+          "delta": -0.20000000298023224
+        },
+        "mainVisibleObservedMs": {
+          "before": 471.40000000596046,
+          "after": 455.6000000014901,
+          "delta": -15.800000004470348
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 508568,
+            "transferBytes": 515168
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 285389,
+            "transferBytes": 291389
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|en|light|/network/wiki",
+      "metrics": {
+        "fcp": {
+          "before": 252,
+          "after": 260,
+          "delta": 8
+        },
+        "lcp": {
+          "before": 436,
+          "after": 440,
+          "delta": 4
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 20,
+          "after": 19,
+          "delta": -1
+        },
+        "ttfb": {
+          "before": 7.300000004470348,
+          "after": 7.300000004470348,
+          "delta": 0
+        },
+        "mainVisibleObservedMs": {
+          "before": 315.5,
+          "after": 319,
+          "delta": 3.5
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 508568,
+            "transferBytes": 515168
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 285389,
+            "transferBytes": 291389
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|en|light|/login",
+      "metrics": {
+        "fcp": {
+          "before": 336,
+          "after": 336,
+          "delta": 0
+        },
+        "lcp": {
+          "before": 476,
+          "after": 476,
+          "delta": 0
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 5,
+          "after": 5,
+          "delta": 0
+        },
+        "ttfb": {
+          "before": 7.299999997019768,
+          "after": 7.600000001490116,
+          "delta": 0.30000000447034836
+        },
+        "mainVisibleObservedMs": {
+          "before": 348.3999999985099,
+          "after": 350.5,
+          "delta": 2.100000001490116
+        },
+        "js": {
+          "before": {
+            "count": 24,
+            "encodedBytes": 518445,
+            "transferBytes": 525645
+          },
+          "after": {
+            "count": 22,
+            "encodedBytes": 295266,
+            "transferBytes": 301866
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|en|light|/register",
+      "metrics": {
+        "fcp": {
+          "before": 264,
+          "after": 364,
+          "delta": 100
+        },
+        "lcp": {
+          "before": 480,
+          "after": 512,
+          "delta": 32
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 17,
+          "after": 8,
+          "delta": -9
+        },
+        "ttfb": {
+          "before": 8.100000001490116,
+          "after": 8.699999995529652,
+          "delta": 0.5999999940395355
+        },
+        "mainVisibleObservedMs": {
+          "before": 318.8999999985099,
+          "after": 375.19999999552965,
+          "delta": 56.29999999701977
+        },
+        "js": {
+          "before": {
+            "count": 21,
+            "encodedBytes": 509955,
+            "transferBytes": 516255
+          },
+          "after": {
+            "count": 19,
+            "encodedBytes": 286776,
+            "transferBytes": 292476
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|en|light|/perfil/visual_fixture",
+      "metrics": {
+        "fcp": {
+          "before": 448,
+          "after": 436,
+          "delta": -12
+        },
+        "lcp": {
+          "before": 900,
+          "after": 848,
+          "delta": -52
+        },
+        "cls": {
+          "before": 0.03222861925095077,
+          "after": 0.0322328194663973,
+          "delta": 0.000004200215446531486
+        },
+        "blocking": {
+          "before": 173,
+          "after": 172,
+          "delta": -1
+        },
+        "ttfb": {
+          "before": 10.699999995529652,
+          "after": 8.199999995529652,
+          "delta": -2.5
+        },
+        "mainVisibleObservedMs": {
+          "before": 651.5,
+          "after": 559,
+          "delta": -92.5
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 519762,
+            "transferBytes": 526362
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 296707,
+            "transferBytes": 302707
+          },
+          "encodedByteDelta": -223055
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 7,
+            "encodedBytes": 209988,
+            "transferBytes": 212088
+          },
+          "after": {
+            "count": 7,
+            "encodedBytes": 209988,
+            "transferBytes": 212088
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|en|light|/mensajes",
+      "metrics": {
+        "fcp": {
+          "before": 228,
+          "after": 228,
+          "delta": 0
+        },
+        "lcp": {
+          "before": 500,
+          "after": 496,
+          "delta": -4
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 7,
+          "after": 6,
+          "delta": -1
+        },
+        "ttfb": {
+          "before": 8.100000001490116,
+          "after": 7.5,
+          "delta": -0.6000000014901161
+        },
+        "mainVisibleObservedMs": {
+          "before": 526.7999999970198,
+          "after": 539.8000000044703,
+          "delta": 13.00000000745058
+        },
+        "js": {
+          "before": {
+            "count": 22,
+            "encodedBytes": 515882,
+            "transferBytes": 522482
+          },
+          "after": {
+            "count": 20,
+            "encodedBytes": 292914,
+            "transferBytes": 298914
+          },
+          "encodedByteDelta": -222968
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|en|light|/configuracion",
+      "metrics": {
+        "fcp": {
+          "before": 300,
+          "after": 232,
+          "delta": -68
+        },
+        "lcp": {
+          "before": 396,
+          "after": 412,
+          "delta": 16
+        },
+        "cls": {
+          "before": 0.011118348644459918,
+          "after": 0.011118348644459918,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 20,
+          "after": 6,
+          "delta": -14
+        },
+        "ttfb": {
+          "before": 8.100000001490116,
+          "after": 7.799999997019768,
+          "delta": -0.30000000447034836
+        },
+        "mainVisibleObservedMs": {
+          "before": 653.7999999970198,
+          "after": 649.2999999970198,
+          "delta": -4.5
+        },
+        "js": {
+          "before": {
+            "count": 24,
+            "encodedBytes": 532857,
+            "transferBytes": 540057
+          },
+          "after": {
+            "count": 22,
+            "encodedBytes": 301186,
+            "transferBytes": 307786
+          },
+          "encodedByteDelta": -231671
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    {
+      "key": "mobile|en|light|/admin",
+      "metrics": {
+        "fcp": {
+          "before": 324,
+          "after": 320,
+          "delta": -4
+        },
+        "lcp": {
+          "before": 580,
+          "after": 560,
+          "delta": -20
+        },
+        "cls": {
+          "before": 0,
+          "after": 0,
+          "delta": 0
+        },
+        "blocking": {
+          "before": 51,
+          "after": 44,
+          "delta": -7
+        },
+        "ttfb": {
+          "before": 7.899999998509884,
+          "after": 7.300000004470348,
+          "delta": -0.5999999940395355
+        },
+        "mainVisibleObservedMs": {
+          "before": 438.70000000298023,
+          "after": 430.40000000596046,
+          "delta": -8.299999997019768
+        },
+        "js": {
+          "before": {
+            "count": 19,
+            "encodedBytes": 491236,
+            "transferBytes": 496936
+          },
+          "after": {
+            "count": 17,
+            "encodedBytes": 268057,
+            "transferBytes": 273157
+          },
+          "encodedByteDelta": -223179
+        },
+        "css": {
+          "before": {
+            "count": 2,
+            "encodedBytes": 46496,
+            "transferBytes": 47096
+          },
+          "after": {
+            "count": 2,
+            "encodedBytes": 43889,
+            "transferBytes": 44489
+          },
+          "encodedByteDelta": -2607
+        },
+        "fonts": {
+          "before": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "after": {
+            "count": 6,
+            "encodedBytes": 190944,
+            "transferBytes": 192744
+          },
+          "encodedByteDelta": 0
+        },
+        "images": {
+          "before": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "after": {
+            "count": 0,
+            "encodedBytes": 0,
+            "transferBytes": 0
+          },
+          "encodedByteDelta": 0
+        },
+        "fontPreloadHtml": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    }
+  ]
+}

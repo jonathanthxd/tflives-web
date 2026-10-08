@@ -1,0 +1,1583 @@
+{
+  "baselineCommit": "c79fd260b297bba86ce493f0cc7b81d811743fa0",
+  "beforeBuild": "SK04bnsgZt78sZAwRavp3",
+  "afterBuild": "s-ntaHs7h5MRjp-RPcNDa",
+  "functionalBuild": "mBy1bt7Mcp7nZqtmZE5KL",
+  "localPhases": "The full personalization/font/message suite and first-interaction repeat preceded a one-rule team-only overflow correction. Final core metrics use the corrected build; six populated-team cases verify the correction. CI repeats all suites together on the published head.",
+  "summary": {
+    "before": {
+      "fcp": 398,
+      "lcp": 580,
+      "cls": 0,
+      "blocking": 28,
+      "ttfb": 8.350000001490116,
+      "mainVisibleObservedMs": 532.8999999985099,
+      "js": {
+        "encodedBytes": 509261.5,
+        "transferBytes": 515711.5,
+        "count": 22
+      },
+      "css": {
+        "encodedBytes": 46496,
+        "transferBytes": 47096,
+        "count": 2
+      },
+      "fonts": {
+        "encodedBytes": 190944,
+        "transferBytes": 192744,
+        "count": 6
+      }
+    },
+    "after": {
+      "fcp": 364,
+      "lcp": 566,
+      "cls": 0,
+      "blocking": 26,
+      "ttfb": 8.300000000745058,
+      "mainVisibleObservedMs": 517.9999999962747,
+      "js": {
+        "encodedBytes": 286082.5,
+        "transferBytes": 291932.5,
+        "count": 20
+      },
+      "css": {
+        "encodedBytes": 43889,
+        "transferBytes": 44489,
+        "count": 2
+      },
+      "fonts": {
+        "encodedBytes": 190944,
+        "transferBytes": 192744,
+        "count": 6
+      }
+    }
+  },
+  "perRoute": [
+    {
+      "route": "",
+      "before": {
+        "fcp": 444,
+        "lcp": 538,
+        "cls": 0.0009070387375534104,
+        "blocking": 126.5,
+        "ttfb": 8.100000001490116,
+        "mainVisibleObservedMs": 611.4000000022352,
+        "js": {
+          "encodedBytes": 508568,
+          "transferBytes": 515168,
+          "count": 22
+        },
+        "css": {
+          "encodedBytes": 46496,
+          "transferBytes": 47096,
+          "count": 2
+        },
+        "fonts": {
+          "encodedBytes": 190944,
+          "transferBytes": 192744,
+          "count": 6
+        }
+      },
+      "after": {
+        "fcp": 422,
+        "lcp": 574,
+        "cls": 0.0008960472423353042,
+        "blocking": 115,
+        "ttfb": 8.299999997019768,
+        "mainVisibleObservedMs": 561.3999999985099,
+        "js": {
+          "encodedBytes": 285389,
+          "transferBytes": 291389,
+          "count": 20
+        },
+        "css": {
+          "encodedBytes": 43889,
+          "transferBytes": 44489,
+          "count": 2
+        },
+        "fonts": {
+          "encodedBytes": 190944,
+          "transferBytes": 192744,
+          "count": 6
+        }
+      },
+      "byViewport": [
+        {
+          "viewport": "desktop",
+          "before": {
+            "fcp": 538,
+            "lcp": 538,
+            "cls": 0.0008791687262892233,
+            "blocking": 124,
+            "ttfb": 12.75000000372529,
+            "mainVisibleObservedMs": 683.1000000052154,
+            "js": {
+              "encodedBytes": 508568,
+              "transferBytes": 515168,
+              "count": 22
+            },
+            "css": {
+              "encodedBytes": 46496,
+              "transferBytes": 47096,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          },
+          "after": {
+            "fcp": 574,
+            "lcp": 574,
+            "cls": 0.00043664085273062414,
+            "blocking": 91,
+            "ttfb": 13.300000000745058,
+            "mainVisibleObservedMs": 675.1999999992549,
+            "js": {
+              "encodedBytes": 285389,
+              "transferBytes": 291389,
+              "count": 20
+            },
+            "css": {
+              "encodedBytes": 43889,
+              "transferBytes": 44489,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          }
+        },
+        {
+          "viewport": "mobile",
+          "before": {
+            "fcp": 396,
+            "lcp": 566,
+            "cls": 0.0009070387375534104,
+            "blocking": 128.5,
+            "ttfb": 7.699999999254942,
+            "mainVisibleObservedMs": 569.5,
+            "js": {
+              "encodedBytes": 508568,
+              "transferBytes": 515168,
+              "count": 22
+            },
+            "css": {
+              "encodedBytes": 46496,
+              "transferBytes": 47096,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          },
+          "after": {
+            "fcp": 364,
+            "lcp": 526,
+            "cls": 0.0009070387375534104,
+            "blocking": 123.5,
+            "ttfb": 8,
+            "mainVisibleObservedMs": 532,
+            "js": {
+              "encodedBytes": 285389,
+              "transferBytes": 291389,
+              "count": 20
+            },
+            "css": {
+              "encodedBytes": 43889,
+              "transferBytes": 44489,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          }
+        }
+      ]
+    },
+    {
+      "route": "/network",
+      "before": {
+        "fcp": 434,
+        "lcp": 614,
+        "cls": 0.00011809985133450366,
+        "blocking": 108,
+        "ttfb": 8.649999998509884,
+        "mainVisibleObservedMs": 527.8000000007451,
+        "js": {
+          "encodedBytes": 508568,
+          "transferBytes": 515168,
+          "count": 22
+        },
+        "css": {
+          "encodedBytes": 46496,
+          "transferBytes": 47096,
+          "count": 2
+        },
+        "fonts": {
+          "encodedBytes": 190944,
+          "transferBytes": 192744,
+          "count": 6
+        }
+      },
+      "after": {
+        "fcp": 388,
+        "lcp": 590,
+        "cls": 0.00011333152922936396,
+        "blocking": 97,
+        "ttfb": 8.099999997764826,
+        "mainVisibleObservedMs": 473.8999999985099,
+        "js": {
+          "encodedBytes": 285389,
+          "transferBytes": 291389,
+          "count": 20
+        },
+        "css": {
+          "encodedBytes": 43889,
+          "transferBytes": 44489,
+          "count": 2
+        },
+        "fonts": {
+          "encodedBytes": 190944,
+          "transferBytes": 192744,
+          "count": 6
+        }
+      },
+      "byViewport": [
+        {
+          "viewport": "desktop",
+          "before": {
+            "fcp": 522,
+            "lcp": 784,
+            "cls": 0.00009808331189986283,
+            "blocking": 106,
+            "ttfb": 9,
+            "mainVisibleObservedMs": 587.6999999955297,
+            "js": {
+              "encodedBytes": 508568,
+              "transferBytes": 515168,
+              "count": 22
+            },
+            "css": {
+              "encodedBytes": 46496,
+              "transferBytes": 47096,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          },
+          "after": {
+            "fcp": 506,
+            "lcp": 740,
+            "cls": 0.00007086056053883744,
+            "blocking": 102.5,
+            "ttfb": 8.75,
+            "mainVisibleObservedMs": 565.3000000007451,
+            "js": {
+              "encodedBytes": 285389,
+              "transferBytes": 291389,
+              "count": 20
+            },
+            "css": {
+              "encodedBytes": 43889,
+              "transferBytes": 44489,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          }
+        },
+        {
+          "viewport": "mobile",
+          "before": {
+            "fcp": 366,
+            "lcp": 584,
+            "cls": 0.00016787692274576274,
+            "blocking": 111.5,
+            "ttfb": 8.649999998509884,
+            "mainVisibleObservedMs": 474.30000000074506,
+            "js": {
+              "encodedBytes": 508568,
+              "transferBytes": 515168,
+              "count": 22
+            },
+            "css": {
+              "encodedBytes": 46496,
+              "transferBytes": 47096,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          },
+          "after": {
+            "fcp": 318,
+            "lcp": 562,
+            "cls": 0.00014033842031619764,
+            "blocking": 94,
+            "ttfb": 7.899999998509884,
+            "mainVisibleObservedMs": 450.54999999701977,
+            "js": {
+              "encodedBytes": 285389,
+              "transferBytes": 291389,
+              "count": 20
+            },
+            "css": {
+              "encodedBytes": 43889,
+              "transferBytes": 44489,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          }
+        }
+      ]
+    },
+    {
+      "route": "/network/wiki",
+      "before": {
+        "fcp": 344,
+        "lcp": 468,
+        "cls": 0,
+        "blocking": 18.5,
+        "ttfb": 8.150000002235174,
+        "mainVisibleObservedMs": 327.2499999962747,
+        "js": {
+          "encodedBytes": 508568,
+          "transferBytes": 515168,
+          "count": 22
+        },
+        "css": {
+          "encodedBytes": 46496,
+          "transferBytes": 47096,
+          "count": 2
+        },
+        "fonts": {
+          "encodedBytes": 190944,
+          "transferBytes": 192744,
+          "count": 6
+        }
+      },
+      "after": {
+        "fcp": 334,
+        "lcp": 464,
+        "cls": 0,
+        "blocking": 20.5,
+        "ttfb": 7.849999997764826,
+        "mainVisibleObservedMs": 328.30000000074506,
+        "js": {
+          "encodedBytes": 285389,
+          "transferBytes": 291389,
+          "count": 20
+        },
+        "css": {
+          "encodedBytes": 43889,
+          "transferBytes": 44489,
+          "count": 2
+        },
+        "fonts": {
+          "encodedBytes": 190944,
+          "transferBytes": 192744,
+          "count": 6
+        }
+      },
+      "byViewport": [
+        {
+          "viewport": "desktop",
+          "before": {
+            "fcp": 486,
+            "lcp": 580,
+            "cls": 0,
+            "blocking": 16,
+            "ttfb": 8.150000002235174,
+            "mainVisibleObservedMs": 411.79999999701977,
+            "js": {
+              "encodedBytes": 508568,
+              "transferBytes": 515168,
+              "count": 22
+            },
+            "css": {
+              "encodedBytes": 46496,
+              "transferBytes": 47096,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          },
+          "after": {
+            "fcp": 356,
+            "lcp": 480,
+            "cls": 0,
+            "blocking": 26,
+            "ttfb": 8.650000002235174,
+            "mainVisibleObservedMs": 332.95000000298023,
+            "js": {
+              "encodedBytes": 285389,
+              "transferBytes": 291389,
+              "count": 20
+            },
+            "css": {
+              "encodedBytes": 43889,
+              "transferBytes": 44489,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          }
+        },
+        {
+          "viewport": "mobile",
+          "before": {
+            "fcp": 256,
+            "lcp": 448,
+            "cls": 0,
+            "blocking": 18.5,
+            "ttfb": 7.949999999254942,
+            "mainVisibleObservedMs": 327.04999999701977,
+            "js": {
+              "encodedBytes": 508568,
+              "transferBytes": 515168,
+              "count": 22
+            },
+            "css": {
+              "encodedBytes": 46496,
+              "transferBytes": 47096,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          },
+          "after": {
+            "fcp": 292,
+            "lcp": 440,
+            "cls": 0,
+            "blocking": 9,
+            "ttfb": 7.550000000745058,
+            "mainVisibleObservedMs": 319.30000000074506,
+            "js": {
+              "encodedBytes": 285389,
+              "transferBytes": 291389,
+              "count": 20
+            },
+            "css": {
+              "encodedBytes": 43889,
+              "transferBytes": 44489,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          }
+        }
+      ]
+    },
+    {
+      "route": "/login",
+      "before": {
+        "fcp": 382,
+        "lcp": 534,
+        "cls": 0,
+        "blocking": 7,
+        "ttfb": 7.800000000745058,
+        "mainVisibleObservedMs": 376.6499999985099,
+        "js": {
+          "encodedBytes": 518445,
+          "transferBytes": 525645,
+          "count": 24
+        },
+        "css": {
+          "encodedBytes": 46496,
+          "transferBytes": 47096,
+          "count": 2
+        },
+        "fonts": {
+          "encodedBytes": 190944,
+          "transferBytes": 192744,
+          "count": 6
+        }
+      },
+      "after": {
+        "fcp": 386,
+        "lcp": 570,
+        "cls": 0,
+        "blocking": 11,
+        "ttfb": 8.099999997764826,
+        "mainVisibleObservedMs": 380.6000000014901,
+        "js": {
+          "encodedBytes": 295266,
+          "transferBytes": 301866,
+          "count": 22
+        },
+        "css": {
+          "encodedBytes": 43889,
+          "transferBytes": 44489,
+          "count": 2
+        },
+        "fonts": {
+          "encodedBytes": 190944,
+          "transferBytes": 192744,
+          "count": 6
+        }
+      },
+      "byViewport": [
+        {
+          "viewport": "desktop",
+          "before": {
+            "fcp": 454,
+            "lcp": 648,
+            "cls": 0,
+            "blocking": 11,
+            "ttfb": 7.649999998509884,
+            "mainVisibleObservedMs": 413.05000000074506,
+            "js": {
+              "encodedBytes": 518445,
+              "transferBytes": 525645,
+              "count": 24
+            },
+            "css": {
+              "encodedBytes": 46496,
+              "transferBytes": 47096,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          },
+          "after": {
+            "fcp": 422,
+            "lcp": 612,
+            "cls": 0,
+            "blocking": 10.5,
+            "ttfb": 8.800000004470348,
+            "mainVisibleObservedMs": 396.44999999925494,
+            "js": {
+              "encodedBytes": 295266,
+              "transferBytes": 301866,
+              "count": 22
+            },
+            "css": {
+              "encodedBytes": 43889,
+              "transferBytes": 44489,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          }
+        },
+        {
+          "viewport": "mobile",
+          "before": {
+            "fcp": 338,
+            "lcp": 496,
+            "cls": 0,
+            "blocking": 4.5,
+            "ttfb": 7.850000001490116,
+            "mainVisibleObservedMs": 352.3500000014901,
+            "js": {
+              "encodedBytes": 518445,
+              "transferBytes": 525645,
+              "count": 24
+            },
+            "css": {
+              "encodedBytes": 46496,
+              "transferBytes": 47096,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          },
+          "after": {
+            "fcp": 330,
+            "lcp": 516,
+            "cls": 0,
+            "blocking": 12.5,
+            "ttfb": 7.650000002235174,
+            "mainVisibleObservedMs": 363.1000000014901,
+            "js": {
+              "encodedBytes": 295266,
+              "transferBytes": 301866,
+              "count": 22
+            },
+            "css": {
+              "encodedBytes": 43889,
+              "transferBytes": 44489,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          }
+        }
+      ]
+    },
+    {
+      "route": "/register",
+      "before": {
+        "fcp": 396,
+        "lcp": 554,
+        "cls": 0,
+        "blocking": 13,
+        "ttfb": 8.300000000745058,
+        "mainVisibleObservedMs": 378.5999999977648,
+        "js": {
+          "encodedBytes": 509955,
+          "transferBytes": 516255,
+          "count": 21
+        },
+        "css": {
+          "encodedBytes": 46496,
+          "transferBytes": 47096,
+          "count": 2
+        },
+        "fonts": {
+          "encodedBytes": 190944,
+          "transferBytes": 192744,
+          "count": 6
+        }
+      },
+      "after": {
+        "fcp": 384,
+        "lcp": 550,
+        "cls": 0,
+        "blocking": 10.5,
+        "ttfb": 8.200000002980232,
+        "mainVisibleObservedMs": 374.75,
+        "js": {
+          "encodedBytes": 286776,
+          "transferBytes": 292476,
+          "count": 19
+        },
+        "css": {
+          "encodedBytes": 43889,
+          "transferBytes": 44489,
+          "count": 2
+        },
+        "fonts": {
+          "encodedBytes": 190944,
+          "transferBytes": 192744,
+          "count": 6
+        }
+      },
+      "byViewport": [
+        {
+          "viewport": "desktop",
+          "before": {
+            "fcp": 432,
+            "lcp": 630,
+            "cls": 0,
+            "blocking": 19,
+            "ttfb": 8.75,
+            "mainVisibleObservedMs": 401.44999999925494,
+            "js": {
+              "encodedBytes": 509955,
+              "transferBytes": 516255,
+              "count": 21
+            },
+            "css": {
+              "encodedBytes": 46496,
+              "transferBytes": 47096,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          },
+          "after": {
+            "fcp": 444,
+            "lcp": 630,
+            "cls": 0,
+            "blocking": 10.5,
+            "ttfb": 8.699999999254942,
+            "mainVisibleObservedMs": 409.3499999977648,
+            "js": {
+              "encodedBytes": 286776,
+              "transferBytes": 292476,
+              "count": 19
+            },
+            "css": {
+              "encodedBytes": 43889,
+              "transferBytes": 44489,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          }
+        },
+        {
+          "viewport": "mobile",
+          "before": {
+            "fcp": 320,
+            "lcp": 504,
+            "cls": 0,
+            "blocking": 11,
+            "ttfb": 7.949999999254942,
+            "mainVisibleObservedMs": 357.44999999552965,
+            "js": {
+              "encodedBytes": 509955,
+              "transferBytes": 516255,
+              "count": 21
+            },
+            "css": {
+              "encodedBytes": 46496,
+              "transferBytes": 47096,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          },
+          "after": {
+            "fcp": 284,
+            "lcp": 508,
+            "cls": 0,
+            "blocking": 13,
+            "ttfb": 8.200000002980232,
+            "mainVisibleObservedMs": 349.1500000022352,
+            "js": {
+              "encodedBytes": 286776,
+              "transferBytes": 292476,
+              "count": 19
+            },
+            "css": {
+              "encodedBytes": 43889,
+              "transferBytes": 44489,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          }
+        }
+      ]
+    },
+    {
+      "route": "/perfil/visual_fixture",
+      "before": {
+        "fcp": 688,
+        "lcp": 1276,
+        "cls": 0.02177901540283735,
+        "blocking": 306.5,
+        "ttfb": 9.050000004470348,
+        "mainVisibleObservedMs": 819.5,
+        "js": {
+          "encodedBytes": 520715.5,
+          "transferBytes": 527465.5,
+          "count": 22.5
+        },
+        "css": {
+          "encodedBytes": 46496,
+          "transferBytes": 47096,
+          "count": 2
+        },
+        "fonts": {
+          "encodedBytes": 209988,
+          "transferBytes": 212088,
+          "count": 7
+        }
+      },
+      "after": {
+        "fcp": 668,
+        "lcp": 1320,
+        "cls": 0.021787429626496515,
+        "blocking": 460.5,
+        "ttfb": 8.449999999254942,
+        "mainVisibleObservedMs": 663.5500000007451,
+        "js": {
+          "encodedBytes": 297660.5,
+          "transferBytes": 303810.5,
+          "count": 20.5
+        },
+        "css": {
+          "encodedBytes": 43889,
+          "transferBytes": 44489,
+          "count": 2
+        },
+        "fonts": {
+          "encodedBytes": 209988,
+          "transferBytes": 212088,
+          "count": 7
+        }
+      },
+      "byViewport": [
+        {
+          "viewport": "desktop",
+          "before": {
+            "fcp": 912,
+            "lcp": 1808,
+            "cls": 0.011671270747098497,
+            "blocking": 562.5,
+            "ttfb": 13.600000001490116,
+            "mainVisibleObservedMs": 1215.25,
+            "js": {
+              "encodedBytes": 521669,
+              "transferBytes": 528569,
+              "count": 23
+            },
+            "css": {
+              "encodedBytes": 46496,
+              "transferBytes": 47096,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 209988,
+              "transferBytes": 212088,
+              "count": 7
+            }
+          },
+          "after": {
+            "fcp": 936,
+            "lcp": 1942,
+            "cls": 0.011412977113449034,
+            "blocking": 721.5,
+            "ttfb": 16.450000002980232,
+            "mainVisibleObservedMs": 951.9000000022352,
+            "js": {
+              "encodedBytes": 298614,
+              "transferBytes": 304914,
+              "count": 21
+            },
+            "css": {
+              "encodedBytes": 43889,
+              "transferBytes": 44489,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 209988,
+              "transferBytes": 212088,
+              "count": 7
+            }
+          }
+        },
+        {
+          "viewport": "mobile",
+          "before": {
+            "fcp": 476,
+            "lcp": 822,
+            "cls": 0.03223388476832769,
+            "blocking": 167,
+            "ttfb": 8.199999999254942,
+            "mainVisibleObservedMs": 587.0500000007451,
+            "js": {
+              "encodedBytes": 519762,
+              "transferBytes": 526362,
+              "count": 22
+            },
+            "css": {
+              "encodedBytes": 46496,
+              "transferBytes": 47096,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 209988,
+              "transferBytes": 212088,
+              "count": 7
+            }
+          },
+          "after": {
+            "fcp": 450,
+            "lcp": 816,
+            "cls": 0.032213229094009005,
+            "blocking": 158.5,
+            "ttfb": 8,
+            "mainVisibleObservedMs": 533.9499999992549,
+            "js": {
+              "encodedBytes": 296707,
+              "transferBytes": 302707,
+              "count": 20
+            },
+            "css": {
+              "encodedBytes": 43889,
+              "transferBytes": 44489,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 209988,
+              "transferBytes": 212088,
+              "count": 7
+            }
+          }
+        }
+      ]
+    },
+    {
+      "route": "/mensajes",
+      "before": {
+        "fcp": 318,
+        "lcp": 624,
+        "cls": 0,
+        "blocking": 15.5,
+        "ttfb": 9.349999997764826,
+        "mainVisibleObservedMs": 572.3000000007451,
+        "js": {
+          "encodedBytes": 507229,
+          "transferBytes": 513679,
+          "count": 21.5
+        },
+        "css": {
+          "encodedBytes": 46496,
+          "transferBytes": 47096,
+          "count": 2
+        },
+        "fonts": {
+          "encodedBytes": 190944,
+          "transferBytes": 192744,
+          "count": 6
+        }
+      },
+      "after": {
+        "fcp": 274,
+        "lcp": 610,
+        "cls": 0,
+        "blocking": 10.5,
+        "ttfb": 8.800000000745058,
+        "mainVisibleObservedMs": 594.3999999985099,
+        "js": {
+          "encodedBytes": 284261,
+          "transferBytes": 290111,
+          "count": 19.5
+        },
+        "css": {
+          "encodedBytes": 43889,
+          "transferBytes": 44489,
+          "count": 2
+        },
+        "fonts": {
+          "encodedBytes": 190944,
+          "transferBytes": 192744,
+          "count": 6
+        }
+      },
+      "byViewport": [
+        {
+          "viewport": "desktop",
+          "before": {
+            "fcp": 344,
+            "lcp": 726,
+            "cls": 0,
+            "blocking": 11,
+            "ttfb": 14.599999997764826,
+            "mainVisibleObservedMs": 622.8999999985099,
+            "js": {
+              "encodedBytes": 498576,
+              "transferBytes": 504876,
+              "count": 21
+            },
+            "css": {
+              "encodedBytes": 46496,
+              "transferBytes": 47096,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          },
+          "after": {
+            "fcp": 366,
+            "lcp": 826,
+            "cls": 0,
+            "blocking": 10,
+            "ttfb": 14.24999999627471,
+            "mainVisibleObservedMs": 665.6999999992549,
+            "js": {
+              "encodedBytes": 275608,
+              "transferBytes": 281308,
+              "count": 19
+            },
+            "css": {
+              "encodedBytes": 43889,
+              "transferBytes": 44489,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          }
+        },
+        {
+          "viewport": "mobile",
+          "before": {
+            "fcp": 244,
+            "lcp": 508,
+            "cls": 0,
+            "blocking": 18,
+            "ttfb": 8.350000001490116,
+            "mainVisibleObservedMs": 541.2999999970198,
+            "js": {
+              "encodedBytes": 515882,
+              "transferBytes": 522482,
+              "count": 22
+            },
+            "css": {
+              "encodedBytes": 46496,
+              "transferBytes": 47096,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          },
+          "after": {
+            "fcp": 230,
+            "lcp": 514,
+            "cls": 0,
+            "blocking": 11.5,
+            "ttfb": 8.349999997764826,
+            "mainVisibleObservedMs": 544.7000000029802,
+            "js": {
+              "encodedBytes": 292914,
+              "transferBytes": 298914,
+              "count": 20
+            },
+            "css": {
+              "encodedBytes": 43889,
+              "transferBytes": 44489,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          }
+        }
+      ]
+    },
+    {
+      "route": "/configuracion",
+      "before": {
+        "fcp": 334,
+        "lcp": 434,
+        "cls": 0.007473989137044773,
+        "blocking": 17,
+        "ttfb": 8.75000000372529,
+        "mainVisibleObservedMs": 647.1499999985099,
+        "js": {
+          "encodedBytes": 530382.5,
+          "transferBytes": 537732.5,
+          "count": 25
+        },
+        "css": {
+          "encodedBytes": 46496,
+          "transferBytes": 47096,
+          "count": 2
+        },
+        "fonts": {
+          "encodedBytes": 190944,
+          "transferBytes": 192744,
+          "count": 6
+        }
+      },
+      "after": {
+        "fcp": 336,
+        "lcp": 452,
+        "cls": 0.007473989137044773,
+        "blocking": 19.5,
+        "ttfb": 9.050000000745058,
+        "mainVisibleObservedMs": 704.75,
+        "js": {
+          "encodedBytes": 297249,
+          "transferBytes": 303849,
+          "count": 22
+        },
+        "css": {
+          "encodedBytes": 43889,
+          "transferBytes": 44489,
+          "count": 2
+        },
+        "fonts": {
+          "encodedBytes": 190944,
+          "transferBytes": 192744,
+          "count": 6
+        }
+      },
+      "byViewport": [
+        {
+          "viewport": "desktop",
+          "before": {
+            "fcp": 368,
+            "lcp": 478,
+            "cls": 0.0036844907407407408,
+            "blocking": 20,
+            "ttfb": 16.449999999254942,
+            "mainVisibleObservedMs": 914.1500000022352,
+            "js": {
+              "encodedBytes": 526340,
+              "transferBytes": 533690,
+              "count": 24.5
+            },
+            "css": {
+              "encodedBytes": 46496,
+              "transferBytes": 47096,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          },
+          "after": {
+            "fcp": 358,
+            "lcp": 466,
+            "cls": 0.0035393518518518517,
+            "blocking": 23.5,
+            "ttfb": 14.949999999254942,
+            "mainVisibleObservedMs": 751.8500000014901,
+            "js": {
+              "encodedBytes": 293312,
+              "transferBytes": 299912,
+              "count": 22
+            },
+            "css": {
+              "encodedBytes": 43889,
+              "transferBytes": 44489,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          }
+        },
+        {
+          "viewport": "mobile",
+          "before": {
+            "fcp": 306,
+            "lcp": 414,
+            "cls": 0.011488960265941914,
+            "blocking": 17,
+            "ttfb": 8,
+            "mainVisibleObservedMs": 621.75,
+            "js": {
+              "encodedBytes": 534764,
+              "transferBytes": 542264,
+              "count": 25
+            },
+            "css": {
+              "encodedBytes": 46496,
+              "transferBytes": 47096,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          },
+          "after": {
+            "fcp": 250,
+            "lcp": 430,
+            "cls": 0.011488960265941914,
+            "blocking": 15,
+            "ttfb": 7.899999998509884,
+            "mainVisibleObservedMs": 668.8499999977648,
+            "js": {
+              "encodedBytes": 303093,
+              "transferBytes": 309993,
+              "count": 23
+            },
+            "css": {
+              "encodedBytes": 43889,
+              "transferBytes": 44489,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          }
+        }
+      ]
+    },
+    {
+      "route": "/admin",
+      "before": {
+        "fcp": 422,
+        "lcp": 654,
+        "cls": 0,
+        "blocking": 53.5,
+        "ttfb": 8.600000001490116,
+        "mainVisibleObservedMs": 464.8500000014901,
+        "js": {
+          "encodedBytes": 491236,
+          "transferBytes": 496936,
+          "count": 19
+        },
+        "css": {
+          "encodedBytes": 46496,
+          "transferBytes": 47096,
+          "count": 2
+        },
+        "fonts": {
+          "encodedBytes": 190944,
+          "transferBytes": 192744,
+          "count": 6
+        }
+      },
+      "after": {
+        "fcp": 366,
+        "lcp": 630,
+        "cls": 0,
+        "blocking": 46.5,
+        "ttfb": 8.24999999627471,
+        "mainVisibleObservedMs": 491.69999999552965,
+        "js": {
+          "encodedBytes": 268057,
+          "transferBytes": 273157,
+          "count": 17
+        },
+        "css": {
+          "encodedBytes": 43889,
+          "transferBytes": 44489,
+          "count": 2
+        },
+        "fonts": {
+          "encodedBytes": 190944,
+          "transferBytes": 192744,
+          "count": 6
+        }
+      },
+      "byViewport": [
+        {
+          "viewport": "desktop",
+          "before": {
+            "fcp": 490,
+            "lcp": 750,
+            "cls": 0,
+            "blocking": 52,
+            "ttfb": 13.75000000372529,
+            "mainVisibleObservedMs": 525.3500000014901,
+            "js": {
+              "encodedBytes": 491236,
+              "transferBytes": 496936,
+              "count": 19
+            },
+            "css": {
+              "encodedBytes": 46496,
+              "transferBytes": 47096,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          },
+          "after": {
+            "fcp": 490,
+            "lcp": 736,
+            "cls": 0,
+            "blocking": 50.5,
+            "ttfb": 13.650000002235174,
+            "mainVisibleObservedMs": 541.9500000029802,
+            "js": {
+              "encodedBytes": 268057,
+              "transferBytes": 273157,
+              "count": 17
+            },
+            "css": {
+              "encodedBytes": 43889,
+              "transferBytes": 44489,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          }
+        },
+        {
+          "viewport": "mobile",
+          "before": {
+            "fcp": 330,
+            "lcp": 562,
+            "cls": 0,
+            "blocking": 53.5,
+            "ttfb": 8,
+            "mainVisibleObservedMs": 427.05000000074506,
+            "js": {
+              "encodedBytes": 491236,
+              "transferBytes": 496936,
+              "count": 19
+            },
+            "css": {
+              "encodedBytes": 46496,
+              "transferBytes": 47096,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          },
+          "after": {
+            "fcp": 312,
+            "lcp": 554,
+            "cls": 0,
+            "blocking": 45,
+            "ttfb": 7.599999997764826,
+            "mainVisibleObservedMs": 439.15000000596046,
+            "js": {
+              "encodedBytes": 268057,
+              "transferBytes": 273157,
+              "count": 17
+            },
+            "css": {
+              "encodedBytes": 43889,
+              "transferBytes": 44489,
+              "count": 2
+            },
+            "fonts": {
+              "encodedBytes": 190944,
+              "transferBytes": 192744,
+              "count": 6
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "warmNavigation": {
+    "before": {
+      "count": 8,
+      "headingObservedMs": 190.14999999850988,
+      "newJsEncodedBytes": 0,
+      "newFontEncodedBytes": 0
+    },
+    "after": {
+      "count": 8,
+      "headingObservedMs": 177.30000000074506,
+      "newJsEncodedBytes": 0,
+      "newFontEncodedBytes": 0
+    }
+  },
+  "interactions": {
+    "before": [
+      {
+        "kind": "studio-first-open-and-repeat",
+        "count": 8,
+        "firstObservedMs": 305.3499999977648,
+        "repeatObservedMs": 283.0999999977648,
+        "newJsEncodedBytes": 0,
+        "newCssEncodedBytes": 0,
+        "newFontsEncodedBytes": null
+      },
+      {
+        "kind": "image-editor-first-open",
+        "count": 8,
+        "firstObservedMs": 143.89999999850988,
+        "repeatObservedMs": null,
+        "newJsEncodedBytes": 0,
+        "newCssEncodedBytes": 0,
+        "newFontsEncodedBytes": null
+      },
+      {
+        "kind": "emoji-picker-first-open-and-insert",
+        "count": 8,
+        "firstObservedMs": 372.1000000014901,
+        "repeatObservedMs": null,
+        "newJsEncodedBytes": 0,
+        "newCssEncodedBytes": 0,
+        "newFontsEncodedBytes": null
+      }
+    ],
+    "rejected": [
+      {
+        "kind": "studio-first-open-and-repeat",
+        "count": 8,
+        "firstObservedMs": 600.0500000007451,
+        "repeatObservedMs": 177.10000000149012,
+        "newJsEncodedBytes": 4012,
+        "newCssEncodedBytes": 482,
+        "newFontsEncodedBytes": 174472
+      },
+      {
+        "kind": "image-editor-first-open",
+        "count": 8,
+        "firstObservedMs": 414.8999999985099,
+        "repeatObservedMs": null,
+        "newJsEncodedBytes": 3062,
+        "newCssEncodedBytes": 0,
+        "newFontsEncodedBytes": 0
+      },
+      {
+        "kind": "chat-first-open-including-picker-preload",
+        "count": 8,
+        "firstObservedMs": 120.89999999850988,
+        "repeatObservedMs": null,
+        "newJsEncodedBytes": 4562,
+        "newCssEncodedBytes": 0,
+        "newFontsEncodedBytes": 0
+      },
+      {
+        "kind": "emoji-picker-first-open-and-insert",
+        "count": 8,
+        "firstObservedMs": 512.1499999985099,
+        "repeatObservedMs": null,
+        "newJsEncodedBytes": 0,
+        "newCssEncodedBytes": 0,
+        "newFontsEncodedBytes": 0
+      },
+      {
+        "kind": "qr-encoder-real-isolated-two-factor-setup",
+        "count": 2,
+        "firstObservedMs": 991.75,
+        "repeatObservedMs": null,
+        "newJsEncodedBytes": 10411,
+        "newCssEncodedBytes": 0,
+        "newFontsEncodedBytes": 0
+      }
+    ],
+    "after": [
+      {
+        "kind": "studio-first-open-and-repeat",
+        "count": 8,
+        "firstObservedMs": 328.8500000014901,
+        "repeatObservedMs": 174.80000000074506,
+        "newJsEncodedBytes": 0,
+        "newCssEncodedBytes": 0,
+        "newFontsEncodedBytes": 174472
+      },
+      {
+        "kind": "image-editor-first-open",
+        "count": 8,
+        "firstObservedMs": 138.44999999925494,
+        "repeatObservedMs": null,
+        "newJsEncodedBytes": 0,
+        "newCssEncodedBytes": 0,
+        "newFontsEncodedBytes": 0
+      },
+      {
+        "kind": "chat-first-open-resources",
+        "count": 8,
+        "firstObservedMs": 103.00000000372529,
+        "repeatObservedMs": null,
+        "newJsEncodedBytes": 0,
+        "newCssEncodedBytes": 0,
+        "newFontsEncodedBytes": 0
+      },
+      {
+        "kind": "emoji-picker-first-open-and-insert",
+        "count": 8,
+        "firstObservedMs": 209.34999999776483,
+        "repeatObservedMs": null,
+        "newJsEncodedBytes": 0,
+        "newCssEncodedBytes": 0,
+        "newFontsEncodedBytes": 0
+      },
+      {
+        "kind": "qr-encoder-real-isolated-two-factor-setup",
+        "count": 2,
+        "firstObservedMs": 909.6999999992549,
+        "repeatObservedMs": null,
+        "newJsEncodedBytes": 8843,
+        "newCssEncodedBytes": 0,
+        "newFontsEncodedBytes": 0
+      }
+    ]
+  },
+  "checks": {
+    "accent-selection-and-persistence": 136,
+    "font-selection-and-persistence": 72,
+    "static-background": 6,
+    "animated-background-draws-and-time-uniforms": 14,
+    "silk-live-accent-uniform-update": 2,
+    "prism-releases-webgl-context-on-replacement": 2,
+    "preview-active-then-paused-no-draw-and-close": 4,
+    "native-cursor-selection-status-animation-and-persistence": 40,
+    "oauth-feedback-url-cleanup": 2,
+    "profile-identity-retained-offscreen-polling-stops-and-resumes": 1,
+    "avatar-editor-load-zoom-cancel-resource-disposal": 2,
+    "authenticated-chat-picker": 2,
+    "direct-message-first-picker-emoji-send-switch-empty-reload-and-error": 2,
+    "login-loading-reserves-space-before-javascript": 2
+  },
+  "teamChecks": {
+    "team-real-3d-navigation-and-route-css": 6
+  },
+  "diagnostics": {
+    "before": {
+      "cacheWarningCount": 483,
+      "knownWarning": "Next E1163; see v0.17 report",
+      "otherFailures": 0
+    },
+    "after": {
+      "cacheWarningCount": 264,
+      "knownWarning": "Next E1163; see v0.17 report",
+      "otherFailures": 0
+    },
+    "fullFunctional": {
+      "cacheWarningCount": 558,
+      "knownWarning": "Next E1163; see v0.17 report",
+      "otherFailures": 0
+    },
+    "interactions": {
+      "cacheWarningCount": 116,
+      "knownWarning": "Next E1163; see v0.17 report",
+      "otherFailures": 0
+    },
+    "team": {
+      "cacheWarningCount": 12,
+      "knownWarning": "Next E1163; see v0.17 report",
+      "otherFailures": 0
+    }
+  }
+}

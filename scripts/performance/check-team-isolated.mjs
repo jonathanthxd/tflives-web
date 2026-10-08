@@ -7,6 +7,9 @@ const env = {
   TFL_TEAM_FIXTURE: "1",
   TFL_TEAM_ONLY: "1",
   TFL_TEAM_CHECKS: "1",
+  TFL_VISUAL_EXTENDED: "1",
+  TFL_INTERACTIONS: "0",
+  TFL_QR_CHECK: "0",
   TFL_PERF_OUTPUT: process.env.TFL_TEAM_OUTPUT || "performance-artifacts/team",
 };
 for (const script of [process.env.TFL_TEAM_CACHED === "1" ? "build-cached.mjs" : "build-isolated.mjs", "measure.mjs"]) {

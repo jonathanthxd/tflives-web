@@ -35,8 +35,99 @@
       "path": "src/providers/studio-provider.tsx",
       "unchanged": true,
       "sha256": "839f5f9327aa366db7ae99b6bb6a4623bc635e6082d07c692745377af744ade8"
+    },
+    {
+      "path": "src/shared/ui/studio/studio-menu.tsx",
+      "unchanged": true,
+      "sha256": "2d08530dea3b68c10ed7be5063848063f4cf9a88c53bf3f8fa1c71d23221a3bd"
+    },
+    {
+      "path": "src/modules/profiles/components/profile-settings.tsx",
+      "unchanged": true,
+      "sha256": "b8b0de4dd6afe1f363a3b7f02421f20466138fc449c6082491bf97afe7381c2b"
+    },
+    {
+      "path": "src/modules/chat/components/emoji-sticker-picker.tsx",
+      "unchanged": true,
+      "sha256": "39dd4b7563d101d854290a4e875b8cd8c4baa1069dc703db8c6de9e3b07476ae"
     }
   ],
   "teamPositionCalculationUnchanged": true,
-  "apiInfrastructureSchemaMigrationsUnchanged": true
+  "teamCameraDprStarsUnchanged": true,
+  "apiInfrastructureSchemaMigrationsUnchanged": true,
+  "implementation": [
+    {
+      "path": "src/app/[locale]/(platform)/mensajes/page.tsx",
+      "sha256": "feac9ce0b1321d945681ca50699e4b5d4b42c8326a1b8c5f87d81f77330392d7"
+    },
+    {
+      "path": "src/modules/administration/components/owners-section.tsx",
+      "sha256": "60d2eb458b405f5fe2abf863247baccaec53e10c984c658e3e04a8ebff2d9134"
+    },
+    {
+      "path": "src/modules/administration/components/team-constellation-loader.tsx",
+      "sha256": "da743cea0c78c483fd6c52b1848de8c94940201db87387d1b761afa4e2fe80cf"
+    },
+    {
+      "path": "src/modules/administration/components/team-constellation.css",
+      "sha256": "b4cf01029c19bfd0bb8d196a85c6be1b6b2ca06c7fca6e0ece91d77adabab40d"
+    },
+    {
+      "path": "src/modules/administration/components/team-constellation.tsx",
+      "sha256": "cd7609110c12e788f06a0e08b279546a705d8080f61ccff4483133065e0f3aba"
+    },
+    {
+      "path": "src/modules/administration/components/team-neural-field.tsx",
+      "sha256": "b240609d82ad387c10034633e0d5ea5cf8298a99061699e09fc1865efc2d435a"
+    },
+    {
+      "path": "src/modules/administration/components/team-space.ts",
+      "sha256": "33ffdff76a9addcafb3eb246696fd2af81944eadb43063bc980a422682031e80"
+    },
+    {
+      "path": "src/modules/authentication/components/security-settings.tsx",
+      "sha256": "d30d3c4e766cac64c9beef946070448360c8b6861083090e59483b241a9a0f4b"
+    },
+    {
+      "path": "src/modules/chat/components/global-chat.tsx",
+      "sha256": "443309d2fa1e395e203243fdc7a66d99c7af270f396926b9f0c549bbc821a5f9"
+    },
+    {
+      "path": "src/modules/chat/emojis.ts",
+      "sha256": "7d67cf6a63de2ff3b8cab95bda05a2700c1ea6217c7159cb970f8123033843f0"
+    },
+    {
+      "path": "src/modules/chat/quick-reactions.ts",
+      "sha256": "0bd1bd2c42e217c3d6b20bf9723bf06e73efcb18779add799343169093c1d603"
+    },
+    {
+      "path": "src/modules/chat/reaction-preferences.ts",
+      "sha256": "de6529a3fdc6bf899a7b9a145ae397dddba6b8ef72352c27791b0be65568c852"
+    },
+    {
+      "path": "src/modules/progression/components/live-progress-card.tsx",
+      "sha256": "ba0991e688e1a83e53f3d441c706f733139040f03d08429b8540e659b6a5844f"
+    },
+    {
+      "path": "src/shared/ui/studio/backgrounds/crt-warp.tsx",
+      "sha256": "8992456f1f7be93aafc5eb9d13f5da185d6b85b204dc10dfce920812196611d8"
+    },
+    {
+      "path": "src/shared/ui/studio/backgrounds/prism.tsx",
+      "sha256": "d3d09811a115a8bf9a01294a6676f1869685dadb734c49ea4f83a7a89665048b"
+    },
+    {
+      "path": "src/shared/ui/studio/cursor-pack-preview.css",
+      "sha256": "c9c5f52eec219eb809998b4b8d8694868df57f6373d77c546a91b7f4d801800c"
+    },
+    {
+      "path": "src/shared/ui/studio/cursor-pack-preview.tsx",
+      "sha256": "677a906f518deba1ef7f70e34e2cfb9dfb73917c98987117ea2c8edf8f5e1b38"
+    },
+    {
+      "path": "src/styles/globals.css",
+      "sha256": "a055f59e7d801a3119babd59b827854051a06de6bc3920709e1aa1759004260a"
+    }
+  ],
+  "implementationDigest": "73d9fcf859c7542ccb7b7893128dcecf4ed6b369b14067b9d39b056201db3beb"
 }

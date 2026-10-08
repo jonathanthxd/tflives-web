@@ -3,7 +3,16 @@
   "lineEndings": "All source sizes normalized to LF; HTTP transfer is measured separately",
   "originalBytes": 187460,
   "originalGzipBytes": 30832,
-  "reconstructedDeclarationsAndOrderEqual": true,
+  "reconstructedDeclarationsAndOrderEqualExceptDeclaredCorrection": true,
+  "acceptedCorrections": [
+    {
+      "selector": ".team-neural__arena",
+      "property": "overflow",
+      "before": "hidden",
+      "after": "clip",
+      "reason": "Prevent focus from scrolling an oversized clipped WebGL scene and displacing the identity/navigation on mobile"
+    }
+  ],
   "inventory": [
     {
       "name": "globals",
@@ -13,8 +22,8 @@
     },
     {
       "name": "team-constellation",
-      "sourceBytes": 19158,
-      "sourceGzipBytes": 4090,
+      "sourceBytes": 19156,
+      "sourceGzipBytes": 4092,
       "topLevelNodes": 81
     },
     {

@@ -4,7 +4,7 @@
 import { FormEvent, PointerEvent as ReactPointerEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { MessageCircle, Minus, Send, SmilePlus, Flag, Reply, X, Loader2, Plus } from "lucide-react";
-import { AnchoredEmojiStickerPicker, preloadEmojiPicker, type PickerAnchorRect } from "@/modules/chat/components/emoji-sticker-picker";
+import { AnchoredEmojiStickerPicker, type PickerAnchorRect } from "@/modules/chat/components/emoji-sticker-picker";
 import { getQuickReactions, recordReactionUse } from "@/modules/chat/reaction-preferences";
 import { CosmeticAvatarFrame } from "@/modules/cosmetics/components/cosmetic-renderer";
 import { cosmeticVisualsByType, type SafeCosmeticVisual } from "@/modules/cosmetics/visuals";
@@ -261,7 +261,7 @@ export default function GlobalChat({ userId }: { userId: string }) {
   }, [replyTo]);
 
   function toggleOpen() {
-    if (!open) { preloadEmojiPicker(); setLoading(true); setError(""); }
+    if (!open) { setLoading(true); setError(""); }
     setOpen((current) => !(current ?? initialOpen));
     setNotice("");
   }
@@ -484,7 +484,7 @@ export default function GlobalChat({ userId }: { userId: string }) {
           </div>
           {replyTo && <div className="flex items-center gap-2 border-t border-border bg-primary/5 px-3 py-1.5 text-xs"><span className="min-w-0 flex-1 truncate">{t("respondiendoA", { name: personName(replyTo.author) })}</span><button type="button" onClick={() => setReplyTo(null)} className="text-muted-foreground hover:text-primary">{t("cancelarRespuesta")}</button></div>}
           <form onSubmit={submit} className="safe-area-bottom flex items-end gap-1 border-t border-border p-2">
-            <button ref={setExpressionButton} type="button" onClick={() => setShowExpressions((value) => !value)} aria-label={t("emojisYStickers")} onPointerEnter={preloadEmojiPicker} onFocus={preloadEmojiPicker} aria-expanded={showExpressions} className="grid size-10 place-items-center rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary"><SmilePlus className="h-4 w-4" /></button>
+            <button ref={setExpressionButton} type="button" onClick={() => setShowExpressions((value) => !value)} aria-label={t("emojisYStickers")} aria-expanded={showExpressions} className="grid size-10 place-items-center rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary"><SmilePlus className="h-4 w-4" /></button>
             <textarea
               ref={composerRef}
               value={draft}

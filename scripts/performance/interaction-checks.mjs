@@ -66,7 +66,7 @@ export async function checkInitialInteractions(page, route, locale, viewport) {
     results.push({ kind: "image-editor-first-open", locale, viewport: viewport.name, first, passed: true });
     const button = page.getByRole("button", { name: messages.GlobalChat.emojisYStickers, exact: true }).filter({ visible: true }).first();
     const chat = await observe(page, () => page.getByRole("button", { name: messages.GlobalChat.abrir, exact: true }).click(), () => button.waitFor());
-    results.push({ kind: "chat-first-open-including-picker-preload", locale, viewport: viewport.name, first: chat, passed: true });
+    results.push({ kind: "chat-first-open-resources", locale, viewport: viewport.name, first: chat, passed: true });
     const ready = () => page.getByRole("button", { name: "😀", exact: true }).waitFor();
     const picker = await observe(page, () => button.click(), ready);
     await page.getByRole("button", { name: "😀", exact: true }).click();
