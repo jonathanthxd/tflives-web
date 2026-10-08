@@ -166,9 +166,23 @@ export async function checkSelectedConversation(page, origin, id, output, otherI
     await page.getByRole("button", { name: "😀", exact: true }).click();
     const composer = page.getByPlaceholder(labels.escribiMensaje, { exact: true });
     assert.ok((await composer.inputValue()).includes("😀"));
+    // Emoji insertion restores focus/caret on the next frame. Wait for that
+    // user-visible state before replacing the draft, so its pending caret
+    // restoration cannot race Playwright's select-all + text insertion.
+    await page.waitForFunction(() => {
+      const field = document.querySelector("main textarea");
+      return field && document.activeElement === field &&
+        field.selectionStart === field.value.length && field.selectionEnd === field.value.length;
+    });
     const sent = `Browser send ${viewport} 😀`;
     await composer.fill(sent);
-    await page.getByRole("button", { name: labels.enviar, exact: true }).filter({ visible: true }).click();
+    assert.equal(await composer.inputValue(), sent, "The replacement draft must be exact before sending");
+    const [response] = await Promise.all([
+      page.waitForResponse((response) => new URL(response.url()).pathname === `/api/messaging/conversations/${id}` && response.request().method() === "POST"),
+      page.getByRole("button", { name: labels.enviar, exact: true }).filter({ visible: true }).click(),
+    ]);
+    assert.equal(response.status(), 201, "The real message POST must succeed");
+    assert.equal((await response.json()).message?.content, sent, "The stored message must match the draft");
     await page.getByRole("article").getByText(sent, { exact: true }).waitFor();
     await page.waitForFunction(() => document.querySelector("main textarea")?.value === "");
     assert.equal(await page.getByRole("button", { name: labels.enviar, exact: true }).filter({ visible: true }).isDisabled(), true);
