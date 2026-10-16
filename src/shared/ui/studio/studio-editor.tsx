@@ -2,7 +2,7 @@
 
 import "./studio-editor.css";
 import dynamic from "next/dynamic";
-import Image from "next/image";
+import { BrandMark } from "@/shared/ui/brand-mark";
 import { useEffect, useId, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
@@ -124,7 +124,7 @@ export default function StudioEditor({ identity }: { identity?: StudioIdentity }
     if (category === "cursors") studio.setCursor("system");
   };
   return <div className="studio-editor">
-    <header className="studio-editor__header"><Image src="/icons/icon-192.png" alt="" width={32} height={32} unoptimized /><div className="min-w-0"><h2 className="font-display text-xl font-semibold sm:text-2xl">{t("title")}</h2><p className="mt-1 text-[11px] text-muted-foreground">{t("subtitle")}</p></div></header>
+    <header className="studio-editor__header"><BrandMark className="size-8" /><div className="min-w-0"><h2 className="font-display text-xl font-semibold sm:text-2xl">{t("title")}</h2><p className="mt-1 text-[11px] text-muted-foreground">{t("subtitle")}</p></div></header>
     <div className="studio-editor__body">
       <nav className="studio-editor__nav" aria-label={t("categoriesLabel")}>{STUDIO_CATEGORIES.map((item) => {
         const Icon = CATEGORY_ICONS[item];
@@ -134,7 +134,7 @@ export default function StudioEditor({ identity }: { identity?: StudioIdentity }
         <div className="mb-3 flex items-center justify-between gap-2"><p className="text-xs font-medium text-muted-foreground">{t("preview")}</p><button type="button" className="grid size-11 place-items-center rounded-xl border border-border hover:bg-muted" onClick={() => setPaused((value) => !value)} aria-pressed={paused} aria-label={paused ? t("resumePreview") : t("pausePreview")}>{paused ? <Play className="size-4" aria-hidden /> : <Pause className="size-4" aria-hidden />}</button></div>
         <div ref={previewRef} className="studio-editor__preview" data-studio-preview><StudioBackground background={studio.background} preview animate={!paused && visible} />
           <div className="studio-editor__sample">
-            <div className="mb-4 flex items-center gap-3">{identity ? <UserAvatar identity={identity} className="size-12 text-lg" /> : <Image src="/icons/icon-192.png" alt="" width={44} height={44} unoptimized />}<div><span className="block font-display text-lg font-semibold">{identity ? identityName(identity) : "TFLives"}</span><span className="font-mono text-xs text-muted-foreground">{identity?.username ? `@${identity.username}` : t("sampleLabel")}</span></div></div>
+            <div className="mb-4 flex items-center gap-3">{identity ? <UserAvatar identity={identity} className="size-12 text-lg" /> : <BrandMark className="size-11" />}<div><span className="block font-display text-lg font-semibold">{identity ? identityName(identity) : "TFLives"}</span><span className="font-mono text-xs text-muted-foreground">{identity?.username ? `@${identity.username}` : t("sampleLabel")}</span></div></div>
             <h3 className="font-display text-2xl font-semibold leading-tight">{t("sampleTitle")}</h3><p className="mt-3 text-sm leading-6 text-muted-foreground">{t("sampleDescription")}</p>
             <button type="button" className="mt-5 min-h-11 w-full rounded-xl bg-primary px-3 text-sm font-semibold text-primary-foreground" aria-pressed={samplePressed} onClick={() => setSamplePressed((value) => !value)}>{samplePressed ? t("sampleActive") : t("sampleAction")}</button>
           </div>

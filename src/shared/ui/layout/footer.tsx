@@ -3,6 +3,7 @@
 import { useInitialClientValue } from "@/shared/lib/client-value";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
+import { BrandMark } from "@/shared/ui/brand-mark";
 
 export default function Footer() {
   const t = useTranslations("Footer");
@@ -20,10 +21,10 @@ export default function Footer() {
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
           <Link
             href="/"
-            className="font-display text-lg font-bold tracking-tight"
+            className="inline-flex items-center gap-2 font-display text-lg font-bold tracking-tight"
           >
-            <span className="text-foreground">TFL</span>
-            <span className="text-primary">ives</span>
+            <BrandMark className="size-8" />
+            <span className="text-foreground">TFLives</span>
           </Link>
 
           <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
