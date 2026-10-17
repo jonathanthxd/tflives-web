@@ -246,7 +246,7 @@ export default function Navbar() {
               >
                 <span className="inline-flex items-center gap-2 font-display text-lg font-bold tracking-tight transition-all duration-300 group-hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)] xl:text-xl">
                   <BrandMark className="size-8" />
-                  <span className="text-foreground transition-colors duration-300 group-hover:text-primary">TFLives</span>
+                  <span className="text-foreground transition-colors duration-300 group-hover:text-primary">TFL</span><span className="text-primary">ives</span>
                 </span>
                 <span className="mt-0.5 h-px w-0 bg-gradient-to-r from-transparent via-primary/50 to-transparent transition-all duration-300 group-hover:w-full" />
               </Link>
@@ -280,7 +280,7 @@ export default function Navbar() {
             >
               <span className="inline-flex items-center gap-2 font-display text-lg font-bold tracking-tight sm:text-xl">
                 <BrandMark className="size-8" />
-                <span className="text-foreground">TFLives</span>
+                <span className="text-foreground">TFL</span><span className="text-primary">ives</span>
               </span>
             </Link>
           </div>

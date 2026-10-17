@@ -12,7 +12,7 @@ export default function AuthHeader() {
       <div className="relative max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 h-16 md:h-20 flex items-center justify-between">
         <Link href="/" className="inline-flex items-center gap-2 font-display text-xl md:text-2xl font-bold tracking-tight whitespace-nowrap">
           <BrandMark className="size-9" />
-          <span className="text-foreground">TFLives</span>
+          <span className="text-foreground">TFL</span><span className="text-primary">ives</span>
         </Link>
 
         <Link

@@ -24,7 +24,7 @@ export default function Footer() {
             className="inline-flex items-center gap-2 font-display text-lg font-bold tracking-tight"
           >
             <BrandMark className="size-8" />
-            <span className="text-foreground">TFLives</span>
+            <span className="text-foreground">TFL</span><span className="text-primary">ives</span>
           </Link>
 
           <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">

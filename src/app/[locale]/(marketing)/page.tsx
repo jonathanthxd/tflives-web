@@ -69,7 +69,7 @@ export default async function Home({
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
           <h1 className="mb-6 flex items-center justify-center gap-3 font-display text-5xl font-bold tracking-tight sm:gap-5 md:text-7xl lg:text-8xl">
             <BrandMark className="size-12 sm:size-16 lg:size-20" />
-            <span className="text-foreground">TFLives</span>
+            <span className="text-foreground">TFL</span><span className="text-primary">ives</span>
           </h1>
 
           <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto mb-8 leading-relaxed">

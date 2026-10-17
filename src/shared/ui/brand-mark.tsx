@@ -1,16 +1,23 @@
 import Image from "next/image";
 import { cn } from "@/shared/utilities/utils";
 
-/** Single source of truth for the official TFLives symbol.
- * The supplied white SVG stays unchanged; the dark tile ensures contrast in light and dark themes.
+/**
+ * Official TFLives logo on a transparent canvas, with no background tile,
+ * border, ring or padding. White on dark themes; dark on light backgrounds.
  */
 export function BrandMark({ className }: { className?: string }) {
   return (
-    <span
+    <Image
+      src="/icons/icon-192.png"
+      alt=""
       aria-hidden="true"
-      className={cn("inline-grid shrink-0 place-items-center overflow-hidden rounded-[22%] bg-[#111827] p-[12%] ring-1 ring-white/10", className)}
-    >
-      <Image src="/brand/tflives.svg" alt="" width={96} height={96} unoptimized className="block h-full w-full object-contain" />
-    </span>
+      width={96}
+      height={96}
+      unoptimized
+      className={cn(
+        "inline-block shrink-0 object-contain brightness-0 dark:brightness-100",
+        className,
+      )}
+    />
   );
 }
