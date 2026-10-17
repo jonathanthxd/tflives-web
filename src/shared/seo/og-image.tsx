@@ -1,17 +1,11 @@
 import { ImageResponse } from "next/og";
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
 import { siteConfig } from "@/config/site";
 
 export const ogSize = { width: 1200, height: 630 };
 export const ogContentType = "image/png";
 export const ogAlt = siteConfig.title;
 
-const logoData = readFile(join(process.cwd(), "public/icons/icon-192.png"))
-  .then((bytes) => `data:image/png;base64,${bytes.toString("base64")}`);
-
-export async function renderDefaultOgImage() {
-  const brand = await logoData;
+export function renderDefaultOgImage() {
   return new ImageResponse(
     (
       <div
@@ -62,8 +56,7 @@ export async function renderDefaultOgImage() {
             color: "#93c5fd",
           }}
         >
-          <img src={brand} alt="" width={56} height={56} />
-          <span>TIME FOR LIVES</span>
+          TIME FOR LIVES
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div

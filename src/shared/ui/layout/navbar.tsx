@@ -12,7 +12,6 @@ import NotificationToasts from "@/modules/notifications/components/notification-
 import GlobalChat from "@/modules/chat/components/global-chat";
 import MessagingUnreadLink from "@/modules/messaging/components/messaging-unread-link";
 import StudioMenu from "@/shared/ui/studio/studio-menu";
-import { BrandMark } from "@/shared/ui/brand-mark";
 
 const MINIMAL_HEADER_ROUTES = [
   "/login",
@@ -244,9 +243,9 @@ export default function Navbar() {
                   compact ? "min-w-[84px]" : "min-w-[96px]"
                 }`}
               >
-                <span className="inline-flex items-center gap-2 font-display text-lg font-bold tracking-tight transition-all duration-300 group-hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)] xl:text-xl">
-                  <BrandMark className="size-8" />
-                  <span className="text-foreground transition-colors duration-300 group-hover:text-primary">TFL</span><span className="text-primary">ives</span>
+                <span className="font-display text-xl font-bold tracking-tight transition-all duration-300 group-hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)] md:text-2xl lg:text-3xl">
+                  <span className="text-foreground transition-colors duration-300 group-hover:text-primary">TFL</span>
+                  <span className="text-primary">ives</span>
                 </span>
                 <span className="mt-0.5 h-px w-0 bg-gradient-to-r from-transparent via-primary/50 to-transparent transition-all duration-300 group-hover:w-full" />
               </Link>
@@ -278,9 +277,9 @@ export default function Navbar() {
               aria-current={pathname === "/" ? "page" : undefined}
               className="group flex min-h-11 flex-col items-center justify-center lg:hidden"
             >
-              <span className="inline-flex items-center gap-2 font-display text-lg font-bold tracking-tight sm:text-xl">
-                <BrandMark className="size-8" />
-                <span className="text-foreground">TFL</span><span className="text-primary">ives</span>
+              <span className="font-display text-xl font-bold tracking-tight sm:text-2xl">
+                <span className="text-foreground">TFL</span>
+                <span className="text-primary">ives</span>
               </span>
             </Link>
           </div>
@@ -348,8 +347,8 @@ export default function Navbar() {
           <div className="tfl-glass-bar border-t">
             <div className="safe-area-bottom max-h-[calc(100dvh-5rem)] overflow-y-auto px-4 py-4">
               <div className="grid gap-1 sm:grid-cols-2">
-                <Link href="/" className="flex min-h-11 items-center gap-2 rounded-xl px-3 font-medium text-primary hover:bg-primary/5" onClick={() => setMobileOpen(false)}>
-                  <BrandMark className="size-6" /> TFLives
+                <Link href="/" className="flex min-h-11 items-center rounded-xl px-3 font-medium text-primary hover:bg-primary/5" onClick={() => setMobileOpen(false)}>
+                  TFLives
                 </Link>
                 <Link href="/proyectos" className="flex min-h-11 items-center rounded-xl px-3 text-muted-foreground hover:bg-primary/5 hover:text-primary" onClick={() => setMobileOpen(false)}>
                   {t("proyectos")}
